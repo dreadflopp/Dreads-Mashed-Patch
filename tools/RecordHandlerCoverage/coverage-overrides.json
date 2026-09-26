@@ -1162,5 +1162,29 @@
     "property": "EnableParentReferencesStatic",
     "status": "IntentionalExclusion",
     "reason": "Serialized xEdit-benign LCTN Master bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "TalkingActivatorRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Common Skyrim major flags are a typed view over MajorRecordFlagsRaw and are owned by the TACT composite flag handler."
+  },
+  {
+    "handler": "TalkingActivatorRecordHandler.cs",
+    "property": "MajorFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "TACT-specific major flags are a typed view over MajorRecordFlagsRaw and are owned by that single composite flag handler."
+  },
+  {
+    "handler": "TalkingActivatorRecordHandler.cs",
+    "property": "PNAM",
+    "status": "IntentionalExclusion",
+    "reason": "xEdit defines TACT PNAM as unknown cpIgnore data; the winning binary value is preserved."
+  },
+  {
+    "handler": "TalkingActivatorRecordHandler.cs",
+    "property": "FNAM",
+    "status": "IntentionalExclusion",
+    "reason": "xEdit defines TACT FNAM as unknown cpIgnore data; the winning binary value is preserved."
   }
 ]

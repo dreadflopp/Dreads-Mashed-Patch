@@ -14,8 +14,6 @@ public sealed record PreparedLoadOrder(
 
 public static class LoadOrderPreparer
 {
-    private const string OutputPluginName = "Dread's Mashed Patch.esp";
-
     public static async Task<PreparedLoadOrder> CreateAsync(StandaloneSettings settings)
     {
         var creationClubPath = System.IO.Path.Combine(settings.GameFolderPath, "Skyrim.ccc");
@@ -55,7 +53,7 @@ public static class LoadOrderPreparer
         // list and let Synthesis apply its output-ModKey cutoff so split-output
         // handling and normal Synthesis load-order behavior stay on one path.
         var outputIndex = mergedLines.FindIndex(line =>
-            string.Equals(GetPluginName(line), OutputPluginName, StringComparison.OrdinalIgnoreCase));
+            string.Equals(GetPluginName(line), PatcherRunner.OutputPluginName, StringComparison.OrdinalIgnoreCase));
         var listingsAfterOutput = outputIndex < 0
             ? 0
             : mergedLines.Skip(outputIndex + 1).Count(line => GetPluginName(line) is not null);

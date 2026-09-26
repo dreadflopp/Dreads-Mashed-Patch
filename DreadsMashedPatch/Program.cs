@@ -59,6 +59,7 @@ namespace DreadsMashedPatch
                 typeof(IFactionGetter),
                 typeof(IEncounterZoneGetter),
                 typeof(IActivatorGetter),
+                typeof(ITalkingActivatorGetter),
                 typeof(ILightGetter),
                 typeof(IMagicEffectGetter),
                 typeof(IProjectileGetter),

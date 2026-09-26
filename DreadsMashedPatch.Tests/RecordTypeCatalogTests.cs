@@ -48,4 +48,11 @@ public sealed class RecordTypeCatalogTests
             Assert.Equal(4, RecordTypeCatalog.GetSignature(recordType).Length);
         }
     }
+
+    [Fact]
+    public void TalkingActivatorIsAnActiveSupportedRecordType()
+    {
+        Assert.Contains(typeof(ITalkingActivatorGetter), Program.SupportedRecordTypes);
+        Assert.Equal("TACT", RecordTypeCatalog.GetSignature(typeof(ITalkingActivatorGetter)));
+    }
 }

@@ -37,6 +37,7 @@ public class IntentionalExclusionTests
             (new QuestRecordHandler(), ["Unknown", "QuestFormVersion"]),
             (new RaceRecordHandler(), ["Unknown"]),
             (new RelationshipRecordHandler(), ["Unknown"]),
+            (new TalkingActivatorRecordHandler(), ["PNAM", "FNAM"]),
             (new TreeRecordHandler(), ["Unknown"]),
             (new WaterRecordHandler(), ["Unknown", "Unknown2", "Unknown3", "Unknown4", "Unknown5", "Unknown6", "Unknown7"]),
             (new WeaponRecordHandler(), ["Data.Unknown", "Data.Unknown2", "Data.Unknown3", "Data.Unknown4", "Data.Unknown5"]),

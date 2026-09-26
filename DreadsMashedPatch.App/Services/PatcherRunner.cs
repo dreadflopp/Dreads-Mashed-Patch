@@ -10,7 +10,7 @@ namespace DreadsMashedPatch.App.Services;
 
 public sealed class PatcherRunner
 {
-    private const string OutputPluginName = "Dread's Mashed Patch.esp";
+    internal const string OutputPluginName = "MashedPatch.esp";
 
     public static string GetOutputPath(StandaloneSettings settings) =>
         Path.Combine(settings.DataFolderPath, OutputPluginName);

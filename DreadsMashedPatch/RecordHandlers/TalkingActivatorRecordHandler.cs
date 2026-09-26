@@ -12,26 +12,27 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: TACT script/model/link/scalar fields and flags via existing handlers.
-// - Kept specialized: shared bounds/name/keyword handlers.
-// - Rationale: mirrors Activator-style forwarding with type-specific property names.
+// - Generalized: localized name and nullable form links use typed shared reflection handlers.
+// - Kept specialized/atomic: Model and ObjectBounds share one geometry owner; Destructible remains
+//   one generated-copy aggregate; Keywords and VMAD scripts retain their xEdit sorted/keyed handlers.
+// - Flag decision: the raw record-header handler is the sole storage path and owns common Skyrim
+//   plus TACT-specific flags.
+// - Intentionally excluded: xEdit marks PNAM and FNAM cpIgnore, so the winning binary values are preserved.
+// - Rationale: semantic TACT fields remain independently mergeable without splitting cohesive model,
+//   destructible, or header state, or manufacturing meaning for ignored binary data.
 public class TalkingActivatorRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(TalkingActivator.MajorFlag)) },
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<ITalkingActivator, ITalkingActivatorGetter>() },
-        { "Name", new NameHandler() },
+        { "Name", new TranslatedStringReflectionPropertyHandler<ITalkingActivator, ITalkingActivatorGetter>("Name") },
         { "ModelAndBounds", new ModelBoundsHandler() },
         { "Destructible", new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, ITalkingActivator, ITalkingActivatorGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals) },
         { "Keywords", new KeywordListHandler() },
-        { "PNAM", new SimpleReflectionPropertyHandler<int?, ITalkingActivator, ITalkingActivatorGetter>("PNAM") },
         { "LoopingSound", new SimpleReflectionFormLinkPropertyHandler<ISoundMarkerGetter, ITalkingActivator, ITalkingActivatorGetter>("LoopingSound") },
-        { "FNAM", new SimpleReflectionPropertyHandler<short?, ITalkingActivator, ITalkingActivatorGetter>("FNAM") },
-        { "Voice", new SimpleReflectionFormLinkPropertyHandler<IVoiceTypeGetter, ITalkingActivator, ITalkingActivatorGetter>("Voice") },
-        { "MajorFlags", new SimpleReflectionFlagPropertyHandler<TalkingActivator.MajorFlag, ITalkingActivator, ITalkingActivatorGetter>("MajorFlags") }
+        { "Voice", new SimpleReflectionFormLinkPropertyHandler<IVoiceTypeGetter, ITalkingActivator, ITalkingActivatorGetter>("Voice") }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

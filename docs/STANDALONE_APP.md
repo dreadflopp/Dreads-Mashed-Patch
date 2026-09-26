@@ -15,7 +15,7 @@ Run output is stored in the `Logs` folder beside the executable. `DreadsMashedPa
 
 ### Mod Organizer 2
 
-Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. For Wabbajack lists, select the list's Stock Game folder and its Data folder, then select the active MO2 profile's `plugins.txt`. `Dread's Mashed Patch.esp` is written through MO2's virtual Data folder and may appear in the configured output mod or **Overwrite**.
+Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. For Wabbajack lists, select the list's Stock Game folder and its Data folder, then select the active MO2 profile's `plugins.txt`. `MashedPatch.esp` is written through MO2's virtual Data folder and may appear in the configured output mod or **Overwrite**.
 
 ### Vortex and deployed installations
 
@@ -31,7 +31,7 @@ The Run Log tab shows bounded progress, warnings, and errors while the complete 
 
 The game release is selected explicitly and passed to Mutagen/Synthesis. Anniversary Edition uses the corresponding Special Edition Steam or GOG selection. Mutagen requires this value for implicit masters, load-order parsing, and binary defaults. Creation Club listings are read explicitly from `Skyrim.ccc` in the selected game folder, merged with `plugins.txt`, and deduplicated by the Synthesis pipeline.
 
-The primary output name is fixed as `Dread's Mashed Patch.esp`. If the patch needs more than 254 masters, Synthesis automatically splits it into additional numbered plugins such as `Dread's Mashed Patch_2.esp`. If the primary output already appears in the selected load order, Synthesis reads only enabled plugins placed before it. If it is absent, Synthesis reads the complete enabled load order. Before a rerun, numbered outputs from the previous run are removed so obsolete split files cannot remain when the new patch uses fewer files.
+The primary output name is fixed as `MashedPatch.esp`. If the patch needs more than 254 masters, Synthesis automatically splits it into additional numbered plugins such as `MashedPatch_2.esp`. If the primary output already appears in the selected load order, Synthesis reads only enabled plugins placed before it. If it is absent, Synthesis reads the complete enabled load order. Before a rerun, numbered outputs from the previous run are removed so obsolete split files cannot remain when the new patch uses fewer files.
 
 Use **Create empty patch output** on the General tab before the first full run when the plugin must be positioned in a mod manager. The action removes the primary and recognized split outputs, then writes one empty, masterless plugin at the stable primary filename.
 
