@@ -1,7 +1,7 @@
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.Formatting;
 using DreadsMashedPatch.PropertyHandlers.General;
-using DreadsMashedPatch.PropertyHandlers.Npc;
+using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Xunit;
@@ -25,8 +25,8 @@ public sealed class DiagnosticValueFormatterTests
     [Fact]
     public void TintLayersUsesStructuralFormattingInsteadOfCollectionTypeName()
     {
-        var handler = new TintLayersHandler();
-        IReadOnlyList<ITintLayerGetter> layers =
+        var handler = new NpcRecordHandler().PropertyHandlers["TintLayers"];
+        List<ITintLayerGetter> layers =
         [
             new TintLayer
             {

@@ -14,7 +14,8 @@ namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
     // - Generalized: the three semantic BodyTemplate leaves use the same exact dotted-property pattern as Armor.
-    // - Split: WorldModel and FirstPersonModel filenames and alternate textures are tracked independently for male and female models.
+    // - Split: WorldModel and FirstPersonModel filenames and alternate textures are tracked independently for male and female models;
+    //   alternate textures use xEdit's (3D Name, 3D Index) sorted key.
     // - Split: priority, weight-slider state, skin textures, and texture-swap lists are tracked independently by gender.
     // - Kept specialized: AdditionalRaces retains list ownership semantics; remaining links and scalar values use general handlers.
     // - Intentionally excluded: BodyTemplate.ActsLike44 is Mutagen serialization state; Unknown* fields are outside the semantic conflict surface.

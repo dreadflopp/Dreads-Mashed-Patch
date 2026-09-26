@@ -2,7 +2,6 @@ using System;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.Flora;
@@ -16,7 +15,7 @@ namespace DreadsMashedPatch.RecordHandlers
     // Migration note:
     // - Generalized: VM adapter, bounds, name/model, keywords, binary slices, links, production.
     // - Kept specialized: Destructible via dedicated handler.
-    // - Rationale: destructible needs explicit deep-copy semantics; remaining fields are reflection-safe.
+    // - Rationale: destructible stays explicit; translated text and Production use generated copies.
     public class FloraRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -30,11 +29,12 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Destructible", new DestructibleHandler() },
             { "Keywords", new KeywordListHandler() },
             { "PNAM", new SimpleReflectionBinaryDataPropertyHandler<IFlora, IFloraGetter>("PNAM") },
-            { "ActivateTextOverride", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IFlora, IFloraGetter>("ActivateTextOverride") },
+            { "ActivateTextOverride", new TranslatedStringReflectionPropertyHandler<IFlora, IFloraGetter>("ActivateTextOverride") },
             { "FNAM", new SimpleReflectionBinaryDataPropertyHandler<IFlora, IFloraGetter>("FNAM") },
             { "Ingredient", new SimpleReflectionFormLinkPropertyHandler<IHarvestTargetGetter, IFlora, IFloraGetter>("Ingredient") },
             { "HarvestSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IFlora, IFloraGetter>("HarvestSound") },
-            { "Production", new ComplexReflectionPropertyHandler<ISeasonalIngredientProductionGetter, IFlora, IFloraGetter>("Production") }
+            { "Production", new GeneratedCopyReflectionPropertyHandler<ISeasonalIngredientProductionGetter, SeasonalIngredientProduction, IFlora, IFloraGetter>(
+                "Production", value => value.DeepCopy(), SeasonalIngredientProductionMixIn.Equals) }
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

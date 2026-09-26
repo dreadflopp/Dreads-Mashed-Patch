@@ -12,7 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: colors, scalars, and nested ambient color blocks via reflection handlers.
+    // - Generalized: scalars use typed reflection; ambient color aggregates use generated copy/equality.
     // - Kept specialized: none.
     // - Intentionally excluded: DATADataTypeState is Mutagen serialization state; Unknown is outside the semantic conflict surface.
     // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout.
@@ -33,12 +33,14 @@ namespace DreadsMashedPatch.RecordHandlers
             { "DirectionalFade", new SimpleReflectionPropertyHandler<float, ILightingTemplate, ILightingTemplateGetter>("DirectionalFade") },
             { "FogClipDistance", new SimpleReflectionPropertyHandler<float, ILightingTemplate, ILightingTemplateGetter>("FogClipDistance") },
             { "FogPower", new SimpleReflectionPropertyHandler<float, ILightingTemplate, ILightingTemplateGetter>("FogPower") },
-            { "AmbientColors", new ComplexReflectionPropertyHandler<IAmbientColorsGetter, ILightingTemplate, ILightingTemplateGetter>("AmbientColors") },
+            { "AmbientColors", new GeneratedCopyReflectionPropertyHandler<IAmbientColorsGetter, AmbientColors, ILightingTemplate, ILightingTemplateGetter>(
+                "AmbientColors", value => value.DeepCopy(), AmbientColorsMixIn.Equals) },
             { "FogFarColor", new SimpleReflectionPropertyHandler<Color, ILightingTemplate, ILightingTemplateGetter>("FogFarColor") },
             { "FogMax", new SimpleReflectionPropertyHandler<float, ILightingTemplate, ILightingTemplateGetter>("FogMax") },
             { "LightFadeStartDistance", new SimpleReflectionPropertyHandler<float, ILightingTemplate, ILightingTemplateGetter>("LightFadeStartDistance") },
             { "LightFadeEndDistance", new SimpleReflectionPropertyHandler<float, ILightingTemplate, ILightingTemplateGetter>("LightFadeEndDistance") },
-            { "DirectionalAmbientColors", new ComplexReflectionPropertyHandler<IAmbientColorsGetter, ILightingTemplate, ILightingTemplateGetter>("DirectionalAmbientColors") },
+            { "DirectionalAmbientColors", new GeneratedCopyReflectionPropertyHandler<IAmbientColorsGetter, AmbientColors, ILightingTemplate, ILightingTemplateGetter>(
+                "DirectionalAmbientColors", value => value.DeepCopy(), AmbientColorsMixIn.Equals) },
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

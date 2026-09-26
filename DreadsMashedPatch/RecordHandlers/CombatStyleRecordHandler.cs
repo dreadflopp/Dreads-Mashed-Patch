@@ -12,7 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: all scalar/object fields via reflection handlers.
+    // - Generalized: scalar fields use typed reflection; object aggregates use Mutagen-generated copy/equality.
     // - Kept specialized: none.
     // - Intentionally excluded: CSGDDataTypeState is Mutagen serialization state, not an xEdit field.
     // - Rationale: semantic fields are forwarded while the winning record retains its binary CSGD layout.
@@ -34,10 +34,13 @@ namespace DreadsMashedPatch.RecordHandlers
             { "EquipmentScoreMultStaff", new SimpleReflectionPropertyHandler<float, ICombatStyle, ICombatStyleGetter>("EquipmentScoreMultStaff", 0.0001f) },
             { "AvoidThreatChance", new SimpleReflectionPropertyHandler<float, ICombatStyle, ICombatStyleGetter>("AvoidThreatChance", 0.0001f) },
             { "CSMD", new SimpleReflectionPropertyHandler<ReadOnlyMemorySlice<byte>?, ICombatStyle, ICombatStyleGetter>("CSMD") },
-            { "Melee", new ComplexReflectionPropertyHandler<ICombatStyleMeleeGetter, ICombatStyle, ICombatStyleGetter>("Melee") },
-            { "CloseRange", new ComplexReflectionPropertyHandler<ICombatStyleCloseRangeGetter, ICombatStyle, ICombatStyleGetter>("CloseRange") },
+            { "Melee", new GeneratedCopyReflectionPropertyHandler<ICombatStyleMeleeGetter, CombatStyleMelee, ICombatStyle, ICombatStyleGetter>(
+                "Melee", value => value.DeepCopy(), CombatStyleMeleeMixIn.Equals) },
+            { "CloseRange", new GeneratedCopyReflectionPropertyHandler<ICombatStyleCloseRangeGetter, CombatStyleCloseRange, ICombatStyle, ICombatStyleGetter>(
+                "CloseRange", value => value.DeepCopy(), CombatStyleCloseRangeMixIn.Equals) },
             { "LongRangeStrafeMult", new SimpleReflectionPropertyHandler<float?, ICombatStyle, ICombatStyleGetter>("LongRangeStrafeMult", 0.0001f) },
-            { "Flight", new ComplexReflectionPropertyHandler<ICombatStyleFlightGetter, ICombatStyle, ICombatStyleGetter>("Flight") },
+            { "Flight", new GeneratedCopyReflectionPropertyHandler<ICombatStyleFlightGetter, CombatStyleFlight, ICombatStyle, ICombatStyleGetter>(
+                "Flight", value => value.DeepCopy(), CombatStyleFlightMixIn.Equals) },
             { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.CombatStyle.Flag, ICombatStyle, ICombatStyleGetter>("Flags") },
             { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.CombatStyle.MajorFlag, ICombatStyle, ICombatStyleGetter>("MajorFlags") }
         };

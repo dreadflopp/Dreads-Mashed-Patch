@@ -4,7 +4,6 @@ using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.PropertyHandlers.Quest;
@@ -59,7 +58,7 @@ public class QuestRecordHandler : AbstractRecordHandler
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Name", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IQuest, IQuestGetter>("Name") },
+        { "Name", new TranslatedStringReflectionPropertyHandler<IQuest, IQuestGetter>("Name") },
         { "VirtualMachineAdapter.Presence", new QuestVirtualMachineAdapterPresenceHandler() },
         { "VirtualMachineAdapter.Version", new SimpleReflectionPropertyHandler<short, IQuest, IQuestGetter>("VirtualMachineAdapter.Version") },
         { "VirtualMachineAdapter.ObjectFormat", new SimpleReflectionPropertyHandler<ushort, IQuest, IQuestGetter>("VirtualMachineAdapter.ObjectFormat") },
@@ -75,7 +74,7 @@ public class QuestRecordHandler : AbstractRecordHandler
         { "TextDisplayGlobals", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IGlobalGetter>, IQuest, IQuestGetter>("TextDisplayGlobals", ListSemantics.AlignedOrdered) },
         { "Filter", new SimpleReflectionPropertyHandler<string, IQuest, IQuestGetter>("Filter") },
         { "NextAliasID", new SimpleReflectionPropertyHandler<uint?, IQuest, IQuestGetter>("NextAliasID") },
-        { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IQuest, IQuestGetter>("Description") },
+        { "Description", new TranslatedStringReflectionPropertyHandler<IQuest, IQuestGetter>("Description") },
         { "DialogConditions", new DialogConditionsHandler() },
         { "EventConditions", new EventConditionsHandler() },
         { "Stages", new StagesHandler() },

@@ -5,7 +5,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
@@ -13,7 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: WOOP translated text fields via existing complex reflection handler.
+// - Generalized: WOOP translated text fields use generated localized-string copying.
 // - Kept specialized: none.
 // - Rationale: IWordOfPower only exposes Name/Translation translated strings plus shared major-record fields.
 public class WordOfPowerRecordHandler : AbstractRecordHandler
@@ -23,8 +22,8 @@ public class WordOfPowerRecordHandler : AbstractRecordHandler
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Name", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IWordOfPower, IWordOfPowerGetter>("Name") },
-        { "Translation", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IWordOfPower, IWordOfPowerGetter>("Translation") }
+        { "Name", new TranslatedStringReflectionPropertyHandler<IWordOfPower, IWordOfPowerGetter>("Name") },
+        { "Translation", new TranslatedStringReflectionPropertyHandler<IWordOfPower, IWordOfPowerGetter>("Translation") }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

@@ -1,7 +1,6 @@
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.Book;
@@ -27,11 +26,11 @@ namespace DreadsMashedPatch.RecordHandlers
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Value", new ValueHandler() },
             { "Weight", new WeightHandler() },
-            { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IBook, IBookGetter>("Description") },
+            { "Description", new TranslatedStringReflectionPropertyHandler<IBook, IBookGetter>("Description") },
             { "PickUpSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IBook, IBookGetter>("PickUpSound") },
             { "PutDownSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IBook, IBookGetter>("PutDownSound") },
             { "Keywords", new KeywordListHandler() },
-            { "BookText", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IBook, IBookGetter>("BookText") },
+            { "BookText", new TranslatedStringReflectionPropertyHandler<IBook, IBookGetter>("BookText") },
             { "Destructible", new DestructibleHandler() },
             { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.Book.Flag, IBook, IBookGetter>("Flags") },
             { "Type", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.Book.BookType, IBook, IBookGetter>("Type") },

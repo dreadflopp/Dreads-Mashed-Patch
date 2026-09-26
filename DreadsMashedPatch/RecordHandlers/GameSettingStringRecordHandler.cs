@@ -6,7 +6,6 @@ using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
@@ -14,7 +13,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: GMST string variant via reflection handlers.
+// - Generalized: GMST translated-string data uses Mutagen's generated localized copy.
 // - Kept specialized: typed Data handling remains per concrete GMST variant.
 // - Rationale: concrete Data type differs across GameSetting variants.
 public class GameSettingStringRecordHandler : AbstractRecordHandler
@@ -24,7 +23,7 @@ public class GameSettingStringRecordHandler : AbstractRecordHandler
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Data", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IGameSettingString, IGameSettingStringGetter>("Data") }
+        { "Data", new TranslatedStringReflectionPropertyHandler<IGameSettingString, IGameSettingStringGetter>("Data") }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

@@ -4,7 +4,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.DialogResponse;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
@@ -40,7 +39,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Responses", new ResponsesHandler(normalizeTrailingWhitespace: true) },
             { "Conditions", new ConditionsHandler() },
 
-            { "Prompt", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IDialogResponses, IDialogResponsesGetter>("Prompt") },
+            { "Prompt", new TranslatedStringReflectionPropertyHandler<IDialogResponses, IDialogResponsesGetter>("Prompt") },
             { "Speaker", new SimpleReflectionFormLinkPropertyHandler<INpcGetter, IDialogResponses, IDialogResponsesGetter>("Speaker") },
             { "WalkAwayTopic", new SimpleReflectionFormLinkPropertyHandler<IDialogTopicGetter, IDialogResponses, IDialogResponsesGetter>("WalkAwayTopic") },
             { "AudioOutputOverride", new SimpleReflectionFormLinkPropertyHandler<ISoundOutputModelGetter, IDialogResponses, IDialogResponsesGetter>("AudioOutputOverride") }

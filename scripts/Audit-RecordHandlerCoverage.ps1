@@ -1,6 +1,7 @@
 param(
     [string]$OutputPath = "docs/record-handler-coverage.md",
-    [string]$JsonOutputPath = "docs/record-handler-coverage.json"
+    [string]$JsonOutputPath = "docs/record-handler-coverage.json",
+    [switch]$FailOnUnresolved
 )
 
 Set-StrictMode -Version Latest
@@ -14,7 +15,12 @@ $jsonPath = Join-Path $repoRoot $JsonOutputPath
 
 Push-Location $repoRoot
 try {
-    dotnet run --project $toolProject --configuration Release -- $repoRoot $markdownPath $jsonPath $overridesPath
+    $toolArguments = @($repoRoot, $markdownPath, $jsonPath, $overridesPath)
+    if ($FailOnUnresolved) {
+        $toolArguments += "--fail-on-unresolved"
+    }
+
+    dotnet run --project $toolProject --configuration Release -- @toolArguments
     if ($LASTEXITCODE -ne 0) {
         throw "Record handler coverage audit failed with exit code $LASTEXITCODE."
     }

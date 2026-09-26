@@ -7,7 +7,6 @@ using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
@@ -17,7 +16,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: RACE scalar, list, form-link, nested complex fields, and dictionary fields.
+// - Generalized: RACE scalar/list/link fields plus generated copies for BodyTemplate, MountData, FaceFxPhonemes, and MovementTypes.
 // - Kept specialized: gendered aggregates use typed male/female copying and equality; Skill Boosts are
 //   grouped as xEdit's fixed sorted array keyed by Skill instead of Mutagen's seven physical slots; Attacks
 //   use Mutagen's typed deep copy so binary-overlay AttackData is materialized as mutable AttackData.
@@ -30,11 +29,12 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Name", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IRace, IRaceGetter>("Name") },
-        { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IRace, IRaceGetter>("Description") },
+        { "Name", new TranslatedStringReflectionPropertyHandler<IRace, IRaceGetter>("Name") },
+        { "Description", new TranslatedStringReflectionPropertyHandler<IRace, IRaceGetter>("Description") },
         { "ActorEffect", new SimpleReflectionListPropertyHandler<IFormLinkGetter<ISpellRecordGetter>, IRace, IRaceGetter>("ActorEffect", ListSemantics.SortedKeyed) },
         { "Skin", new SimpleReflectionFormLinkPropertyHandler<IArmorGetter, IRace, IRaceGetter>("Skin") },
-        { "BodyTemplate", new ComplexReflectionPropertyHandler<IBodyTemplateGetter, IRace, IRaceGetter>("BodyTemplate") },
+        { "BodyTemplate", new GeneratedCopyReflectionPropertyHandler<IBodyTemplateGetter, BodyTemplate, IRace, IRaceGetter>(
+            "BodyTemplate", value => value.DeepCopy(), BodyTemplateMixIn.Equals) },
         { "Keywords", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IKeywordGetter>, IRace, IRaceGetter>("Keywords", ListSemantics.SortedKeyed) },
         { "SkillBoosts", new RaceSkillBoostsHandler() },
         { "Height", new GenderedItemHandler<float, float, IRace, IRaceGetter>("Height", record => record.Height, (record, value) => { if (value != null) record.Height = value; }, value => value) },
@@ -58,7 +58,8 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "FlightRadius", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("FlightRadius") },
         { "AngularAccelerationRate", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("AngularAccelerationRate") },
         { "AngularTolerance", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("AngularTolerance") },
-        { "MountData", new ComplexReflectionPropertyHandler<IMountDataGetter, IRace, IRaceGetter>("MountData") },
+        { "MountData", new GeneratedCopyReflectionPropertyHandler<IMountDataGetter, MountData, IRace, IRaceGetter>(
+            "MountData", value => value.DeepCopy(), MountDataMixIn.Equals) },
         { "SkeletalModel", new GenderedItemHandler<ISimpleModelGetter?, SimpleModel?, IRace, IRaceGetter>("SkeletalModel", record => record.SkeletalModel, (record, value) => record.SkeletalModel = value, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
         { "MovementTypeNames", new SimpleReflectionListPropertyHandler<string, IRace, IRaceGetter>("MovementTypeNames", ListSemantics.SortedKeyed) },
         { "Voices", new GenderedItemHandler<IFormLinkGetter<IVoiceTypeGetter>, IFormLinkGetter<IVoiceTypeGetter>, IRace, IRaceGetter>("Voices", record => record.Voices, (record, value) => { if (value != null) record.Voices = value; }, value => new FormLink<IVoiceTypeGetter>(value.FormKey), (left, right) => left.FormKey == right.FormKey) },
@@ -80,11 +81,14 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "OpenLootSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IRace, IRaceGetter>("OpenLootSound") },
         { "CloseLootSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IRace, IRaceGetter>("CloseLootSound") },
         { "BipedObjectNames", new RaceBipedObjectNamesHandler() },
-        { "MovementTypes", new SimpleReflectionListPropertyHandler<IRaceMovementTypeGetter, IRace, IRaceGetter>("MovementTypes", ListSemantics.SortedKeyed, keySelector: movement => movement.MovementType.FormKey) },
+        { "MovementTypes", new GeneratedCopyReflectionListPropertyHandler<IRaceMovementTypeGetter, RaceMovementType, IRace, IRaceGetter>(
+            "MovementTypes", ListSemantics.SortedKeyed, value => value.DeepCopy(), RaceMovementTypeMixIn.Equals,
+            keySelector: movement => movement.MovementType.FormKey) },
         { "EquipmentFlags", new SimpleReflectionPropertyHandler<EquipTypeFlag?, IRace, IRaceGetter>("EquipmentFlags") },
         { "EquipmentSlots", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IEquipTypeGetter>, IRace, IRaceGetter>("EquipmentSlots", ListSemantics.SortedKeyed) },
         { "UnarmedEquipSlot", new SimpleReflectionFormLinkPropertyHandler<IEquipTypeGetter, IRace, IRaceGetter>("UnarmedEquipSlot") },
-        { "FaceFxPhonemes", new ComplexReflectionPropertyHandler<IFaceFxPhonemesGetter, IRace, IRaceGetter>("FaceFxPhonemes") },
+        { "FaceFxPhonemes", new GeneratedCopyReflectionPropertyHandler<IFaceFxPhonemesGetter, FaceFxPhonemes, IRace, IRaceGetter>(
+            "FaceFxPhonemes", value => value.DeepCopy(), FaceFxPhonemesMixIn.Equals) },
         { "BaseMovementDefaultWalk", new SimpleReflectionFormLinkPropertyHandler<IMovementTypeGetter, IRace, IRaceGetter>("BaseMovementDefaultWalk") },
         { "BaseMovementDefaultRun", new SimpleReflectionFormLinkPropertyHandler<IMovementTypeGetter, IRace, IRaceGetter>("BaseMovementDefaultRun") },
         { "BaseMovementDefaultSwim", new SimpleReflectionFormLinkPropertyHandler<IMovementTypeGetter, IRace, IRaceGetter>("BaseMovementDefaultSwim") },

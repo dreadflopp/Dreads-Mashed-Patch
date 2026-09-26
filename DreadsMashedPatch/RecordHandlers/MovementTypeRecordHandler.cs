@@ -12,7 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: all MOVT scalar and enum fields via reflection handlers.
+// - Generalized: MOVT scalars/enums use typed reflection; AnimationChangeThresholds uses generated copying.
 // - Kept specialized: none.
 // - Intentionally excluded: SPEDDataTypeState is Mutagen serialization state, not an xEdit field.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary SPED layout.
@@ -35,7 +35,8 @@ public class MovementTypeRecordHandler : AbstractRecordHandler
         { "RotateInPlaceWalk", new SimpleReflectionPropertyHandler<float, IMovementType, IMovementTypeGetter>("RotateInPlaceWalk") },
         { "RotateInPlaceRun", new SimpleReflectionPropertyHandler<float, IMovementType, IMovementTypeGetter>("RotateInPlaceRun") },
         { "RotateWhileMovingRun", new SimpleReflectionPropertyHandler<float, IMovementType, IMovementTypeGetter>("RotateWhileMovingRun") },
-        { "AnimationChangeThresholds", new ComplexReflectionPropertyHandler<IAnimationChangeThresholdsGetter, IMovementType, IMovementTypeGetter>("AnimationChangeThresholds") },
+        { "AnimationChangeThresholds", new GeneratedCopyReflectionPropertyHandler<IAnimationChangeThresholdsGetter, AnimationChangeThresholds, IMovementType, IMovementTypeGetter>(
+            "AnimationChangeThresholds", value => value.DeepCopy(), AnimationChangeThresholdsMixIn.Equals) },
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

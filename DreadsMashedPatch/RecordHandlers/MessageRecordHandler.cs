@@ -5,7 +5,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Message;
@@ -24,8 +23,8 @@ public class MessageRecordHandler : AbstractRecordHandler
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Description", new ComplexReflectionPropertyHandler<TranslatedString, IMessage, IMessageGetter>("Description") },
-        { "Name", new ComplexReflectionPropertyHandler<TranslatedString, IMessage, IMessageGetter>("Name") },
+        { "Description", new TranslatedStringReflectionPropertyHandler<IMessage, IMessageGetter>("Description") },
+        { "Name", new TranslatedStringReflectionPropertyHandler<IMessage, IMessageGetter>("Name") },
         { "INAM", new SimpleReflectionBinaryDataPropertyHandler<IMessage, IMessageGetter>("INAM") },
         { "Quest", new SimpleReflectionFormLinkPropertyHandler<IQuestGetter, IMessage, IMessageGetter>("Quest") },
         { "Flags", new SimpleReflectionFlagPropertyHandler<Message.Flag, IMessage, IMessageGetter>("Flags") },

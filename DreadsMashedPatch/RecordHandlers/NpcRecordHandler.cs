@@ -4,7 +4,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.Npc;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
@@ -16,9 +15,10 @@ namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
     // - Generalized: semantic AIData, Configuration, and scalar PlayerSkills leaves use exact dotted shared handlers.
-    // - Specialized: protection policy, skill dictionaries, float tolerance, NPC collection merging, and typed attack deep-copying remain explicit.
+    // - Generalized: xEdit-sorted HeadParts and TintLayers use shared keyed list ownership.
+    // - Specialized: polymorphic Level, protection policy, skill dictionaries, float tolerance, remaining NPC collection merging, and typed attacks remain explicit.
     // - Intentionally excluded: AIData.Unused and PlayerSkills.Unused* are serialization-only fields.
-    // - Rationale: direct semantic leaves are reflection-safe; unused storage is not an xEdit-visible conflict surface.
+    // - Rationale: Level uses generated subtype dispatch; unused storage is not an xEdit-visible conflict surface.
     public class NpcRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -33,7 +33,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Configuration.Flags", new ProtectionFlagsHandler() },
             { "Configuration.MagickaOffset", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.MagickaOffset") },
             { "Configuration.StaminaOffset", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.StaminaOffset") },
-            { "Configuration.Level", new ComplexReflectionPropertyHandler<IANpcLevelGetter, INpc, INpcGetter>("Configuration.Level") },
+            { "Configuration.Level", new NpcLevelHandler() },
             { "Configuration.CalcMinLevel", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.CalcMinLevel") },
             { "Configuration.CalcMaxLevel", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.CalcMaxLevel") },
             { "Configuration.SpeedMultiplier", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.SpeedMultiplier") },
@@ -70,7 +70,9 @@ namespace DreadsMashedPatch.RecordHandlers
             { "FaceMorph", new FaceMorphHandler() },
             { "FaceParts", new FacePartsHandler() },
             { "TextureLighting", new TextureLightingHandler() },
-            { "TintLayers", new TintLayersHandler() },
+            { "TintLayers", new GeneratedCopyReflectionListPropertyHandler<ITintLayerGetter, TintLayer, INpc, INpcGetter>(
+                "TintLayers", ListSemantics.SortedKeyed, value => value.DeepCopy(), TintLayerMixIn.Equals,
+                keySelector: value => value.Index) },
             { "Race", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, INpc, INpcGetter>("Race") },
             { "Destructible", new DestructibleHandler() },
             { "Height", new SimpleReflectionPropertyHandler<float, INpc, INpcGetter>("Height", 0.001f) },
@@ -78,10 +80,11 @@ namespace DreadsMashedPatch.RecordHandlers
             { "ObjectBounds", new ObjectBoundsHandler() },
             { "Voice", new SimpleReflectionFormLinkPropertyHandler<IVoiceTypeGetter, INpc, INpcGetter>("Voice") },
             { "Template", new SimpleReflectionFormLinkPropertyHandler<INpcSpawnGetter, INpc, INpcGetter>("Template") },
-            { "ShortName", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, INpc, INpcGetter>("ShortName") },
+            { "ShortName", new TranslatedStringReflectionPropertyHandler<INpc, INpcGetter>("ShortName") },
             { "NAM5", new SimpleReflectionPropertyHandler<ushort, INpc, INpcGetter>("NAM5") },
             { "SoundLevel", new SimpleReflectionPropertyHandler<SoundLevel, INpc, INpcGetter>("SoundLevel") },
-            { "HeadParts", new HeadPartsHandler() },
+            { "HeadParts", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IHeadPartGetter>, INpc, INpcGetter>(
+                "HeadParts", ListSemantics.SortedKeyed) },
             { "WornArmor", new SimpleReflectionFormLinkPropertyHandler<IArmorGetter, INpc, INpcGetter>("WornArmor") },
             { "AttackRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, INpc, INpcGetter>("AttackRace") },
             { "HairColor", new SimpleReflectionFormLinkPropertyHandler<IColorRecordGetter, INpc, INpcGetter>("HairColor") },

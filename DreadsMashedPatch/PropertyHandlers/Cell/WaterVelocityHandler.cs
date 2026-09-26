@@ -19,10 +19,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
             {
                 if (value != null)
                 {
-                    // Create a new CellWaterVelocity and copy the values
-                    var newWaterVelocity = new CellWaterVelocity();
-                    newWaterVelocity.DeepCopyIn(value);
-                    cellRecord.WaterVelocity = newWaterVelocity;
+                    cellRecord.WaterVelocity = value.DeepCopy();
                 }
                 else
                 {

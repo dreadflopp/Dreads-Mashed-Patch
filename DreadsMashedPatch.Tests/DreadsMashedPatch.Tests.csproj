@@ -19,4 +19,13 @@
   <ItemGroup>
     <ProjectReference Include="..\DreadsMashedPatch\DreadsMashedPatch.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\docs\collection-semantics-manifest.json"
+          Link="collection-semantics-manifest.json"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\docs\xedit-collection-expectations.json"
+          Link="xedit-collection-expectations.json"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

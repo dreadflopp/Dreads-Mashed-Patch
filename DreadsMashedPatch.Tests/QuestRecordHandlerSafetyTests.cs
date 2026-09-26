@@ -91,9 +91,9 @@ public sealed class QuestRecordHandlerSafetyTests
     {
         var handler = new QuestRecordHandler();
 
-        Assert.IsType<ComplexReflectionPropertyHandler<ITranslatedStringGetter, IQuest, IQuestGetter>>(
+        Assert.IsType<TranslatedStringReflectionPropertyHandler<IQuest, IQuestGetter>>(
             handler.PropertyHandlers["Name"]);
-        Assert.IsType<ComplexReflectionPropertyHandler<ITranslatedStringGetter, IQuest, IQuestGetter>>(
+        Assert.IsType<TranslatedStringReflectionPropertyHandler<IQuest, IQuestGetter>>(
             handler.PropertyHandlers["Description"]);
         Assert.IsType<SimpleReflectionFlagPropertyHandler<Quest.Flag, IQuest, IQuestGetter>>(
             handler.PropertyHandlers["Flags"]);

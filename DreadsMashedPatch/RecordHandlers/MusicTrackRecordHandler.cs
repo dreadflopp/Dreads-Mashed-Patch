@@ -31,7 +31,8 @@ public class MusicTrackRecordHandler : AbstractRecordHandler
         { "FadeOut", new SimpleReflectionPropertyHandler<float?, IMusicTrack, IMusicTrackGetter>("FadeOut") },
         { "TrackFilename", new TrackAssetLinkHandler("TrackFilename") },
         { "FinaleFilename", new TrackAssetLinkHandler("FinaleFilename") },
-        { "LoopData", new ComplexReflectionPropertyHandler<IMusicTrackLoopDataGetter, IMusicTrack, IMusicTrackGetter>("LoopData") },
+        { "LoopData", new GeneratedCopyReflectionPropertyHandler<IMusicTrackLoopDataGetter, MusicTrackLoopData, IMusicTrack, IMusicTrackGetter>(
+            "LoopData", value => value.DeepCopy(), MusicTrackLoopDataMixIn.Equals) },
         { "CuePoints", new CuePointsHandler() },
         { "Conditions", new ConditionsHandler() },
         { "Tracks", new AtomicReflectionListPropertyHandler<IFormLinkGetter<IMusicTrackGetter>, IMusicTrack, IMusicTrackGetter>("Tracks") }

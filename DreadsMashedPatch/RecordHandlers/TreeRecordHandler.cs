@@ -12,7 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: TREE fields via reflection-based handlers and existing shared property handlers.
+// - Generalized: TREE scalars/links use typed handlers; Production uses generated copy/equality.
 // - Kept specialized: none.
 // - Intentionally excluded: Unknown is outside the semantic conflict surface.
 // - Rationale: surface aligns with existing flora/static forwarding patterns.
@@ -27,7 +27,8 @@ public class TreeRecordHandler : AbstractRecordHandler
         { "ModelAndBounds", new ModelBoundsHandler() },
         { "Ingredient", new SimpleReflectionFormLinkPropertyHandler<IHarvestTargetGetter, ITree, ITreeGetter>("Ingredient") },
         { "HarvestSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, ITree, ITreeGetter>("HarvestSound") },
-        { "Production", new ComplexReflectionPropertyHandler<ISeasonalIngredientProductionGetter, ITree, ITreeGetter>("Production") },
+        { "Production", new GeneratedCopyReflectionPropertyHandler<ISeasonalIngredientProductionGetter, SeasonalIngredientProduction, ITree, ITreeGetter>(
+            "Production", value => value.DeepCopy(), SeasonalIngredientProductionMixIn.Equals) },
         { "Name", new NameHandler() },
         { "TrunkFlexibility", new SimpleReflectionPropertyHandler<float, ITree, ITreeGetter>("TrunkFlexibility") },
         { "BranchFlexibility", new SimpleReflectionPropertyHandler<float, ITree, ITreeGetter>("BranchFlexibility") },

@@ -5,7 +5,6 @@ using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.MagicEffect;
@@ -15,8 +14,8 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: semantic MGEF scalar, link, list, and aggregate fields use shared handlers.
-    // - Kept specialized: flags, sounds, conditions, and archetype-specific behavior.
+    // - Generalized: semantic MGEF scalar/link fields and sound rows use shared handlers with generated copies.
+    // - Kept specialized: flags, conditions, and polymorphic archetype copying/equality.
     // - Intentionally excluded: Unknown1 is outside the semantic conflict surface.
     // - Rationale: the winning override retains excluded engine-managed data.
     public class MagicEffectRecordHandler : AbstractRecordHandler
@@ -28,7 +27,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
             { "Name", new NameHandler() },
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() },
-            { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IMagicEffect, IMagicEffectGetter>("Description") },
+            { "Description", new TranslatedStringReflectionPropertyHandler<IMagicEffect, IMagicEffectGetter>("Description") },
             { "BaseCost", new SimpleReflectionPropertyHandler<float, IMagicEffect, IMagicEffectGetter>("BaseCost") },
             { "Flags", new FlagsHandler() },
             { "CastType", new SimpleReflectionPropertyHandler<CastType, IMagicEffect, IMagicEffectGetter>("CastType") },
@@ -66,7 +65,9 @@ namespace DreadsMashedPatch.RecordHandlers
             { "ScriptEffectAIScore", new SimpleReflectionPropertyHandler<float, IMagicEffect, IMagicEffectGetter>("ScriptEffectAIScore") },
             { "ScriptEffectAIDelayTime", new SimpleReflectionPropertyHandler<float, IMagicEffect, IMagicEffectGetter>("ScriptEffectAIDelayTime") },
             { "CounterEffects", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IMagicEffectGetter>, IMagicEffect, IMagicEffectGetter>("CounterEffects", ListSemantics.SortedKeyed) },
-            { "Sounds", new SimpleReflectionListPropertyHandler<IMagicEffectSoundGetter, IMagicEffect, IMagicEffectGetter>("Sounds", ListSemantics.SortedKeyed, keySelector: sound => sound.Type) },
+            { "Sounds", new GeneratedCopyReflectionListPropertyHandler<IMagicEffectSoundGetter, MagicEffectSound, IMagicEffect, IMagicEffectGetter>(
+                "Sounds", ListSemantics.SortedKeyed, value => value.DeepCopy(), MagicEffectSoundMixIn.Equals,
+                keySelector: sound => sound.Type) },
             { "Archetype", new ArchetypeHandler() },
             { "Conditions", new ConditionsHandler() }
         };

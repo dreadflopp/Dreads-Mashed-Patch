@@ -12,8 +12,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 {
     /// <summary>
     /// A generic property handler that uses reflection to access simple properties.
-    /// This handler is designed for simple properties that don't require special handling
-    /// like deep copying, custom equality, or complex initialization logic.
+    /// This handler is limited to value types and strings, which do not require deep copying.
     /// 
     /// Supports nested property paths (e.g., "Placement.Position") and will automatically
     /// create intermediate objects if they are null when setting values.
@@ -36,6 +35,13 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
         public SimpleReflectionPropertyHandler(string propertyName, float? p3FloatEpsilon = null)
         {
+            if (!typeof(TValue).IsValueType && typeof(TValue) != typeof(string))
+            {
+                throw new NotSupportedException(
+                    $"{nameof(SimpleReflectionPropertyHandler<TValue, TRecord, TRecordGetter>)} supports only value types and strings. " +
+                    $"Use GeneratedCopyReflectionPropertyHandler with a Mutagen-generated copy function for {typeof(TValue).FullName}.");
+            }
+
             _propertyName = propertyName;
             _p3FloatEpsilon = p3FloatEpsilon;
             _propertyPath = propertyName.Split('.');

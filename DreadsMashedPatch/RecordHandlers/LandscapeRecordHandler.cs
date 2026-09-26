@@ -15,9 +15,9 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: flags, height map, layers, and textures via reflection handlers.
+    // - Generalized: flags/form links use typed handlers; height-map and layer values use generated copy/equality.
     // - Kept specialized: vertex normal/color arrays.
-    // - Rationale: overlay IReadOnlyArray2d values require typed mutable Array2d copies.
+    // - Rationale: overlays require generated mutable layer copies and typed mutable Array2d copies.
     public class LandscapeRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -27,9 +27,11 @@ namespace DreadsMashedPatch.RecordHandlers
             { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
             { "Flags", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.Landscape.Flag?, ILandscape, ILandscapeGetter>("Flags") },
             { "VertexNormals", new LandscapeArray2dHandler(vertexNormals: true) },
-            { "VertexHeightMap", new ComplexReflectionPropertyHandler<ILandscapeVertexHeightMapGetter, ILandscape, ILandscapeGetter>("VertexHeightMap") },
+            { "VertexHeightMap", new GeneratedCopyReflectionPropertyHandler<ILandscapeVertexHeightMapGetter, LandscapeVertexHeightMap, ILandscape, ILandscapeGetter>(
+                "VertexHeightMap", value => value.DeepCopy(), LandscapeVertexHeightMapMixIn.Equals) },
             { "VertexColors", new LandscapeArray2dHandler(vertexNormals: false) },
-            { "Layers", new SimpleReflectionListPropertyHandler<IBaseLayerGetter, ILandscape, ILandscapeGetter>("Layers", ListSemantics.Unordered) },
+            { "Layers", new GeneratedCopyReflectionListPropertyHandler<IBaseLayerGetter, BaseLayer, ILandscape, ILandscapeGetter>(
+                "Layers", ListSemantics.Unordered, value => value.DeepCopy(), BaseLayerMixIn.Equals) },
             { "Textures", new SimpleReflectionListPropertyHandler<IFormLinkGetter<ILandscapeTextureGetter>, ILandscape, ILandscapeGetter>("Textures", ListSemantics.Unordered, canBeNull: true) }
         };
 

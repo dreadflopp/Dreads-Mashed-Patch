@@ -7,7 +7,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General;
 /// Reflection access for generated Mutagen aggregates. The supplied generated
 /// copy operation handles overlay-to-mutable conversion, including nested assets.
 /// </summary>
-public sealed class GeneratedCopyReflectionPropertyHandler<TGetter, TMutable, TRecord, TRecordGetter>
+public class GeneratedCopyReflectionPropertyHandler<TGetter, TMutable, TRecord, TRecordGetter>
     : AbstractPropertyHandler<TGetter?>
     where TGetter : class
     where TMutable : class, TGetter

@@ -2,7 +2,6 @@ using System.Drawing;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins.Records;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
@@ -38,7 +37,7 @@ namespace DreadsMashedPatch.RecordHandlers
                 { "LoopingSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IActivator, IActivatorGetter>("LoopingSound") },
                 { "ActivationSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IActivator, IActivatorGetter>("ActivationSound") },
                 { "WaterType", new SimpleReflectionFormLinkPropertyHandler<IWaterGetter, IActivator, IActivatorGetter>("WaterType") },
-                { "ActivateTextOverride", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IActivator, IActivatorGetter>("ActivateTextOverride") },
+                { "ActivateTextOverride", new TranslatedStringReflectionPropertyHandler<IActivator, IActivatorGetter>("ActivateTextOverride") },
                 { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.Activator.Flag, IActivator, IActivatorGetter>("Flags") },
                 { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.Activator.MajorFlag, IActivator, IActivatorGetter>("MajorFlags") },
                 { "InteractionKeyword", new SimpleReflectionFormLinkPropertyHandler<IKeywordGetter, IActivator, IActivatorGetter>("InteractionKeyword") }

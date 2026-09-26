@@ -32,7 +32,7 @@
 | Head Part | Parts remain aligned; ExtraParts is sorted. | Parts retain PartType/path copying and identity. |
 | Message | Buttons remain aligned. | Button copying remains specialized. |
 | Ingredient / Ingestible / Object Effect / Scroll / Spell | Effects use exact positional identity and atomic generated Effect equality. | Record-specific collection access remains specialized; xEdit declares no outer effect-row key. |
-| NPC | Packages align; actor effects, attacks, factions, perks, and inventory are sorted/keyed. | Inventory metadata and duplicate matching remain specialized. |
+| NPC | Packages align; actor effects, attacks, factions, perks, inventory, HeadParts, and TintLayers are sorted/keyed. | Inventory metadata and duplicate matching remain specialized; HeadParts key by FormID and TintLayers by Tint Index. |
 | Race | Scalar collections and keyed attack/movement entries are sorted. | Race dictionaries and fixed structures remain specialized scalar properties. |
 | Magic Effect | CounterEffects and sounds are sorted; sound Type is the key. | Effects/conditions retain their specialized structures. |
 | Placed Object / Placed NPC | REFR LinkedReferences uses exact positional order; ACHR LinkedReferences and the other xEdit sorted arrays remain keyed; LocationRefTypes aligns. | Skyrim xEdit defines the two linked-reference surfaces differently: REFR uses unsorted `wbRArray`/plain `wbStruct`, while ACHR uses `wbRArrayS`/`wbStructSK([0])`. Portals remain atomic because their positions are structural. |
@@ -68,3 +68,7 @@
 - Classification tests cover representative aligned, sorted, and atomic
   registrations. The complete solution build and test suite are the migration
   gate.
+- The post-migration collection cross-check additionally corrected BPTD Parts
+  to the `PartNode` key and Armor Addon alternate textures to xEdit's composite
+  `(3D Name, 3D Index)` key. The independent expectations and comparison report
+  are maintained by `scripts/Audit-CollectionSemantics.ps1`.

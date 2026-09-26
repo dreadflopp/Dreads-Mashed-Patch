@@ -2,7 +2,6 @@ using System;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.ActorValueInformation;
@@ -13,7 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: Description, Abbreviation, and Skill via reflection handlers.
+    // - Generalized: Description and Skill use generated copying; Abbreviation remains a typed scalar.
     // - Kept specialized: Name via the shared name handler; PerkTree via a record-specific structural handler.
     // - Intentionally excluded: CNAM is engine-managed binary data outside the semantic conflict surface.
     // - Rationale: PerkTree is a get-only mutable collection whose nested binary and list data require Mutagen's
@@ -26,9 +25,10 @@ namespace DreadsMashedPatch.RecordHandlers
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
             { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
             { "Name", new NameHandler() },
-            { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IActorValueInformation, IActorValueInformationGetter>("Description") },
+            { "Description", new TranslatedStringReflectionPropertyHandler<IActorValueInformation, IActorValueInformationGetter>("Description") },
             { "Abbreviation", new SimpleReflectionPropertyHandler<string, IActorValueInformation, IActorValueInformationGetter>("Abbreviation") },
-            { "Skill", new ComplexReflectionPropertyHandler<IActorValueSkillGetter, IActorValueInformation, IActorValueInformationGetter>("Skill") },
+            { "Skill", new GeneratedCopyReflectionPropertyHandler<IActorValueSkillGetter, ActorValueSkill, IActorValueInformation, IActorValueInformationGetter>(
+                "Skill", value => value.DeepCopy(), ActorValueSkillMixIn.Equals) },
             { "PerkTree", new PerkTreeHandler() }
         };
 

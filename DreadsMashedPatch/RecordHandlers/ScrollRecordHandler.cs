@@ -6,7 +6,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.PropertyHandlers.Scroll;
@@ -28,7 +27,7 @@ public class ScrollRecordHandler : AbstractRecordHandler
         { "Keywords", new KeywordListHandler() },
         { "MenuDisplayObject", new SimpleReflectionFormLinkPropertyHandler<IStaticGetter, IScroll, IScrollGetter>("MenuDisplayObject") },
         { "EquipmentType", new SimpleReflectionFormLinkPropertyHandler<IEquipTypeGetter, IScroll, IScrollGetter>("EquipmentType") },
-        { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IScroll, IScrollGetter>("Description") },
+        { "Description", new TranslatedStringReflectionPropertyHandler<IScroll, IScrollGetter>("Description") },
         { "ModelAndBounds", new ModelBoundsHandler() },
         { "Destructible", new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, IScroll, IScrollGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals) },
         { "PickUpSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IScroll, IScrollGetter>("PickUpSound") },

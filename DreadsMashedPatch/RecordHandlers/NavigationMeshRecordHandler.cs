@@ -12,9 +12,10 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: NAVM binary payloads and nested data via generic handlers.
-// - Kept specialized: none.
-// - Rationale: compact interface and existing binary/complex handler coverage.
+// - Generalized: NAVM binary payloads use shared handlers.
+// - Kept specialized: Data uses Mutagen's generated aggregate copy because its overlay-backed geometry lists
+//   require element conversion into mutable NavmeshTriangle, EdgeLink, and DoorTriangle instances.
+// - Rationale: generated copy preserves the full atomic NAVM data aggregate without reflection assignments.
 public class NavigationMeshRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -22,7 +23,8 @@ public class NavigationMeshRecordHandler : AbstractRecordHandler
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Data", new ComplexReflectionPropertyHandler<INavigationMeshDataGetter, INavigationMesh, INavigationMeshGetter>("Data") },
+        { "Data", new GeneratedCopyReflectionPropertyHandler<INavigationMeshDataGetter, NavigationMeshData, INavigationMesh, INavigationMeshGetter>(
+            "Data", value => value.DeepCopy(), NavigationMeshDataMixIn.Equals) },
         { "ONAM", new SimpleReflectionBinaryDataPropertyHandler<INavigationMesh, INavigationMeshGetter>("ONAM") },
         { "PNAM", new SimpleReflectionBinaryDataPropertyHandler<INavigationMesh, INavigationMeshGetter>("PNAM") },
         { "NNAM", new SimpleReflectionBinaryDataPropertyHandler<INavigationMesh, INavigationMeshGetter>("NNAM") },

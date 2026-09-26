@@ -5,15 +5,17 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.General;
+using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: Parts list via reflection-based complex handler.
+    // - Generalized: Parts use generated element copying and xEdit's PartNode sort key.
     // - Kept specialized: Model via shared model handler.
-    // - Rationale: preserves modeled-record behavior while adding concrete BPTD support.
+    // - Rationale: BPTD Body Parts is wbRArrayS/wbRStructSK([2]); PartNode is
+    //   identity while the remaining body-part fields are replaceable row data.
     public class BodyPartDataRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -22,7 +24,9 @@ namespace DreadsMashedPatch.RecordHandlers
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
             { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
             { "Model", new ModelHandler() },
-            { "Parts", new ComplexReflectionPropertyHandler<IReadOnlyList<IBodyPartGetter>, IBodyPartData, IBodyPartDataGetter>("Parts") }
+            { "Parts", new GeneratedCopyReflectionListPropertyHandler<IBodyPartGetter, BodyPart, IBodyPartData, IBodyPartDataGetter>(
+                "Parts", ListSemantics.SortedKeyed, value => value.DeepCopy(), BodyPartMixIn.Equals,
+                keySelector: value => value.PartNode) }
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

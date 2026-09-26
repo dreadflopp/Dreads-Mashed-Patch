@@ -1006,5 +1006,161 @@
     "property": "Unused",
     "status": "IntentionalExclusion",
     "reason": "Unused WEAP storage is outside the supported semantic conflict surface; the winning value is preserved."
+  },
+  {
+    "handler": "ImpactRecordHandler.cs",
+    "property": "Decal.Unknown",
+    "status": "IntentionalExclusion",
+    "reason": "Unknown DODT storage is outside the supported semantic conflict surface; all identified decal fields are handled and the winning unknown value is preserved."
+  },
+  {
+    "handler": "NpcRecordHandler.cs",
+    "property": "AIData.Unused",
+    "status": "SerializationState",
+    "reason": "Unused AIDT storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "NpcRecordHandler.cs",
+    "property": "PlayerSkills.Unused",
+    "status": "SerializationState",
+    "reason": "Unused DNAM storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "NpcRecordHandler.cs",
+    "property": "PlayerSkills.Unused2",
+    "status": "SerializationState",
+    "reason": "Unused DNAM storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "WeaponRecordHandler.cs",
+    "property": "Critical.Unused",
+    "status": "SerializationState",
+    "reason": "Unused CRDT storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "WeaponRecordHandler.cs",
+    "property": "Critical.Unused2",
+    "status": "SerializationState",
+    "reason": "Unused CRDT storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "WeaponRecordHandler.cs",
+    "property": "Critical.Unused3",
+    "status": "SerializationState",
+    "reason": "Unused CRDT storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "WeaponRecordHandler.cs",
+    "property": "Critical.Unused4",
+    "status": "SerializationState",
+    "reason": "Unused CRDT storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "WeaponRecordHandler.cs",
+    "property": "Data.Unused",
+    "status": "SerializationState",
+    "reason": "Unused DATA storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "WeaponRecordHandler.cs",
+    "property": "Data.Unused2",
+    "status": "SerializationState",
+    "reason": "Unused DATA storage is binary padding rather than an independent xEdit semantic field."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "PersistentActorReferencesAdded",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Added bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "PersistentActorReferencesStatic",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Master bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "PersistentActorReferencesRemoved",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Removed bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "UniqueActorReferencesAdded",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Added bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "UniqueActorReferencesStatic",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Master bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "UniqueActorReferencesRemoved",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Removed bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "LocationRefTypeReferencesAdded",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Added bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "LocationRefTypeReferencesStatic",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Master bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "LocationRefTypeReferencesRemoved",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Removed bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "WorldspaceCellsAdded",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Added bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "WorldspaceCellsStatic",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Master bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "WorldspaceCellsRemoved",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Removed bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "InitiallyDisabledReferencesAdded",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Added bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "InitiallyDisabledReferencesStatic",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Master bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "EnableParentReferencesAdded",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Added bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
+  },
+  {
+    "handler": "LocationRecordHandler.cs",
+    "property": "EnableParentReferencesStatic",
+    "status": "IntentionalExclusion",
+    "reason": "Serialized xEdit-benign LCTN Master bookkeeping; the project deliberately preserves the winning generated membership data instead of conflict-resolving it."
   }
 ]

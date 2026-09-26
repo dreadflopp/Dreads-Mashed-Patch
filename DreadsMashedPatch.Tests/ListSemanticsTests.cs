@@ -27,6 +27,25 @@ public sealed class ListSemanticsTests
         Assert.True(comparer.Compare([1], [1, 0]) < 0);
     }
 
+    [Fact]
+    public void GeneratedListCompositeIdentityUsesStructuralXEditKeyEquality()
+    {
+        Assert.True(GeneratedCopyReflectionListPropertyHandler<
+            IBodyPartGetter,
+            BodyPart,
+            IBodyPartData,
+            IBodyPartDataGetter>.AreKeysEqual(
+                new object?[] { "NPC Head", 3 },
+                new object?[] { "npc head", 3 }));
+        Assert.False(GeneratedCopyReflectionListPropertyHandler<
+            IBodyPartGetter,
+            BodyPart,
+            IBodyPartData,
+            IBodyPartDataGetter>.AreKeysEqual(
+                new object?[] { "NPC Head", 3 },
+                new object?[] { "NPC Head", 4 }));
+    }
+
     [Theory]
     [InlineData(typeof(MagicEffectRecordHandler), "Sounds", ListSemantics.SortedKeyed)]
     [InlineData(typeof(LandscapeTextureRecordHandler), "Grasses", ListSemantics.SortedKeyed)]
@@ -34,6 +53,10 @@ public sealed class ListSemanticsTests
     [InlineData(typeof(PlacedNpcRecordHandler), "LinkedReferences", ListSemantics.SortedKeyed)]
     [InlineData(typeof(QuestRecordHandler), "TextDisplayGlobals", ListSemantics.AlignedOrdered)]
     [InlineData(typeof(WeatherRecordHandler), "Sounds", ListSemantics.SortedKeyed)]
+    [InlineData(typeof(BodyPartDataRecordHandler), "Parts", ListSemantics.SortedKeyed)]
+    [InlineData(typeof(NpcRecordHandler), "HeadParts", ListSemantics.SortedKeyed)]
+    [InlineData(typeof(NpcRecordHandler), "TintLayers", ListSemantics.SortedKeyed)]
+    [InlineData(typeof(ArmorAddonRecordHandler), "FirstPersonModel.Male.AlternateTextures", ListSemantics.SortedKeyed)]
     public void AuditedListRegistrationsUseTheirExplicitSemantics(
         Type recordHandlerType,
         string propertyName,
@@ -94,6 +117,23 @@ public sealed class ListSemanticsTests
             target.LinkedReferences.Select(entry => entry.KeywordOrReference.FormKey));
     }
 
+    [Fact]
+    public void BodyPartRowsAreSortedByPartNodeRatherThanPosition()
+    {
+        var handler = new BodyPartDataRecordHandler().PropertyHandlers["Parts"];
+        var head = new BodyPart { PartNode = "NPC Head [Head]", DamageMult = 1f };
+        var torso = new BodyPart { PartNode = "NPC Spine [Spn0]", DamageMult = 2f };
+        var editedHead = head.DeepCopy();
+        editedHead.DamageMult = 3f;
+
+        Assert.True(handler.AreValuesEqual(
+            new List<IBodyPartGetter> { head, torso },
+            new List<IBodyPartGetter> { torso.DeepCopy(), head.DeepCopy() }));
+        Assert.False(handler.AreValuesEqual(
+            new List<IBodyPartGetter> { head },
+            new List<IBodyPartGetter> { editedHead }));
+    }
+
     private static LinkedReferences LinkedReference(uint keywordId, uint referenceId)
     {
         var skyrim = ModKey.FromNameAndExtension("Skyrim.esm");
@@ -106,6 +146,7 @@ public sealed class ListSemanticsTests
 
     [Theory]
     [InlineData(typeof(FurnitureRecordHandler), "Markers")]
+    [InlineData(typeof(PlacedObjectRecordHandler), "Portals")]
     [InlineData(typeof(IdleMarkerRecordHandler), "Animations")]
     [InlineData(typeof(MusicTypeRecordHandler), "Tracks")]
     [InlineData(typeof(MusicTrackRecordHandler), "Tracks")]
@@ -115,7 +156,7 @@ public sealed class ListSemanticsTests
             System.Activator.CreateInstance(recordHandlerType));
         var propertyHandler = recordHandler.PropertyHandlers[propertyName];
 
-        Assert.StartsWith("AtomicReflectionListPropertyHandler", propertyHandler.GetType().Name);
+        Assert.StartsWith("Atomic", propertyHandler.GetType().Name);
         Assert.StartsWith("SimplePropertyContext", propertyHandler.CreatePropertyContext().GetType().Name);
     }
 

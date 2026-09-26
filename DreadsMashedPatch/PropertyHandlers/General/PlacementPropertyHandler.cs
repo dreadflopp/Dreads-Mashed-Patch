@@ -10,12 +10,12 @@ namespace DreadsMashedPatch.PropertyHandlers.General;
 /// comparing its serialized position and rotation components at xEdit-visible precision.
 /// </summary>
 public class PlacementPropertyHandler<TRecord, TRecordGetter>
-    : ComplexReflectionPropertyHandler<IPlacementGetter, TRecord, TRecordGetter>
+    : GeneratedCopyReflectionPropertyHandler<IPlacementGetter, Placement, TRecord, TRecordGetter>
     where TRecord : class, IMajorRecord
     where TRecordGetter : class, IMajorRecordGetter
 {
     public PlacementPropertyHandler()
-        : base("Placement")
+        : base("Placement", value => value.DeepCopy(), PlacementMixIn.Equals)
     {
     }
 

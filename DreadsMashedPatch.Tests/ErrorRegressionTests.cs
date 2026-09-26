@@ -50,7 +50,7 @@ public sealed class ErrorRegressionTests
     }
 
     [Fact]
-    public void GenericListHandlersHaveSafeMutableItemStrategies()
+    public void SimpleReflectionListHandlersAreLimitedToStringsAndFormLinks()
     {
         var failures = new List<string>();
         foreach (var recordHandler in CreateAllRecordHandlers())
@@ -64,20 +64,15 @@ public sealed class ErrorRegressionTests
                     continue;
                 }
 
-                var mutableType = handlerType
-                    .GetField("_mutableItemType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                    ?.GetValue(handler) as Type;
-                var isFormLinkList = (bool)(handlerType
-                    .GetField("_isFormLinkList", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                    ?.GetValue(handler) ?? false);
                 var itemType = handlerType.GetGenericArguments()[0];
-                if (mutableType == null && itemType != typeof(string) && !isFormLinkList)
+                var candidateTypes = itemType.GetInterfaces().Append(itemType);
+                var isFormLink = candidateTypes.Any(type =>
+                    type.IsGenericType
+                    && (type.GetGenericTypeDefinition() == typeof(IFormLinkGetter<>)
+                        || type.GetGenericTypeDefinition() == typeof(IFormLinkNullableGetter<>)));
+                if (itemType != typeof(string) && !isFormLink)
                 {
-                    failures.Add($"{recordHandler.GetType().Name}.{propertyName} -> no mutable type for {itemType.FullName}");
-                }
-                else if (mutableType is { IsAbstract: true } || mutableType is { IsInterface: true })
-                {
-                    failures.Add($"{recordHandler.GetType().Name}.{propertyName} -> {mutableType.FullName}");
+                    failures.Add($"{recordHandler.GetType().Name}.{propertyName} -> unsupported {itemType.FullName}");
                 }
             }
         }
@@ -86,27 +81,88 @@ public sealed class ErrorRegressionTests
     }
 
     [Fact]
-    public void GenericComplexHandlersDoNotTreatGenderedAggregatesAsLists()
+    public void GeneratedAggregateHandlersTargetWritableProperties()
     {
-        var failures = CreateAllRecordHandlers()
-            .SelectMany(recordHandler => recordHandler.PropertyHandlers.Select(pair => (recordHandler, pair)))
-            .Where(item =>
+        var failures = new List<string>();
+        foreach (var recordHandler in CreateAllRecordHandlers())
+        {
+            foreach (var (propertyName, handler) in recordHandler.PropertyHandlers)
             {
-                var handlerType = item.pair.Value.GetType();
-                if (!handlerType.IsGenericType
-                    || handlerType.GetGenericTypeDefinition() != typeof(ComplexReflectionPropertyHandler<,,>))
+                var handlerType = handler.GetType();
+                while (handlerType != null
+                       && (!handlerType.IsGenericType
+                           || handlerType.GetGenericTypeDefinition() != typeof(GeneratedCopyReflectionPropertyHandler<,,,>)))
                 {
-                    return false;
+                    handlerType = handlerType.BaseType;
+                }
+
+                if (handlerType == null)
+                {
+                    continue;
+                }
+
+                var setter = handlerType
+                    .GetField("_setterProperty", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    ?.GetValue(handler) as System.Reflection.PropertyInfo;
+                if (setter is not { CanWrite: true })
+                {
+                    failures.Add($"{recordHandler.GetType().Name}.{propertyName}");
+                }
+            }
+        }
+
+        Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+    }
+
+    [Fact]
+    public void SimpleReflectionPropertyHandlersAreLimitedToScalarValues()
+    {
+        var failures = new List<string>();
+        foreach (var recordHandler in CreateAllRecordHandlers())
+        {
+            foreach (var (propertyName, handler) in recordHandler.PropertyHandlers)
+            {
+                var handlerType = handler.GetType();
+                if (!handlerType.IsGenericType
+                    || handlerType.GetGenericTypeDefinition() != typeof(SimpleReflectionPropertyHandler<,,>))
+                {
+                    continue;
                 }
 
                 var valueType = handlerType.GetGenericArguments()[0];
-                return valueType.IsGenericType
-                    && valueType.GetGenericTypeDefinition() == typeof(IGenderedItemGetter<>);
-            })
-            .Select(item => $"{item.recordHandler.GetType().Name}.{item.pair.Key}")
-            .ToList();
+                if (!valueType.IsValueType && valueType != typeof(string))
+                {
+                    failures.Add($"{recordHandler.GetType().Name}.{propertyName} -> unsupported {valueType.FullName}");
+                }
+            }
+        }
 
         Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+    }
+
+    [Fact]
+    public void BodyPartRowsUseGeneratedElementCopies()
+    {
+        var handler = Assert.IsType<GeneratedCopyReflectionListPropertyHandler<
+            IBodyPartGetter,
+            BodyPart,
+            IBodyPartData,
+            IBodyPartDataGetter>>(new BodyPartDataRecordHandler().PropertyHandlers["Parts"]);
+        var source = new BodyPart
+        {
+            PartNode = "NPC Head [Head]",
+            DamageMult = 1.5f,
+            HealthPercent = 25
+        };
+        var target = new BodyPartData(new FormKey(TestModKey, 0x620), SkyrimRelease.SkyrimSE);
+
+        handler.SetValue(target, [source]);
+
+        var copied = Assert.Single(target.Parts);
+        Assert.NotSame(source, copied);
+        Assert.Equal(source.PartNode, copied.PartNode);
+        Assert.Equal(source.DamageMult, copied.DamageMult);
+        Assert.Equal(source.HealthPercent, copied.HealthPercent);
     }
 
     [Fact]

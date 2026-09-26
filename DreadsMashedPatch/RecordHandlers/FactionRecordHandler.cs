@@ -14,9 +14,9 @@ using System;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: Relations, Ranks, all non-flag FormLink properties, CrimeValues, VendorValues, VendorLocation.
+    // - Generalized: Relations and Ranks use Mutagen-generated element copies; direct links and aggregates use shared handlers.
     // - Kept specialized: Conditions (conditions-specific list semantics), Flags (project flag policy).
-    // - Rationale: reflection handlers cover direct property forwarding; conditions and flags require project-specific behavior.
+    // - Rationale: generated copies materialize overlay rows safely; conditions and flags require project-specific behavior.
     public class FactionRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -25,8 +25,12 @@ namespace DreadsMashedPatch.RecordHandlers
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
             { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
             { "Name", new NameHandler() },
-            { "Relations", new SimpleReflectionListPropertyHandler<IRelationGetter, IFaction, IFactionGetter>("Relations", ListSemantics.SortedKeyed, keySelector: relation => relation.Target.FormKey) },
-            { "Ranks", new SimpleReflectionListPropertyHandler<IRankGetter, IFaction, IFactionGetter>("Ranks", ListSemantics.SortedKeyed, keySelector: rank => rank.Number) },
+            { "Relations", new GeneratedCopyReflectionListPropertyHandler<IRelationGetter, Relation, IFaction, IFactionGetter>(
+                "Relations", ListSemantics.SortedKeyed, value => value.DeepCopy(), RelationMixIn.Equals,
+                keySelector: relation => relation.Target.FormKey) },
+            { "Ranks", new GeneratedCopyReflectionListPropertyHandler<IRankGetter, Rank, IFaction, IFactionGetter>(
+                "Ranks", ListSemantics.SortedKeyed, value => value.DeepCopy(), RankMixIn.Equals,
+                keySelector: rank => rank.Number) },
             { "Conditions", new ConditionsHandler() },
             { "Flags", new FlagsHandler() },
             { "ExteriorJailMarker", new SimpleReflectionFormLinkPropertyHandler<IPlacedObjectGetter, IFaction, IFactionGetter>("ExteriorJailMarker") },
@@ -35,11 +39,14 @@ namespace DreadsMashedPatch.RecordHandlers
             { "PlayerInventoryContainer", new SimpleReflectionFormLinkPropertyHandler<IPlacedObjectGetter, IFaction, IFactionGetter>("PlayerInventoryContainer") },
             { "SharedCrimeFactionList", new SimpleReflectionFormLinkPropertyHandler<IFormListGetter, IFaction, IFactionGetter>("SharedCrimeFactionList") },
             { "JailOutfit", new SimpleReflectionFormLinkPropertyHandler<IOutfitGetter, IFaction, IFactionGetter>("JailOutfit") },
-            { "CrimeValues", new SimpleReflectionPropertyHandler<CrimeValues, IFaction, IFactionGetter>("CrimeValues") },
+            { "CrimeValues", new GeneratedCopyReflectionPropertyHandler<ICrimeValuesGetter, CrimeValues, IFaction, IFactionGetter>(
+                "CrimeValues", value => value.DeepCopy(), CrimeValuesMixIn.Equals) },
             { "VendorBuySellList", new SimpleReflectionFormLinkPropertyHandler<IFormListGetter, IFaction, IFactionGetter>("VendorBuySellList") },
             { "MerchantContainer", new SimpleReflectionFormLinkPropertyHandler<IPlacedObjectGetter, IFaction, IFactionGetter>("MerchantContainer") },
-            { "VendorValues", new SimpleReflectionPropertyHandler<VendorValues, IFaction, IFactionGetter>("VendorValues") },
-            { "VendorLocation", new SimpleReflectionPropertyHandler<LocationTargetRadius, IFaction, IFactionGetter>("VendorLocation") }
+            { "VendorValues", new GeneratedCopyReflectionPropertyHandler<IVendorValuesGetter, VendorValues, IFaction, IFactionGetter>(
+                "VendorValues", value => value.DeepCopy(), VendorValuesMixIn.Equals) },
+            { "VendorLocation", new GeneratedCopyReflectionPropertyHandler<ILocationTargetRadiusGetter, LocationTargetRadius, IFaction, IFactionGetter>(
+                "VendorLocation", value => value.DeepCopy(), LocationTargetRadiusMixIn.Equals) }
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

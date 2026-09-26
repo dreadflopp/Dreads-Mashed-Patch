@@ -9,7 +9,7 @@ using Mutagen.Bethesda.Skyrim;
 
 if (args.Length < 2)
 {
-    Console.Error.WriteLine("Usage: RecordHandlerCoverage <repository-root> <markdown-output> [json-output] [overrides-file]");
+    Console.Error.WriteLine("Usage: RecordHandlerCoverage <repository-root> <markdown-output> [json-output] [overrides-file] [--fail-on-unresolved]");
     return 2;
 }
 
@@ -17,6 +17,7 @@ var repositoryRoot = Path.GetFullPath(args[0]);
 var markdownOutput = Path.GetFullPath(args[1]);
 var jsonOutput = args.Length >= 3 ? Path.GetFullPath(args[2]) : null;
 var overridesPath = args.Length >= 4 ? Path.GetFullPath(args[3]) : null;
+var failOnUnresolved = args.Contains("--fail-on-unresolved", StringComparer.OrdinalIgnoreCase);
 var handlersDirectory = Path.Combine(repositoryRoot, "DreadsMashedPatch", "RecordHandlers");
 var propertyHandlersDirectory = Path.Combine(repositoryRoot, "DreadsMashedPatch", "PropertyHandlers");
 
@@ -42,10 +43,7 @@ var auditedInheritedPropertyNames = new HashSet<string>(StringComparer.Ordinal)
     "MajorRecordFlagsRaw",
     "SkyrimMajorRecordFlags"
 };
-var propertyHandlerSources = Directory
-    .EnumerateFiles(propertyHandlersDirectory, "*.cs", SearchOption.AllDirectories)
-    .GroupBy(Path.GetFileNameWithoutExtension, StringComparer.Ordinal)
-    .ToDictionary(group => group.Key!, group => string.Join(Environment.NewLine, group.Select(File.ReadAllText)), StringComparer.Ordinal);
+var propertyHandlerSources = BuildPropertyHandlerSources(propertyHandlersDirectory);
 
 foreach (var sourcePath in Directory.EnumerateFiles(handlersDirectory, "*RecordHandler.cs").OrderBy(Path.GetFileName))
 {
@@ -115,7 +113,31 @@ if (jsonOutput is not null)
     Console.WriteLine($"JSON report: {jsonOutput}");
 }
 
-return reports.Any(report => report.Error is not null) || unusedOverrides.Count > 0 ? 1 : 0;
+var hasUnresolved = missingCount > 0 || partialCount > 0;
+return reports.Any(report => report.Error is not null)
+    || unusedOverrides.Count > 0
+    || (failOnUnresolved && hasUnresolved)
+        ? 1
+        : 0;
+
+static Dictionary<string, string> BuildPropertyHandlerSources(string propertyHandlersDirectory)
+{
+    var entries = new List<(string Name, string Source)>();
+    foreach (var path in Directory.EnumerateFiles(propertyHandlersDirectory, "*.cs", SearchOption.AllDirectories))
+    {
+        var source = File.ReadAllText(path);
+        entries.Add((Path.GetFileNameWithoutExtension(path), source));
+        entries.AddRange(Regex.Matches(source, @"\b(?:class|record(?:\s+class)?)\s+(?<name>[A-Za-z_][A-Za-z0-9_]*)")
+            .Select(match => (match.Groups["name"].Value, source)));
+    }
+
+    return entries
+        .GroupBy(entry => entry.Name, StringComparer.Ordinal)
+        .ToDictionary(
+            group => group.Key,
+            group => string.Join(Environment.NewLine, group.Select(entry => entry.Source).Distinct()),
+            StringComparer.Ordinal);
+}
 
 static Dictionary<string, CoverageOverride> LoadOverrides(string? overridesPath, JsonSerializerOptions jsonOptions)
 {
@@ -162,8 +184,10 @@ static string? FindGetterName(string source)
 
 static List<HandlerRegistration> FindRegistrations(string source)
 {
-    const string pattern = "\\{\\s*\"(?<key>[^\"]+)\"\\s*,\\s*new\\s+(?<handler>[A-Za-z0-9_.]+)(?:<[^;{}]+?>)?\\s*\\(";
-    return Regex.Matches(source, pattern, RegexOptions.Multiline)
+    const string constructedPattern = "\\{\\s*\"(?<key>[^\"]+)\"\\s*,\\s*new\\s+(?<handler>[A-Za-z0-9_.]+)(?:<[^;{}]+?>)?\\s*\\(";
+    const string factoryPattern = "\\{\\s*\"(?<key>[^\"]+)\"\\s*,\\s*(?<handler>[A-Za-z_][A-Za-z0-9_.]*)\\s*\\(";
+    return Regex.Matches(source, constructedPattern, RegexOptions.Multiline)
+        .Concat(Regex.Matches(source, factoryPattern, RegexOptions.Multiline))
         .Where(match =>
         {
             var lineStart = source.LastIndexOf('\n', Math.Max(0, match.Index - 1)) + 1;
@@ -174,6 +198,8 @@ static List<HandlerRegistration> FindRegistrations(string source)
             match.Groups["key"].Value,
             match.Groups["handler"].Value,
             source.AsSpan(0, match.Index).Count('\n') + 1))
+        .DistinctBy(registration => registration.Key, StringComparer.OrdinalIgnoreCase)
+        .OrderBy(registration => registration.SourceLine)
         .ToList();
 }
 
@@ -221,11 +247,13 @@ static PropertyReport AuditProperty(
         .ToList();
 
     var implementationCandidates = registrations.Where(registration =>
-        propertyHandlerSources.TryGetValue(registration.HandlerType, out var implementationSource)
-        && Regex.IsMatch(implementationSource, $@"\.{Regex.Escape(property.Name)}\b"));
+        ImplementationReferencesProperty(registration, property.Name, propertyHandlerSources));
+    var explicitOwnershipCandidates = registrations.Where(registration =>
+        ExplicitlyOwnsProperty(registration, property.Name));
     var candidates = dotted
         .Concat(normalizedAliases)
         .Concat(implementationCandidates)
+        .Concat(explicitOwnershipCandidates)
         .DistinctBy(registration => registration.Key)
         .ToList();
     var nestedLeaves = ExpandLeaves(property.PropertyType, property.Name, depth: 0, visited: []);
@@ -240,10 +268,16 @@ static PropertyReport AuditProperty(
     var allNestedLeavesCovered = nestedLeaves.Count > 0
         && nestedLeaves.All(leaf =>
             registrations.Any(registration => string.Equals(registration.Key, leaf, StringComparison.OrdinalIgnoreCase))
-            || coverageOverrides.ContainsKey(OverrideKey(handlerFile, leaf)));
+            || coverageOverrides.ContainsKey(OverrideKey(handlerFile, leaf))
+            || registrations.Any(registration =>
+                ImplementationReferencesProperty(registration, LeafName(leaf), propertyHandlerSources)));
+    var explicitlyAggregateCovered = candidates.Any(registration =>
+        ExplicitlyOwnsProperty(registration, property.Name));
     var status = candidates.Count == 0
         ? CoverageStatus.MissingCandidate
-        : IsLeaf(Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType) || allNestedLeavesCovered
+        : IsLeaf(Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType)
+            || allNestedLeavesCovered
+            || explicitlyAggregateCovered
             ? CoverageStatus.AggregateCovered
             : CoverageStatus.Partial;
 
@@ -257,6 +291,37 @@ static PropertyReport AuditProperty(
             ? null
             : string.Join(" ",
                 classifiedLeaves.Select(item => $"{item.Leaf}: {coverageOverrides[item.Key].Reason}")));
+}
+
+static bool ImplementationReferencesProperty(
+    HandlerRegistration registration,
+    string propertyName,
+    IReadOnlyDictionary<string, string> propertyHandlerSources) =>
+    propertyHandlerSources.TryGetValue(registration.HandlerType, out var implementationSource)
+    && Regex.IsMatch(implementationSource, $@"\.{Regex.Escape(propertyName)}\b");
+
+static bool ExplicitlyOwnsProperty(HandlerRegistration registration, string propertyName)
+{
+    if (!registration.HandlerType.StartsWith("ModelBoundsHandler", StringComparison.Ordinal))
+    {
+        return false;
+    }
+
+    const string suffix = "AndBounds";
+    if (!registration.Key.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+    {
+        return false;
+    }
+
+    var modelProperty = registration.Key[..^suffix.Length];
+    return string.Equals(propertyName, modelProperty, StringComparison.OrdinalIgnoreCase)
+        || string.Equals(propertyName, "ObjectBounds", StringComparison.OrdinalIgnoreCase);
+}
+
+static string LeafName(string path)
+{
+    var separator = path.LastIndexOf('.');
+    return separator < 0 ? path : path[(separator + 1)..];
 }
 
 static string OverrideKey(string handler, string property) => $"{handler}\0{property}";
@@ -299,7 +364,8 @@ static List<string> ExpandLeaves(Type inputType, string path, int depth, HashSet
 static bool IsLeaf(Type type)
 {
     if (type.IsPrimitive || type.IsEnum || type == typeof(string) || type == typeof(decimal)
-        || type == typeof(FormKey) || typeof(IMajorRecordGetter).IsAssignableFrom(type))
+        || type == typeof(FormKey) || type.Name == "Percent"
+        || typeof(IMajorRecordGetter).IsAssignableFrom(type))
     {
         return true;
     }
@@ -351,6 +417,8 @@ static string BuildMarkdown(List<HandlerReport> reports)
     builder.AppendLine("This is a static registration audit. `Covered` is an exact registration, `AggregateCovered` is inferred from a specialized handler implementation, `Partial` indicates nested/split handling, and `MissingCandidate` has no detected handler. Reviewed aliases and non-property surfaces are classified through the tracked overrides file.");
     builder.AppendLine();
     builder.AppendLine("Direct record properties plus the project-standard inherited `EditorID`, `MajorRecordFlagsRaw`, and `SkyrimMajorRecordFlags` fields are compared. Identity/version metadata is excluded.");
+    builder.AppendLine();
+    builder.AppendLine("Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Audit-RecordHandlerCoverage.ps1 -FailOnUnresolved`. This fails for stale overrides, audit errors, or any unexplained partial/missing candidate.");
     builder.AppendLine();
     builder.AppendLine("## Summary");
     builder.AppendLine();

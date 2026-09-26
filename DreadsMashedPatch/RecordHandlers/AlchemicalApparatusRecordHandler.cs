@@ -2,7 +2,6 @@ using System;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.General;
@@ -13,7 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: Quality, Description, PickUpSound, PutDownSound, and VM via reflection handlers.
+    // - Generalized: Description uses generated localized-string copying; scalar/link fields use typed handlers.
     // - Kept specialized: Name/ObjectBounds/Model/Icons/Destructible/Value/Weight via existing shared handlers.
     // - Rationale: follows established item handler pattern used by adjacent record handlers.
     public class AlchemicalApparatusRecordHandler : AbstractRecordHandler
@@ -31,7 +30,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "PickUpSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IAlchemicalApparatus, IAlchemicalApparatusGetter>("PickUpSound") },
             { "PutDownSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IAlchemicalApparatus, IAlchemicalApparatusGetter>("PutDownSound") },
             { "Quality", new SimpleReflectionPropertyHandler<QualityLevel?, IAlchemicalApparatus, IAlchemicalApparatusGetter>("Quality") },
-            { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IAlchemicalApparatus, IAlchemicalApparatusGetter>("Description") },
+            { "Description", new TranslatedStringReflectionPropertyHandler<IAlchemicalApparatus, IAlchemicalApparatusGetter>("Description") },
             { "Value", new ValueHandler() },
             { "Weight", new WeightHandler() }
         };

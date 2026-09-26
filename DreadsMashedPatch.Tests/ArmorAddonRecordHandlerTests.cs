@@ -81,10 +81,32 @@ public sealed class ArmorAddonRecordHandlerTests
         var differentTexture = CreateModel("Armor\\Female.nif", [1, 2], 7).AlternateTextures;
         differentTexture![0].NewTexture = new FormLink<ITextureSetGetter>(new FormKey(TestModKey, 0x901));
 
-        Assert.False(handler.AreValuesEqual(baseline, differentIndex));
-        Assert.False(handler.AreValuesEqual(baseline, differentName));
-        Assert.False(handler.AreValuesEqual(baseline, differentTexture));
-        Assert.True(handler.AreValuesEqual(null, new ExtendedList<AlternateTexture>()));
+        Assert.False(handler.AreValuesEqual(ToGetterList(baseline), ToGetterList(differentIndex)));
+        Assert.False(handler.AreValuesEqual(ToGetterList(baseline), ToGetterList(differentName)));
+        Assert.False(handler.AreValuesEqual(ToGetterList(baseline), ToGetterList(differentTexture)));
+        Assert.True(handler.AreValuesEqual(null, []));
+    }
+
+    [Fact]
+    public void AlternateTexturesUseCaseInsensitiveNameAndIndexIdentityWithOrderIndependentContent()
+    {
+        var handler = CreateFirstPersonAlternateTexturesHandler(MaleFemaleGender.Female);
+        var body = CreateAlternateTexture("Body", 3, 0x900);
+        var hands = CreateAlternateTexture("Hands", 7, 0x901);
+        var bodyDifferentCase = CreateAlternateTexture("BODY", 3, 0x900);
+
+        Assert.True(handler.AreValuesEqual(
+            new List<IAlternateTextureGetter> { body, hands },
+            new List<IAlternateTextureGetter> { hands.DeepCopy(), body.DeepCopy() }));
+        Assert.False(handler.AreValuesEqual(
+            new List<IAlternateTextureGetter> { body },
+            new List<IAlternateTextureGetter> { bodyDifferentCase }));
+        Assert.True(GenderedModelAlternateTexturesHandler<IArmorAddon, IArmorAddonGetter>.HaveSameXEditKey(
+            body,
+            bodyDifferentCase));
+        Assert.False(GenderedModelAlternateTexturesHandler<IArmorAddon, IArmorAddonGetter>.HaveSameXEditKey(
+            body,
+            hands));
     }
 
     [Fact]
@@ -300,4 +322,16 @@ public sealed class ArmorAddonRecordHandlerTests
 
         return model;
     }
+
+    private static List<IAlternateTextureGetter>? ToGetterList(
+        IEnumerable<IAlternateTextureGetter>? value)
+        => value?.ToList();
+
+    private static AlternateTexture CreateAlternateTexture(string name, int index, uint textureId)
+        => new()
+        {
+            Name = name,
+            Index = index,
+            NewTexture = new FormLink<ITextureSetGetter>(new FormKey(TestModKey, textureId))
+        };
 }

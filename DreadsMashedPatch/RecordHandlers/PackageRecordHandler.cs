@@ -19,7 +19,8 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Temporarily disabled: PackageTemplateGraph would atomically own the template reference, version, indexed data,
 //   marker, and ordered procedure tree. Mutagen 0.54.4 sorts PACK data values by UNAM key while writing, which changes
 //   their physical xEdit row order. Keep the registration commented out until an order-preserving writer is available.
-// - Kept specialized: Conditions uses the shared polymorphic condition handler.
+// - Kept specialized: Conditions uses polymorphic copying; VMAD/events and IdleAnimations use Mutagen-generated
+//   aggregate copies so overlay-backed nested values become mutable safely.
 // - Intentionally excluded: Unknown* fields are outside the semantic conflict surface.
 // - Rationale: procedure branches refer to package data indexes, so splitting the graph can invent invalid combinations;
 //   abstract Condition values still need typed copying, and InterruptFlags is a normal flag field.
@@ -30,7 +31,8 @@ public class PackageRecordHandler : AbstractRecordHandler
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "VirtualMachineAdapter", new ComplexReflectionPropertyHandler<IPackageAdapterGetter, IPackage, IPackageGetter>("VirtualMachineAdapter") },
+        { "VirtualMachineAdapter", new GeneratedCopyReflectionPropertyHandler<IPackageAdapterGetter, PackageAdapter, IPackage, IPackageGetter>(
+            "VirtualMachineAdapter", value => value.DeepCopy(), PackageAdapterMixIn.Equals) },
         { "Flags", new SimpleReflectionFlagPropertyHandler<Package.Flag, IPackage, IPackageGetter>("Flags") },
         { "Type", new SimpleReflectionPropertyHandler<Package.Types, IPackage, IPackageGetter>("Type") },
         { "InterruptOverride", new SimpleReflectionPropertyHandler<Package.Interrupt, IPackage, IPackageGetter>("InterruptOverride") },
@@ -43,14 +45,18 @@ public class PackageRecordHandler : AbstractRecordHandler
         { "ScheduleMinute", new SimpleReflectionPropertyHandler<sbyte, IPackage, IPackageGetter>("ScheduleMinute") },
         { "ScheduleDurationInMinutes", new SimpleReflectionPropertyHandler<int, IPackage, IPackageGetter>("ScheduleDurationInMinutes") },
         { "Conditions", new ConditionsHandler<IPackage, IPackageGetter>(record => record.Conditions, record => record.Conditions) },
-        { "IdleAnimations", new ComplexReflectionPropertyHandler<IPackageIdlesGetter, IPackage, IPackageGetter>("IdleAnimations") },
+        { "IdleAnimations", new GeneratedCopyReflectionPropertyHandler<IPackageIdlesGetter, PackageIdles, IPackage, IPackageGetter>(
+            "IdleAnimations", value => value.DeepCopy(), PackageIdlesMixIn.Equals) },
         { "CombatStyle", new SimpleReflectionFormLinkPropertyHandler<ICombatStyleGetter, IPackage, IPackageGetter>("CombatStyle") },
         { "OwnerQuest", new SimpleReflectionFormLinkPropertyHandler<IQuestGetter, IPackage, IPackageGetter>("OwnerQuest") },
         // TEMPORARILY DISABLED: Mutagen's PACK writer reorders package data by UNAM key.
         // { "PackageTemplateGraph", new PackageTemplateGraphHandler() },
-        { "OnBegin", new ComplexReflectionPropertyHandler<IPackageEventGetter, IPackage, IPackageGetter>("OnBegin") },
-        { "OnEnd", new ComplexReflectionPropertyHandler<IPackageEventGetter, IPackage, IPackageGetter>("OnEnd") },
-        { "OnChange", new ComplexReflectionPropertyHandler<IPackageEventGetter, IPackage, IPackageGetter>("OnChange") }
+        { "OnBegin", new GeneratedCopyReflectionPropertyHandler<IPackageEventGetter, PackageEvent, IPackage, IPackageGetter>(
+            "OnBegin", value => value.DeepCopy(), PackageEventMixIn.Equals) },
+        { "OnEnd", new GeneratedCopyReflectionPropertyHandler<IPackageEventGetter, PackageEvent, IPackage, IPackageGetter>(
+            "OnEnd", value => value.DeepCopy(), PackageEventMixIn.Equals) },
+        { "OnChange", new GeneratedCopyReflectionPropertyHandler<IPackageEventGetter, PackageEvent, IPackage, IPackageGetter>(
+            "OnChange", value => value.DeepCopy(), PackageEventMixIn.Equals) }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

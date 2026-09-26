@@ -4,7 +4,6 @@ using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Skyrim.Assets;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
@@ -16,7 +15,7 @@ using Noggog;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: icons, translated text, links, and scalars via reflection handlers.
+    // - Generalized: translated text and constraints use generated copies; links/scalars use typed handlers.
     // - Kept specialized: Conditions uses the shared polymorphic condition handler.
     // - Rationale: Condition is abstract and must be copied through generated subtype dispatch.
     public class LoadScreenRecordHandler : AbstractRecordHandler
@@ -27,12 +26,13 @@ namespace DreadsMashedPatch.RecordHandlers
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
             { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
             { "Icons", new SimpleReflectionIconsPropertyHandler<ILoadScreen, ILoadScreenGetter>("Icons") },
-            { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, ILoadScreen, ILoadScreenGetter>("Description") },
+            { "Description", new TranslatedStringReflectionPropertyHandler<ILoadScreen, ILoadScreenGetter>("Description") },
             { "Conditions", new ConditionsHandler<ILoadScreen, ILoadScreenGetter>(record => record.Conditions, record => record.Conditions) },
             { "LoadingScreenNif", new SimpleReflectionFormLinkPropertyHandler<IStaticGetter, ILoadScreen, ILoadScreenGetter>("LoadingScreenNif") },
             { "InitialScale", new SimpleReflectionPropertyHandler<float?, ILoadScreen, ILoadScreenGetter>("InitialScale") },
             { "InitialRotation", new SimpleReflectionPropertyHandler<P3Int16?, ILoadScreen, ILoadScreenGetter>("InitialRotation") },
-            { "RotationOffsetConstraints", new ComplexReflectionPropertyHandler<IInt16MinMaxGetter, ILoadScreen, ILoadScreenGetter>("RotationOffsetConstraints") },
+            { "RotationOffsetConstraints", new GeneratedCopyReflectionPropertyHandler<IInt16MinMaxGetter, Int16MinMax, ILoadScreen, ILoadScreenGetter>(
+                "RotationOffsetConstraints", value => value.DeepCopy(), Int16MinMaxMixIn.Equals) },
             { "InitialTranslationOffset", new SimpleReflectionPropertyHandler<P3Float?, ILoadScreen, ILoadScreenGetter>("InitialTranslationOffset") },
             { "CameraPath", new SimpleReflectionAssetLinkPropertyHandler<SkyrimModelAssetType, ILoadScreen, ILoadScreenGetter>("CameraPath") },
             { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.LoadScreen.MajorFlag, ILoadScreen, ILoadScreenGetter>("MajorFlags") }

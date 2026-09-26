@@ -14,9 +14,9 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: MUSC scalar/flag/form-link-list fields and nested Data via reflection handlers.
+// - Generalized: MUSC scalar/flag/form-link-list fields use typed handlers; Data uses generated copy/equality.
 // - Kept specialized: none.
-// - Rationale: current IMusicType surface is fully representable with existing generic list/complex handlers.
+// - Rationale: generated copying safely converts overlay Data to its mutable representation.
 public class MusicTypeRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -25,7 +25,8 @@ public class MusicTypeRecordHandler : AbstractRecordHandler
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
         { "Flags", new SimpleReflectionFlagPropertyHandler<MusicType.Flag, IMusicType, IMusicTypeGetter>("Flags") },
-        { "Data", new ComplexReflectionPropertyHandler<IMusicTypeDataGetter, IMusicType, IMusicTypeGetter>("Data") },
+        { "Data", new GeneratedCopyReflectionPropertyHandler<IMusicTypeDataGetter, MusicTypeData, IMusicType, IMusicTypeGetter>(
+            "Data", value => value.DeepCopy(), MusicTypeDataMixIn.Equals) },
         { "FadeDuration", new SimpleReflectionPropertyHandler<float?, IMusicType, IMusicTypeGetter>("FadeDuration") },
         { "Tracks", new AtomicReflectionListPropertyHandler<IFormLinkGetter<IMusicTrackGetter>, IMusicType, IMusicTypeGetter>("Tracks", canBeNull: true) }
     };

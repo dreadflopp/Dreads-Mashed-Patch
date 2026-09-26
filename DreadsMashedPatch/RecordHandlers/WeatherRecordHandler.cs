@@ -17,7 +17,7 @@ using Noggog;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: WTHR scalar/binary/link fields plus CloudTextures/Clouds arrays via dedicated handlers.
+// - Generalized: WTHR scalar/binary/link fields, generated sound-row copies, and CloudTextures/Clouds arrays.
 // - Kept specialized: generated Weather aggregate copying preserves indexed TimeOfDay members without reflecting over indexers.
 // - Intentionally excluded: NAM0DataTypeState is serialization state; Unknown is outside the semantic conflict surface.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary NAM0 layout.
@@ -78,7 +78,9 @@ public class WeatherRecordHandler : AbstractRecordHandler
         { "VisualEffectEnd", new SimpleReflectionPropertyHandler<Percent, IWeather, IWeatherGetter>("VisualEffectEnd") },
         { "WindDirection", new SimpleReflectionPropertyHandler<float, IWeather, IWeatherGetter>("WindDirection") },
         { "WindDirectionRange", new SimpleReflectionPropertyHandler<float, IWeather, IWeatherGetter>("WindDirectionRange") },
-        { "Sounds", new SimpleReflectionListPropertyHandler<IWeatherSoundGetter, IWeather, IWeatherGetter>("Sounds", ListSemantics.SortedKeyed, keySelector: sound => sound.Type) },
+        { "Sounds", new GeneratedCopyReflectionListPropertyHandler<IWeatherSoundGetter, WeatherSound, IWeather, IWeatherGetter>(
+            "Sounds", ListSemantics.SortedKeyed, value => value.DeepCopy(), WeatherSoundMixIn.Equals,
+            keySelector: sound => sound.Type) },
         { "SkyStatics", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IStaticGetter>, IWeather, IWeatherGetter>("SkyStatics", ListSemantics.SortedKeyed) },
         { "ImageSpaces", new GeneratedCopyReflectionPropertyHandler<IWeatherImageSpacesGetter, WeatherImageSpaces, IWeather, IWeatherGetter>("ImageSpaces", value => value.DeepCopy(), WeatherImageSpacesMixIn.Equals) },
         { "VolumetricLighting", new GeneratedCopyReflectionPropertyHandler<IWeatherVolumetricLightingGetter, WeatherVolumetricLighting, IWeather, IWeatherGetter>("VolumetricLighting", value => value.DeepCopy(), WeatherVolumetricLightingMixIn.Equals) },

@@ -163,23 +163,34 @@ public sealed class GenderedModelFileHandler<TRecord, TRecordGetter>
 }
 
 public sealed class GenderedModelAlternateTexturesHandler<TRecord, TRecordGetter>
-    : GenderedModelFieldHandler<IReadOnlyList<IAlternateTextureGetter>?, TRecord, TRecordGetter>
+    : AbstractListPropertyHandler<IAlternateTextureGetter>
     where TRecord : class, IMajorRecord
     where TRecordGetter : class, IMajorRecordGetter
 {
+    private readonly MaleFemaleGender _gender;
+    private readonly Func<TRecordGetter, IGenderedItemGetter<IModelGetter?>?> _getValue;
+    private readonly Action<TRecord, IGenderedItem<Model?>?> _setValue;
+
     public GenderedModelAlternateTexturesHandler(
         string modelPropertyName,
         MaleFemaleGender gender,
         Func<TRecordGetter, IGenderedItemGetter<IModelGetter?>?> getValue,
         Action<TRecord, IGenderedItem<Model?>?> setValue)
-        : base(modelPropertyName, gender, "AlternateTextures", getValue, setValue)
     {
+        PropertyName = $"{modelPropertyName}.{gender}.AlternateTextures";
+        _gender = gender;
+        _getValue = getValue;
+        _setValue = setValue;
     }
 
-    public override IReadOnlyList<IAlternateTextureGetter>? GetValue(IMajorRecordGetter record)
-        => GetModel(record)?.AlternateTextures;
+    public override string PropertyName { get; }
 
-    public override void SetValue(IMajorRecord record, IReadOnlyList<IAlternateTextureGetter>? value)
+    public override ListSemantics Semantics => ListSemantics.SortedKeyed;
+
+    public override List<IAlternateTextureGetter>? GetValue(IMajorRecordGetter record)
+        => GetModel(record)?.AlternateTextures?.ToList();
+
+    public override void SetValue(IMajorRecord record, List<IAlternateTextureGetter>? value)
     {
         var currentModel = GetModel(record);
         if (currentModel == null && value == null)
@@ -187,41 +198,101 @@ public sealed class GenderedModelAlternateTexturesHandler<TRecord, TRecordGetter
             return;
         }
 
-        var model = CopyModel(currentModel) ?? new Model();
+        var model = CopyModelValue(currentModel) ?? new Model();
         model.AlternateTextures = CopyAlternateTextures(value);
         SetModel(record, model);
     }
 
     public override bool AreValuesEqual(
-        IReadOnlyList<IAlternateTextureGetter>? value1,
-        IReadOnlyList<IAlternateTextureGetter>? value2)
+        List<IAlternateTextureGetter>? value1,
+        List<IAlternateTextureGetter>? value2)
+        => base.AreValuesEqual(value1 ?? [], value2 ?? []);
+
+    protected override bool IsItemEqual(IAlternateTextureGetter? item1, IAlternateTextureGetter? item2)
     {
-        var count1 = value1?.Count ?? 0;
-        var count2 = value2?.Count ?? 0;
-        if (count1 != count2)
+        if (item1 == null || item2 == null)
         {
-            return false;
+            return item1 == null && item2 == null;
         }
 
-        for (var index = 0; index < count1; index++)
+        return item1.Name == item2.Name
+            && item1.Index == item2.Index
+            && item1.NewTexture.FormKey == item2.NewTexture.FormKey;
+    }
+
+    protected override bool IsItemIdentityEqual(IAlternateTextureGetter? item1, IAlternateTextureGetter? item2)
+    {
+        if (item1 == null || item2 == null)
         {
-            var alternate1 = value1![index];
-            var alternate2 = value2![index];
-            if (!string.Equals(alternate1.Name, alternate2.Name, StringComparison.Ordinal)
-                || alternate1.NewTexture.FormKey != alternate2.NewTexture.FormKey
-                || alternate1.Index != alternate2.Index)
+            return item1 == null && item2 == null;
+        }
+
+        return HaveSameXEditKey(item1, item2);
+    }
+
+    protected override IReadOnlyList<object?> GetSortKey(IAlternateTextureGetter item)
+        => [item.Name, item.Index];
+
+    internal static bool HaveSameXEditKey(
+        IAlternateTextureGetter left,
+        IAlternateTextureGetter right)
+        => StringComparer.OrdinalIgnoreCase.Equals(left.Name, right.Name)
+            && left.Index == right.Index;
+
+    private IModelGetter? GetModel(IMajorRecordGetter record)
+        => record is TRecordGetter typedRecord ? _getValue(typedRecord)?[_gender] : null;
+
+    private void SetModel(IMajorRecord record, Model? model)
+    {
+        if (record is not TRecord typedRecord || record is not TRecordGetter getterRecord)
+        {
+            return;
+        }
+
+        var current = _getValue(getterRecord);
+        var male = _gender == MaleFemaleGender.Male ? model : CopyModelValue(current?.Male);
+        var female = _gender == MaleFemaleGender.Female ? model : CopyModelValue(current?.Female);
+        _setValue(typedRecord, male == null && female == null ? null : new GenderedItem<Model?>(male, female));
+    }
+
+    private static Model? CopyModelValue(IModelGetter? source)
+    {
+        if (source == null) return null;
+        return new Model
+        {
+            File = new AssetLink<SkyrimModelAssetType>(ModelPathHelper.NormalizeAsset(source.File)),
+            Data = source.Data?.ToArray(),
+            AlternateTextures = CopyAlternateTextures(source.AlternateTextures)
+        };
+    }
+
+    private static ExtendedList<AlternateTexture>? CopyAlternateTextures(
+        IEnumerable<IAlternateTextureGetter>? source)
+    {
+        if (source == null) return null;
+        var result = new ExtendedList<AlternateTexture>();
+        foreach (var texture in source)
+        {
+            result.Add(new AlternateTexture
             {
-                return false;
-            }
+                Name = texture.Name,
+                NewTexture = new FormLink<ITextureSetGetter>(texture.NewTexture.FormKey),
+                Index = texture.Index
+            });
         }
 
-        return true;
+        return result;
     }
 
     public override string FormatValue(object? value)
     {
-        if (value is not IReadOnlyList<IAlternateTextureGetter> alternateTextures
-            || alternateTextures.Count == 0)
+        if (value is not IEnumerable<IAlternateTextureGetter> alternateTextureValues)
+        {
+            return "[]";
+        }
+
+        var alternateTextures = alternateTextureValues.ToList();
+        if (alternateTextures.Count == 0)
         {
             return "[]";
         }

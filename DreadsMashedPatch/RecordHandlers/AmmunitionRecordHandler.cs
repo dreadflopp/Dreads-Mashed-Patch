@@ -1,7 +1,6 @@
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.General;
@@ -13,7 +12,7 @@ using System;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: AMMO scalar/form-link fields and flags through reflection-based handlers.
+    // - Generalized: AMMO scalar/form-link fields use typed reflection; translated text uses generated copying.
     // - Kept specialized: Name/ObjectBounds/Model/Icons/Destructible/Keywords/Value/Weight and Skyrim flag handlers.
     // - Intentionally excluded: DATADataTypeState is Mutagen serialization state, not an xEdit field.
     // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout.
@@ -30,7 +29,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Destructible", new DestructibleHandler() },
             { "PickUpSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IAmmunition, IAmmunitionGetter>("PickUpSound") },
             { "PutDownSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IAmmunition, IAmmunitionGetter>("PutDownSound") },
-            { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IAmmunition, IAmmunitionGetter>("Description") },
+            { "Description", new TranslatedStringReflectionPropertyHandler<IAmmunition, IAmmunitionGetter>("Description") },
             { "Keywords", new KeywordListHandler() },
             { "Projectile", new SimpleReflectionFormLinkPropertyHandler<IProjectileGetter, IAmmunition, IAmmunitionGetter>("Projectile") },
             { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.Ammunition.Flag, IAmmunition, IAmmunitionGetter>("Flags") },

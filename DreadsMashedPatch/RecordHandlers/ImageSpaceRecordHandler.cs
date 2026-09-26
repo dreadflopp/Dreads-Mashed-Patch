@@ -11,7 +11,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: ENAM and nested image-space sections via reflection handlers.
+    // - Generalized: ENAM uses the binary handler; nested image-space sections use generated copy/equality.
     // - Kept specialized: none.
     // - Rationale: the record is a small composition of binary data plus nested value objects.
     public class ImageSpaceRecordHandler : AbstractRecordHandler
@@ -22,10 +22,14 @@ namespace DreadsMashedPatch.RecordHandlers
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
             { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
             { "ENAM", new SimpleReflectionBinaryDataPropertyHandler<IImageSpace, IImageSpaceGetter>("ENAM") },
-            { "Hdr", new ComplexReflectionPropertyHandler<IImageSpaceHdrGetter, IImageSpace, IImageSpaceGetter>("Hdr") },
-            { "Cinematic", new ComplexReflectionPropertyHandler<IImageSpaceCinematicGetter, IImageSpace, IImageSpaceGetter>("Cinematic") },
-            { "Tint", new ComplexReflectionPropertyHandler<IImageSpaceTintGetter, IImageSpace, IImageSpaceGetter>("Tint") },
-            { "DepthOfField", new ComplexReflectionPropertyHandler<IImageSpaceDepthOfFieldGetter, IImageSpace, IImageSpaceGetter>("DepthOfField") }
+            { "Hdr", new GeneratedCopyReflectionPropertyHandler<IImageSpaceHdrGetter, ImageSpaceHdr, IImageSpace, IImageSpaceGetter>(
+                "Hdr", value => value.DeepCopy(), ImageSpaceHdrMixIn.Equals) },
+            { "Cinematic", new GeneratedCopyReflectionPropertyHandler<IImageSpaceCinematicGetter, ImageSpaceCinematic, IImageSpace, IImageSpaceGetter>(
+                "Cinematic", value => value.DeepCopy(), ImageSpaceCinematicMixIn.Equals) },
+            { "Tint", new GeneratedCopyReflectionPropertyHandler<IImageSpaceTintGetter, ImageSpaceTint, IImageSpace, IImageSpaceGetter>(
+                "Tint", value => value.DeepCopy(), ImageSpaceTintMixIn.Equals) },
+            { "DepthOfField", new GeneratedCopyReflectionPropertyHandler<IImageSpaceDepthOfFieldGetter, ImageSpaceDepthOfField, IImageSpace, IImageSpaceGetter>(
+                "DepthOfField", value => value.DeepCopy(), ImageSpaceDepthOfFieldMixIn.Equals) }
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

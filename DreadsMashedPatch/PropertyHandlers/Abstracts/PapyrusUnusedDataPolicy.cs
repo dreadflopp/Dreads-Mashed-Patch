@@ -14,8 +14,7 @@ internal static class PapyrusUnusedDataPolicy
         IScriptEntryGetter source,
         IScriptEntryGetter? destination)
     {
-        var copy = new ScriptEntry();
-        copy.DeepCopyIn(source);
+        var copy = source.DeepCopy();
         PreserveScriptUnusedValues(copy, destination);
         return copy;
     }

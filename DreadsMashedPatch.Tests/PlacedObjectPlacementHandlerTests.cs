@@ -132,8 +132,9 @@ public sealed class PlacedObjectPlacementHandlerTests
         var target = new PlacedObject(
             new FormKey(PatchModKey, 0x900),
             SkyrimRelease.SkyrimSE);
-        var handler = Assert.IsType<ComplexReflectionPropertyHandler<
+        var handler = Assert.IsType<GeneratedCopyReflectionPropertyHandler<
             IEnableParentGetter,
+            EnableParent,
             IPlacedObject,
             IPlacedObjectGetter>>(
                 new PlacedObjectRecordHandler().PropertyHandlers["EnableParent"]);

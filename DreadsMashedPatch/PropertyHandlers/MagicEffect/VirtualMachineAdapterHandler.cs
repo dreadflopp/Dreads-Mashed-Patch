@@ -20,10 +20,7 @@ namespace DreadsMashedPatch.PropertyHandlers.MagicEffect
             }
             else if (value != null)
             {
-                // Create a new VirtualMachineAdapter and copy the data
-                var newAdapter = new VirtualMachineAdapter();
-                newAdapter.DeepCopyIn(value);
-                record.VirtualMachineAdapter = newAdapter;
+                record.VirtualMachineAdapter = value.DeepCopy();
             }
             else
             {

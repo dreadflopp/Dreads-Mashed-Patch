@@ -6,7 +6,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
@@ -24,7 +23,7 @@ public class SoundCategoryRecordHandler : AbstractRecordHandler
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Name", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, ISoundCategory, ISoundCategoryGetter>("Name") },
+        { "Name", new TranslatedStringReflectionPropertyHandler<ISoundCategory, ISoundCategoryGetter>("Name") },
         { "Flags", new SimpleReflectionFlagPropertyHandler<SoundCategory.Flag, ISoundCategory, ISoundCategoryGetter>("Flags") },
         { "Parent", new SimpleReflectionFormLinkPropertyHandler<ISoundCategoryGetter, ISoundCategory, ISoundCategoryGetter>("Parent") },
         { "StaticVolumeMultiplier", new SimpleReflectionPropertyHandler<float?, ISoundCategory, ISoundCategoryGetter>("StaticVolumeMultiplier") },

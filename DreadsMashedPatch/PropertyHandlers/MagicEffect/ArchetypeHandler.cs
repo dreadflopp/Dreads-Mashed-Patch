@@ -16,10 +16,10 @@ namespace DreadsMashedPatch.PropertyHandlers.MagicEffect
             {
                 if (value != null)
                 {
-                    // Create a deep copy of the archetype
-                    var newArchetype = new MagicEffectArchetype();
-                    newArchetype.DeepCopyIn(value);
-                    magicEffect.Archetype = newArchetype;
+                    // The generated base-interface copy preserves specialized runtime types
+                    // such as PeakValueModifier. Copying every value into MagicEffectArchetype
+                    // makes Mutagen cast specialized getters to IMagicEffectArchetypeGetter.
+                    magicEffect.Archetype = value.DeepCopy();
                 }
                 else
                 {

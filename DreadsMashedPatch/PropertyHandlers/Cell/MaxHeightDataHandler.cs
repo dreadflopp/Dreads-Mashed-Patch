@@ -23,11 +23,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
                     return;
                 }
 
-                // Try using DeepCopyIn first, but handle HeightMap separately if needed
-                var newMaxHeightData = new CellMaxHeightData();
-                newMaxHeightData.DeepCopyIn(value);
-
-                cellRecord.MaxHeightData = newMaxHeightData;
+                cellRecord.MaxHeightData = value.DeepCopy();
             }
             else
             {

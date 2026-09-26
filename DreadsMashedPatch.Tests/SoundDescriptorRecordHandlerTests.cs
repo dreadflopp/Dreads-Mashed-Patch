@@ -17,7 +17,7 @@ public sealed class SoundDescriptorRecordHandlerTests
     {
         var handlers = new SoundDescriptorRecordHandler().PropertyHandlers;
 
-        Assert.IsType<ComplexReflectionPropertyHandler<ITranslatedStringGetter, ISoundDescriptor, ISoundDescriptorGetter>>(
+        Assert.IsType<TranslatedStringReflectionPropertyHandler<ISoundDescriptor, ISoundDescriptorGetter>>(
             handlers["String"]);
         Assert.IsType<SoundDescriptorPitchHandler>(handlers["Pitch"]);
         Assert.IsType<SoundDescriptorVolumeHandler>(handlers["Volume"]);

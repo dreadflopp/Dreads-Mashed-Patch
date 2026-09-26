@@ -1,7 +1,6 @@
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.Ingestible;
@@ -16,7 +15,7 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: ObjectBounds, Description, PickUpSound, PutDownSound, EquipmentType, Addiction, AddictionChance, ConsumeSound.
     // - Generalized Effects reconciliation to the shared exact-position atomic handler.
     // - Kept specialized: Destructible, Icons, Effects collection access, Flags, MajorFlags.
-    // - Rationale: direct properties are reflection-safe; xEdit gives outer Effects
+    // - Rationale: translated text uses generated copying; xEdit gives outer Effects
     //   entries no row key, while collection access and flag handling remain record-specific.
     public class IngestibleRecordHandler : AbstractRecordHandler
     {
@@ -26,7 +25,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
             { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
             { "Name", new NameHandler() },
-            { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IIngestible, IIngestibleGetter>("Description") },
+            { "Description", new TranslatedStringReflectionPropertyHandler<IIngestible, IIngestibleGetter>("Description") },
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Destructible", new DestructibleHandler() },
             { "Icons", new IconsHandler() },

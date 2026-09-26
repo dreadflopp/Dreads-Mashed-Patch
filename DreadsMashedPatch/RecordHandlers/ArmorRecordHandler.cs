@@ -2,7 +2,6 @@ using Mutagen.Bethesda;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.General;
@@ -45,7 +44,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "AlternateBlockMaterial", new SimpleReflectionFormLinkPropertyHandler<IMaterialTypeGetter, IArmor, IArmorGetter>("AlternateBlockMaterial") },
             { "Race", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, IArmor, IArmorGetter>("Race") },
             { "Keywords", new KeywordListHandler() },
-            { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IArmor, IArmorGetter>("Description") },
+            { "Description", new TranslatedStringReflectionPropertyHandler<IArmor, IArmorGetter>("Description") },
             { "Armature", new AtomicFormLinkListPropertyHandler<IArmorAddonGetter, IArmor, IArmorGetter>("Armature") },
             { "Value", new ValueHandler() },
             { "Weight", new WeightHandler() },

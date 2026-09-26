@@ -4,7 +4,6 @@ using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Skyrim.Assets;
-using Mutagen.Bethesda.Strings;
 using Mutagen.Bethesda.Synthesis;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.Furniture;
@@ -16,9 +15,9 @@ using Noggog;
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: VM/bounds/name/model, keywords, binary data, links, workbench/markers/model filename.
+    // - Generalized: VM/bounds/name/model, keywords, binary data, links, and generated copies for workbench/marker data.
     // - Kept specialized: Destructible and nullable furniture flags via dedicated handlers.
-    // - Rationale: preserve destructible and flag semantics while reusing stable shared handlers.
+    // - Rationale: generated copies safely materialize overlay marker rows while preserving destructible and flag semantics.
     public class FurnitureRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -34,9 +33,11 @@ namespace DreadsMashedPatch.RecordHandlers
             { "PNAM", new SimpleReflectionBinaryDataPropertyHandler<IFurniture, IFurnitureGetter>("PNAM") },
             { "Flags", new FlagsHandler() },
             { "InteractionKeyword", new SimpleReflectionFormLinkPropertyHandler<IKeywordGetter, IFurniture, IFurnitureGetter>("InteractionKeyword") },
-            { "WorkbenchData", new ComplexReflectionPropertyHandler<IWorkbenchDataGetter, IFurniture, IFurnitureGetter>("WorkbenchData") },
+            { "WorkbenchData", new GeneratedCopyReflectionPropertyHandler<IWorkbenchDataGetter, WorkbenchData, IFurniture, IFurnitureGetter>(
+                "WorkbenchData", value => value.DeepCopy(), WorkbenchDataMixIn.Equals) },
             { "AssociatedSpell", new SimpleReflectionFormLinkPropertyHandler<ISpellGetter, IFurniture, IFurnitureGetter>("AssociatedSpell") },
-            { "Markers", new AtomicReflectionListPropertyHandler<IFurnitureMarkerGetter, IFurniture, IFurnitureGetter>("Markers", true) },
+            { "Markers", new AtomicGeneratedCopyReflectionListPropertyHandler<IFurnitureMarkerGetter, FurnitureMarker, IFurniture, IFurnitureGetter>(
+                "Markers", value => value.DeepCopy(), FurnitureMarkerMixIn.Equals, canBeNull: true) },
             { "ModelFilename", new SimpleReflectionAssetLinkPropertyHandler<SkyrimModelAssetType, IFurniture, IFurnitureGetter>("ModelFilename") },
             { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.Furniture.MajorFlag, IFurniture, IFurnitureGetter>("MajorFlags") }
         };

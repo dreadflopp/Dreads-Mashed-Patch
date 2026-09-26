@@ -5,7 +5,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.PropertyHandlers.Shout;
@@ -26,7 +25,7 @@ public class ShoutRecordHandler : AbstractRecordHandler
         { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
         { "Name", new NameHandler() },
         { "MenuDisplayObject", new SimpleReflectionFormLinkPropertyHandler<IStaticGetter, IShout, IShoutGetter>("MenuDisplayObject") },
-        { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IShout, IShoutGetter>("Description") },
+        { "Description", new TranslatedStringReflectionPropertyHandler<IShout, IShoutGetter>("Description") },
         { "WordsOfPower", new WordsOfPowerHandler() },
         { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Shout.MajorFlag, IShout, IShoutGetter>("MajorFlags") }
     };

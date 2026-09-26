@@ -14,7 +14,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: SMQN links, controls, and quest rows use shared semantic handlers.
+// - Generalized: SMQN links and controls use shared handlers; quest rows use Mutagen-generated element copies.
 // - Kept specialized: Conditions uses the shared polymorphic condition handler.
 // - Intentionally non-migrated: none; Parent and PreviousSibling remain registered so topology changes are detected.
 // - Coupled forwarding: topology, conditions, flags, and limits always establish complete-node ownership;
@@ -49,7 +49,9 @@ public class StoryManagerQuestNodeRecordHandler : AbstractRecordHandler
         { "QuestFlags", new SimpleReflectionFlagPropertyHandler<StoryManagerQuestNode.QuestFlag, IStoryManagerQuestNode, IStoryManagerQuestNodeGetter>("QuestFlags") },
         { "MaxConcurrentQuests", new SimpleReflectionPropertyHandler<uint?, IStoryManagerQuestNode, IStoryManagerQuestNodeGetter>("MaxConcurrentQuests") },
         { "MaxNumQuestsToRun", new SimpleReflectionPropertyHandler<uint?, IStoryManagerQuestNode, IStoryManagerQuestNodeGetter>("MaxNumQuestsToRun") },
-        { "Quests", new SimpleReflectionListPropertyHandler<IStoryManagerQuestGetter, IStoryManagerQuestNode, IStoryManagerQuestNodeGetter>("Quests", ListSemantics.AlignedOrdered, keySelector: quest => quest.Quest.FormKey) }
+        { "Quests", new GeneratedCopyReflectionListPropertyHandler<IStoryManagerQuestGetter, StoryManagerQuest, IStoryManagerQuestNode, IStoryManagerQuestNodeGetter>(
+            "Quests", ListSemantics.AlignedOrdered, value => value.DeepCopy(), StoryManagerQuestMixIn.Equals,
+            keySelector: quest => quest.Quest.FormKey) }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

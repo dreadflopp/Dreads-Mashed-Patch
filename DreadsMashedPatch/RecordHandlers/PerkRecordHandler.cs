@@ -6,7 +6,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Strings;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
@@ -45,9 +44,10 @@ public class PerkRecordHandler : AbstractRecordHandler
     {
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Perk.MajorFlag)) },
-        { "VirtualMachineAdapter", new ComplexReflectionPropertyHandler<IPerkAdapterGetter, IPerk, IPerkGetter>("VirtualMachineAdapter") },
-        { "Name", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IPerk, IPerkGetter>("Name") },
-        { "Description", new ComplexReflectionPropertyHandler<ITranslatedStringGetter, IPerk, IPerkGetter>("Description") },
+        { "VirtualMachineAdapter", new GeneratedCopyReflectionPropertyHandler<IPerkAdapterGetter, PerkAdapter, IPerk, IPerkGetter>(
+            "VirtualMachineAdapter", value => value.DeepCopy(), PerkAdapterMixIn.Equals) },
+        { "Name", new TranslatedStringReflectionPropertyHandler<IPerk, IPerkGetter>("Name") },
+        { "Description", new TranslatedStringReflectionPropertyHandler<IPerk, IPerkGetter>("Description") },
         { "Icons", new SimpleReflectionIconsPropertyHandler<IPerk, IPerkGetter>("Icons") },
         { "Conditions", new ConditionsHandler<IPerk, IPerkGetter>(record => record.Conditions, record => record.Conditions) },
         { "Trait", new SimpleReflectionPropertyHandler<bool, IPerk, IPerkGetter>("Trait") },
