@@ -178,4 +178,4 @@ This report compares the generated runtime inventory with the independently main
 | `WeatherRecordHandler.CloudTextures` | Matched | Atomic | Atomic | Cloud data is reconstructed from several fixed parallel arrays; whole-value ownership prevents cross-layer desynchronization. |
 | `WeatherRecordHandler.Clouds` | Matched | Atomic | Atomic | Cloud data is reconstructed from several fixed parallel arrays; whole-value ownership prevents cross-layer desynchronization. |
 | `WeatherRecordHandler.SkyStatics` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `WeatherRecordHandler.Sounds` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `WeatherRecordHandler.Sounds` | Matched | ExactOrdered | ExactOrdered | SetSummaryKeyOnValue configures xEdit display text only. It does not turn the plain wbRArray into a sorted/keyed collection. |

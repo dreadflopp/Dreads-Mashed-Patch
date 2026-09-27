@@ -18,6 +18,8 @@ namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
 // - Generalized: WTHR scalar/binary/link fields, generated sound-row copies, and CloudTextures/Clouds arrays.
+// - Collection decision: Sounds is a plain xEdit wbRArray without a StructSK, so complete rows use
+//   declaration position as identity; the display summary fields are not a sorting key.
 // - Kept specialized: generated Weather aggregate copying preserves indexed TimeOfDay members without reflecting over indexers.
 // - Intentionally excluded: NAM0DataTypeState is serialization state; Unknown is outside the semantic conflict surface.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary NAM0 layout.
@@ -79,8 +81,7 @@ public class WeatherRecordHandler : AbstractRecordHandler
         { "WindDirection", new SimpleReflectionPropertyHandler<float, IWeather, IWeatherGetter>("WindDirection") },
         { "WindDirectionRange", new SimpleReflectionPropertyHandler<float, IWeather, IWeatherGetter>("WindDirectionRange") },
         { "Sounds", new GeneratedCopyReflectionListPropertyHandler<IWeatherSoundGetter, WeatherSound, IWeather, IWeatherGetter>(
-            "Sounds", ListSemantics.SortedKeyed, value => value.DeepCopy(), WeatherSoundMixIn.Equals,
-            keySelector: sound => sound.Type) },
+            "Sounds", ListSemantics.ExactOrdered, value => value.DeepCopy(), WeatherSoundMixIn.Equals) },
         { "SkyStatics", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IStaticGetter>, IWeather, IWeatherGetter>("SkyStatics", ListSemantics.SortedKeyed) },
         { "ImageSpaces", new GeneratedCopyReflectionPropertyHandler<IWeatherImageSpacesGetter, WeatherImageSpaces, IWeather, IWeatherGetter>("ImageSpaces", value => value.DeepCopy(), WeatherImageSpacesMixIn.Equals) },
         { "VolumetricLighting", new GeneratedCopyReflectionPropertyHandler<IWeatherVolumetricLightingGetter, WeatherVolumetricLighting, IWeather, IWeatherGetter>("VolumetricLighting", value => value.DeepCopy(), WeatherVolumetricLightingMixIn.Equals) },

@@ -16,10 +16,35 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: semantic CELL fields use shared scalar, flag, link, and list handlers; obsolete one-field
     //   CELL handlers replaced by these registrations were removed.
     // - Kept specialized: lighting, ownership, encounter-zone, and occlusion structures retain typed handlers.
+    // - Smart rule: Tamriel's persistent CELL (000D74:Skyrim.esm) can retain the exact Dawnguard,
+    //   Skyrim, or winning header, or use a hybrid that substitutes Dawnguard only for a winning
+    //   Skyrim-equivalent header. Mutagen's CELL override mask keeps child references, landscape,
+    //   navigation meshes, and group metadata outside this header policy and comparison.
     // - Intentionally excluded: WaterHeight and Landscape are runtime-managed; NavigationMeshes is navigation data.
     // - Rationale: excluded fields remain exactly as authored by the winning override.
     public class CellRecordHandler : AbstractRecordHandler
     {
+        internal static readonly ModKey SkyrimModKey = ModKey.FromNameAndExtension("Skyrim.esm");
+        internal static readonly ModKey DawnguardModKey = ModKey.FromNameAndExtension("Dawnguard.esm");
+        internal static readonly FormKey TamrielPersistentCellFormKey = new(SkyrimModKey, 0x000D74);
+        private static readonly Cell.TranslationMask CellHeaderComparisonMask = new(defaultOn: true)
+        {
+            Persistent = false,
+            Temporary = false,
+            Landscape = false,
+            NavigationMeshes = false,
+            Timestamp = false,
+            PersistentTimestamp = false,
+            TemporaryTimestamp = false,
+            UnknownGroupData = false,
+            PersistentUnknownGroupData = false,
+            TemporaryUnknownGroupData = false
+        };
+
+        internal static bool RequiresSmartPolicyProcessing(FormKey formKey) =>
+            formKey == TamrielPersistentCellFormKey
+            && PatcherSettings.TamrielPersistentCellPolicy != Enums.TamrielPersistentCellPolicy.StandardForwarding;
+
         private readonly Dictionary<string, IPropertyHandler> _propertyHandlers;
 
         public CellRecordHandler()
@@ -60,6 +85,98 @@ namespace DreadsMashedPatch.RecordHandlers
         }
 
         public override Dictionary<string, IPropertyHandler> PropertyHandlers => _propertyHandlers;
+
+        protected override bool TryApplyRecordPolicy(
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state,
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts)
+        {
+            var winningContext = recordContexts[0];
+            if (winningContext.Record.FormKey != TamrielPersistentCellFormKey)
+            {
+                return false;
+            }
+
+            if (recordContexts.Any(context => PatcherSettings.IsAlwaysWinningMod(context.ModKey)))
+            {
+                Console.WriteLine(
+                    "Tamriel persistent CELL policy: explicit Priority Mods rule takes precedence");
+                return false;
+            }
+
+            var policy = PatcherSettings.TamrielPersistentCellPolicy;
+            if (policy == Enums.TamrielPersistentCellPolicy.StandardForwarding)
+            {
+                Console.WriteLine("Tamriel persistent CELL policy: using normal property forwarding");
+                return false;
+            }
+
+            if (policy == Enums.TamrielPersistentCellPolicy.KeepWinning)
+            {
+                Console.WriteLine(
+                    $"Tamriel persistent CELL policy: copying winning header from {winningContext.ModKey}");
+                GetOverrideRecord(winningContext, state);
+                return true;
+            }
+
+            if (policy == Enums.TamrielPersistentCellPolicy.Hybrid)
+            {
+                var skyrimContext = recordContexts.FirstOrDefault(context => context.ModKey == SkyrimModKey);
+                var dawnguardContext = recordContexts.FirstOrDefault(context => context.ModKey == DawnguardModKey);
+                if (skyrimContext?.Record is not ICellGetter skyrimCell
+                    || dawnguardContext == null)
+                {
+                    LogCollector.AddWarning(
+                        "TamrielPersistentCell",
+                        $"Hybrid policy could not find both Skyrim.esm and Dawnguard.esm in the override " +
+                        $"chain for {TamrielPersistentCellFormKey}; using normal property forwarding");
+                    return false;
+                }
+
+                var winningCell = (ICellGetter)winningContext.Record;
+                if (!winningCell.Equals(skyrimCell, CellHeaderComparisonMask))
+                {
+                    Console.WriteLine(
+                        "Tamriel persistent CELL hybrid policy: winning header differs from Skyrim.esm; " +
+                        "using normal property forwarding");
+                    return false;
+                }
+
+                Console.WriteLine(
+                    "Tamriel persistent CELL hybrid policy: winning header matches Skyrim.esm; " +
+                    "copying Dawnguard.esm header");
+                GetOverrideRecord(dawnguardContext, state);
+                return true;
+            }
+
+            var preferredMod = policy == Enums.TamrielPersistentCellPolicy.PreferDawnguard
+                ? DawnguardModKey
+                : SkyrimModKey;
+            var preferredContext = recordContexts.FirstOrDefault(context => context.ModKey == preferredMod);
+            if (preferredContext == null)
+            {
+                LogCollector.AddWarning(
+                    "TamrielPersistentCell",
+                    $"Could not find {preferredMod} in the override chain for {TamrielPersistentCellFormKey}; " +
+                    $"copying the winning header from {winningContext.ModKey}");
+                GetOverrideRecord(winningContext, state);
+                return true;
+            }
+
+            if (preferredContext.ModKey == winningContext.ModKey)
+            {
+                Console.WriteLine(
+                    $"Tamriel persistent CELL policy: preferred {preferredMod} header already wins");
+            }
+            else
+            {
+                Console.WriteLine(
+                    $"Tamriel persistent CELL policy: copying complete header from {preferredMod} " +
+                    $"over {winningContext.ModKey}");
+            }
+
+            GetOverrideRecord(preferredContext, state);
+            return true;
+        }
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,

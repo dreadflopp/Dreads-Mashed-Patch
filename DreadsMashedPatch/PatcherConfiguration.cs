@@ -33,8 +33,6 @@ public sealed class PatcherConfiguration
     /// </summary>
     public HashSet<string> IgnoredMods { get; set; } = new(StringComparer.OrdinalIgnoreCase)
     {
-        "True Light.esp",
-        "True Light - USSEP Patch.esp"
     };
 
     /// <summary>
@@ -57,7 +55,19 @@ public sealed class PatcherConfiguration
                 "Navigator-NavFixes.esl",
                 "SurvivalModeImproved.esp",
                 "King-Priest.esp",
-                "Window Shadows Ultimate.esp"
+                "Window Shadows Ultimate.esp",
+                "Dawnguard HQ.esp",
+                "DawnguardArsenal.esp",
+                "Lux.esp",
+                "Lux Orbis.esp",
+                "Lux - Great Village of Shor's Stone patch.esp",
+                "CS Light.esp",
+                "Gourmet.esp",
+                "Reliquary of Myth.esp",
+                "CraftingRevamped.esp",
+                "BBNoKillmoves.esp",
+                "Simple Better Civil War Soldiers.esp",
+                "AI Overhaul.esp"
             ]
         },
         new VirtualMasterRule
@@ -102,6 +112,15 @@ public sealed class PatcherConfiguration
                 "Starfrost.esp"
             ]
         },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "cutting room floor.esp",
+            TargetMods =
+            [
+                "Simple Better Civil War Soldiers.esp",
+                "MadMen.esp"
+            ]
+        },
          new VirtualMasterRule
         {
             InjectedMaster = "Apothecary.esp",
@@ -116,6 +135,71 @@ public sealed class PatcherConfiguration
             TargetMods =
             [
                 "BS Bruma - CC Curios Patch.esp"
+            ]
+        },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "Embers XD.esp",
+            TargetMods = 
+            [
+                "Lux.esp"
+            ]
+        },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "BladeAndBlunt.esp",
+            TargetMods =
+            [
+                "MadMen.esp",
+                "BBNoKillmoves.esp"
+            ]
+        },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "ccQDRSSE001-SurvivalMode.esl",
+            TargetMods =
+            [
+                "Gourmet.esp"
+            ]
+        },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "NAT-ENB.esp",
+            TargetMods =
+            [
+              "Lux.esp"  
+            ]
+        },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "Lux.esp",
+            TargetMods =
+            [
+              "Lux Orbis.esp"  
+            ]
+        },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "Simple Better Civil War Soldiers.esp",
+            TargetMods =
+            [
+                "Civil War Overhaul.esp"
+            ]
+        },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "Audio Overhaul Skyrim.esp",
+            TargetMods =
+            [                
+                "Immersive Sounds - Compendium.esp"
+            ]
+        },
+        new VirtualMasterRule
+        {
+            InjectedMaster = "Nature of the Wild Lands.esp",
+            TargetMods = 
+            [
+                "Aspens Ablaze.esp"
             ]
         }
     ];
@@ -162,7 +246,8 @@ public sealed class PatcherConfiguration
                     Forwarding.VanillaWeaponTypeKeywords,
                     StringComparer.OrdinalIgnoreCase),
                 EditorIdPolicy = Forwarding.EditorIdPolicy,
-                ProtectionPolicy = Forwarding.ProtectionPolicy
+                ProtectionPolicy = Forwarding.ProtectionPolicy,
+                TamrielPersistentCellPolicy = Forwarding.TamrielPersistentCellPolicy
             },
             Diagnostics = Diagnostics.Copy(),
             CompatibilityRules = CompatibilityRules.Select(rule => rule.Copy()).ToList()
@@ -225,6 +310,9 @@ public sealed class ForwardingSettings
     public ProtectionForwardingPolicy ProtectionPolicy { get; set; } =
         ProtectionForwardingPolicy.PreferHigherWithAuthorizedDowngrades;
 
+    public TamrielPersistentCellPolicy TamrielPersistentCellPolicy { get; set; } =
+        TamrielPersistentCellPolicy.Hybrid;
+
     public void Normalize()
     {
         VanillaWeaponTypeKeywords = new HashSet<string>(
@@ -251,14 +339,11 @@ public sealed class DiagnosticsSettings
 
     public HashSet<string> DeepDiveFormKeys { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
-    public HashSet<string> DeepDiveProperties { get; set; } = new(StringComparer.OrdinalIgnoreCase);
-
     public void Normalize()
     {
         MaxValuePreviewLength = Math.Clamp(MaxValuePreviewLength, 40, 10_000);
         DeepDiveRecordSignatures = NormalizeSet(DeepDiveRecordSignatures);
         DeepDiveFormKeys = NormalizeSet(DeepDiveFormKeys);
-        DeepDiveProperties = NormalizeSet(DeepDiveProperties);
     }
 
     public DiagnosticsSettings Copy()
@@ -272,8 +357,7 @@ public sealed class DiagnosticsSettings
             IncludeNoChangeDecisionsInDetailed = IncludeNoChangeDecisionsInDetailed,
             MaxValuePreviewLength = MaxValuePreviewLength,
             DeepDiveRecordSignatures = new HashSet<string>(DeepDiveRecordSignatures, StringComparer.OrdinalIgnoreCase),
-            DeepDiveFormKeys = new HashSet<string>(DeepDiveFormKeys, StringComparer.OrdinalIgnoreCase),
-            DeepDiveProperties = new HashSet<string>(DeepDiveProperties, StringComparer.OrdinalIgnoreCase)
+            DeepDiveFormKeys = new HashSet<string>(DeepDiveFormKeys, StringComparer.OrdinalIgnoreCase)
         };
     }
 

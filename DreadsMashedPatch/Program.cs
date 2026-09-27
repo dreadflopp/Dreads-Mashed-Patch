@@ -713,7 +713,10 @@ namespace DreadsMashedPatch
             var filteredContainerContexts = containerContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
             Console.WriteLine($"Container contexts: {containerContexts.Length} -> {filteredContainerContexts.Length} (filtered: {containerContexts.Length - filteredContainerContexts.Length})");
             Console.WriteLine("Filtering Cells...");
-            var filteredCellContexts = cellContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredCellContexts = cellContexts
+                .Where(context => CellRecordHandler.RequiresSmartPolicyProcessing(context.Record.FormKey)
+                    || !ShouldBreakEarly(context, state))
+                .ToArray();
             Console.WriteLine($"Cell contexts: {cellContexts.Length} -> {filteredCellContexts.Length} (filtered: {cellContexts.Length - filteredCellContexts.Length})");
             Console.WriteLine("Filtering Weapons...");
             var filteredWeaponContexts = weaponContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();

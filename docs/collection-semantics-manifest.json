@@ -1841,9 +1841,9 @@
     "Property": "Sounds",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IWeatherSoundGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GeneratedCopyReflectionListPropertyHandler\u003CMutagen.Bethesda.Skyrim.IWeatherSoundGetter, Mutagen.Bethesda.Skyrim.WeatherSound, Mutagen.Bethesda.Skyrim.IWeather, Mutagen.Bethesda.Skyrim.IWeatherGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "MergeMode": "ExactOrdered",
+    "IdentityPolicy": "Zero-based position",
+    "CardinalityPolicy": "Positional sequence",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
     "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
   }

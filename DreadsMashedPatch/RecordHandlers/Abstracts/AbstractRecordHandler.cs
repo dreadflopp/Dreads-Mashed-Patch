@@ -44,6 +44,18 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
             return PropertyForwardingCoordination.None;
         }
 
+        /// <summary>
+        /// Applies a narrowly scoped whole-record policy before the ordinary early-exit,
+        /// priority-mod, and property-forwarding paths. Returning true means the record
+        /// was fully handled, including policies which deliberately emit no override.
+        /// </summary>
+        protected virtual bool TryApplyRecordPolicy(
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state,
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts)
+        {
+            return false;
+        }
+
         private static bool IsLikelyTypeNameString(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -266,6 +278,11 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     Console.WriteLine($"Processing: {winningContext.Record.FormKey} ({winningContext.Record.EditorID})");
                     Console.WriteLine($"Record type: {RecordTypeCatalog.GetRecordDescription(winningContext.Record)}");
 
+                    if (TryApplyRecordPolicy(state, recordContexts))
+                    {
+                        continue;
+                    }
+
                     // some break early checks if the pre-filtering failed
                     if (Utility.IsVanilla(winningContext))
                     {
@@ -352,7 +369,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                                 if (!handler.AreValuesEqual(originalValue, winningValue))
                                 {
                                     propContext.IsResolved = true;
-                                    if (detailedRecord && LoggingSettings.ShouldLogProperty(propName, deepDiveRecord))
+                                    if (detailedRecord)
                                     {
                                         LogCollector.Add(propName, $"[{propName}] {winningContext.Record.FormKey} Resolved, nothing to forward. Original: {FormatForLogWithWarning(propName, handler, originalValue, "quick-check original", deepDiveRecord)}, Winning: {FormatForLogWithWarning(propName, handler, winningValue, "quick-check winning", deepDiveRecord)}");
                                     }
@@ -374,7 +391,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     {
                         var originalValue = handler.GetValue(originalContext.Record);
                         var winningValue = handler.GetValue(winningContext.Record);
-                        if (detailedRecord && LoggingSettings.ShouldLogProperty(propName, deepDiveRecord))
+                        if (detailedRecord)
                         {
                             LogCollector.Add(propName, $"[{propName}] Original: {FormatForLogWithWarning(propName, handler, originalValue, "initial original", deepDiveRecord)}, Winning: {FormatForLogWithWarning(propName, handler, winningValue, "initial winning", deepDiveRecord)}");
                         }
@@ -424,7 +441,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                                 if (propContext.IsResolved) continue;
 
                                 var mod = state.LoadOrder[context.ModKey].Mod;
-                                if (detailedRecord && LoggingSettings.ShouldLogProperty(propName, deepDiveRecord))
+                                if (detailedRecord)
                                 {
                                     LogCollector.Add(propName, $"[{propName}] Processing mod: {context.ModKey} with value: {FormatForLogWithWarning(propName, handler, handler.GetValue(context.Record), "pass1 context value", deepDiveRecord)} with masters: {(mod != null ? string.Join(", ", mod.MasterReferences.Select(m => m.Master.FileName)) : "")}");
                                 }
@@ -442,7 +459,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
 
                             // Mark as resolved if it is processed in pass 1
                             propContext.IsResolved = true;
-                            if (detailedRecord && LoggingSettings.ShouldLogProperty(propName, deepDiveRecord))
+                            if (detailedRecord)
                             {
                                 LogCollector.Add(propName, $"[{propName}] {winningContext.ModKey}: Marked as resolved after pass 1");
                             }
@@ -501,7 +518,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                                 // if the property is not resolved, update the property context
                                 allResolved = false;
                                 var mod = state.LoadOrder[context.ModKey].Mod;
-                                if (detailedRecord && LoggingSettings.ShouldLogProperty(propName, deepDiveRecord))
+                                if (detailedRecord)
                                 {
                                     LogCollector.Add(propName, $"[{propName}] Processing mod: {context.ModKey} with value: {FormatForLogWithWarning(propName, handler, handler.GetValue(context.Record), "pass2 context value", deepDiveRecord)} with masters: {(mod != null ? string.Join(", ", mod.MasterReferences.Select(m => m.Master.FileName)) : "")}");
                                 }
@@ -589,8 +606,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                             unchangedDecisionCount++;
                         }
 
-                        var shouldLogProperty = LoggingSettings.ShouldLogProperty(propertyName, deepDiveRecord);
-                        if (!auditContextChanges || !shouldLogProperty)
+                        if (!auditContextChanges)
                         {
                             continue;
                         }

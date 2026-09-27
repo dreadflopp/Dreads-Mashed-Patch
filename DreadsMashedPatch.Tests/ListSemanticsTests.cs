@@ -52,7 +52,7 @@ public sealed class ListSemanticsTests
     [InlineData(typeof(PlacedObjectRecordHandler), "LinkedReferences", ListSemantics.ExactOrdered)]
     [InlineData(typeof(PlacedNpcRecordHandler), "LinkedReferences", ListSemantics.SortedKeyed)]
     [InlineData(typeof(QuestRecordHandler), "TextDisplayGlobals", ListSemantics.AlignedOrdered)]
-    [InlineData(typeof(WeatherRecordHandler), "Sounds", ListSemantics.SortedKeyed)]
+    [InlineData(typeof(WeatherRecordHandler), "Sounds", ListSemantics.ExactOrdered)]
     [InlineData(typeof(BodyPartDataRecordHandler), "Parts", ListSemantics.SortedKeyed)]
     [InlineData(typeof(NpcRecordHandler), "HeadParts", ListSemantics.SortedKeyed)]
     [InlineData(typeof(NpcRecordHandler), "TintLayers", ListSemantics.SortedKeyed)]
@@ -84,6 +84,18 @@ public sealed class ListSemanticsTests
         Assert.False(handler.AreValuesEqual(
             new List<ILinkedReferencesGetter> { first, second },
             new List<ILinkedReferencesGetter> { second.DeepCopy(), first.DeepCopy() }));
+    }
+
+    [Fact]
+    public void WeatherSoundsWithTheSameTypeRetainPositionalIdentity()
+    {
+        var handler = new WeatherRecordHandler().PropertyHandlers["Sounds"];
+        var first = CreateWeatherSound(0x100);
+        var second = CreateWeatherSound(0x200);
+
+        Assert.False(handler.AreValuesEqual(
+            new List<IWeatherSoundGetter> { first, second },
+            new List<IWeatherSoundGetter> { second.DeepCopy(), first.DeepCopy() }));
     }
 
     [Fact]
@@ -141,6 +153,16 @@ public sealed class ListSemanticsTests
         {
             KeywordOrReference = new FormLink<IKeywordLinkedReferenceGetter>(new FormKey(skyrim, keywordId)),
             Reference = new FormLink<IPlacedGetter>(new FormKey(skyrim, referenceId))
+        };
+    }
+
+    private static WeatherSound CreateWeatherSound(uint soundId)
+    {
+        var dawnguard = ModKey.FromNameAndExtension("Dawnguard.esm");
+        return new WeatherSound
+        {
+            Sound = new FormLink<ISoundGetter>(new FormKey(dawnguard, soundId)),
+            Type = 0
         };
     }
 

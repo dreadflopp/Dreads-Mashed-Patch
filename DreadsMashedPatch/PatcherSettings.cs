@@ -37,6 +37,9 @@ namespace DreadsMashedPatch
 
         public static ProtectionForwardingPolicy ProtectionPolicy => _current.Forwarding.ProtectionPolicy;
 
+        public static TamrielPersistentCellPolicy TamrielPersistentCellPolicy =>
+            _current.Forwarding.TamrielPersistentCellPolicy;
+
         public static void Apply(PatcherConfiguration configuration, IEnumerable<ModKey>? creationClubPlugins = null)
         {
             ArgumentNullException.ThrowIfNull(configuration);

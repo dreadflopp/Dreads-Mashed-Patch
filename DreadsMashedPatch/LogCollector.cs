@@ -90,11 +90,6 @@ namespace DreadsMashedPatch
         {
             lock (_sync)
             {
-                if (_currentDeepDiveRecord && !LoggingSettings.ShouldLogProperty(identifier, deepDiveRecord: true))
-                {
-                    return;
-                }
-
                 AddCore(identifier, line);
             }
         }
@@ -141,12 +136,6 @@ namespace DreadsMashedPatch
 
             // Summary mode + non-deep: suppress ALL handler log lines.
             if (!_currentDetailedRecord && !_currentDeepDiveRecord)
-            {
-                return false;
-            }
-
-            // Deep-dive: optionally narrow to selected properties.
-            if (_currentDeepDiveRecord && !LoggingSettings.ShouldLogProperty(identifier, deepDiveRecord: true))
             {
                 return false;
             }

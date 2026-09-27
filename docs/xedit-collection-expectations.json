@@ -2174,13 +2174,13 @@
         "RecordHandler":  "WeatherRecordHandler",
         "Property":  "Sounds",
         "ReviewStatus":  "Reviewed",
-        "ExpectedRuntimeMode":  "SortedKeyed",
-        "XEditSemantics":  "SortedKeyed",
-        "XEditConstruct":  "wbArrayS/wbRArrayS or audited sorted VMAD collection",
-        "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
-        "Alignability":  "Sorted by xEdit key",
-        "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
-        "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
+        "ExpectedRuntimeMode":  "ExactOrdered",
+        "XEditSemantics":  "ExactOrdered",
+        "XEditConstruct":  "Plain wbRArray of wbStruct(SNAM, 'Sound', ...); no wbRArrayS or StructSK",
+        "IdentityKey":  "Zero-based declaration position; the complete WeatherSound row is atomic",
+        "Alignability":  "Not keyed; rows retain declared order",
+        "CountOrCoupling":  "No separate count or parallel collection; duplicate Type values are valid distinct rows.",
+        "XEditSource":  "XEditSource/Core/wbDefinitionsCommon.pas:9639-9657",
+        "Rationale":  "SetSummaryKeyOnValue configures xEdit display text only. It does not turn the plain wbRArray into a sorted/keyed collection."
     }
 ]

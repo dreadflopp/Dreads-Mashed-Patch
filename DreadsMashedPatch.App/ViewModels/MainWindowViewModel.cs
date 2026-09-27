@@ -12,7 +12,6 @@ public sealed class MainWindowViewModel : BindableBase
     private bool _isRunning;
     private string _deepDiveRecordSignaturesText = string.Empty;
     private string _deepDiveFormKeysText = string.Empty;
-    private string _deepDivePropertiesText = string.Empty;
     private string _ignoredModsText = string.Empty;
     private string _alwaysWinningModsText = string.Empty;
     private string _vanillaWeaponTypeKeywordsText = string.Empty;
@@ -55,6 +54,20 @@ public sealed class MainWindowViewModel : BindableBase
             "Forward each status change normally")
     ];
 
+    public IReadOnlyList<EnumChoice<TamrielPersistentCellPolicy>> TamrielPersistentCellPolicies { get; } =
+    [
+        new(TamrielPersistentCellPolicy.Hybrid,
+            "Patch normally; use Dawnguard if winning equals Skyrim (Recommended)"),
+        new(TamrielPersistentCellPolicy.PreferDawnguard,
+            "Always use Dawnguard.esm state"),
+        new(TamrielPersistentCellPolicy.PreferSkyrim,
+            "Use Skyrim.esm state"),
+        new(TamrielPersistentCellPolicy.KeepWinning,
+            "Keep winning override"),
+        new(TamrielPersistentCellPolicy.StandardForwarding,
+            "Patch normally")
+    ];
+
     public IReadOnlyList<EnumChoice<PatcherLogVerbosity>> LogVerbosityChoices { get; } =
     [
         new(PatcherLogVerbosity.Summary, "Summary only"),
@@ -94,12 +107,6 @@ public sealed class MainWindowViewModel : BindableBase
     {
         get => _deepDiveFormKeysText;
         set => SetProperty(ref _deepDiveFormKeysText, value);
-    }
-
-    public string DeepDivePropertiesText
-    {
-        get => _deepDivePropertiesText;
-        set => SetProperty(ref _deepDivePropertiesText, value);
     }
 
     public string IgnoredModsText
@@ -152,7 +159,6 @@ public sealed class MainWindowViewModel : BindableBase
 
         DeepDiveRecordSignaturesText = JoinLines(settings.Patcher.Diagnostics.DeepDiveRecordSignatures);
         DeepDiveFormKeysText = JoinLines(settings.Patcher.Diagnostics.DeepDiveFormKeys);
-        DeepDivePropertiesText = JoinLines(settings.Patcher.Diagnostics.DeepDiveProperties);
         IgnoredModsText = JoinLines(settings.Patcher.IgnoredMods);
         AlwaysWinningModsText = JoinLinesInOrder(settings.Patcher.AlwaysWinningMods);
         VanillaWeaponTypeKeywordsText = JoinLines(
@@ -173,7 +179,6 @@ public sealed class MainWindowViewModel : BindableBase
             .ToHashSet(StringComparer.Ordinal);
         Settings.Patcher.Diagnostics.DeepDiveRecordSignatures = ParseEntries(DeepDiveRecordSignaturesText);
         Settings.Patcher.Diagnostics.DeepDiveFormKeys = ParseEntries(DeepDiveFormKeysText);
-        Settings.Patcher.Diagnostics.DeepDiveProperties = ParseEntries(DeepDivePropertiesText);
         Settings.Patcher.IgnoredMods = ParseEntries(IgnoredModsText);
         Settings.Patcher.AlwaysWinningMods = ParseOrderedEntries(AlwaysWinningModsText);
         Settings.Patcher.Forwarding.VanillaWeaponTypeKeywords =

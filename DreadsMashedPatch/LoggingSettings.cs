@@ -43,10 +43,6 @@ namespace DreadsMashedPatch
         // Add exact FormKey strings like "050CED:Skyrim.esm".
         public static IReadOnlySet<string> DeepDiveFormKeys => _settings.DeepDiveFormKeys;
 
-        // Add property names like "Responses" or "Conditions".
-        // Empty means all properties for matched deep-dive records.
-        public static IReadOnlySet<string> DeepDiveProperties => _settings.DeepDiveProperties;
-
         public static void Apply(DiagnosticsSettings settings)
         {
             ArgumentNullException.ThrowIfNull(settings);
@@ -100,32 +96,6 @@ namespace DreadsMashedPatch
 
             // Last-resort textual compare for unusual formatting.
             return string.Equals(candidate, recordFormKey.ToString(), StringComparison.OrdinalIgnoreCase);
-        }
-
-        public static bool ShouldLogProperty(string propertyName, bool deepDiveRecord)
-        {
-            if (!deepDiveRecord)
-            {
-                return true;
-            }
-
-            return DeepDiveProperties.Count == 0
-                || DeepDiveProperties.Contains(propertyName)
-                || DeepDiveProperties.Any(selector => MatchesXEditFieldSelector(selector, propertyName));
-        }
-
-        private static bool MatchesXEditFieldSelector(string selector, string propertyName)
-        {
-            return selector.ToUpperInvariant() switch
-            {
-                "EDID" => propertyName.Equals("EditorID", StringComparison.OrdinalIgnoreCase),
-                "FULL" => propertyName.Equals("Name", StringComparison.OrdinalIgnoreCase),
-                "DESC" => propertyName.Equals("Description", StringComparison.OrdinalIgnoreCase),
-                "KWDA" => propertyName.Equals("Keywords", StringComparison.OrdinalIgnoreCase),
-                "VMAD" => propertyName.Equals("VirtualMachineAdapter", StringComparison.OrdinalIgnoreCase),
-                "CTDA" => propertyName.Contains("Condition", StringComparison.OrdinalIgnoreCase),
-                _ => false
-            };
         }
 
         public static string ForLog(string? value, bool deepDiveRecord)

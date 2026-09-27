@@ -376,6 +376,15 @@
                                   SelectedValue="{Binding Settings.Patcher.Forwarding.ProtectionPolicy}"/>
                         <TextBlock Style="{StaticResource HelpText}"
                                    Text="Avoids accidentally making an Essential or Protected NPC vulnerable while still allowing a later mod to change the status deliberately."/>
+
+                        <TextBlock Style="{StaticResource FieldLabel}"
+                                   Text="Tamriel persistent cell (000D74:Skyrim.esm)"/>
+                        <ComboBox ItemsSource="{Binding TamrielPersistentCellPolicies}"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectedValue="{Binding Settings.Patcher.Forwarding.TamrielPersistentCellPolicy}"/>
+                        <TextBlock Style="{StaticResource HelpText}"
+                                   Text="Recommended hybrid: patch normally unless the winning CELL header matches Skyrim.esm, then use Dawnguard.esm instead. Persistent references, landscape, navmeshes, and group metadata are ignored by this comparison and remain untouched."/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -536,15 +545,6 @@
                                      VerticalScrollBarVisibility="Auto"
                                      Text="{Binding DeepDiveFormKeysText, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Style="{StaticResource FieldLabel}"
-                                       Text="Deep-dive properties"/>
-                            <TextBlock Style="{StaticResource HelpText}"
-                                       Text="Optional xEdit field signatures such as EDID, FULL, DESC, KWDA, VMAD, or CTDA. Friendly property names such as Responses are also accepted. Leave empty to inspect every property on matching records."/>
-                            <TextBox Height="72"
-                                     AcceptsReturn="True"
-                                     VerticalContentAlignment="Top"
-                                     VerticalScrollBarVisibility="Auto"
-                                     Text="{Binding DeepDivePropertiesText, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
