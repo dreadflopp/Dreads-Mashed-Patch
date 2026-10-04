@@ -44,15 +44,6 @@ public partial class MainWindow : Window
         {
             var settings = await _settingsStore.LoadAsync();
             _viewModel.Load(settings);
-
-            if (string.IsNullOrWhiteSpace(settings.GameFolderPath)
-                || string.IsNullOrWhiteSpace(settings.DataFolderPath)
-                || string.IsNullOrWhiteSpace(settings.LoadOrderFilePath))
-            {
-                DetectPaths(overwriteExisting: false);
-            }
-
-            _viewModel.StatusText = "Ready";
         }
         catch (Exception ex)
         {
@@ -62,6 +53,34 @@ public partial class MainWindow : Window
                 "Could not load settings",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(_viewModel.Settings.GameFolderPath)
+            || string.IsNullOrWhiteSpace(_viewModel.Settings.DataFolderPath)
+            || string.IsNullOrWhiteSpace(_viewModel.Settings.LoadOrderFilePath))
+        {
+            try
+            {
+                DetectPaths(overwriteExisting: false);
+            }
+            catch (Exception ex)
+            {
+                _viewModel.StatusText = "Select Skyrim paths manually";
+                MessageBox.Show(
+                    $"Automatic path detection failed. Select the game, Data, and plugins.txt paths manually.\n\n{ex.Message}",
+                    "Automatic detection unavailable",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_viewModel.Settings.GameFolderPath)
+            && !string.IsNullOrWhiteSpace(_viewModel.Settings.DataFolderPath)
+            && !string.IsNullOrWhiteSpace(_viewModel.Settings.LoadOrderFilePath))
+        {
+            _viewModel.StatusText = "Ready";
         }
     }
 
@@ -124,7 +143,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            ShowError("The patcher was not started because the portable log could not be created", ex);
+            ShowError("The patcher was not started because the log could not be created", ex);
             return;
         }
 
@@ -180,7 +199,14 @@ public partial class MainWindow : Window
 
     private void OnAutoDetectPaths(object sender, RoutedEventArgs e)
     {
-        DetectPaths(overwriteExisting: true);
+        try
+        {
+            DetectPaths(overwriteExisting: true);
+        }
+        catch (Exception ex)
+        {
+            ShowError("Automatic path detection failed; select the paths manually", ex);
+        }
     }
 
     private void DetectPaths(bool overwriteExisting)
@@ -441,7 +467,7 @@ public partial class MainWindow : Window
         }
 
         if (MessageBox.Show(
-                "This will delete the current patch output, then create one empty patch plugin. Continue?",
+                "This will replace the current patch output with one empty patch plugin. Continue?",
                 "Create empty patch output",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning) != MessageBoxResult.Yes)

@@ -9,9 +9,9 @@ Mashed Patch is a Windows desktop patcher. It is not intended to be added to or 
 3. Choose record families and forwarding policies.
 4. Select **Run patcher**. Settings are saved automatically before the run.
 
-Settings are portable and stored as `settings.json` beside `DreadsMashedPatch.exe`. The **Save settings** button writes the same file without running the patcher. The application folder must therefore be writable.
+Settings are stored in the Windows user-local application data folder (`%LOCALAPPDATA%\DreadsMashedPatch`). In Proton, this is inside the prefix. The **Save settings** button writes settings without running the patcher.
 
-Run output is stored in the `Logs` folder beside the executable. `DreadsMashedPatch-current.log` contains the latest run. At the start of the next run it becomes a timestamped historical log. The configurable retention limit defaults to ten historical logs, and the oldest logs are removed automatically.
+Run output is stored in `%LOCALAPPDATA%\DreadsMashedPatch\Logs`. `DreadsMashedPatch-current.log` contains the latest run. At the start of the next run it becomes a timestamped historical log. The configurable retention limit defaults to ten historical logs, and the oldest logs are removed automatically.
 
 ### Mod Organizer 2
 
@@ -20,6 +20,10 @@ Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. F
 ### Vortex and deployed installations
 
 Run the executable normally after deployment. Confirm that the game folder, Data folder, and `plugins.txt` belong to the active deployment/profile.
+
+### Proton and Amethyst
+
+Launch the Windows executable in Skyrim's Proton prefix, either directly or through Amethyst's external applications feature. Confirm the game folder, deployed Data folder, and active `plugins.txt` manually if automatic detection is incomplete. The patcher writes `MashedPatch.esp` into the selected Data folder; after running it, check how Amethyst captures generated files on restore and redeploy. WPF behavior under Proton has not yet been verified.
 
 ## Record selection
 
@@ -31,7 +35,7 @@ The Run Log tab shows bounded progress, warnings, and errors while the complete 
 
 The game release is selected explicitly and passed to Mutagen/Synthesis. Anniversary Edition uses the corresponding Special Edition Steam or GOG selection. Mutagen requires this value for implicit masters, load-order parsing, and binary defaults. Creation Club listings are read explicitly from `Skyrim.ccc` in the selected game folder, merged with `plugins.txt`, and deduplicated by the Synthesis pipeline.
 
-The primary output name is fixed as `MashedPatch.esp`. If the patch needs more than 254 masters, Synthesis automatically splits it into additional numbered plugins such as `MashedPatch_2.esp`. If the primary output already appears in the selected load order, Synthesis reads only enabled plugins placed before it. If it is absent, Synthesis reads the complete enabled load order. Before a rerun, numbered outputs from the previous run are removed so obsolete split files cannot remain when the new patch uses fewer files.
+The primary output name is fixed as `MashedPatch.esp`. If the patch needs more than 254 masters, Synthesis automatically splits it into additional numbered plugins such as `MashedPatch_2.esp`. If the primary output already appears in the selected load order, Synthesis reads only enabled plugins placed before it. If it is absent, Synthesis reads the complete enabled load order. Each run writes new output into a temporary folder inside Data, then replaces the previous primary and numbered outputs after writing succeeds. A failed patch build leaves the previous output files in place.
 
 Use **Create empty patch output** on the General tab before the first full run when the plugin must be positioned in a mod manager. The action removes the primary and recognized split outputs, then writes one empty, masterless plugin at the stable primary filename.
 
@@ -49,7 +53,7 @@ The **Master Rules** tab supports intentional overwrite relationships that plugi
 
 ## Build and publish
 
-For a clean Release build, test run, and portable publish, run from the repository root:
+On Windows, run the existing launcher from the repository root for a clean Release build, test run, and self-contained publish:
 
 ```bat
 .\Build-Standalone.cmd
@@ -57,12 +61,22 @@ For a clean Release build, test run, and portable publish, run from the reposito
 
 The launcher permits this repository's PowerShell script to run for that process only; it does not change the system execution policy. The script removes only the known generated `bin`/`obj` directories and the canonical `artifacts\DreadsMashedPatch-win-x64` publish directory. It then restores packages, builds the solution, runs the tests, and publishes the current standalone executable.
 
-Build and run tests:
+On Linux, install the .NET 10 SDK and run:
+
+```bash
+bash ./Build-Standalone.sh
+```
+
+The Linux script restores, builds, tests, and publishes the same `win-x64` Windows executable to `artifacts/DreadsMashedPatch-win-x64`. It does not clean `bin` or `obj`. `EnableWindowsTargeting` lets the SDK obtain Windows targeting packs on Linux; it does not make WPF a native Linux UI. Run the published executable through Wine or Proton to test the interface.
+
+Build and run tests on Windows:
 
 ```powershell
 dotnet build "DreadsMashedPatch.sln"
 dotnet test "DreadsMashedPatch.Tests/DreadsMashedPatch.Tests.csproj"
 ```
+
+On Linux, `dotnet test DreadsMashedPatch.Tests/DreadsMashedPatch.Tests.csproj` runs the platform-neutral patcher tests without building the WPF app. `dotnet build DreadsMashedPatch.sln` also compiles the Windows-targeted WPF app when its targeting packs are available.
 
 Publish a self-contained 64-bit Windows executable:
 

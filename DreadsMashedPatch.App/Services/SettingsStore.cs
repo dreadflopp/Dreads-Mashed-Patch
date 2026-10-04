@@ -13,7 +13,9 @@ public sealed class SettingsStore
         Converters = { new JsonStringEnumConverter() }
     };
 
-    public static string SettingsDirectory { get; } = AppContext.BaseDirectory;
+    public static string SettingsDirectory { get; } = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "DreadsMashedPatch");
 
     public static string SettingsPath => Path.Combine(SettingsDirectory, "settings.json");
 
@@ -35,12 +37,23 @@ public sealed class SettingsStore
     {
         ArgumentNullException.ThrowIfNull(settings);
         settings.Normalize();
-        var temporaryPath = SettingsPath + ".tmp";
-        await using (var stream = File.Create(temporaryPath))
+        Directory.CreateDirectory(SettingsDirectory);
+        var temporaryPath = SettingsPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
         {
-            await JsonSerializer.SerializeAsync(stream, settings, JsonOptions);
-        }
+            await using (var stream = File.Create(temporaryPath))
+            {
+                await JsonSerializer.SerializeAsync(stream, settings, JsonOptions);
+            }
 
-        File.Move(temporaryPath, SettingsPath, overwrite: true);
+            File.Move(temporaryPath, SettingsPath, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath))
+            {
+                File.Delete(temporaryPath);
+            }
+        }
     }
 }

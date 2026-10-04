@@ -3,6 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <ImplicitUsings>true</ImplicitUsings>
     <AssemblyName>DreadsMashedPatch</AssemblyName>
     <PackageId>DreadsMashedPatch.Standalone</PackageId>

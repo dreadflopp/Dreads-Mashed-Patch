@@ -7,7 +7,7 @@ public static class LogManager
     private const string CurrentLogName = "DreadsMashedPatch-current.log";
     private const string HistoryPattern = "DreadsMashedPatch-*.log";
 
-    public static string LogsDirectory { get; } = Path.Combine(AppContext.BaseDirectory, "Logs");
+    public static string LogsDirectory { get; } = Path.Combine(SettingsStore.SettingsDirectory, "Logs");
 
     public static LogSession StartRun(int historicalLogsToKeep)
     {
