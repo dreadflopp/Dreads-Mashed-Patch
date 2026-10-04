@@ -58,7 +58,7 @@ public sealed class HeadPartRecordHandlerTests
         new PartsHandler().SetValue(target, overlayParts);
 
         Assert.Equal(
-            ["Meshes\\Actors\\Character\\EyesFemale.tri", "Meshes\\Actors\\Character\\EyesChildChargen.tri"],
+            [Path.Combine("Meshes", "Actors", "Character", "EyesFemale.tri"), Path.Combine("Meshes", "Actors", "Character", "EyesChildChargen.tri")],
             target.Parts.Select(part => part.FileName?.DataRelativePath.ToString()));
 
         using var patchStream = new MemoryStream();
@@ -71,7 +71,7 @@ public sealed class HeadPartRecordHandlerTests
         var writtenParts = Assert.Single(patchOverlay.HeadParts).Parts;
 
         Assert.Equal(
-            ["Meshes\\Actors\\Character\\EyesFemale.tri", "Meshes\\Actors\\Character\\EyesChildChargen.tri"],
+            [Path.Combine("Meshes", "Actors", "Character", "EyesFemale.tri"), Path.Combine("Meshes", "Actors", "Character", "EyesChildChargen.tri")],
             writtenParts.Select(part => part.FileName?.DataRelativePath.ToString()));
     }
 

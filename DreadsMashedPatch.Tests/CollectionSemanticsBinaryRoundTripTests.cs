@@ -127,10 +127,10 @@ public sealed class CollectionSemanticsBinaryRoundTripTests
         using var patchOverlay = SkyrimMod.CreateFromBinaryOverlay(patchStream, SkyrimRelease.SkyrimSE, PatchModKey);
         var written = Assert.Single(patchOverlay.ArmorAddons);
 
-        AssertModel(written.FirstPersonModel!.Male!, "Meshes\\TargetFirstMale.nif", 11, [("Body", 2, 0x201u), ("Body", 7, 0x202u)]);
-        AssertModel(written.FirstPersonModel.Female!, "Meshes\\TargetFirstFemale.nif", 12, [("FemaleBody", 3, 0x203u)]);
-        AssertModel(written.WorldModel!.Male!, "Meshes\\TargetWorldMale.nif", 13, [("MaleWorld", 4, 0x204u)]);
-        AssertModel(written.WorldModel.Female!, "Meshes\\TargetWorldFemale.nif", 14, [("FemaleWorld", 5, 0x205u)]);
+        AssertModel(written.FirstPersonModel!.Male!, Path.Combine("Meshes", "TargetFirstMale.nif"), 11, [("Body", 2, 0x201u), ("Body", 7, 0x202u)]);
+        AssertModel(written.FirstPersonModel.Female!, Path.Combine("Meshes", "TargetFirstFemale.nif"), 12, [("FemaleBody", 3, 0x203u)]);
+        AssertModel(written.WorldModel!.Male!, Path.Combine("Meshes", "TargetWorldMale.nif"), 13, [("MaleWorld", 4, 0x204u)]);
+        AssertModel(written.WorldModel.Female!, Path.Combine("Meshes", "TargetWorldFemale.nif"), 14, [("FemaleWorld", 5, 0x205u)]);
     }
 
     private static BodyPart BodyPart(string partNode, float damageMult, byte healthPercent) => new()

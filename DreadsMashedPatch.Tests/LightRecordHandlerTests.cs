@@ -32,14 +32,14 @@ public sealed class LightRecordHandlerTests
             SkyrimRelease.SkyrimSE,
             SourceModKey);
         var sourceModel = Assert.IsAssignableFrom<IModelGetter>(Assert.Single(sourceOverlay.Lights).Model);
-        Assert.Equal("Meshes\\NAT\\torch.nif", sourceModel.File.ToString(), ignoreCase: true);
+        Assert.Equal(Path.Combine("Meshes", "NAT", "torch.nif"), sourceModel.File.ToString(), ignoreCase: true);
 
         var patch = new SkyrimMod(PatchModKey, SkyrimRelease.SkyrimSE);
         var target = new Light(new FormKey(PatchModKey, 0x801), SkyrimRelease.SkyrimSE);
         patch.Lights.Add(target);
         new ModelHandler().SetValue(target, sourceModel);
 
-        Assert.Equal("Meshes\\NAT\\torch.nif", target.Model!.File.ToString(), ignoreCase: true);
+        Assert.Equal(Path.Combine("Meshes", "NAT", "torch.nif"), target.Model!.File.ToString(), ignoreCase: true);
 
         using var patchStream = new MemoryStream();
         patch.WriteToBinary(patchStream);

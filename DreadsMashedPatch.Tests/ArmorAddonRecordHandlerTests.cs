@@ -51,8 +51,8 @@ public sealed class ArmorAddonRecordHandlerTests
             armorAddon,
             handlers["FirstPersonModel.Female.AlternateTextures"].GetValue(source));
 
-        Assert.Equal("Meshes\\Armor\\MaleOriginal.nif", armorAddon.FirstPersonModel!.Male!.File.DataRelativePath.ToString());
-        Assert.Equal("Meshes\\Armor\\FemaleForwarded.nif", armorAddon.FirstPersonModel.Female!.File.DataRelativePath.ToString());
+        Assert.Equal(Path.Combine("Meshes", "Armor", "MaleOriginal.nif"), armorAddon.FirstPersonModel!.Male!.File.DataRelativePath.ToString());
+        Assert.Equal(Path.Combine("Meshes", "Armor", "FemaleForwarded.nif"), armorAddon.FirstPersonModel.Female!.File.DataRelativePath.ToString());
         Assert.Equal(1, armorAddon.FirstPersonModel.Male.AlternateTextures![0].Index);
         Assert.Equal(3, armorAddon.FirstPersonModel.Female.AlternateTextures![0].Index);
         Assert.Equal(new byte[] { 3 }, armorAddon.FirstPersonModel.Female.Data!.Value.ToArray());
@@ -151,7 +151,7 @@ public sealed class ArmorAddonRecordHandlerTests
 
         handler.SetValue(armorAddon, handler.GetValue(source));
 
-        Assert.Equal("Meshes\\Armor\\WinningFemale.nif", armorAddon.FirstPersonModel!.Female!.File.DataRelativePath.ToString());
+        Assert.Equal(Path.Combine("Meshes", "Armor", "WinningFemale.nif"), armorAddon.FirstPersonModel!.Female!.File.DataRelativePath.ToString());
         Assert.Equal(new byte[] { 4, 5, 6 }, armorAddon.FirstPersonModel.Female.Data!.Value.ToArray());
         Assert.Equal(12, armorAddon.FirstPersonModel.Female.AlternateTextures![0].Index);
     }
@@ -173,10 +173,10 @@ public sealed class ArmorAddonRecordHandlerTests
             armorAddon,
             handlers["WorldModel.Male.AlternateTextures"].GetValue(source));
 
-        Assert.Equal("Meshes\\Armor\\WinningMaleWorld.nif", armorAddon.WorldModel!.Male!.File.DataRelativePath.ToString());
+        Assert.Equal(Path.Combine("Meshes", "Armor", "WinningMaleWorld.nif"), armorAddon.WorldModel!.Male!.File.DataRelativePath.ToString());
         Assert.Equal(new byte[] { 4 }, armorAddon.WorldModel.Male.Data!.Value.ToArray());
         Assert.Equal(14, armorAddon.WorldModel.Male.AlternateTextures![0].Index);
-        Assert.Equal("Meshes\\Armor\\FemaleWorld.nif", armorAddon.WorldModel.Female!.File.DataRelativePath.ToString());
+        Assert.Equal(Path.Combine("Meshes", "Armor", "FemaleWorld.nif"), armorAddon.WorldModel.Female!.File.DataRelativePath.ToString());
     }
 
     [Fact]
