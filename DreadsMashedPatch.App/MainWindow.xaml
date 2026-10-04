@@ -164,35 +164,20 @@
                                            Margin="0,0,0,5"/>
                                 <TextBlock TextWrapping="Wrap"
                                            Margin="0,1">
-                                    <Run FontWeight="SemiBold" Text="DIAL — Dialog Topic:"/>
-                                    <Run Text=" Quest and branch links participate in a coupled dialogue graph and are unsafe to merge independently."/>
+                                    <Run FontWeight="SemiBold" Text="Dialogue records (DIAL, DLBR, INFO, DLVW):"/>
+                                    <Run Text=" These records depend on one another, and mixing parts from different mods can break conversations."/>
                                 </TextBlock>
                                 <TextBlock TextWrapping="Wrap"
                                            Margin="0,1">
-                                    <Run FontWeight="SemiBold" Text="DLBR — Dialog Branch:"/>
-                                    <Run Text=" The quest, flags, and starting topic jointly define branch routing and should remain authored together."/>
+                                    <Run FontWeight="SemiBold" Text="Navigation meshes (NAVM):"/>
+                                    <Run Text=" These records control where characters can walk. Mixing data from different mods can create broken paths."/>
                                 </TextBlock>
                                 <TextBlock TextWrapping="Wrap"
                                            Margin="0,1">
-                                    <Run FontWeight="SemiBold" Text="INFO — Dialog Response:"/>
-                                    <Run Text=" Topic links, response chains, conditions, scripts, and response text can become inconsistent when forwarded separately."/>
+                                    <Run FontWeight="SemiBold" Text="Packages (PACK):"/>
+                                    <Run Text=" A Mutagen bug can rearrange package data when the patch is written. Leave this disabled until the bug is fixed."/>
                                 </TextBlock>
-                                <TextBlock TextWrapping="Wrap"
-                                           Margin="0,1">
-                                    <Run FontWeight="SemiBold" Text="DLVW — Dialog View:"/>
-                                    <Run Text=" Its quest, branch list, and topic list describe the same dialogue layout and must stay synchronized."/>
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap"
-                                           Margin="0,1">
-                                    <Run FontWeight="SemiBold" Text="NAVM — Navigation Mesh:"/>
-                                    <Run Text=" Connector arrays contain indexes into the navmesh geometry; mixing sources can point them at the wrong vertices."/>
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap"
-                                           Margin="0,1">
-                                    <Run FontWeight="SemiBold" Text="PACK — Package:"/>
-                                    <Run Text=" Its indexed data and procedure tree must move together, but the current Mutagen writer reorders that data."/>
-                                </TextBlock>
-                                <TextBlock Text="These families remain available as advanced opt-ins. Review their generated overrides in xEdit when enabling them."
+                                <TextBlock Text="You can still enable these record types, but check the resulting overrides in xEdit."
                                            TextWrapping="Wrap"
                                            FontStyle="Italic"
                                            Margin="0,6,0,0"/>
@@ -279,7 +264,7 @@
                         <TextBlock Style="{StaticResource SectionTitle}"
                                    Text="Mods that always win"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="When a listed plugin edits a record but is not the winning override, the patch copies that plugin's entire record unchanged. If multiple listed plugins edit the same record, the last of those plugins in this list wins. Nothing is forwarded when the selected plugin already wins."/>
+                                   Text="When a listed plugin edits a record but is not the winning override, the patch copies that plugin's entire record unchanged. If multiple listed plugins edit the same record, the last of those plugins in this list wins."/>
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Plugin filenames"/>
                         <TextBlock Style="{StaticResource HelpText}"
@@ -291,8 +276,6 @@
                                  VerticalContentAlignment="Top"
                                  VerticalScrollBarVisibility="Auto"
                                  FontFamily="Consolas"/>
-                        <TextBlock Style="{StaticResource HelpText}"
-                                   Text="A plugin cannot also appear under Ignored Mods. The patcher rejects that contradictory configuration before a run."/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -315,10 +298,7 @@
                                  AcceptsReturn="True"
                                  VerticalContentAlignment="Top"
                                  VerticalScrollBarVisibility="Auto"
-                                 Text="{Binding IgnoredModsText, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Enter one complete plugin filename per line."/>
-                        <TextBlock Style="{StaticResource HelpText}"
-                                   Text="A plugin cannot also appear under Priority Mods. The patcher rejects that contradictory configuration before a run."/>
+                                 Text="{Binding IgnoredModsText, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -384,7 +364,7 @@
                                   SelectedValuePath="Value"
                                   SelectedValue="{Binding Settings.Patcher.Forwarding.TamrielPersistentCellPolicy}"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Recommended hybrid: patch normally unless the winning CELL header matches Skyrim.esm, then use Dawnguard.esm instead. Persistent references, landscape, navmeshes, and group metadata are ignored by this comparison and remain untouched."/>
+                                   Text="Recommended hybrid: patch normally unless the winning CELL header matches Skyrim.esm, then use Dawnguard.esm instead."/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -398,9 +378,9 @@
                     </Grid.RowDefinitions>
                     <StackPanel Margin="0,0,0,10">
                         <TextBlock Style="{StaticResource SectionTitle}"
-                                   Text="Treat plugins as declared masters"/>
+                                   Text="Virtual master rules"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="A mod is normally allowed to revert another plugin's changes only when that plugin is one of its declared masters. Add a rule to grant the same permission when the relationship is missing from the mod's header. No plugin files are modified."/>
+                                   Text="A mod is normally allowed to revert another plugin's changes only when that plugin is one of its declared masters. Select or add a mod, then list the additional plugins it should treat as masters during forwarding. No plugin files are modified."/>
                     </StackPanel>
 
                     <Border Grid.Row="1"
@@ -427,7 +407,7 @@
                                            Text="Default master rules"/>
                                 <TextBlock Style="{StaticResource HelpText}"
                                            Margin="0,3,0,0"
-                                           Text="Import replaces the current list. Export saves only these master rules as portable JSON. New settings include curated rules that can be restored after editing or removing them."/>
+                                           Text="Import replaces the current list. Export saves the master rules as a portable file. Default settings include curated rules."/>
                             </StackPanel>
                         </DockPanel>
                     </Border>
@@ -462,22 +442,22 @@
                                 Padding="14">
                             <StackPanel DataContext="{Binding SelectedCompatibilityRule}">
                                 <TextBlock Style="{StaticResource FieldLabel}"
-                                           Text="Plugin to treat as a master"/>
-                                <TextBox Text="{Binding InjectedMaster, UpdateSourceTrigger=PropertyChanged}"
-                                         ToolTip="For example: Unofficial Skyrim Special Edition Patch.esp"/>
+                                           Text="Mod"/>
+                                <TextBox Text="{Binding TargetMod, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="For example: Lux.esp"/>
                                 <TextBlock Style="{StaticResource HelpText}"
                                            Text="Use the complete plugin filename, including .esm, .esp, or .esl."/>
 
                                  <TextBlock Style="{StaticResource FieldLabel}"
-                                           Text="Mods that should treat this plugin as a master"/>
+                                           Text="Additional virtual masters for this mod"/>
                                 <TextBox Height="230"
                                          AcceptsReturn="True"
                                          VerticalContentAlignment="Top"
                                          VerticalScrollBarVisibility="Auto"
-                                         Text="{Binding TargetModsText, UpdateSourceTrigger=PropertyChanged}"
+                                         Text="{Binding VirtualMastersText, UpdateSourceTrigger=PropertyChanged}"
                                          ToolTip="Enter one complete plugin filename per line."/>
                                 <TextBlock Style="{StaticResource HelpText}"
-                                           Text="Enter one complete plugin filename per line. These mods may intentionally restore values that the master plugin changed. A rule with no target mods has no effect."/>
+                                           Text="Enter one complete plugin filename per line. This mod may intentionally restore values changed by these plugins. A rule with no virtual masters has no effect."/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -492,7 +472,7 @@
                         <TextBlock Style="{StaticResource SectionTitle}"
                                    Text="Logging and deep-dive diagnostics"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Warnings and run progress are always shown. Debug mode adds property-level decisions and optional deep-dive logging, and can produce very large log files. Use deep dives to limit detailed logging to specific records or record families."/>
+                                   Text="Warnings and run progress are always shown. Debug mode adds property-level decisions and optional deep-dive logging. Use deep dives for more detail about specific records or record families. Logging an entire family can create very large log files."/>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Historical logs to keep"/>
@@ -516,8 +496,6 @@
                                       DisplayMemberPath="DisplayName"
                                       SelectedValuePath="Value"
                                       SelectedValue="{Binding Settings.Patcher.Diagnostics.Verbosity}"/>
-                            <CheckBox Content="Print enabled record types at startup"
-                                      IsChecked="{Binding Settings.Patcher.Diagnostics.EnableStartupDiagnostics}"/>
 
                             <TextBlock Style="{StaticResource FieldLabel}"
                                        Text="Maximum value preview length"/>

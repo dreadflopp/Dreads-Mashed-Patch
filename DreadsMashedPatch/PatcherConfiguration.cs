@@ -46,163 +46,85 @@ public sealed class PatcherConfiguration
 
     public static List<VirtualMasterRule> CreateDefaultCompatibilityRules() =>
     [
-        new VirtualMasterRule
-        {
-            InjectedMaster = "Unofficial Skyrim Special Edition Patch.esp",
-            TargetMods =
-            [
-                "imp_helm_legend.esp",
-                "Navigator-NavFixes.esl",
-                "SurvivalModeImproved.esp",
-                "King-Priest.esp",
-                "Window Shadows Ultimate.esp",
-                "Dawnguard HQ.esp",
-                "DawnguardArsenal.esp",
-                "Lux.esp",
-                "Lux Orbis.esp",
-                "Lux - Great Village of Shor's Stone patch.esp",
-                "CS Light.esp",
-                "Gourmet.esp",
-                "Reliquary of Myth.esp",
-                "CraftingRevamped.esp",
-                "BBNoKillmoves.esp",
-                "Simple Better Civil War Soldiers.esp",
-                "AI Overhaul.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "Unofficial Skyrim Creation Club Content Patch.esl",
-            TargetMods =
-            [
-                "Creation Club Rebalancing.esp",
-                "Masterwork - Bittercup.esp",
-                "Masterwork - Chrysamere.esp",
-                "Masterwork - Civil War Champions.esp",
-                "Masterwork - Dawnfang.esp",
-                "Masterwork - Dead Man's Dread.esp",
-                "Masterwork - Fishing.esp",
-                "Masterwork - Forgotten Seasons.esp",
-                "Masterwork - Gallows Hall - Tweaks and Enhancements.esp",
-                "Masterwork - Gallows Hall.esp",
-                "Masterwork - Ghosts of the Tribunal - Reduced Cut.esp",
-                "Masterwork - Ghosts of the Tribunal.esp",
-                "Masterwork - Goldbrand.esp",
-                "Masterwork - Ruin's Edge.esp",
-                "Masterwork - Saints and Seducers.esp",
-                "Masterwork - Shadowrend.esp",
-                "Masterwork - Spell Knight Armor.esp",
-                "Masterwork - Stendarr's Hammer.esp",
-                "Masterwork - Sunder and Wraithguard.esp",
-                "Masterwork - The Arms of Chaos.esp",
-                "Masterwork - The Boots of Blinding Speed.esp",
-                "Masterwork - The Bow of Shadows.esp",
-                "Masterwork - The Cause.esp",
-                "Masterwork - The Contest.esp",
-                "Masterwork - The Crusader's Relics - Knight of the North.esp",
-                "Masterwork - The Crusader's Relics.esp",
-                "Masterwork - The Dragonbone Mail.esp",
-                "Masterwork - The Gray Cowl.esp",
-                "Masterwork - The Headman's Cleaver.esp",
-                "Masterwork - The Lord's Mail.esp",
-                "Masterwork - The Staff of Hasedoki.esp",
-                "Masterwork - The Staff of Sheogorath - ECSS.esp",
-                "Masterwork - The Staff of Sheogorath.esp",
-                "Masterwork - Umbra.esp",
-                "Starfrost.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "cutting room floor.esp",
-            TargetMods =
-            [
-                "Simple Better Civil War Soldiers.esp",
-                "MadMen.esp"
-            ]
-        },
-         new VirtualMasterRule
-        {
-            InjectedMaster = "Apothecary.esp",
-            TargetMods =
-            [
-                "StarfrostInjuries.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "BSHeartland - Unofficial Fixes.esp",
-            TargetMods =
-            [
-                "BS Bruma - CC Curios Patch.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "Embers XD.esp",
-            TargetMods = 
-            [
-                "Lux.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "BladeAndBlunt.esp",
-            TargetMods =
-            [
-                "MadMen.esp",
-                "BBNoKillmoves.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "ccQDRSSE001-SurvivalMode.esl",
-            TargetMods =
-            [
-                "Gourmet.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "NAT-ENB.esp",
-            TargetMods =
-            [
-              "Lux.esp"  
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "Lux.esp",
-            TargetMods =
-            [
-              "Lux Orbis.esp"  
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "Simple Better Civil War Soldiers.esp",
-            TargetMods =
-            [
-                "Civil War Overhaul.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "Audio Overhaul Skyrim.esp",
-            TargetMods =
-            [                
-                "Immersive Sounds - Compendium.esp"
-            ]
-        },
-        new VirtualMasterRule
-        {
-            InjectedMaster = "Nature of the Wild Lands.esp",
-            TargetMods = 
-            [
-                "Aspens Ablaze.esp"
-            ]
-        }
+        Rule("imp_helm_legend.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("Navigator-NavFixes.esl", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("SurvivalModeImproved.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("King-Priest.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("Window Shadows Ultimate.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("Dawnguard HQ.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("DawnguardArsenal.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("Lux.esp",
+            "Unofficial Skyrim Special Edition Patch.esp",
+            "Embers XD.esp",
+            "NAT-ENB.esp"),
+        Rule("Lux Orbis.esp",
+            "Unofficial Skyrim Special Edition Patch.esp",
+            "Lux.esp"),
+        Rule("Lux - Great Village of Shor's Stone patch.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("CS Light.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("Gourmet.esp",
+            "Unofficial Skyrim Special Edition Patch.esp",
+            "ccQDRSSE001-SurvivalMode.esl",
+            "SurvivalModeImproved.esp"),
+        Rule("Reliquary of Myth.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("CraftingRevamped.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("BBNoKillmoves.esp",
+            "Unofficial Skyrim Special Edition Patch.esp",
+            "BladeAndBlunt.esp"),
+        Rule("Simple Better Civil War Soldiers.esp",
+            "Unofficial Skyrim Special Edition Patch.esp",
+            "cutting room floor.esp"),
+        Rule("AI Overhaul.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+
+        Rule("Creation Club Rebalancing.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Bittercup.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Chrysamere.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Civil War Champions.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Dawnfang.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Dead Man's Dread.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Fishing.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Forgotten Seasons.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Gallows Hall - Tweaks and Enhancements.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Gallows Hall.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Ghosts of the Tribunal - Reduced Cut.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Ghosts of the Tribunal.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Goldbrand.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Ruin's Edge.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Saints and Seducers.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Shadowrend.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Spell Knight Armor.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Stendarr's Hammer.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Sunder and Wraithguard.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Arms of Chaos.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Boots of Blinding Speed.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Bow of Shadows.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Cause.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Contest.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Crusader's Relics - Knight of the North.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Crusader's Relics.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Dragonbone Mail.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Gray Cowl.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Headman's Cleaver.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Lord's Mail.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Staff of Hasedoki.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Staff of Sheogorath - ECSS.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - The Staff of Sheogorath.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Masterwork - Umbra.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+        Rule("Starfrost.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
+
+        Rule("MadMen.esp", "cutting room floor.esp", "BladeAndBlunt.esp"),
+        Rule("StarfrostInjuries.esp", "Apothecary.esp"),
+        Rule("BS Bruma - CC Curios Patch.esp", "BSHeartland - Unofficial Fixes.esp"),
+        Rule("Civil War Overhaul.esp", "Simple Better Civil War Soldiers.esp"),
+        Rule("Immersive Sounds - Compendium.esp", "Audio Overhaul Skyrim.esp"),
+        Rule("Aspens Ablaze.esp", "Nature of the Wild Lands.esp")
     ];
+
+    private static VirtualMasterRule Rule(string targetMod, params string[] virtualMasters) => new()
+    {
+        TargetMod = targetMod,
+        VirtualMasters = new HashSet<string>(virtualMasters, StringComparer.OrdinalIgnoreCase)
+    };
 
     public void Normalize()
     {
@@ -210,10 +132,7 @@ public sealed class PatcherConfiguration
         Forwarding.Normalize();
         Diagnostics ??= new DiagnosticsSettings();
         Diagnostics.Normalize();
-        CompatibilityRules = (CompatibilityRules ?? [])
-            .Where(rule => rule is not null)
-            .Select(rule => rule.Normalize())
-            .ToList();
+        CompatibilityRules = NormalizeCompatibilityRules(CompatibilityRules);
 
         DisabledRecordTypes = new HashSet<string>(
             (DisabledRecordTypes ?? []).Where(x => !string.IsNullOrWhiteSpace(x)),
@@ -253,27 +172,54 @@ public sealed class PatcherConfiguration
             CompatibilityRules = CompatibilityRules.Select(rule => rule.Copy()).ToList()
         };
     }
+
+    private static List<VirtualMasterRule> NormalizeCompatibilityRules(
+        IEnumerable<VirtualMasterRule>? rules)
+    {
+        var normalized = new List<VirtualMasterRule>();
+        var ruleIndexes = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var rule in rules ?? [])
+        {
+            if (rule is null)
+            {
+                continue;
+            }
+
+            rule.Normalize();
+            if (ruleIndexes.TryGetValue(rule.TargetMod, out var existingIndex))
+            {
+                normalized[existingIndex].VirtualMasters.UnionWith(rule.VirtualMasters);
+                continue;
+            }
+
+            ruleIndexes[rule.TargetMod] = normalized.Count;
+            normalized.Add(rule);
+        }
+
+        return normalized;
+    }
 }
 
 public sealed class VirtualMasterRule
 {
-    public string InjectedMaster { get; set; } = string.Empty;
+    public string TargetMod { get; set; } = string.Empty;
 
-    public HashSet<string> TargetMods { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+    public HashSet<string> VirtualMasters { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public VirtualMasterRule Normalize()
     {
-        InjectedMaster = InjectedMaster?.Trim() ?? string.Empty;
-        TargetMods = new HashSet<string>(
-            (TargetMods ?? []).Select(name => name.Trim()).Where(name => name.Length > 0),
+        TargetMod = TargetMod?.Trim() ?? string.Empty;
+        VirtualMasters = new HashSet<string>(
+            (VirtualMasters ?? []).Select(name => name.Trim()).Where(name => name.Length > 0),
             StringComparer.OrdinalIgnoreCase);
         return this;
     }
 
     public VirtualMasterRule Copy() => new()
     {
-        InjectedMaster = InjectedMaster,
-        TargetMods = new HashSet<string>(TargetMods, StringComparer.OrdinalIgnoreCase)
+        TargetMod = TargetMod,
+        VirtualMasters = new HashSet<string>(VirtualMasters, StringComparer.OrdinalIgnoreCase)
     };
 }
 
@@ -329,8 +275,6 @@ public sealed class DiagnosticsSettings
 
     public PatcherLogVerbosity Verbosity { get; set; } = PatcherLogVerbosity.ContextChanges;
 
-    public bool EnableStartupDiagnostics { get; set; }
-
     public bool IncludeNoChangeDecisionsInDetailed { get; set; } = true;
 
     public int MaxValuePreviewLength { get; set; } = 240;
@@ -353,7 +297,6 @@ public sealed class DiagnosticsSettings
         {
             DebugMode = DebugMode,
             Verbosity = Verbosity,
-            EnableStartupDiagnostics = EnableStartupDiagnostics,
             IncludeNoChangeDecisionsInDetailed = IncludeNoChangeDecisionsInDetailed,
             MaxValuePreviewLength = MaxValuePreviewLength,
             DeepDiveRecordSignatures = new HashSet<string>(DeepDiveRecordSignatures, StringComparer.OrdinalIgnoreCase),

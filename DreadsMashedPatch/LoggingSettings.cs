@@ -28,9 +28,6 @@ namespace DreadsMashedPatch
         public static PatcherLogVerbosity Verbosity =>
             _settings.DebugMode ? _settings.Verbosity : PatcherLogVerbosity.Summary;
 
-        public static bool EnableStartupDiagnostics =>
-            _settings.DebugMode && _settings.EnableStartupDiagnostics;
-
         public static bool IncludeNoChangeDecisionsInDetailed =>
             _settings.DebugMode && _settings.IncludeNoChangeDecisionsInDetailed;
 

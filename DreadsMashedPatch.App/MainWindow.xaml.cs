@@ -653,16 +653,16 @@ public partial class MainWindow : Window
         for (var index = 0; index < rules.Count; index++)
         {
             var rule = rules[index];
-            if (!ModKey.TryFromFileName(rule.InjectedMaster, out _))
+            if (!ModKey.TryFromFileName(rule.TargetMod, out _))
             {
-                error = $"Master rule {index + 1} has an invalid filename for the plugin to treat as a master.";
+                error = $"Master rule {index + 1} has an invalid target mod filename.";
                 return false;
             }
 
-            var invalidTarget = rule.TargetMods.FirstOrDefault(target => !ModKey.TryFromFileName(target, out _));
-            if (invalidTarget is not null)
+            var invalidMaster = rule.VirtualMasters.FirstOrDefault(master => !ModKey.TryFromFileName(master, out _));
+            if (invalidMaster is not null)
             {
-                error = $"Master rule {index + 1} has an invalid target plugin filename: {invalidTarget}";
+                error = $"Master rule {index + 1} has an invalid virtual master filename: {invalidMaster}";
                 return false;
             }
         }

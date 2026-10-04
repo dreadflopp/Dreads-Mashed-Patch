@@ -303,7 +303,7 @@ namespace DreadsMashedPatch
                 $"{(vanillaBaseline.IncludesCreationClub ? "included" : "treated as mods")}");
             Console.WriteLine($"Editor ID policy: {PatcherSettings.EditorIdPolicy}");
             Console.WriteLine(
-                $"Master rules: {PatcherSettings.CompatibilityRuleCount} rules for " +
+                $"Master rules: {PatcherSettings.VirtualMasterRelationshipCount} relationships for " +
                 $"{PatcherSettings.CompatibilityTargetCount} target plugins");
             Console.WriteLine($"Ignored plugins: {PatcherSettings.IgnoredModCount}");
             Console.WriteLine($"Always-win plugins: {PatcherSettings.AlwaysWinningModCount}");
@@ -312,7 +312,7 @@ namespace DreadsMashedPatch
                 .ToArray();
             Console.WriteLine($"Processing {enabledRecordTypes.Length} of {SupportedRecordTypes.Length} record types");
 
-            if (LoggingSettings.EnableStartupDiagnostics)
+            if (LoggingSettings.DebugMode)
             {
                 Console.WriteLine("Enabled record types:");
                 foreach (var enabledRecordType in enabledRecordTypes)

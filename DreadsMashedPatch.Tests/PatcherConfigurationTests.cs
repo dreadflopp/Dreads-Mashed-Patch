@@ -39,23 +39,41 @@ public sealed class PatcherConfigurationTests
             settings.Forwarding.TamrielPersistentCellPolicy);
         Assert.False(settings.Diagnostics.DebugMode);
         Assert.Equal(PatcherLogVerbosity.ContextChanges, settings.Diagnostics.Verbosity);
+        Assert.Equal(58, settings.CompatibilityRules.Count);
+        Assert.Equal(66, settings.CompatibilityRules.Sum(rule => rule.VirtualMasters.Count));
         var compatibilityRules = settings.CompatibilityRules.ToDictionary(
-            rule => rule.InjectedMaster,
+            rule => rule.TargetMod,
             StringComparer.OrdinalIgnoreCase);
-        var ussepRule = compatibilityRules["Unofficial Skyrim Special Edition Patch.esp"];
-        Assert.DoesNotContain("Unofficial Skyrim Creation Club Content Patch.esl", ussepRule.TargetMods);
+        var luxRule = compatibilityRules["Lux.esp"];
+        Assert.Equal(
+            new[]
+            {
+                "Embers XD.esp",
+                "NAT-ENB.esp",
+                "Unofficial Skyrim Special Edition Patch.esp"
+            },
+            luxRule.VirtualMasters.Order(StringComparer.OrdinalIgnoreCase));
+        Assert.Contains(
+            "SurvivalModeImproved.esp",
+            compatibilityRules["Gourmet.esp"].VirtualMasters);
 
-        var creationClubPatchRule =
-            compatibilityRules["Unofficial Skyrim Creation Club Content Patch.esl"];
-        Assert.Contains("Creation Club Rebalancing.esp", creationClubPatchRule.TargetMods);
-        Assert.Contains("Masterwork - Bittercup.esp", creationClubPatchRule.TargetMods);
-        Assert.Contains("Masterwork - Umbra.esp", creationClubPatchRule.TargetMods);
+        Assert.Contains(
+            "Unofficial Skyrim Creation Club Content Patch.esl",
+            compatibilityRules["Creation Club Rebalancing.esp"].VirtualMasters);
+        Assert.Contains(
+            "Unofficial Skyrim Creation Club Content Patch.esl",
+            compatibilityRules["Masterwork - Bittercup.esp"].VirtualMasters);
+        Assert.Contains(
+            "Unofficial Skyrim Creation Club Content Patch.esl",
+            compatibilityRules["Masterwork - Umbra.esp"].VirtualMasters);
 
-        var apothecaryRule = compatibilityRules["Apothecary.esp"];
-        Assert.Contains("StarfrostInjuries.esp", apothecaryRule.TargetMods);
+        Assert.Contains(
+            "Apothecary.esp",
+            compatibilityRules["StarfrostInjuries.esp"].VirtualMasters);
 
-        var brumaUnofficialFixesRule = compatibilityRules["BSHeartland - Unofficial Fixes.esp"];
-        Assert.Contains("BS Bruma - CC Curios Patch.esp", brumaUnofficialFixesRule.TargetMods);
+        Assert.Contains(
+            "BSHeartland - Unofficial Fixes.esp",
+            compatibilityRules["BS Bruma - CC Curios Patch.esp"].VirtualMasters);
     }
 
     [Fact]
@@ -66,10 +84,39 @@ public sealed class PatcherConfigurationTests
 
         foreach (var rule in first.CompatibilityRules)
         {
-            rule.TargetMods.Clear();
+            rule.VirtualMasters.Clear();
         }
 
-        Assert.All(second.CompatibilityRules, rule => Assert.NotEmpty(rule.TargetMods));
+        Assert.All(second.CompatibilityRules, rule => Assert.NotEmpty(rule.VirtualMasters));
+    }
+
+    [Fact]
+    public void NormalizeCombinesDuplicateTargetRules()
+    {
+        var settings = new PatcherConfiguration
+        {
+            CompatibilityRules =
+            [
+                new VirtualMasterRule
+                {
+                    TargetMod = " Target.esp ",
+                    VirtualMasters = ["First.esp"]
+                },
+                new VirtualMasterRule
+                {
+                    TargetMod = "target.esp",
+                    VirtualMasters = ["Second.esp", "FIRST.esp"]
+                }
+            ]
+        };
+
+        settings.Normalize();
+
+        var rule = Assert.Single(settings.CompatibilityRules);
+        Assert.Equal("Target.esp", rule.TargetMod);
+        Assert.Equal(2, rule.VirtualMasters.Count);
+        Assert.Contains("First.esp", rule.VirtualMasters);
+        Assert.Contains("Second.esp", rule.VirtualMasters);
     }
 
     [Fact]

@@ -45,8 +45,8 @@ public sealed class VirtualMasterRuleTests
             [
                 new VirtualMasterRule
                 {
-                    InjectedMaster = unofficialPatch.FileName.String,
-                    TargetMods = [simonMod.FileName.String]
+                    TargetMod = simonMod.FileName.String,
+                    VirtualMasters = [unofficialPatch.FileName.String]
                 }
             ]
         };
@@ -80,8 +80,8 @@ public sealed class VirtualMasterRuleTests
             [
                 new VirtualMasterRule
                 {
-                    InjectedMaster = unofficialPatch.FileName.String,
-                    TargetMods = [adamant.FileName.String]
+                    TargetMod = adamant.FileName.String,
+                    VirtualMasters = [unofficialPatch.FileName.String]
                 }
             ]
         };

@@ -137,7 +137,6 @@ public sealed class MainWindowViewModel : BindableBase
 
         Settings = settings;
         RecordTypes.Clear();
-        CompatibilityRules.Clear();
 
         var groupedTypes = Program.SupportedRecordTypes
             .GroupBy(RecordTypeCatalog.GetSignature)
@@ -163,11 +162,7 @@ public sealed class MainWindowViewModel : BindableBase
         AlwaysWinningModsText = JoinLinesInOrder(settings.Patcher.AlwaysWinningMods);
         VanillaWeaponTypeKeywordsText = JoinLines(
             settings.Patcher.Forwarding.VanillaWeaponTypeKeywords);
-        foreach (var rule in settings.Patcher.CompatibilityRules)
-        {
-            CompatibilityRules.Add(new VirtualMasterRuleViewModel(rule));
-        }
-        SelectedCompatibilityRule = CompatibilityRules.FirstOrDefault();
+        ReplaceCompatibilityRules(settings.Patcher.CompatibilityRules);
         NotifyRecordCounts();
     }
 
@@ -194,10 +189,23 @@ public sealed class MainWindowViewModel : BindableBase
     {
         ArgumentNullException.ThrowIfNull(rules);
 
+        foreach (var existingRule in CompatibilityRules)
+        {
+            existingRule.PropertyChanged -= OnCompatibilityRulePropertyChanged;
+        }
+
         CompatibilityRules.Clear();
         foreach (var rule in rules)
         {
-            CompatibilityRules.Add(new VirtualMasterRuleViewModel(rule.Copy().Normalize()));
+            var ruleViewModel = new VirtualMasterRuleViewModel(rule.Copy().Normalize());
+            var existingRule = FindRuleByTarget(ruleViewModel.TargetMod);
+            if (existingRule is not null)
+            {
+                existingRule.MergeVirtualMastersFrom(ruleViewModel);
+                continue;
+            }
+
+            AddRuleViewModel(ruleViewModel);
         }
 
         SelectedCompatibilityRule = CompatibilityRules.FirstOrDefault();
@@ -206,7 +214,7 @@ public sealed class MainWindowViewModel : BindableBase
     public void AddCompatibilityRule()
     {
         var rule = new VirtualMasterRuleViewModel(new VirtualMasterRule());
-        CompatibilityRules.Add(rule);
+        AddRuleViewModel(rule);
         SelectedCompatibilityRule = rule;
     }
 
@@ -223,6 +231,7 @@ public sealed class MainWindowViewModel : BindableBase
         }
 
         var index = CompatibilityRules.IndexOf(SelectedCompatibilityRule);
+        SelectedCompatibilityRule.PropertyChanged -= OnCompatibilityRulePropertyChanged;
         CompatibilityRules.Remove(SelectedCompatibilityRule);
         SelectedCompatibilityRule = CompatibilityRules.Count == 0
             ? null
@@ -251,6 +260,52 @@ public sealed class MainWindowViewModel : BindableBase
         {
             NotifyRecordCounts();
         }
+    }
+
+    private void OnCompatibilityRulePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(VirtualMasterRuleViewModel.TargetMod)
+            || sender is not VirtualMasterRuleViewModel changedRule
+            || string.IsNullOrWhiteSpace(changedRule.TargetMod))
+        {
+            return;
+        }
+
+        var existingRule = CompatibilityRules.FirstOrDefault(rule =>
+            !ReferenceEquals(rule, changedRule)
+            && string.Equals(
+                rule.TargetMod.Trim(),
+                changedRule.TargetMod.Trim(),
+                StringComparison.OrdinalIgnoreCase));
+        if (existingRule is null)
+        {
+            return;
+        }
+
+        existingRule.MergeVirtualMastersFrom(changedRule);
+        changedRule.PropertyChanged -= OnCompatibilityRulePropertyChanged;
+        CompatibilityRules.Remove(changedRule);
+        SelectedCompatibilityRule = existingRule;
+        StatusText = $"Merged with the existing rule for {existingRule.TargetMod.Trim()}";
+    }
+
+    private void AddRuleViewModel(VirtualMasterRuleViewModel rule)
+    {
+        rule.PropertyChanged += OnCompatibilityRulePropertyChanged;
+        CompatibilityRules.Add(rule);
+    }
+
+    private VirtualMasterRuleViewModel? FindRuleByTarget(string targetMod)
+    {
+        if (string.IsNullOrWhiteSpace(targetMod))
+        {
+            return null;
+        }
+
+        return CompatibilityRules.FirstOrDefault(rule => string.Equals(
+            rule.TargetMod.Trim(),
+            targetMod.Trim(),
+            StringComparison.OrdinalIgnoreCase));
     }
 
     private void NotifyRecordCounts()

@@ -31,7 +31,8 @@ namespace DreadsMashedPatch
 
         public static int AlwaysWinningModCount => _alwaysWinningModPriorities.Count;
 
-        public static int CompatibilityRuleCount => _current.CompatibilityRules.Count;
+        public static int VirtualMasterRelationshipCount =>
+            _virtualMastersByTarget.Sum(entry => entry.Value.Count);
 
         public static int CompatibilityTargetCount => _virtualMastersByTarget.Count;
 
@@ -125,25 +126,23 @@ namespace DreadsMashedPatch
             var lookup = new Dictionary<ModKey, HashSet<ModKey>>();
             foreach (var rule in rules)
             {
-                if (!ModKey.TryFromFileName(rule.InjectedMaster, out var injectedMaster))
+                if (!ModKey.TryFromFileName(rule.TargetMod, out var targetMod))
                 {
                     continue;
                 }
 
-                foreach (var targetName in rule.TargetMods)
+                foreach (var masterName in rule.VirtualMasters)
                 {
-                    if (!ModKey.TryFromFileName(targetName, out var targetMod))
+                    if (ModKey.TryFromFileName(masterName, out var virtualMaster))
                     {
-                        continue;
-                    }
+                        if (!lookup.TryGetValue(targetMod, out var virtualMasters))
+                        {
+                            virtualMasters = [];
+                            lookup[targetMod] = virtualMasters;
+                        }
 
-                    if (!lookup.TryGetValue(targetMod, out var virtualMasters))
-                    {
-                        virtualMasters = [];
-                        lookup[targetMod] = virtualMasters;
+                        virtualMasters.Add(virtualMaster);
                     }
-
-                    virtualMasters.Add(injectedMaster);
                 }
             }
 
