@@ -12,7 +12,12 @@ $outputPath = [System.IO.Path]::GetFullPath((Join-Path $repoRoot $OutputRoot))
 $repoPrefix = $repoRoot.TrimEnd([System.IO.Path]::DirectorySeparatorChar) +
     [System.IO.Path]::DirectorySeparatorChar
 
-if (-not $outputPath.StartsWith($repoPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+$pathComparison = if ([System.IO.Path]::DirectorySeparatorChar -eq '\') {
+    [StringComparison]::OrdinalIgnoreCase
+} else {
+    [StringComparison]::Ordinal
+}
+if (-not $outputPath.StartsWith($repoPrefix, $pathComparison)) {
     throw "Output path must remain inside the repository: $outputPath"
 }
 

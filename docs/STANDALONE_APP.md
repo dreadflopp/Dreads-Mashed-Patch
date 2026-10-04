@@ -53,6 +53,9 @@ The **Master Rules** tab supports intentional overwrite relationships that plugi
 
 ## Build and publish
 
+For regenerating the ignored Mutagen and xEdit references on Windows or Linux,
+see [Rebuilding external reference sources](REFERENCE_SOURCES.md).
+
 On Windows, run the existing launcher from the repository root for a clean Release build, test run, and self-contained publish:
 
 ```bat
