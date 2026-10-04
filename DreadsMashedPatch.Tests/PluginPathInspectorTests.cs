@@ -35,7 +35,7 @@ public sealed class PluginPathInspectorTests : IDisposable
         Assert.Equal(0, result.WarningCount);
         Assert.Contains("Installed Creation Club plugins: 1", result.Report);
         Assert.Contains("Disabled.esp [disabled; missing", result.Report);
-        Assert.Contains("Update.esm [implicit]", result.Report);
+        Assert.Contains("Installed implicit plugins: 2", result.Report);
     }
 
     [Fact]
@@ -60,7 +60,8 @@ public sealed class PluginPathInspectorTests : IDisposable
 
         Assert.Equal(0, result.ErrorCount);
         Assert.Equal(0, result.WarningCount);
-        Assert.Contains("After.esp [output or later listing; excluded", result.Report);
+        Assert.Contains("Plugins after the patch (1; excluded from patch input)", result.Report);
+        Assert.Contains("After.esp [enabled; missing", result.Report);
     }
 
     [Fact]
@@ -76,6 +77,40 @@ public sealed class PluginPathInspectorTests : IDisposable
         Assert.Equal(0, result.ErrorCount);
         Assert.Equal(1, result.WarningCount);
         Assert.Contains("absent from plugins.txt: Unlisted.esp", result.Report);
+    }
+
+    [Fact]
+    public void CompactReportSeparatesOutputsFromDisabledAndLaterPlugins()
+    {
+        AddPlugin("Before.esp");
+        AddPlugin("Disabled.esp");
+        AddPlugin("MashedPatch.esp");
+        AddPlugin("MashedPatch_2.esp");
+        AddPlugin("After.esp");
+        File.WriteAllText(Plugins, "*Before.esp\nDisabled.esp\nmashedpatch.esp\nMashedPatch_2.esp\n*After.esp\n");
+
+        var result = Inspect();
+
+        Assert.Equal(0, result.ErrorCount);
+        Assert.Equal(0, result.WarningCount);
+        Assert.Contains("6 discovered plugins; 1 disabled; 1 after the patch", result.Summary);
+        Assert.Contains("Patch output plugins (2; not counted as disabled)", result.Report);
+        Assert.Contains("Disabled.esp [disabled; found]", result.Report);
+        Assert.Contains("After.esp [enabled; found]", result.Report);
+        Assert.DoesNotContain("Before.esp", result.Report);
+        Assert.DoesNotContain("Skyrim.esm", result.Report);
+    }
+
+    [Fact]
+    public void UnlistedOutputDoesNotCreateDisabledPluginOrWarning()
+    {
+        AddPlugin("MashedPatch.esp");
+
+        var result = Inspect();
+
+        Assert.Equal(0, result.WarningCount);
+        Assert.Contains("2 discovered plugins; 0 disabled; 0 after the patch", result.Summary);
+        Assert.Contains("Patch output plugins (1; not counted as disabled)", result.Report);
     }
 
     [Fact]
@@ -114,7 +149,7 @@ public sealed class PluginPathInspectorTests : IDisposable
             Plugins, "", "MashedPatch.esp");
 
         Assert.True(result.ErrorCount >= 2);
-        Assert.Contains("Select an existing plugin input folder", result.Report);
+        Assert.Contains("Select an existing Data folder", result.Report);
         Assert.Contains("Select an existing patch output folder", result.Report);
     }
 
@@ -128,7 +163,7 @@ public sealed class PluginPathInspectorTests : IDisposable
         Assert.Equal(0, result.ErrorCount);
         Assert.Equal(1, result.WarningCount);
         Assert.Contains("Duplicate plugins.txt entries", result.Report);
-        Assert.Contains("duplicate; first listing takes precedence", result.Report);
+        Assert.Contains("1 disabled", result.Summary);
     }
 
     [Fact]
@@ -142,7 +177,8 @@ public sealed class PluginPathInspectorTests : IDisposable
 
         Assert.Equal(0, result.ErrorCount);
         Assert.Equal(0, result.WarningCount);
-        Assert.Contains("ccTest.esl [included implicitly or via Creation Club; found]", result.Report);
+        Assert.Contains("Installed Creation Club plugins: 1", result.Report);
+        Assert.Contains("0 disabled; 0 after the patch", result.Summary);
     }
 
     [Fact]

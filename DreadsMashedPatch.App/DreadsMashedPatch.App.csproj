@@ -18,6 +18,12 @@
 
   <ItemGroup>
     <Resource Include="Assets\AppIcon.png" />
+    <Resource Include="Assets\Fonts\*.ttf" />
+    <Resource Include="Assets\Fonts\OFL.txt" />
+    <None Update="Assets\Fonts\OFL.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
     <ProjectReference Include="..\DreadsMashedPatch\DreadsMashedPatch.csproj" />
     <PackageReference Include="Mutagen.Bethesda.Skyrim" Version="0.54.4" />
     <PackageReference Include="Mutagen.Bethesda.Synthesis" Version="0.36.6" />

@@ -2,12 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Mashed Patch"
+        Style="{StaticResource AppWindowStyle}"
         Icon="Assets/AppIcon.png"
         Width="1040"
         Height="760"
         MinWidth="820"
         MinHeight="620"
-        UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         Loaded="OnLoaded"
         Closing="OnClosing"
@@ -62,7 +62,7 @@
                                FontWeight="SemiBold"/>
                     <TextBlock Text="{Binding ElapsedText}"
                                Foreground="{StaticResource HeaderMutedTextBrush}"
-                               FontFamily="Consolas"
+                               FontFamily="{StaticResource MonospaceFontFamily}"
                                Margin="12,0,0,0"/>
                 </StackPanel>
             </Grid>
@@ -92,11 +92,29 @@
 
                         <Border Background="{StaticResource InfoPanelBrush}"
                                 BorderBrush="{StaticResource InfoBorderBrush}"
+                                BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,8,0,8">
+                            <StackPanel>
+                                <TextBlock Text="Mod manager setup"
+                                           FontWeight="Bold" TextWrapping="Wrap"/>
+                                <TextBlock TextWrapping="Wrap" Margin="0,5,0,0">
+                                    <Run FontWeight="SemiBold" Text="MO2:"/>
+                                    <Run Text=" Add the patcher as an executable in MO2 and launch it through MO2 so it can access your active profile's virtual files."/>
+                                    <LineBreak/>
+                                    <Run FontWeight="SemiBold" Text="Amethyst:"/>
+                                    <Run Text=" Deploy your active profile before running the patcher."/>
+                                </TextBlock>
+                                <TextBlock Text="The paths below are examples. Replace the placeholders and adjust the folders to match your installation and active profile."
+                                           TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="{StaticResource InfoPanelBrush}"
+                                BorderBrush="{StaticResource InfoBorderBrush}"
                                 BorderThickness="2" CornerRadius="4" Padding="12" Margin="0,8,0,8">
                             <StackPanel>
-                                <TextBlock Text="Wabbajack / Stock Game: use the game copy your list launches"
+                                <TextBlock Text="Wabbajack / Stock Game: select the game installation your list uses"
                                            FontWeight="Bold" TextWrapping="Wrap"/>
-                                <TextBlock Text="Select your list's Stock Game folder and its Data folder, even if Steam has another Skyrim installation. Detect paths may find the official installation. Select the active profile's plugins.txt and verify paths before patching."
+                                <TextBlock Text="Select your list's copied game folder and its Data folder, even if you have another Skyrim installation in Steam. Detect paths may find the Steam installation instead. Select the active profile's plugins.txt, then verify the paths before patching."
                                            TextWrapping="Wrap" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
@@ -125,11 +143,18 @@
                                     Margin="8,0,0,0"/>
                             <TextBox Text="{Binding Settings.GameFolderPath, UpdateSourceTrigger=PropertyChanged}"/>
                         </DockPanel>
-                        <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Contains SkyrimSE.exe or SkyrimVR.exe and, when present, Skyrim.ccc. For Wabbajack, select the list's copied game folder (often named Stock Game)."/>
+                        <TextBlock Style="{StaticResource HelpText}">
+                            <Run Text="Contains SkyrimSE.exe or SkyrimVR.exe and, when present, Skyrim.ccc."/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="MO2 example:"/>
+                            <Run Text=" C:\Modlists\&lt;list name&gt;\Stock Game"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="Amethyst example (Proton):"/>
+                            <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\.wj\&lt;list name&gt;\root\Game Root"/>
+                        </TextBlock>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
-                                   Text="Plugin input folder (Data)"/>
+                                   Text="Data folder"/>
                         <DockPanel LastChildFill="True">
                             <Button DockPanel.Dock="Right"
                                     Content="Browse…"
@@ -137,8 +162,15 @@
                                     Margin="8,0,0,0"/>
                             <TextBox Text="{Binding Settings.DataFolderPath, UpdateSourceTrigger=PropertyChanged}"/>
                         </DockPanel>
-                        <TextBlock Style="{StaticResource HelpText}"
-                                   Text="The Data folder used by your list. Deploy first with Amethyst/Vortex; launch through MO2 to see its virtual Data folder. A staging root containing separate mod folders is not a plugin input folder."/>
+                        <TextBlock Style="{StaticResource HelpText}">
+                            <Run Text="Contains the plugins used by your game or mod list."/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="MO2 example:"/>
+                            <Run Text=" C:\Modlists\&lt;list name&gt;\Stock Game\Data"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="Amethyst example (Proton):"/>
+                            <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\.wj\&lt;list name&gt;\root\Game Root\Data"/>
+                        </TextBlock>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Load order file (plugins.txt)"/>
@@ -149,22 +181,42 @@
                                     Margin="8,0,0,0"/>
                             <TextBox Text="{Binding Settings.LoadOrderFilePath, UpdateSourceTrigger=PropertyChanged}"/>
                         </DockPanel>
-                        <TextBlock Style="{StaticResource HelpText}"
-                                   Text="MO2: usually &lt;MO2 folder&gt;\profiles\&lt;profile name&gt;\plugins.txt. Without MO2: usually %LOCALAPPDATA%\Skyrim Special Edition\plugins.txt (or the matching GOG or VR folder)."/>
+                        <TextBlock Style="{StaticResource HelpText}">
+                            <Run Text="Select the plugins.txt file used by your active profile or game installation."/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="MO2 example:"/>
+                            <Run Text=" C:\Modlists\&lt;list name&gt;\profiles\&lt;profile name&gt;\plugins.txt"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="Amethyst example (Proton):"/>
+                            <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\profiles\&lt;profile name&gt;\plugins.txt"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="Without a mod manager:"/>
+                            <Run Text=" Look in %LOCALAPPDATA%\Skyrim Special Edition\plugins.txt, or the corresponding GOG or VR folder."/>
+                        </TextBlock>
 
                         <TextBlock Style="{StaticResource FieldLabel}" Text="Patch output folder"/>
                         <DockPanel LastChildFill="True">
                             <Button DockPanel.Dock="Right" Content="Browse…" Click="OnBrowseOutputFolder" Margin="8,0,0,0"/>
                             <TextBox Text="{Binding Settings.OutputFolderPath, UpdateSourceTrigger=PropertyChanged}"/>
                         </DockPanel>
-                        <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Choose an output folder explicitly. MO2: use virtual Data for MO2's configured output/Overwrite, or a dedicated output mod. Amethyst/Vortex: use a separate folder and install the generated plugins as an output mod. Do not select the manager's staging root."/>
+                        <TextBlock Style="{StaticResource HelpText}">
+                            <Run Text="Stores the generated patch plugins. With MO2 or Amethyst, create an empty mod for the patch using your mod manager's interface, then select that mod's folder."/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="MO2 example:"/>
+                            <Run Text=" C:\Modlists\&lt;list name&gt;\mods\Mashed Patch"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="Amethyst example (Proton):"/>
+                            <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\mods\Mashed Patch"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="Without a mod manager:"/>
+                            <Run Text=" Select your Skyrim installation's Data folder."/>
+                        </TextBlock>
 
                         <TextBlock x:Name="PathVerificationSummary" Text="Paths have not been verified."
                                    FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,12,0,4"/>
                         <Expander x:Name="PathVerificationDetails" Header="Path verification details" Visibility="Collapsed">
                             <TextBox x:Name="PathVerificationReport" IsReadOnly="True" AcceptsReturn="True"
-                                     Height="260" VerticalContentAlignment="Top" FontFamily="Consolas" FontSize="12"
+                                     Height="260" VerticalContentAlignment="Top" Style="{StaticResource MonospaceTextBox}"
                                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
                                      AutomationProperties.Name="Path verification report"/>
                         </Expander>
@@ -175,7 +227,7 @@
                                 Click="OnCreateEmptyOutput"
                                 HorizontalAlignment="Left"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Replaces patch plugins in the selected output folder with one empty plugin. Install or enable it and position it in your mod manager before the first full run."/>
+                                   Text="Replaces existing patch plugins in the selected output folder with one empty plugin. Enable it and set its load-order position before the first full run."/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -281,7 +333,7 @@
                                                         Orientation="Horizontal"
                                                         VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding Signature}"
-                                                           FontFamily="Consolas"
+                                                           FontFamily="{StaticResource MonospaceFontFamily}"
                                                            FontWeight="SemiBold"
                                                            Width="55"/>
                                                 <TextBlock Text="{Binding DisplayName}"
@@ -315,7 +367,7 @@
                                  MinHeight="220"
                                  VerticalContentAlignment="Top"
                                  VerticalScrollBarVisibility="Auto"
-                                 FontFamily="Consolas"/>
+                                 Style="{StaticResource MonospaceTextBox}"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -375,7 +427,7 @@
                                          MinWidth="420"
                                          MinHeight="145"
                                          VerticalScrollBarVisibility="Auto"
-                                         FontFamily="Consolas"/>
+                                         Style="{StaticResource MonospaceTextBox}"/>
                             </StackPanel>
                         </Expander>
 
@@ -593,8 +645,7 @@
                              IsReadOnly="True"
                              AcceptsReturn="True"
                              TextWrapping="NoWrap"
-                             FontFamily="Consolas"
-                             FontSize="12"
+                             Style="{StaticResource MonospaceTextBox}"
                              VerticalContentAlignment="Top"
                              VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Auto"

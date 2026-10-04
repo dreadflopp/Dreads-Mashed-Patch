@@ -291,7 +291,7 @@ public partial class MainWindow : Window
     private void OnBrowseOutputFolder(object sender, RoutedEventArgs e)
     {
         var selectedPath = BrowsePath(_viewModel.Settings.OutputFolderPath, false,
-            () => new OpenFolderDialog { Title = "Select the patch output folder (not the mod manager's staging root)" });
+            () => new OpenFolderDialog { Title = "Select the patch output folder" });
         if (selectedPath is not null)
         {
             _viewModel.Settings.OutputFolderPath = selectedPath;
@@ -353,7 +353,7 @@ public partial class MainWindow : Window
             PathVerificationSummary.Text = result.Summary;
             PathVerificationReport.Text = result.Report;
             PathVerificationDetails.Visibility = Visibility.Visible;
-            PathVerificationDetails.IsExpanded = true;
+            PathVerificationDetails.IsExpanded = result.ErrorCount > 0 || result.WarningCount > 0;
             _viewModel.StatusText = result.ErrorCount > 0 ? "Path verification found errors"
                 : result.WarningCount > 0 ? "Review path warnings" : "Path filenames verified";
         }
@@ -374,7 +374,7 @@ public partial class MainWindow : Window
     private void OnBrowseDataFolder(object sender, RoutedEventArgs e)
     {
         var selectedPath = BrowsePath(_viewModel.Settings.DataFolderPath, false,
-            () => new OpenFolderDialog { Title = "Select the Skyrim Data folder" });
+            () => new OpenFolderDialog { Title = "Select the Data folder" });
 
         if (selectedPath is not null)
         {
@@ -396,7 +396,7 @@ public partial class MainWindow : Window
         var selectedPath = BrowsePath(_viewModel.Settings.LoadOrderFilePath, true,
             () => new OpenFileDialog
         {
-                Title = "Select plugins.txt",
+                Title = "Select the load order file (plugins.txt)",
                 Filter = "Plugin load order (plugins.txt)|plugins.txt|Text files (*.txt)|*.txt|All files (*.*)|*.*",
                 CheckFileExists = true,
                 FileName = "plugins.txt"
@@ -681,7 +681,7 @@ public partial class MainWindow : Window
     private static bool TryValidateOutputFolder(StandaloneSettings settings, out string error)
     {
         error = Directory.Exists(settings.OutputFolderPath) ? string.Empty
-            : "Select an existing patch output folder. For Amethyst/Vortex, use a separate folder and install the output as a mod; do not use the staging root.";
+            : "Select an existing patch output folder. With MO2 or Amethyst, create an empty mod for the patch using your mod manager's interface, then select that mod's folder. Without a mod manager, select your Skyrim installation's Data folder.";
         return error.Length == 0;
     }
 
@@ -702,7 +702,7 @@ public partial class MainWindow : Window
 
         if (!Directory.Exists(settings.DataFolderPath))
         {
-            error = "Select an existing Skyrim Data folder.";
+            error = "Select an existing Data folder.";
             return false;
         }
 

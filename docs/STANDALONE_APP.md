@@ -5,7 +5,7 @@ Mashed Patch is a Windows desktop patcher. It is not intended to be added to or 
 ## Running
 
 1. Launch `DreadsMashedPatch.exe`.
-2. Confirm the Skyrim game folder, plugin input (Data) folder, active `plugins.txt`, and patch output folder on the **General** tab. Select **Verify paths** and review the report.
+2. Confirm the Skyrim game folder, Data folder, active `plugins.txt`, and patch output folder on the **General** tab. Select **Verify paths** and review the report.
 3. Choose record families and forwarding policies.
 4. Select **Run patcher**. Settings are saved automatically before the run.
 
@@ -15,26 +15,48 @@ Run output is stored in `%LOCALAPPDATA%\DreadsMashedPatch\Logs`. `DreadsMashedPa
 
 ### Mod Organizer 2
 
-Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. For Wabbajack lists, select the list's Stock Game folder and its Data folder, then select the active MO2 profile's `plugins.txt`. Select the virtual Data folder as the output folder to use MO2's configured output mod or **Overwrite**, or explicitly select a dedicated output mod folder.
+Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. For Wabbajack lists, select the list's Stock Game folder and its Data folder, then select the active MO2 profile's `plugins.txt`. Create an empty mod for the patch using MO2's interface, then select that mod's folder as the patch output folder.
 
 ### Wabbajack and Stock Game paths
 
-Some lists launch a copied game installation, often named **Stock Game**, rather than the official Steam/GOG installation. Both the game folder and input Data folder must refer to the installation your list actually launches. **Detect paths** locates registered installations and may select the official installation instead. The highlighted notice on the General tab explains this; **Verify paths** can identify missing plugins but cannot prove which installation your manager launches.
-
-### Vortex and deployed installations
-
-Run the executable normally after deployment. Confirm that the game folder, Data folder, and `plugins.txt` belong to the active deployment/profile.
-Choose a separate patch output folder, then install its generated plugins together as a dedicated output mod. The mod manager's staging root is not an output mod folder.
+Some lists launch a copied game installation, often named **Stock Game** or **Game Root**, rather than the official Steam/GOG installation. Both the game folder and Data folder must refer to the installation your list actually launches. **Detect paths** locates registered installations and may select the official installation instead. The highlighted notice on the General tab explains this; **Verify paths** can identify missing plugins but cannot prove which installation your manager launches.
 
 ### Proton and Amethyst
 
-Launch the Windows executable in a Proton prefix that can access the selected game and profile paths, either directly or through Amethyst's external applications feature. Deploy the active profile first. Confirm the actual game folder (including a list's Stock Game copy), deployed Data folder, and active `plugins.txt` manually. Choose a separate output folder and install its generated plugins together as an output mod in Amethyst; do not write directly into the staging root. WPF behavior under Proton has not yet been verified.
+Launch the Windows executable in a Proton prefix that can access the selected game and profile paths, either directly or through Amethyst's external applications feature. Deploy the active profile first. Confirm the actual game folder (including a list's Stock Game copy), deployed Data folder, and active `plugins.txt` manually. An example Amethyst load-order path is `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\profiles\<profile name>\plugins.txt`; adjust it to match your installation and active profile. Create an empty mod for the patch using Amethyst's interface, then select that mod's folder as the patch output folder. Startup and General-tab rendering have been smoke-tested under Proton 10.0 in a fresh prefix at the default window size; this does not verify patching or mod-manager integration.
+
+### Without a mod manager
+
+Select your Skyrim installation's Data folder in both the **Data folder** and **Patch output folder** fields. Select the game's active `plugins.txt`, usually in `%LOCALAPPDATA%\Skyrim Special Edition` or the corresponding GOG or VR folder. Enable the generated patch plugins and set their load-order position before running the full patcher.
+
+### Selecting folders
+
+- **Skyrim game folder:** Contains `SkyrimSE.exe` or `SkyrimVR.exe` and, when present, `Skyrim.ccc`.
+- **Data folder:** Contains the plugins used by your game or mod list.
+- **Patch output folder:** Stores the generated patch plugins. With MO2 or Amethyst, create an empty mod for the patch using your mod manager's interface, then select that mod's folder. Without a mod manager, select your Skyrim installation's Data folder.
+
+The General tab has a shared **Mod manager setup** notice: launch the patcher through MO2 to access your active profile's virtual files, or deploy your active Amethyst profile before running the patcher. The paths below are examples. Replace the placeholders and adjust the folders to match your installation and active profile. The Amethyst game path follows the `.wj/<list name>/root/Game Root` layout.
+
+| Field | MO2 example | Amethyst example (Proton) |
+| --- | --- | --- |
+| Skyrim game folder | `C:\Modlists\<list name>\Stock Game` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\.wj\<list name>\root\Game Root` |
+| Data folder | `C:\Modlists\<list name>\Stock Game\Data` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\.wj\<list name>\root\Game Root\Data` |
+| Load order file (plugins.txt) | `C:\Modlists\<list name>\profiles\<profile name>\plugins.txt` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\profiles\<profile name>\plugins.txt` |
+| Patch output folder | `C:\Modlists\<list name>\mods\Mashed Patch` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\mods\Mashed Patch` |
+
+### Typography on Windows and Proton
+
+Both application windows use embedded, static TrueType Noto Sans fonts at 14 device-independent pixels for body text. Logs and multiline plugin/keyword fields use Noto Sans Mono at 13 pixels; record signatures and elapsed time use the same embedded monospace family. Regular, semibold, bold, and italic UI faces and regular/semibold monospace faces are included, so these styles do not require installing fonts in Windows or a Proton prefix. Glyphs outside the bundled families' coverage still use WPF font fallback.
+
+The shared window style uses display text formatting, grayscale antialiasing, layout rounding, and device-pixel snapping. Grayscale avoids dependence on the prefix's ClearType/subpixel configuration. Buttons, fields, tabs, headings, and help text share spacing rules. System file dialogs, message boxes, and window decorations retain platform-provided typography because WPF application styles do not control those surfaces.
+
+Typography migration note: both windows share one typography/rendering style; all former Consolas assignments use the bundled monospace resource or shared textbox style. The installation picker reuses the existing section-heading style. System dialogs remain platform-managed; patch logic and record-specific handlers retain their existing implementation. Font sources and the redistribution license are in `DreadsMashedPatch.App/Assets/Fonts`; the license is also embedded and copied alongside published output.
 
 ### Output and path verification
 
-The output folder is independent of the plugin input folder and is required for both a full run and **Create empty patch output**. Existing settings from before this option was introduced require an explicit selection; the app does not silently reuse the input or staging folder. Both the run log and completion message identify the chosen destination. Only previous patch outputs in that destination are replaced; copies in other directories are untouched.
+The patch output folder is selected separately from the Data folder and is required for both a full run and **Create empty patch output**. Existing settings from before this option was introduced require an explicit selection; the app does not silently reuse the Data folder. Both the run log and completion message identify the chosen destination. Only previous patch outputs in that destination are replaced; copies in other directories are untouched.
 
-**Verify paths** produces a read-only report on the General tab showing the discovered `.esm`, `.esp`, and `.esl` files and each `plugins.txt` entry's enabled/disabled and found/missing status. Missing enabled inputs are errors; unlisted files are warnings because they may be intentionally inactive. Installed implicit masters and Creation Club plugins are accounted for, and output/later listings are marked as excluded by the patch's load-order cutoff. Duplicate listings and filenames are reported. Changing any selected path or game release invalidates the displayed report. Verify again after changing the manager's deployment or profile, even if the path strings remain the same.
+**Verify paths** shows counts of discovered files, disabled plugins, plugins after the patch, errors, and warnings on the General tab. Expand **Path verification details** for path information and the names of disabled plugins, patch outputs, and plugins excluded by the patch's load-order cutoff. Details stay collapsed when there are no issues and open automatically for errors or warnings. Patch outputs are listed separately and do not count as disabled. Disabled plugins after the patch appear in both relevant lists. Missing enabled inputs are errors; unlisted files are warnings because they may be intentionally inactive. Installed implicit masters and Creation Club plugins are accounted for without listing every enabled plugin. Duplicate listings and filenames are reported. Changing any selected path or game release invalidates the displayed report. Verify again after changing the manager's deployment or profile, even if the path strings remain the same.
 
 Listings are parsed with Mutagen, and plugin identities are compared using `ModKey`. Filesystem checks are separate: a case-insensitive name match does not guarantee that the expected path exists on a case-sensitive filesystem. The report identifies such discrepancies without renaming files. This check does not import records, inspect master dependencies, validate output write permissions, or confirm the manager's launch target.
 
@@ -56,7 +78,7 @@ The primary output name is fixed as `MashedPatch.esp`. If the patch needs more t
 
 Use **Create empty patch output** on the General tab before the first full run when the plugin must be positioned in a mod manager. The action removes the primary and recognized split outputs, then writes one empty, masterless plugin at the stable primary filename.
 
-Path/output migration note: full runs and empty-output creation now share one explicit destination setting and the existing output transaction. Plugin input remains separate; Synthesis still handles imports, deduplication, load-order trimming, and output splitting. Creation Club file parsing is shared by preparation and verification. No record handlers or flag policies changed. The old input-derived output destination and obsolete Creation Club parsing loop were removed.
+Path/output migration note: full runs and empty-output creation now share one explicit destination setting and the existing output transaction. The Data folder setting remains separate; Synthesis still handles imports, deduplication, load-order trimming, and output splitting. Creation Club file parsing is shared by preparation and verification. No record handlers or flag policies changed. The old output destination derived from the Data folder and obsolete Creation Club parsing loop were removed.
 
 Plugins on the **Priority Mods** tab win at record scope. If another plugin overwrites one of their records, Mashed Patch copies the complete record snapshot from the matching priority mod occurring last in the configured list instead of merging individual properties. No patch record is needed when that selected source is already the winning override.
 

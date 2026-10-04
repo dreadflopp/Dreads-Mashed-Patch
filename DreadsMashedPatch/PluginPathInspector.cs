@@ -25,7 +25,7 @@ public static class PluginPathInspector
         var warnings = new List<string>();
         var errors = new List<string>();
         report.AppendLine($"Game folder: {gameFolder}");
-        report.AppendLine($"Plugin input folder: {dataFolder}");
+        report.AppendLine($"Data folder: {dataFolder}");
         report.AppendLine($"Load order: {pluginsFile}");
         report.AppendLine($"Patch output folder: {outputFolder}");
         report.AppendLine();
@@ -35,7 +35,7 @@ public static class PluginPathInspector
         else if (!File.Exists(Path.Combine(gameFolder, release == GameRelease.SkyrimVR ? "SkyrimVR.exe" : "SkyrimSE.exe")))
             errors.Add("The selected game folder does not contain the executable for the selected game release.");
         if (!Directory.Exists(dataFolder))
-            errors.Add("Select an existing plugin input folder.");
+            errors.Add("Select an existing Data folder.");
         if (!File.Exists(pluginsFile))
             errors.Add("Select the active profile's plugins.txt file.");
         if (!Directory.Exists(outputFolder))
@@ -44,7 +44,7 @@ public static class PluginPathInspector
             && !string.Equals(Path.TrimEndingDirectorySeparator(Path.GetFullPath(dataFolder)),
                 Path.Combine(Path.GetFullPath(gameFolder), "Data"),
                 OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
-            warnings.Add("The plugin input folder is outside the selected game's Data folder. Confirm both paths belong to the game copy your list launches.");
+            warnings.Add("The selected Data folder is outside the selected game's Data folder. Confirm both paths belong to the game installation your list uses.");
 
         var diskFiles = Directory.Exists(dataFolder)
             ? Directory.EnumerateFiles(dataFolder)
@@ -66,7 +66,7 @@ public static class PluginPathInspector
 
         var skyrimKey = ModKey.FromNameAndExtension("Skyrim.esm".AsSpan());
         if (!installed.ContainsKey(skyrimKey))
-            errors.Add("Skyrim.esm was not found in the plugin input folder. Select the deployed or virtual Data folder.");
+            errors.Add("Skyrim.esm was not found in the selected Data folder. Select the deployed or virtual Data folder.");
 
         foreach (var (key, paths) in installed.Where(pair => pair.Value.Length > 1))
             errors.Add($"Multiple files represent {key.FileName.String}: {string.Join(", ", paths.Select(Path.GetFileName))}. Resolve this ambiguity.");
@@ -78,20 +78,19 @@ public static class PluginPathInspector
         foreach (var key in ccc.Where(installed.ContainsKey).Except(installedCcc))
             CheckAccessible(key.FileName.String, "Creation Club plugin");
 
-        report.AppendLine($"Discovered plugins in the input folder ({diskFiles.Length}):");
         foreach (var file in diskFiles)
         {
             var key = ModKey.FromNameAndExtension(Path.GetFileName(file).AsSpan());
-            var category = implicitKeys.Contains(key) ? "implicit" : installedCcc.Contains(key) ? "Creation Club"
-                : listedKeys.Contains(key) ? "listed in plugins.txt" : "not listed in plugins.txt";
-            report.AppendLine($"  {Path.GetFileName(file)} [{category}]");
             if (!listedKeys.Contains(key) && !implicitKeys.Contains(key) && !installedCcc.Contains(key)
                 && key != outputKey && !Mutagen.Bethesda.Plugins.Analysis.MultiModFileAnalysis.IsSplitModSibling(key, outputKey))
                 warnings.Add($"Present in the input folder but absent from plugins.txt: {Path.GetFileName(file)}. This may be an intentionally inactive plugin.");
         }
 
-        report.AppendLine();
-        report.AppendLine($"plugins.txt entries ({listings.Length}):");
+        var disabledPlugins = new List<string>();
+        var laterPlugins = new List<string>();
+        var outputPlugins = installed.Keys.Concat(listedKeys).Distinct()
+            .Where(key => key == outputKey || Mutagen.Bethesda.Plugins.Analysis.MultiModFileAnalysis.IsSplitModSibling(key, outputKey))
+            .OrderBy(key => key.FileName.String, StringComparer.OrdinalIgnoreCase).ToArray();
         var seenListings = new HashSet<ModKey>();
         for (var i = 0; i < listings.Length; i++)
         {
@@ -102,12 +101,14 @@ public static class PluginPathInspector
             var automaticallyIncluded = implicitPlugin || installedCcc.Contains(listing.ModKey);
             var enabled = listing.Enabled || automaticallyIncluded;
             var excluded = afterCutoff && !automaticallyIncluded;
-            var status = duplicate ? "duplicate; first listing takes precedence"
-                : automaticallyIncluded ? "included implicitly or via Creation Club"
-                : excluded ? "output or later listing; excluded from patch input"
-                : enabled ? "enabled" : "disabled";
             var found = installed.ContainsKey(listing.ModKey);
-            report.AppendLine($"  {listing.FileName} [{status}; {(found ? "found" : "missing from input folder")}]");
+            var outputPlugin = outputPlugins.Contains(listing.ModKey);
+            var entry = $"{listing.FileName} [{(enabled ? "enabled" : "disabled")}; {(found ? "found" : "missing from input folder")}]";
+            if (!duplicate && !outputPlugin)
+            {
+                if (!enabled) disabledPlugins.Add(entry);
+                if (excluded) laterPlugins.Add(entry);
+            }
             if (enabled && !excluded && !duplicate && !found)
                 errors.Add($"Enabled plugin missing from input folder: {listing.ModKey.FileName.String}. Check the Stock Game path, active profile, deployment, or launch through MO2.");
             // Implicit and CCC entries precede plugins.txt and supply their own filenames.
@@ -117,20 +118,29 @@ public static class PluginPathInspector
         }
 
         report.AppendLine();
-        report.AppendLine($"Installed implicit plugins: {string.Join(", ", implicitKeys.Where(installed.ContainsKey).Select(key => key.FileName.String))}");
+        report.AppendLine($"Discovered plugins: {diskFiles.Length}");
+        report.AppendLine($"Installed implicit plugins: {implicitKeys.Count(installed.ContainsKey)}");
         report.AppendLine($"Installed Creation Club plugins: {installedCcc.Count}");
         report.AppendLine(cutoff >= 0
             ? $"The patch reads enabled plugins before {outputPluginName}; the output and later entries are excluded."
             : $"{outputPluginName} is absent from plugins.txt; the patch reads the complete enabled load order.");
         if (!File.Exists(Path.Combine(gameFolder, "Skyrim.ccc")))
             report.AppendLine("Skyrim.ccc was not found; only implicit plugins and plugins.txt will be used.");
+        report.AppendLine();
+        report.AppendLine($"Patch output plugins ({outputPlugins.Length}; not counted as disabled):");
+        foreach (var key in outputPlugins) report.AppendLine($"  {key.FileName.String}");
+        report.AppendLine($"Disabled plugins ({disabledPlugins.Count}):");
+        foreach (var entry in disabledPlugins) report.AppendLine($"  {entry}");
+        report.AppendLine($"Plugins after the patch ({laterPlugins.Count}; excluded from patch input):");
+        foreach (var entry in laterPlugins) report.AppendLine($"  {entry}");
+        report.AppendLine();
         report.AppendLine("This checks filenames and listings. It does not validate plugin contents, masters, or output write permissions.");
         report.AppendLine("The stock-game path cannot be confirmed automatically: it must match the game launched by your mod manager.");
 
         var distinctErrors = errors.Distinct().ToArray();
         var distinctWarnings = warnings.Distinct().ToArray();
-        var summary = $"{diskFiles.Length} discovered plugins; {listings.Count(listing => listing.Enabled)} enabled plugins.txt entries; "
-            + $"{distinctErrors.Length} errors; {distinctWarnings.Length} warnings.";
+        var summary = $"{diskFiles.Length} discovered plugins; {disabledPlugins.Count} disabled; "
+            + $"{laterPlugins.Count} after the patch; {distinctErrors.Length} errors; {distinctWarnings.Length} warnings.";
         var issues = new StringBuilder(summary).AppendLine().AppendLine();
         foreach (var error in distinctErrors) issues.AppendLine($"ERROR: {error}");
         foreach (var warning in distinctWarnings) issues.AppendLine($"WARNING: {warning}");
