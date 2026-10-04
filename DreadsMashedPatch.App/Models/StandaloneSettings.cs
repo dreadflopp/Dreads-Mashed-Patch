@@ -1,4 +1,5 @@
 using Mutagen.Bethesda;
+using DreadsMashedPatch.App.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -10,11 +11,12 @@ public sealed class StandaloneSettings : INotifyPropertyChanged
     private string _gameFolderPath = string.Empty;
     private string _dataFolderPath = string.Empty;
     private string _loadOrderFilePath = string.Empty;
+    private string _outputFolderPath = string.Empty;
     private int _historicalLogsToKeep = 10;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public int SettingsVersion { get; set; } = 4;
+    public int SettingsVersion { get; set; } = 5;
 
     public GameRelease GameRelease
     {
@@ -46,22 +48,31 @@ public sealed class StandaloneSettings : INotifyPropertyChanged
         set => SetProperty(ref _historicalLogsToKeep, value);
     }
 
+    public string OutputFolderPath
+    {
+        get => _outputFolderPath;
+        set => SetProperty(ref _outputFolderPath, value ?? string.Empty);
+    }
+
     public PatcherConfiguration Patcher { get; set; } = new();
 
     public void Normalize()
     {
-        SettingsVersion = 4;
+        SettingsVersion = 5;
         if (GameRelease is not (GameRelease.SkyrimSE or GameRelease.SkyrimSEGog or GameRelease.SkyrimVR))
         {
             GameRelease = GameRelease.SkyrimSE;
         }
 
-        GameFolderPath = GameFolderPath?.Trim() ?? string.Empty;
-        DataFolderPath = DataFolderPath?.Trim() ?? string.Empty;
-        LoadOrderFilePath = LoadOrderFilePath?.Trim() ?? string.Empty;
+        GameFolderPath = PathInput.Normalize(GameFolderPath);
+        DataFolderPath = PathInput.Normalize(DataFolderPath);
+        LoadOrderFilePath = PathInput.Normalize(LoadOrderFilePath);
+        // Require an explicit destination, including for older saved settings.
+        // The input directory may be a manager-owned staging directory.
+        OutputFolderPath = PathInput.Normalize(OutputFolderPath);
         if (string.IsNullOrWhiteSpace(GameFolderPath) && !string.IsNullOrWhiteSpace(DataFolderPath))
         {
-            GameFolderPath = Directory.GetParent(DataFolderPath)?.FullName ?? string.Empty;
+            GameFolderPath = PathInput.GetParentOrEmpty(DataFolderPath);
         }
         HistoricalLogsToKeep = Math.Clamp(HistoricalLogsToKeep, 0, 100);
         Patcher ??= new PatcherConfiguration();

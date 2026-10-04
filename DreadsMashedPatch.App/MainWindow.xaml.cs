@@ -44,10 +44,12 @@ public partial class MainWindow : Window
         {
             var settings = await _settingsStore.LoadAsync();
             _viewModel.Load(settings);
+            settings.PropertyChanged += OnPathSettingChanged;
         }
         catch (Exception ex)
         {
             _viewModel.Load(new StandaloneSettings());
+            _viewModel.Settings.PropertyChanged += OnPathSettingChanged;
             MessageBox.Show(
                 $"The saved settings could not be loaded. Defaults will be used.\n\n{ex.Message}",
                 "Could not load settings",
@@ -80,7 +82,8 @@ public partial class MainWindow : Window
             && !string.IsNullOrWhiteSpace(_viewModel.Settings.DataFolderPath)
             && !string.IsNullOrWhiteSpace(_viewModel.Settings.LoadOrderFilePath))
         {
-            _viewModel.StatusText = "Ready";
+            _viewModel.StatusText = string.IsNullOrWhiteSpace(_viewModel.Settings.OutputFolderPath)
+                ? "Select a patch output folder" : "Ready";
         }
     }
 
@@ -173,7 +176,8 @@ public partial class MainWindow : Window
                     $"Warnings: {result.WarningCount}; errors: {result.ErrorCount}.{Environment.NewLine}");
                 _viewModel.StatusText = "Completed";
                 MessageBox.Show(
-                    "Patch created successfully.",
+                    $"Patch created successfully in:{Environment.NewLine}{_viewModel.Settings.OutputFolderPath}{Environment.NewLine}{Environment.NewLine}"
+                    + "Install or enable the output plugins in your mod manager.",
                     "Mashed Patch completed",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -263,19 +267,20 @@ public partial class MainWindow : Window
 
     private void OnBrowseGameFolder(object sender, RoutedEventArgs e)
     {
-        var dialog = new OpenFolderDialog
-        {
-            Title = "Select the Skyrim game folder",
-            InitialDirectory = Directory.Exists(_viewModel.Settings.GameFolderPath)
-                ? _viewModel.Settings.GameFolderPath
-                : null
-        };
+        var selectedPath = BrowsePath(_viewModel.Settings.GameFolderPath, false,
+            () => new OpenFolderDialog { Title = "Select the Skyrim game folder" });
 
-        if (dialog.ShowDialog(this) == true)
+        if (selectedPath is not null)
         {
-            _viewModel.Settings.GameFolderPath = dialog.FolderName;
-            var proposedDataFolder = Path.Combine(dialog.FolderName, "Data");
-            if (Directory.Exists(proposedDataFolder))
+            var previousGameFolder = PathInput.GetExistingDirectory(_viewModel.Settings.GameFolderPath);
+            var previousDefaultData = previousGameFolder.Length > 0 ? Path.Combine(previousGameFolder, "Data") : string.Empty;
+            var followsGameFolder = string.Equals(
+                PathInput.GetExistingDirectory(_viewModel.Settings.DataFolderPath),
+                previousDefaultData, StringComparison.OrdinalIgnoreCase);
+            _viewModel.Settings.GameFolderPath = selectedPath;
+            var proposedDataFolder = Path.Combine(selectedPath, "Data");
+            if ((string.IsNullOrWhiteSpace(_viewModel.Settings.DataFolderPath) || followsGameFolder)
+                && Directory.Exists(proposedDataFolder))
             {
                 _viewModel.Settings.DataFolderPath = proposedDataFolder;
             }
@@ -283,21 +288,99 @@ public partial class MainWindow : Window
         }
     }
 
+    private void OnBrowseOutputFolder(object sender, RoutedEventArgs e)
+    {
+        var selectedPath = BrowsePath(_viewModel.Settings.OutputFolderPath, false,
+            () => new OpenFolderDialog { Title = "Select the patch output folder (not the mod manager's staging root)" });
+        if (selectedPath is not null)
+        {
+            _viewModel.Settings.OutputFolderPath = selectedPath;
+        }
+    }
+
+    private string? BrowsePath(string enteredPath, bool isFilePath, Func<CommonItemDialog> createDialog)
+    {
+        try
+        {
+            return PathInput.Browse<string?>(enteredPath, isFilePath, initialDirectory =>
+            {
+                var dialog = createDialog();
+                dialog.InitialDirectory = initialDirectory;
+                if (dialog.ShowDialog(this) != true) return null;
+                return dialog is OpenFolderDialog folderDialog ? folderDialog.FolderName : ((OpenFileDialog)dialog).FileName;
+            });
+        }
+        catch (Exception ex)
+        {
+            ShowError("Could not open the path browser. Clear the path field and try again", ex);
+            return null;
+        }
+    }
+
+    private void OnPathSettingChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not (nameof(StandaloneSettings.GameFolderPath)
+            or nameof(StandaloneSettings.DataFolderPath) or nameof(StandaloneSettings.LoadOrderFilePath)
+            or nameof(StandaloneSettings.OutputFolderPath) or nameof(StandaloneSettings.GameRelease))) return;
+        PathVerificationSummary.Text = "Paths changed. Verify paths again before patching.";
+        PathVerificationDetails.Visibility = Visibility.Collapsed;
+        PathVerificationReport.Clear();
+    }
+
+    private async void OnVerifyPaths(object sender, RoutedEventArgs e)
+    {
+        if (_viewModel.IsRunning) return;
+        _viewModel.Settings.Normalize();
+        // Snapshot editable settings so the report always refers to one selection.
+        var settings = _viewModel.Settings;
+        var release = settings.GameRelease;
+        var game = settings.GameFolderPath;
+        var data = settings.DataFolderPath;
+        var listings = settings.LoadOrderFilePath;
+        var output = settings.OutputFolderPath;
+        _viewModel.IsRunning = true;
+        _viewModel.StatusText = "Verifying paths...";
+        try
+        {
+            var result = await Task.Run(() => PluginPathInspector.Inspect(
+                release, game, data, listings, output, PatcherRunner.OutputPluginName));
+            if (release != settings.GameRelease || game != settings.GameFolderPath || data != settings.DataFolderPath
+                || listings != settings.LoadOrderFilePath || output != settings.OutputFolderPath)
+            {
+                _viewModel.StatusText = "Paths changed; verify again";
+                return;
+            }
+            PathVerificationSummary.Text = result.Summary;
+            PathVerificationReport.Text = result.Report;
+            PathVerificationDetails.Visibility = Visibility.Visible;
+            PathVerificationDetails.IsExpanded = true;
+            _viewModel.StatusText = result.ErrorCount > 0 ? "Path verification found errors"
+                : result.WarningCount > 0 ? "Review path warnings" : "Path filenames verified";
+        }
+        catch (Exception ex)
+        {
+            PathVerificationSummary.Text = "Path verification failed. Check the paths and load-order format.";
+            PathVerificationReport.Text = ex.Message;
+            PathVerificationDetails.Visibility = Visibility.Visible;
+            PathVerificationDetails.IsExpanded = true;
+            _viewModel.StatusText = "Path verification failed";
+        }
+        finally
+        {
+            _viewModel.IsRunning = false;
+        }
+    }
+
     private void OnBrowseDataFolder(object sender, RoutedEventArgs e)
     {
-        var dialog = new OpenFolderDialog
-        {
-            Title = "Select the Skyrim Data folder",
-            InitialDirectory = Directory.Exists(_viewModel.Settings.DataFolderPath)
-                ? _viewModel.Settings.DataFolderPath
-                : null
-        };
+        var selectedPath = BrowsePath(_viewModel.Settings.DataFolderPath, false,
+            () => new OpenFolderDialog { Title = "Select the Skyrim Data folder" });
 
-        if (dialog.ShowDialog(this) == true)
+        if (selectedPath is not null)
         {
-            _viewModel.Settings.DataFolderPath = dialog.FolderName;
-            var proposedGameFolder = Directory.GetParent(dialog.FolderName)?.FullName;
-            if (proposedGameFolder is not null
+            _viewModel.Settings.DataFolderPath = selectedPath;
+            var proposedGameFolder = PathInput.GetParentOrEmpty(selectedPath);
+            if (proposedGameFolder.Length > 0
                 && (File.Exists(Path.Combine(proposedGameFolder, "SkyrimSE.exe"))
                     || File.Exists(Path.Combine(proposedGameFolder, "SkyrimVR.exe"))
                     || File.Exists(Path.Combine(proposedGameFolder, "Skyrim.ccc"))))
@@ -310,22 +393,18 @@ public partial class MainWindow : Window
 
     private void OnBrowseLoadOrder(object sender, RoutedEventArgs e)
     {
-        var dialog = new OpenFileDialog
+        var selectedPath = BrowsePath(_viewModel.Settings.LoadOrderFilePath, true,
+            () => new OpenFileDialog
         {
-            Title = "Select plugins.txt",
-            Filter = "Plugin load order (plugins.txt)|plugins.txt|Text files (*.txt)|*.txt|All files (*.*)|*.*",
-            CheckFileExists = true,
-            FileName = "plugins.txt"
-        };
+                Title = "Select plugins.txt",
+                Filter = "Plugin load order (plugins.txt)|plugins.txt|Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                CheckFileExists = true,
+                FileName = "plugins.txt"
+            });
 
-        if (File.Exists(_viewModel.Settings.LoadOrderFilePath))
+        if (selectedPath is not null)
         {
-            dialog.InitialDirectory = Path.GetDirectoryName(_viewModel.Settings.LoadOrderFilePath);
-        }
-
-        if (dialog.ShowDialog(this) == true)
-        {
-            _viewModel.Settings.LoadOrderFilePath = dialog.FileName;
+            _viewModel.Settings.LoadOrderFilePath = selectedPath;
         }
     }
 
@@ -456,10 +535,10 @@ public partial class MainWindow : Window
         }
 
         _viewModel.UpdateSettingsFromEditor();
-        if (!Directory.Exists(_viewModel.Settings.DataFolderPath))
+        if (!TryValidateOutputFolder(_viewModel.Settings, out var outputError))
         {
             MessageBox.Show(
-                "Select an existing Skyrim Data folder first.",
+                outputError,
                 "Check patcher settings",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
@@ -467,7 +546,8 @@ public partial class MainWindow : Window
         }
 
         if (MessageBox.Show(
-                "This will replace the current patch output with one empty patch plugin. Continue?",
+                $"This will replace the patch plugins in:{Environment.NewLine}{_viewModel.Settings.OutputFolderPath}"
+                + $"{Environment.NewLine}{Environment.NewLine}with one empty patch plugin. Continue?",
                 "Create empty patch output",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning) != MessageBoxResult.Yes)
@@ -598,6 +678,13 @@ public partial class MainWindow : Window
         _viewModel.ElapsedText = $"{(int)elapsed.TotalHours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
     }
 
+    private static bool TryValidateOutputFolder(StandaloneSettings settings, out string error)
+    {
+        error = Directory.Exists(settings.OutputFolderPath) ? string.Empty
+            : "Select an existing patch output folder. For Amethyst/Vortex, use a separate folder and install the output as a mod; do not use the staging root.";
+        return error.Length == 0;
+    }
+
     private static bool TryValidateSettings(StandaloneSettings settings, out string error)
     {
         if (!Directory.Exists(settings.GameFolderPath))
@@ -630,6 +717,8 @@ public partial class MainWindow : Window
             error = "Select an existing plugins.txt load-order file.";
             return false;
         }
+
+        if (!TryValidateOutputFolder(settings, out error)) return false;
 
         var invalidIgnoredMod = settings.Patcher.IgnoredMods
             .FirstOrDefault(name => !ModKey.TryFromFileName(name, out _));

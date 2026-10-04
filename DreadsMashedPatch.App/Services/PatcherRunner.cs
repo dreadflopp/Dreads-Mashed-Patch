@@ -11,8 +11,15 @@ public sealed class PatcherRunner
 {
     internal const string OutputPluginName = "MashedPatch.esp";
 
-    public static string GetOutputPath(StandaloneSettings settings) =>
-        Path.Combine(settings.DataFolderPath, OutputPluginName);
+    public static string GetOutputPath(StandaloneSettings settings)
+    {
+        if (string.IsNullOrWhiteSpace(settings.OutputFolderPath))
+        {
+            throw new ArgumentException("Select a patch output folder.", nameof(settings));
+        }
+
+        return Path.Combine(settings.OutputFolderPath, OutputPluginName);
+    }
 
     public EmptyOutputResult CreateEmptyOutput(StandaloneSettings settings)
     {
@@ -57,6 +64,7 @@ public sealed class PatcherRunner
             writeLog($"Game folder: {settings.GameFolderPath}{Environment.NewLine}");
             writeLog($"Data folder: {settings.DataFolderPath}{Environment.NewLine}");
             writeLog($"Load order: {settings.LoadOrderFilePath}{Environment.NewLine}");
+            writeLog($"Patch output: {outputPath}{Environment.NewLine}");
             if (File.Exists(preparedLoadOrder.CreationClubPath))
             {
                 writeLog($"Creation Club list: {preparedLoadOrder.CreationClubPath} "

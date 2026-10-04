@@ -78,13 +78,36 @@
                               Padding="18">
                     <StackPanel MaxWidth="820"
                                 HorizontalAlignment="Left">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
                         <TextBlock Style="{StaticResource SectionTitle}"
                                    Text="Game paths"/>
 
-                        <Button Content="Detect paths"
-                                Click="OnAutoDetectPaths"
-                                HorizontalAlignment="Left"
-                                Margin="0,5,0,7"/>
+                        <Border Background="{StaticResource InfoPanelBrush}"
+                                BorderBrush="{StaticResource InfoBorderBrush}"
+                                BorderThickness="2" CornerRadius="4" Padding="12" Margin="0,8,0,8">
+                            <StackPanel>
+                                <TextBlock Text="Wabbajack / Stock Game: use the game copy your list launches"
+                                           FontWeight="Bold" TextWrapping="Wrap"/>
+                                <TextBlock Text="Select your list's Stock Game folder and its Data folder, even if Steam has another Skyrim installation. Detect paths may find the official installation. Select the active profile's plugins.txt and verify paths before patching."
+                                           TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Detect paths"
+                                    Click="OnAutoDetectPaths"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,5,0,7"/>
+                            <Button Content="Verify paths" Click="OnVerifyPaths" Margin="8,5,0,7"/>
+                        </StackPanel>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Game release"/>
@@ -103,10 +126,10 @@
                             <TextBox Text="{Binding Settings.GameFolderPath, UpdateSourceTrigger=PropertyChanged}"/>
                         </DockPanel>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Contains SkyrimSE.exe or SkyrimVR.exe and Skyrim.ccc. MO2 users should select the base folder configured in MO2's settings."/>
+                                   Text="Contains SkyrimSE.exe or SkyrimVR.exe and, when present, Skyrim.ccc. For Wabbajack, select the list's copied game folder (often named Stock Game)."/>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
-                                   Text="Skyrim Data folder"/>
+                                   Text="Plugin input folder (Data)"/>
                         <DockPanel LastChildFill="True">
                             <Button DockPanel.Dock="Right"
                                     Content="Browse…"
@@ -115,7 +138,7 @@
                             <TextBox Text="{Binding Settings.DataFolderPath, UpdateSourceTrigger=PropertyChanged}"/>
                         </DockPanel>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="The game's Data folder, usually located inside the main game folder."/>
+                                   Text="The Data folder used by your list. Deploy first with Amethyst/Vortex; launch through MO2 to see its virtual Data folder. A staging root containing separate mod folders is not a plugin input folder."/>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Load order file (plugins.txt)"/>
@@ -129,13 +152,30 @@
                         <TextBlock Style="{StaticResource HelpText}"
                                    Text="MO2: usually &lt;MO2 folder&gt;\profiles\&lt;profile name&gt;\plugins.txt. Without MO2: usually %LOCALAPPDATA%\Skyrim Special Edition\plugins.txt (or the matching GOG or VR folder)."/>
 
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Patch output folder"/>
+                        <DockPanel LastChildFill="True">
+                            <Button DockPanel.Dock="Right" Content="Browse…" Click="OnBrowseOutputFolder" Margin="8,0,0,0"/>
+                            <TextBox Text="{Binding Settings.OutputFolderPath, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DockPanel>
+                        <TextBlock Style="{StaticResource HelpText}"
+                                   Text="Choose an output folder explicitly. MO2: use virtual Data for MO2's configured output/Overwrite, or a dedicated output mod. Amethyst/Vortex: use a separate folder and install the generated plugins as an output mod. Do not select the manager's staging root."/>
+
+                        <TextBlock x:Name="PathVerificationSummary" Text="Paths have not been verified."
+                                   FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,12,0,4"/>
+                        <Expander x:Name="PathVerificationDetails" Header="Path verification details" Visibility="Collapsed">
+                            <TextBox x:Name="PathVerificationReport" IsReadOnly="True" AcceptsReturn="True"
+                                     Height="260" VerticalContentAlignment="Top" FontFamily="Consolas" FontSize="12"
+                                     HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                                     AutomationProperties.Name="Path verification report"/>
+                        </Expander>
+
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Initial load-order placement"/>
                         <Button Content="Create empty patch output"
                                 Click="OnCreateEmptyOutput"
                                 HorizontalAlignment="Left"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Replaces all current patch output plugins with a single empty plugin. Enable it and position it in your mod manager before the first full run."/>
+                                   Text="Replaces patch plugins in the selected output folder with one empty plugin. Install or enable it and position it in your mod manager before the first full run."/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

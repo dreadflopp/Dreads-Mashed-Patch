@@ -23,15 +23,8 @@ public static class LoadOrderPreparer
 
         if (File.Exists(creationClubPath))
         {
-            foreach (var rawLine in await File.ReadAllLinesAsync(creationClubPath))
+            foreach (var modKey in PluginPathInspector.ReadCreationClubPlugins(settings.GameFolderPath))
             {
-                var pluginName = rawLine.Trim();
-                if (pluginName.Length == 0)
-                {
-                    continue;
-                }
-
-                var modKey = ModKey.FromNameAndExtension(pluginName.AsSpan());
                 if (!File.Exists(System.IO.Path.Combine(settings.DataFolderPath, modKey.FileName.String)))
                 {
                     continue;

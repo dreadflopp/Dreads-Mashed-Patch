@@ -5,7 +5,7 @@ Mashed Patch is a Windows desktop patcher. It is not intended to be added to or 
 ## Running
 
 1. Launch `DreadsMashedPatch.exe`.
-2. Confirm the Skyrim game folder, Data folder, and active `plugins.txt` on the **General** tab.
+2. Confirm the Skyrim game folder, plugin input (Data) folder, active `plugins.txt`, and patch output folder on the **General** tab. Select **Verify paths** and review the report.
 3. Choose record families and forwarding policies.
 4. Select **Run patcher**. Settings are saved automatically before the run.
 
@@ -15,15 +15,32 @@ Run output is stored in `%LOCALAPPDATA%\DreadsMashedPatch\Logs`. `DreadsMashedPa
 
 ### Mod Organizer 2
 
-Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. For Wabbajack lists, select the list's Stock Game folder and its Data folder, then select the active MO2 profile's `plugins.txt`. `MashedPatch.esp` is written through MO2's virtual Data folder and may appear in the configured output mod or **Overwrite**.
+Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. For Wabbajack lists, select the list's Stock Game folder and its Data folder, then select the active MO2 profile's `plugins.txt`. Select the virtual Data folder as the output folder to use MO2's configured output mod or **Overwrite**, or explicitly select a dedicated output mod folder.
+
+### Wabbajack and Stock Game paths
+
+Some lists launch a copied game installation, often named **Stock Game**, rather than the official Steam/GOG installation. Both the game folder and input Data folder must refer to the installation your list actually launches. **Detect paths** locates registered installations and may select the official installation instead. The highlighted notice on the General tab explains this; **Verify paths** can identify missing plugins but cannot prove which installation your manager launches.
 
 ### Vortex and deployed installations
 
 Run the executable normally after deployment. Confirm that the game folder, Data folder, and `plugins.txt` belong to the active deployment/profile.
+Choose a separate patch output folder, then install its generated plugins together as a dedicated output mod. The mod manager's staging root is not an output mod folder.
 
 ### Proton and Amethyst
 
-Launch the Windows executable in Skyrim's Proton prefix, either directly or through Amethyst's external applications feature. Confirm the game folder, deployed Data folder, and active `plugins.txt` manually if automatic detection is incomplete. The patcher writes `MashedPatch.esp` into the selected Data folder; after running it, check how Amethyst captures generated files on restore and redeploy. WPF behavior under Proton has not yet been verified.
+Launch the Windows executable in a Proton prefix that can access the selected game and profile paths, either directly or through Amethyst's external applications feature. Deploy the active profile first. Confirm the actual game folder (including a list's Stock Game copy), deployed Data folder, and active `plugins.txt` manually. Choose a separate output folder and install its generated plugins together as an output mod in Amethyst; do not write directly into the staging root. WPF behavior under Proton has not yet been verified.
+
+### Output and path verification
+
+The output folder is independent of the plugin input folder and is required for both a full run and **Create empty patch output**. Existing settings from before this option was introduced require an explicit selection; the app does not silently reuse the input or staging folder. Both the run log and completion message identify the chosen destination. Only previous patch outputs in that destination are replaced; copies in other directories are untouched.
+
+**Verify paths** produces a read-only report on the General tab showing the discovered `.esm`, `.esp`, and `.esl` files and each `plugins.txt` entry's enabled/disabled and found/missing status. Missing enabled inputs are errors; unlisted files are warnings because they may be intentionally inactive. Installed implicit masters and Creation Club plugins are accounted for, and output/later listings are marked as excluded by the patch's load-order cutoff. Duplicate listings and filenames are reported. Changing any selected path or game release invalidates the displayed report. Verify again after changing the manager's deployment or profile, even if the path strings remain the same.
+
+Listings are parsed with Mutagen, and plugin identities are compared using `ModKey`. Filesystem checks are separate: a case-insensitive name match does not guarantee that the expected path exists on a case-sensitive filesystem. The report identifies such discrepancies without renaming files. This check does not import records, inspect master dependencies, validate output write permissions, or confirm the manager's launch target.
+
+Pasted path text can include surrounding double quotes or mixed `/` and `\` separators. The app normalizes these for its runtime. Under Wine/Proton, existing Unix absolute paths are mapped through `Z:` when that mapped file or folder is accessible. All four path Browse buttons share the same normalization and use an absolute existing starting directory. If the shell dialog rejects it, Browse retries once without a starting directory; a persistent failure produces a handled error message. Clearing a path field also opens Browse without a starting directory.
+
+Browse migration note: game, input, output, and plugins.txt browsing share one path-input and dialog-fallback implementation; the separate raw `InitialDirectory` assignments were removed. Master-rule import/export dialogs retain their existing behavior because they do not accept pasted starting-directory fields. Game-folder inference uses the same safe path handling. Record handlers and flag policies are unchanged.
 
 ## Record selection
 
@@ -35,9 +52,11 @@ The Run Log tab shows bounded progress, warnings, and errors while the complete 
 
 The game release is selected explicitly and passed to Mutagen/Synthesis. Anniversary Edition uses the corresponding Special Edition Steam or GOG selection. Mutagen requires this value for implicit masters, load-order parsing, and binary defaults. Creation Club listings are read explicitly from `Skyrim.ccc` in the selected game folder, merged with `plugins.txt`, and deduplicated by the Synthesis pipeline.
 
-The primary output name is fixed as `MashedPatch.esp`. If the patch needs more than 254 masters, Synthesis automatically splits it into additional numbered plugins such as `MashedPatch_2.esp`. If the primary output already appears in the selected load order, Synthesis reads only enabled plugins placed before it. If it is absent, Synthesis reads the complete enabled load order. Each run writes new output into a temporary folder inside Data, then replaces the previous primary and numbered outputs after writing succeeds. A failed patch build leaves the previous output files in place.
+The primary output name is fixed as `MashedPatch.esp`. If the patch needs more than 254 masters, Synthesis automatically splits it into additional numbered plugins such as `MashedPatch_2.esp`. If the primary output already appears in the selected load order, Synthesis reads only enabled plugins placed before it. If it is absent, Synthesis reads the complete enabled load order. Each run writes new output into a temporary folder inside the selected output folder, then replaces the previous primary and numbered outputs after writing succeeds. A failed patch build leaves the previous output files in place.
 
 Use **Create empty patch output** on the General tab before the first full run when the plugin must be positioned in a mod manager. The action removes the primary and recognized split outputs, then writes one empty, masterless plugin at the stable primary filename.
+
+Path/output migration note: full runs and empty-output creation now share one explicit destination setting and the existing output transaction. Plugin input remains separate; Synthesis still handles imports, deduplication, load-order trimming, and output splitting. Creation Club file parsing is shared by preparation and verification. No record handlers or flag policies changed. The old input-derived output destination and obsolete Creation Club parsing loop were removed.
 
 Plugins on the **Priority Mods** tab win at record scope. If another plugin overwrites one of their records, Mashed Patch copies the complete record snapshot from the matching priority mod occurring last in the configured list instead of merging individual properties. No patch record is needed when that selected source is already the winning override.
 
@@ -69,6 +88,8 @@ On Linux, install the .NET 10 SDK and run:
 ```bash
 bash ./Build-Standalone.sh
 ```
+
+The Linux script requires .NET 10. It uses the SDK on `PATH` if compatible, otherwise it checks the repository's `.tools/dotnet` installation. It prints the selected SDK and reports a clear error if neither is compatible. This avoids selecting a system .NET 9 SDK when a local .NET 10 SDK is available.
 
 The Linux script restores, builds, tests, and publishes the same `win-x64` Windows executable to `artifacts/DreadsMashedPatch-win-x64`. It does not clean `bin` or `obj`. `EnableWindowsTargeting` lets the SDK obtain Windows targeting packs on Linux; it does not make WPF a native Linux UI. Run the published executable through Wine or Proton to test the interface.
 

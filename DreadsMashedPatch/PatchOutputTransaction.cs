@@ -2,7 +2,7 @@ using Mutagen.Bethesda.Plugins.Analysis;
 
 namespace DreadsMashedPatch;
 
-/// <summary>Stages patch files beside Data so a failed build leaves the previous patch intact.</summary>
+/// <summary>Stages patch files inside the output folder so a failed build leaves the previous patch intact.</summary>
 public sealed class PatchOutputTransaction : IDisposable
 {
     private readonly string _outputPath;

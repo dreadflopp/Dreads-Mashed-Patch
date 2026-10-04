@@ -20,6 +20,16 @@
     <ProjectReference Include="..\DreadsMashedPatch\DreadsMashedPatch.csproj" />
   </ItemGroup>
 
+  <!-- Exercise the desktop host's platform-independent path/output services on Linux too. -->
+  <ItemGroup>
+    <Compile Include="..\DreadsMashedPatch.App\Models\StandaloneSettings.cs" Link="Standalone\StandaloneSettings.cs" />
+    <Compile Include="..\DreadsMashedPatch.App\Services\PatcherRunner.cs" Link="Standalone\PatcherRunner.cs" />
+    <Compile Include="..\DreadsMashedPatch.App\Services\LoadOrderPreparer.cs" Link="Standalone\LoadOrderPreparer.cs" />
+    <Compile Include="..\DreadsMashedPatch.App\Services\SettingsStore.cs" Link="Standalone\SettingsStore.cs" />
+    <Compile Include="..\DreadsMashedPatch.App\Services\UiTextWriter.cs" Link="Standalone\UiTextWriter.cs" />
+    <Compile Include="..\DreadsMashedPatch.App\Services\PathInput.cs" Link="Standalone\PathInput.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="..\docs\collection-semantics-manifest.json"
           Link="collection-semantics-manifest.json"
