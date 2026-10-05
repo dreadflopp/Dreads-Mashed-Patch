@@ -67,7 +67,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             {
                 return typedRecord;
             }
-            Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
+            LogCollector.AddError(propertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
             return null;
         }
 
@@ -77,7 +77,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             {
                 return typedRecord;
             }
-            Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
+            LogCollector.AddError(propertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
             return null;
         }
 
@@ -90,27 +90,27 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
 
             if (context == null)
             {
-                Console.WriteLine($"Error: Context is null for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Context is null for {PropertyName}");
                 return;
             }
 
             if (propertyContext is not FlagPropertyContext<TFlag> flagPropertyContext)
             {
-                Console.WriteLine($"Error: Property context is not a flag property context for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Property context is not a flag property context for {PropertyName}");
                 return;
             }
 
             var forwardFlagContexts = flagPropertyContext.ForwardFlagContexts;
             if (forwardFlagContexts == null)
             {
-                Console.WriteLine($"Error: Property context is not properly initialized for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Property context is not properly initialized for {PropertyName}");
                 return;
             }
 
             var recordMod = state.LoadOrder[context.ModKey].Mod;
             if (recordMod == null)
             {
-                Console.WriteLine($"Error: Record mod is null for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record mod is null for {PropertyName}");
                 return;
             }
 

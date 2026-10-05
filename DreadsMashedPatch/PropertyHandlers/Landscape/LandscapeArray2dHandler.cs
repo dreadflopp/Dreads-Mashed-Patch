@@ -20,7 +20,7 @@ public sealed class LandscapeArray2dHandler : AbstractPropertyHandler<IReadOnlyA
     {
         if (record is not ILandscapeGetter landscape)
         {
-            Console.WriteLine($"Error: Record does not implement ILandscapeGetter for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement ILandscapeGetter for {PropertyName}");
             return null;
         }
 
@@ -31,7 +31,7 @@ public sealed class LandscapeArray2dHandler : AbstractPropertyHandler<IReadOnlyA
     {
         if (record is not ILandscape landscape)
         {
-            Console.WriteLine($"Error: Record does not implement ILandscape for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement ILandscape for {PropertyName}");
             return;
         }
 

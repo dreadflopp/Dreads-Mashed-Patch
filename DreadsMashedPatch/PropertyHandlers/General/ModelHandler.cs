@@ -54,7 +54,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IModeled for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IModeled for {PropertyName}");
             }
         }
 
@@ -66,7 +66,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IModeledGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IModeledGetter for {PropertyName}");
             }
             return null;
         }

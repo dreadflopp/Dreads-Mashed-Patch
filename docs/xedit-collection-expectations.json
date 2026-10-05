@@ -2182,5 +2182,70 @@
         "CountOrCoupling":  "No separate count or parallel collection; duplicate Type values are valid distinct rows.",
         "XEditSource":  "XEditSource/Core/wbDefinitionsCommon.pas:9639-9657",
         "Rationale":  "SetSummaryKeyOnValue configures xEdit display text only. It does not turn the plain wbRArray into a sorted/keyed collection."
+    },
+    {
+        "RecordHandler": "PlacedHazardRecordHandler",
+        "Property": "LinkedReferences",
+        "ReviewStatus": "Reviewed",
+        "ExpectedRuntimeMode": "SortedKeyed",
+        "XEditSemantics": "SortedKeyed",
+        "XEditConstruct": "ReferenceRecord wbRArrayS / wbStructSK(XLKR, [0])",
+        "IdentityKey": "KeywordOrReference.FormKey",
+        "Alignability": "Sorted by key",
+        "CountOrCoupling": "Keyed reference rows; reference is payload",
+        "XEditSource": "XEditSource/Core/wbDefinitionsTES5.pas:2161-2164,4190",
+        "Rationale": "PHZD uses ReferenceRecord, which sorts by Keyword/Ref; reuse ACHR keyed replacement rather than REFR positional mode."
+    },
+    {
+        "RecordHandler": "PlacedHazardRecordHandler",
+        "Property": "Reflections",
+        "ReviewStatus": "Reviewed",
+        "ExpectedRuntimeMode": "SortedKeyed",
+        "XEditSemantics": "SortedKeyed",
+        "XEditConstruct": "ReferenceRecord wbRArrayS / wbStructSK(XPWR, [0])",
+        "IdentityKey": "Water.FormKey",
+        "Alignability": "Sorted by key",
+        "CountOrCoupling": "Keyed water-reference rows; Type belongs to its row",
+        "XEditSource": "XEditSource/Core/wbDefinitionsTES5.pas:2151-2160,4190",
+        "Rationale": "Water is the xEdit row key; reflection/refraction flags travel with the complete selected row."
+    },
+    {
+        "RecordHandler": "PlacedHazardRecordHandler",
+        "Property": "LocationRefTypes",
+        "ReviewStatus": "Reviewed",
+        "ExpectedRuntimeMode": "AlignedOrdered",
+        "XEditSemantics": "AlignedOrdered",
+        "XEditConstruct": "ReferenceRecord wbArray(XLRT)",
+        "IdentityKey": "FormKey with occurrence alignment",
+        "Alignability": "Occurrence alignment",
+        "CountOrCoupling": "Ordered reference sequence",
+        "XEditSource": "XEditSource/Core/wbDefinitionsTES5.pas:2178,4190",
+        "Rationale": "Reuse ACHR/REFR ordered location-reference-type forwarding; preserve source declaration order."
+    },
+    {
+        "RecordHandler": "PlacedHazardRecordHandler",
+        "Property": "VirtualMachineAdapter",
+        "ReviewStatus": "Reviewed",
+        "ExpectedRuntimeMode": "SortedKeyed",
+        "XEditSemantics": "SortedKeyed",
+        "XEditConstruct": "wbVMAD script collection",
+        "IdentityKey": "Script name",
+        "Alignability": "Sorted by key",
+        "CountOrCoupling": "Scripts are complete authored values",
+        "XEditSource": "LIST_ORDERING_MIGRATION.md; XEditSource/Core/wbDefinitionsTES5.pas:2147,4190",
+        "Rationale": "Reuse ordinary VMAD script-name ownership and destination metadata preservation."
+    },
+    {
+        "RecordHandler": "PlacedHazardRecordHandler",
+        "Property": "DistantLodData",
+        "ReviewStatus": "Reviewed",
+        "ExpectedRuntimeMode": "Atomic",
+        "XEditSemantics": "Atomic",
+        "XEditConstruct": "wbXLOD fixed wbArray(XLOD, wbFloat, 3)",
+        "IdentityKey": "Whole XLOD value",
+        "Alignability": "Whole value",
+        "CountOrCoupling": "Fixed three-float payload; one owner for every slot",
+        "XEditSource": "XEditSource/Core/wbDefinitionsCommon.pas:10064-10070; XEditSource/Core/wbDefinitionsTES5.pas:2180,4190",
+        "Rationale": "The slots form a fixed XLOD value; atomic ownership avoids combining coordinates from different source records."
     }
 ]

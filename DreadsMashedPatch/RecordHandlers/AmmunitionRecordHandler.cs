@@ -13,17 +13,23 @@ namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
     // - Generalized: AMMO scalar/form-link fields use typed reflection; translated text uses generated copying.
-    // - Kept specialized: Name/ObjectBounds/Model/Icons/Destructible/Keywords/Value/Weight and Skyrim flag handlers.
+    // - Kept specialized: ObjectBounds/Model/Icons/Destructible/Keywords/Value/Weight and Skyrim flag handlers.
     // - Intentionally excluded: DATADataTypeState is Mutagen serialization state, not an xEdit field.
     // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout.
+
+    // Header migration: raw/common/Ammunition.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class AmmunitionRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-            { "Name", new NameHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Ammunition.MajorFlag)) },
+            { "Name", new TranslatedStringReflectionPropertyHandler<IAmmunition, IAmmunitionGetter>("Name") },
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Icons", new IconsHandler() },
             { "Destructible", new DestructibleHandler() },
@@ -37,7 +43,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Value", new ValueHandler() },
             { "Weight", new WeightHandler() },
             { "ShortName", new SimpleReflectionPropertyHandler<string, IAmmunition, IAmmunitionGetter>("ShortName") },
-            { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.Ammunition.MajorFlag, IAmmunition, IAmmunitionGetter>("MajorFlags") }
+
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

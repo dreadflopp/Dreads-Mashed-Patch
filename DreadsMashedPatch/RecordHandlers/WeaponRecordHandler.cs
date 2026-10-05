@@ -17,19 +17,25 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Intentionally excluded: Unused*, Data.Unused*, Critical.Unused*, and Data.Unknown* are outside the semantic conflict surface.
     // - Rationale: exact dotted registrations expose semantic leaves while preserving dedicated copy/flag behavior;
     //   only WEAP keywords need the configured type-family ownership rule, so other record keyword handlers stay generic.
+
+    // Header migration: raw/common/Weapon.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class WeaponRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             // General properties (using existing handlers)
             { "EditorID", new EditorIDHandler() },
-            { "Name", new NameHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-            { "MajorFlags", new MajorFlagsHandler() },
+            { "Name", new TranslatedStringReflectionPropertyHandler<IWeapon, IWeaponGetter>("Name") },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Weapon.MajorFlag)) },
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Icons", new IconsHandler() },
             { "Keywords", new WeaponKeywordListHandler() },
+            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() },
 
             // Weapon-specific properties
@@ -99,7 +105,7 @@ namespace DreadsMashedPatch.RecordHandlers
             return contexts;
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

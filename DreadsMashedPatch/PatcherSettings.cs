@@ -77,28 +77,6 @@ namespace DreadsMashedPatch
         public static int GetAlwaysWinningPriority(ModKey modKey) =>
             _alwaysWinningModPriorities.GetValueOrDefault(modKey, -1);
 
-        internal static TContext? SelectAlwaysWinningContext<TContext>(
-            IEnumerable<TContext> contexts,
-            Func<TContext, ModKey> modKeySelector)
-            where TContext : class
-        {
-            TContext? selected = null;
-            var selectedPriority = -1;
-            foreach (var context in contexts)
-            {
-                var priority = GetAlwaysWinningPriority(modKeySelector(context));
-                if (priority <= selectedPriority)
-                {
-                    continue;
-                }
-
-                selected = context;
-                selectedPriority = priority;
-            }
-
-            return selected;
-        }
-
         public static bool HasMasterOrVirtualMaster(ISkyrimModGetter mod, string? ownerMod)
         {
             if (ownerMod is null || !ModKey.TryFromFileName(ownerMod, out var ownerKey))

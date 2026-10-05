@@ -2,7 +2,7 @@
 
 [Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
 
-The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated.
+The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
 <a id="alch-ingestible"></a>
 
@@ -13,7 +13,7 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 | Properties | How they are patched |
 |---|---|
 | `Name`, `Description`, `PickUpSound`, `PutDownSound`, `EquipmentType`, `Weight`, `Value`, `Addiction`, `AddictionChance`, `ConsumeSound` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Destructible`, `Icons` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Keywords` | Merge rows by key. |
@@ -28,7 +28,7 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Description`, `Projectile`, `Damage`, `Value`, `Weight`, `ShortName` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Icons`, `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Keywords` | Merge rows by key. |
@@ -53,7 +53,7 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 
 ## ARMA — Armor Addon
 
-Male and female fields are separate. Each model filename is separate from its alternate textures, which match by (Name, Index). Selected filenames also carry model data bytes, but byte-only differences do not trigger forwarding. BodyTemplate.ActsLike44 is not independently patched.
+Male and female fields are separate. Each model filename is separate from its alternate textures, which match by (Name, Index). Selected filenames also carry model data bytes, but byte-only differences do not trigger forwarding. This is explicit migration policy, confirmed for all four filename handlers in the [comparison audit](COVERAGE-COMPARISON-AUDIT.md#pack-arma-and-navi-boundaries). BodyTemplate.ActsLike44 is not independently patched.
 
 | Properties | How they are patched |
 |---|---|
@@ -117,12 +117,12 @@ Teaches keeps the teaching variant and its value together. It does not combine s
 
 ## CONT — Container
 
-Items match by item reference, including duplicate handling and count updates. A newly different same-item count can replace a row through the shared list rules even when the specialized count update declines it. Rewriting Items drops entry ownership/condition extra data (COED): see [known issues](KNOWN-ISSUES.md#container-item-extra-data).
+Items match by item reference, retaining duplicate rows and their complete ownership/condition extra data (COED). Unchanged duplicate rows match first; remaining occurrences match by metadata-change cost. Newly different counts can forward independently; returning to the baseline count requires ownership permission. COED presence, condition and coherent owner changes require the row owner to be a declared or configured virtual master. Count edits do not grant COED permission in the same row. Absent COED stays distinct from a present default group. See the [completed fix and verification](KNOWN-ISSUES.md#container-item-extra-data).
 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `Weight`, `OpenSound`, `CloseSound` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Items`, `VirtualMachineAdapter` | Merge rows by key. |
@@ -153,7 +153,7 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
+
 | `Icons`, `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
@@ -182,7 +182,7 @@ Entries match by (Level, Reference), with complete row payloads/counts. Entries 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
+
 | `Icons`, `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
@@ -196,7 +196,7 @@ Entries match by (Level, Reference), with complete row payloads/counts. Entries 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight`, `ContainedSoul`, `MaximumCapacity`, `LinkedTo` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
+
 | `Icons`, `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Keywords` | Merge rows by key. |
@@ -212,7 +212,7 @@ By default, a newly accepted single configured vanilla weapon-type keyword repla
 | Properties | How they are patched |
 |---|---|
 | `Name`, `ObjectEffect`, `EnchantmentAmount`, `EquipmentType`, `BlockBashImpact`, `AlternateBlockMaterial`, `PickUpSound`, `PutDownSound`, `Description`, `ImpactDataSet`, `FirstPersonModel`, `AttackSound`, `AttackSound2D`, `AttackLoopSound`, `AttackFailSound`, `IdleSound`, `EquipSound`, `UnequipSound`, `BasicStats.Value`, `BasicStats.Weight`, `BasicStats.Damage`, `DetectionSoundLevel`, `Template`, `Data.AnimationType`, `Data.Speed`, `Data.Reach`, `Data.SightFOV`, `Data.BaseVATStoHitChance`, `Data.AttackAnimation`, `Data.NumProjectiles`, `Data.EmbeddedWeaponAV`, `Data.RangeMin`, `Data.RangeMax`, `Data.OnHit`, `Data.AnimationAttackMult`, `Data.RumbleLeftMotorStrength`, `Data.RumbleRightMotorStrength`, `Data.RumbleDuration`, `Data.Skill`, `Data.Resist`, `Data.Stagger`, `Critical.Damage`, `Critical.PercentMult`, `Critical.Effect` | Select each value separately. |
-| `MajorFlags`, `Data.Flags`, `Critical.Flags` | Merge registered flag bits separately. |
+| `Data.Flags`, `Critical.Flags` | Merge registered flag bits separately. |
 | `Icons`, `Destructible`, `ScopeModel` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Keywords`, `VirtualMachineAdapter` | Merge rows by key. |

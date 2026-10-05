@@ -18,13 +18,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: most scalar/asset/list properties via shared handlers.
     // - Kept specialized: Conditions via the shared condition implementation and a record adapter.
     // - Rationale: conditions require aligned list ordering, deep copies, and semantic CTDA comparison.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class IdleAnimationRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Conditions", new ConditionsHandler() },
             { "Filename", new SimpleReflectionAssetLinkPropertyHandler<SkyrimBehaviorAssetType, IIdleAnimation, IIdleAnimationGetter>("Filename") },
             { "AnimationEvent", new SimpleReflectionPropertyHandler<string?, IIdleAnimation, IIdleAnimationGetter>("AnimationEvent") },

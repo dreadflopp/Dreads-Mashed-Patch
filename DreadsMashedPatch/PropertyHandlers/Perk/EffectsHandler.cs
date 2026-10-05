@@ -22,7 +22,7 @@ public sealed class EffectsHandler : AbstractListPropertyHandler<IAPerkEffectGet
     {
         if (record is not IPerk perk)
         {
-            Console.WriteLine($"Error: Record does not implement IPerk for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement IPerk for {PropertyName}");
             return;
         }
 

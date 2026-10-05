@@ -13,21 +13,27 @@ namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
 // - Generalized: MSTT fields including flags and looping sound via existing handlers.
-// - Kept specialized: shared bounds/name/model handlers.
+// - Kept specialized: shared bounds/model handlers.
 // - Rationale: follows Static-style forwarding while preserving moveable-static-specific fields.
+
+// Header migration: raw/common/MoveableStatic.MajorFlag flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Name migration: translated Name uses generated copying to retain every selected language.
+// Optional null names remove the value; comparison follows Mutagen's language policy.
+// Other specialized fields/flags retain their policies; translations are selected as one value.
 public class MoveableStaticRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Name", new NameHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(MoveableStatic.MajorFlag)) },
+        { "Name", new TranslatedStringReflectionPropertyHandler<IMoveableStatic, IMoveableStaticGetter>("Name") },
             { "ModelAndBounds", new ModelBoundsHandler() },
         { "Destructible", new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, IMoveableStatic, IMoveableStaticGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals) },
         { "Flags", new SimpleReflectionFlagPropertyHandler<MoveableStatic.Flag, IMoveableStatic, IMoveableStaticGetter>("Flags") },
         { "LoopingSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IMoveableStatic, IMoveableStaticGetter>("LoopingSound") },
-        { "MajorFlags", new SimpleReflectionFlagPropertyHandler<MoveableStatic.MajorFlag, IMoveableStatic, IMoveableStaticGetter>("MajorFlags") }
+
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

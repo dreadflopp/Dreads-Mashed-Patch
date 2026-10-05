@@ -21,7 +21,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Armor
         {
             if (record is not IArmor armor)
             {
-                Console.WriteLine($"Error: Record does not implement IArmor for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IArmor for {PropertyName}");
                 return;
             }
 

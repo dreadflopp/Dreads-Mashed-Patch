@@ -18,7 +18,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Weather
                 return weatherRecord.Clouds;
             }
 
-            Console.WriteLine($"Error: Record does not implement IWeatherGetter for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement IWeatherGetter for {PropertyName}");
             return null;
         }
 
@@ -26,7 +26,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Weather
         {
             if (record is not IWeather weatherRecord)
             {
-                Console.WriteLine($"Error: Record does not implement IWeather for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IWeather for {PropertyName}");
                 return;
             }
 

@@ -46,6 +46,7 @@ namespace DreadsMashedPatch
                     return;
                 }
 
+                if (IsDiagnostic(line, "Error")) PatchDiagnostics.Error(identifier, line);
                 AddCore(identifier, line);
             }
         }
@@ -64,6 +65,7 @@ namespace DreadsMashedPatch
         {
             lock (_sync)
             {
+                PatchDiagnostics.Error(identifier, message, exception);
                 AddCore(identifier, FormatDiagnostic("Error", message, exception));
             }
         }
@@ -143,12 +145,24 @@ namespace DreadsMashedPatch
             return true;
         }
 
-        private static bool IsDiagnostic(string line, string severity)
+        /// <summary>Recognizes severity at the start of a message, optionally after a property tag.</summary>
+        public static bool IsDiagnostic(string line, string severity)
         {
-            return line.Contains($"[{severity}]", StringComparison.OrdinalIgnoreCase)
-                || line.Contains($"{severity}:", StringComparison.OrdinalIgnoreCase)
-                || line.TrimStart().StartsWith(severity, StringComparison.OrdinalIgnoreCase)
-                || line.Contains($"] {severity} ", StringComparison.OrdinalIgnoreCase);
+            var message = line.TrimStart();
+            if (HasSeverityPrefix(message, severity)) return true;
+            if (!message.StartsWith('[')) return false;
+            var tagEnd = message.IndexOf(']');
+            return tagEnd >= 0 && HasSeverityPrefix(message[(tagEnd + 1)..].TrimStart(), severity);
+        }
+
+        private static bool HasSeverityPrefix(string message, string severity)
+        {
+            // Values may themselves contain "<Error: ...>", "[Error]" or "Warning:".
+            // Only a diagnostic prefix describes the severity of the log entry.
+            return message.StartsWith($"[{severity}]", StringComparison.OrdinalIgnoreCase)
+                || message.StartsWith($"{severity}:", StringComparison.OrdinalIgnoreCase)
+                || message.StartsWith($"{severity} ", StringComparison.OrdinalIgnoreCase)
+                || message.Equals(severity, StringComparison.OrdinalIgnoreCase);
         }
 
         public static void PrintAll(bool stripAllControlChars = true)

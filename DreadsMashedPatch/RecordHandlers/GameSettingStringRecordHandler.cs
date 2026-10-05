@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Generalized: GMST translated-string data uses Mutagen's generated localized copy.
 // - Kept specialized: typed Data handling remains per concrete GMST variant.
 // - Rationale: concrete Data type differs across GameSetting variants.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class GameSettingStringRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Data", new TranslatedStringReflectionPropertyHandler<IGameSettingString, IGameSettingStringGetter>("Data") }
     };
 

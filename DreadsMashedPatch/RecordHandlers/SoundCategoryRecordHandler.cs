@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Generalized: SNCT name, parent link, volume scalars, and metadata use shared semantic handlers.
 // - Kept specialized: none; Flags remains on the project-approved flag handler path.
 // - Rationale: all semantic fields are independent scalar or link values.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class SoundCategoryRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Name", new TranslatedStringReflectionPropertyHandler<ISoundCategory, ISoundCategoryGetter>("Name") },
         { "Flags", new SimpleReflectionFlagPropertyHandler<SoundCategory.Flag, ISoundCategory, ISoundCategoryGetter>("Flags") },
         { "Parent", new SimpleReflectionFormLinkPropertyHandler<ISoundCategoryGetter, ISoundCategory, ISoundCategoryGetter>("Parent") },

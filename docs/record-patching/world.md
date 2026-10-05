@@ -2,7 +2,7 @@
 
 [Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
 
-The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated.
+The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
 <a id="cell-cell"></a>
 
@@ -13,7 +13,7 @@ Lighting includes its inheritance flags and Versioning. WaterHeight is not indep
 | Properties | How they are patched |
 |---|---|
 | `Name`, `Location`, `Owner`, `Water`, `LightingTemplate`, `AcousticSpace`, `EncounterZone`, `Music`, `ImageSpace`, `SkyAndWeatherFromRegion`, `WaterNoiseTexture`, `FactionRank`, `LockList`, `WaterEnvironmentMap` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Lighting`, `Grid`, `MaxHeightData`, `WaterVelocity`, `XWCN`, `XWCS`, `OcclusionData`, `LNAM` | Select each whole value separately. |
 | `Regions` | Merge rows by key. |
 | `WaterHeight` | Not independently forwarded. |
@@ -103,7 +103,7 @@ Data keeps all geometry and connectivity together; vertices and triangles do not
 
 | Properties | How they are patched |
 |---|---|
-| `MajorFlags` | Merge registered flag bits separately. |
+
 | `Data`, `ONAM`, `PNAM`, `NNAM` | Select each whole value separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/NavigationMeshRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
@@ -117,7 +117,7 @@ RegionAreas keeps area order and each polygon together; comparison normalizes po
 | Properties | How they are patched |
 |---|---|
 | `MapColor`, `Worldspace` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
+
 | `Objects`, `Weather`, `Map`, `Land`, `Grasses`, `Sounds` | Select each whole value separately. |
 | `RegionAreas` | Select each whole collection separately. |
 
@@ -130,7 +130,7 @@ RegionAreas keeps area order and each polygon together; comparison normalizes po
 | Properties | How they are patched |
 |---|---|
 | `Ingredient`, `HarvestSound`, `Name`, `TrunkFlexibility`, `BranchFlexibility`, `LeafAmplitude`, `LeafFrequency` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
+
 | `Production` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter` | Merge rows by key. |

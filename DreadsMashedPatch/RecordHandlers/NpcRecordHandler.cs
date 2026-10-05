@@ -16,17 +16,26 @@ namespace DreadsMashedPatch.RecordHandlers
     // Migration note:
     // - Generalized: semantic AIData, Configuration, and scalar PlayerSkills leaves use exact dotted shared handlers.
     // - Generalized: xEdit-sorted HeadParts and TintLayers use shared keyed list ownership.
+    // - Generalized: Items' complete generated snapshots, duplicate matching, and COED reconciliation share AbstractInventoryItemsHandler with CONT.
+    // - Kept specialized: inventory count/COED edits retain NPC's ownership permission checks; only the Items surface adapter is record-specific.
     // - Specialized: polymorphic Level, protection policy, skill dictionaries, float tolerance, remaining NPC collection merging, and typed attacks remain explicit.
     // - Intentionally excluded: AIData.Unused and PlayerSkills.Unused* are serialization-only fields.
     // - Rationale: Level uses generated subtype dispatch; unused storage is not an xEdit-visible conflict surface.
+
+    // Header migration: raw/common/Npc.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // Output migration: shared staged context insertion replaces the separate NPC group path.
+    // NPC property/flag/ownership policies stay specialized; insertion needs no NPC exception.
     public class NpcRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
-            { "Name", new NameHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-            { "MajorFlags", new MajorFlagsHandler() },
+            { "Name", new TranslatedStringReflectionPropertyHandler<INpc, INpcGetter>("Name") },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Npc.MajorFlag)) },
             { "DeathItem", new SimpleReflectionFormLinkPropertyHandler<ILeveledItemGetter, INpc, INpcGetter>("DeathItem") },
             { "CombatOverridePackageList", new SimpleReflectionFormLinkPropertyHandler<IFormListGetter, INpc, INpcGetter>("CombatOverridePackageList") },
             { "SpectatorOverridePackageList", new SimpleReflectionFormLinkPropertyHandler<IFormListGetter, INpc, INpcGetter>("SpectatorOverridePackageList") },
@@ -57,6 +66,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Factions", new FactionHandler() },
             { "Packages", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IPackageGetter>, INpc, INpcGetter>("Packages", ListSemantics.AlignedOrdered) },
             { "ActorEffect", new SimpleReflectionListPropertyHandler<IFormLinkGetter<ISpellRecordGetter>, INpc, INpcGetter>("ActorEffect", ListSemantics.SortedKeyed) },
+            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() },
             { "Items", new ItemHandler() },
             { "Keywords", new KeywordListHandler() },
@@ -110,13 +120,6 @@ namespace DreadsMashedPatch.RecordHandlers
                 .ToLink<INpcGetter>()
                 .ResolveAllContexts<ISkyrimMod, ISkyrimModGetter, INpc, INpcGetter>(state.LinkCache)
                 .ToArray();
-        }
-
-        public override IMajorRecord GetOverrideRecord(
-            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,
-            IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
-        {
-            return state.PatchMod.Npcs.GetOrAddAsOverride(winningContext.Record);
         }
 
         // ApplyForwardedProperties is now handled by the base class

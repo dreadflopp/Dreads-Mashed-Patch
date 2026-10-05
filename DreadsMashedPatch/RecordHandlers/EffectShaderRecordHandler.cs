@@ -15,13 +15,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: EFSH texture fields share serialized asset-path comparison and copying behavior.
     // - Kept specialized: EffectShaderData remains one typed aggregate handler for its coupled DATA payload.
     // - Intentionally excluded: DATADataTypeState is serializer layout state, not an editable semantic field.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class EffectShaderRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "FillTexture", new FillTextureHandler() },
             { "ParticleShaderTexture", new ParticleShaderTextureHandler() },
             { "HolesTexture", new HolesTextureHandler() },
@@ -46,7 +49,7 @@ namespace DreadsMashedPatch.RecordHandlers
             return contexts;
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

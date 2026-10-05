@@ -1,11 +1,9 @@
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins.Records;
-using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Aspects;
 using Noggog;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
-using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.PropertyHandlers.General
 {
@@ -13,6 +11,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
     {
         public override string PropertyName => "Keywords";
         public override ListSemantics Semantics => ListSemantics.SortedKeyed;
+        protected override bool CanBeNull => true;
 
         protected override IReadOnlyList<object?> GetSortKey(IFormLinkGetter<IKeywordGetter> item) => [item.FormKey];
 
@@ -20,14 +19,15 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             if (record is IKeyworded<IKeywordGetter> keyworded)
             {
-                if (value != null)
-                {
-                    keyworded.Keywords = new ExtendedList<IFormLinkGetter<IKeywordGetter>>(value);
-                }
+                // Skyrim's keyword aspect is nullable: absence and present-empty
+                // have separate ownership. Copy links as well as the collection.
+                keyworded.Keywords = value == null ? null
+                    : new ExtendedList<IFormLinkGetter<IKeywordGetter>>(value.Select(link =>
+                        (IFormLinkGetter<IKeywordGetter>)new FormLink<IKeywordGetter>(link.FormKey)));
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IKeyworded<IKeywordGetter> for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IKeyworded<IKeywordGetter> for {PropertyName}");
             }
         }
 
@@ -39,7 +39,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IKeywordedGetter<IKeywordGetter> for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IKeywordedGetter<IKeywordGetter> for {PropertyName}");
             }
             return null;
         }

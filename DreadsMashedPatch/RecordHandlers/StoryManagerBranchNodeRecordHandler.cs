@@ -19,6 +19,10 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Coupled forwarding: every topology or behavior change always establishes complete-node ownership.
 // - Rationale: parent/sibling links, conditions, flags, and concurrency form one behavior-graph decision;
 //   independent configuration forwarding is intentionally unavailable.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class StoryManagerBranchNodeRecordHandler : AbstractRecordHandler
 {
     private static readonly IReadOnlySet<string> ConfigurationPropertyNames = new HashSet<string>(StringComparer.Ordinal)
@@ -36,8 +40,7 @@ public class StoryManagerBranchNodeRecordHandler : AbstractRecordHandler
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Parent", new SimpleReflectionFormLinkPropertyHandler<IAStoryManagerNodeGetter, IStoryManagerBranchNode, IStoryManagerBranchNodeGetter>("Parent") },
         { "PreviousSibling", new SimpleReflectionFormLinkPropertyHandler<IAStoryManagerNodeGetter, IStoryManagerBranchNode, IStoryManagerBranchNodeGetter>("PreviousSibling") },
         { "Conditions", new ConditionsHandler<IStoryManagerBranchNode, IStoryManagerBranchNodeGetter>(record => record.Conditions, record => record.Conditions) },

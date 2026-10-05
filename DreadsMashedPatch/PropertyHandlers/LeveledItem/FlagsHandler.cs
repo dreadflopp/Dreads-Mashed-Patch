@@ -16,7 +16,7 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
             }
             else
             {
-                System.Console.WriteLine($"Error: Record does not implement ILeveledItem for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement ILeveledItem for {PropertyName}");
             }
         }
 
@@ -28,7 +28,7 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
             }
             else
             {
-                System.Console.WriteLine($"Error: Record does not implement ILeveledItemGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement ILeveledItemGetter for {PropertyName}");
             }
             return default(Mutagen.Bethesda.Skyrim.LeveledItem.Flag);
         }

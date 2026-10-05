@@ -24,7 +24,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IWeightValue for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IWeightValue for {PropertyName}");
             }
         }
 
@@ -40,7 +40,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IWeightValueGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IWeightValueGetter for {PropertyName}");
             }
             return null;
         }

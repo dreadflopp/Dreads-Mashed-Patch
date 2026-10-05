@@ -14,13 +14,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: UnloadEvent via reflection.
     // - Kept specialized: Model uses existing modeled-asset handler.
     // - Rationale: matches project pattern of shared model handling plus minimal record-specific fields.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class AnimatedObjectRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Model", new ModelHandler() },
             { "UnloadEvent", new SimpleReflectionPropertyHandler<string, IAnimatedObject, IAnimatedObjectGetter>("UnloadEvent") }
         };

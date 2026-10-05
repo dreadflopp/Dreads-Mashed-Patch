@@ -17,13 +17,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Intentionally excluded: IMPA Unknown and Decal.Unknown are outside the semantic conflict surface.
     // - Rationale: independent DODT changes can merge without treating a later partial reversion as a
     //   new complete value; related dimensions and parallax settings remain atomic.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class ImpactRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Model", new ModelHandler() },
             { "Duration", new SimpleReflectionPropertyHandler<float, IImpact, IImpactGetter>("Duration") },
             { "Orientation", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.Impact.OrientationType, IImpact, IImpactGetter>("Orientation") },

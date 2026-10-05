@@ -1,114 +1,30 @@
-using Mutagen.Bethesda;
-using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Plugins.Records;
-using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Synthesis;
 using DreadsMashedPatch.Contexts;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
-using DreadsMashedPatch.PropertyHandlers.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
+using Mutagen.Bethesda.Skyrim;
 using Noggog;
 
 namespace DreadsMashedPatch.PropertyHandlers.Container
 {
-    public class ItemHandler : AbstractListPropertyHandler<ContainerEntry>
+    public class ItemHandler : AbstractInventoryItemsHandler<IContainerGetter, IContainer>
     {
-        public override string PropertyName => "Items";
-        public override ListSemantics Semantics => ListSemantics.SortedKeyed;
+        protected override IReadOnlyList<IContainerEntryGetter>? GetItems(IContainerGetter record) => record.Items;
 
-        protected override bool IsItemIdentityEqual(ContainerEntry? left, ContainerEntry? right) =>
-            left?.Item.Item.FormKey == right?.Item.Item.FormKey;
+        protected override void SetItems(IContainer record, ExtendedList<ContainerEntry>? items) => record.Items = items;
 
-        protected override IReadOnlyList<object?> GetSortKey(ContainerEntry item) => [item.Item.Item.FormKey];
-
-        protected override ContainerEntry CopyItemForForwardContext(ContainerEntry item) => CopyItem(item);
-
-        private static ContainerEntry CopyItem(IContainerEntryGetter item) => new()
-        {
-            Item = new ContainerItem
-            {
-                Item = new FormLink<IItemGetter>(item.Item.Item.FormKey),
-                Count = item.Item.Count
-            }
-        };
-
-        public override void SetValue(IMajorRecord record, List<ContainerEntry>? value)
-        {
-            if (record is IContainer container)
-            {
-                container.Items = value != null ? new ExtendedList<ContainerEntry>(value) : null;
-            }
-            else
-            {
-                Console.WriteLine($"Error: Record does not implement IContainer for {PropertyName}");
-            }
-        }
-
-        public override List<ContainerEntry>? GetValue(IMajorRecordGetter record)
-        {
-            if (record is IContainerGetter container)
-            {
-                return container.Items?.Select(CopyItem).ToList();
-            }
-
-            Console.WriteLine($"Error: Record does not implement IContainerGetter for {PropertyName}");
-            return null;
-        }
-
-        protected override bool IsItemEqual(ContainerEntry? item1, ContainerEntry? item2)
-        {
-            if (item1 == null && item2 == null) return true;
-            if (item1 == null || item2 == null) return false;
-
-            return item1.Item.Item.FormKey == item2.Item.Item.FormKey &&
-                   item1.Item.Count == item2.Item.Count;
-        }
-
-        protected override string FormatItem(ContainerEntry? item)
-        {
-            if (item == null) return "null";
-            return $"{item.Item.Item.FormKey} (Count: {item.Item.Count})";
-        }
-
-        protected override void ProcessHandlerSpecificLogic(
-            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> context,
-            IPatcherState<ISkyrimMod, ISkyrimModGetter> state,
+        protected override bool CanUpdateCount(
+            ISkyrimModGetter recordMod,
             ListPropertyContext<ContainerEntry> listPropertyContext,
-            List<ContainerEntry> recordItems,
-            List<ListPropertyValueContext<ContainerEntry>> currentForwardItems)
+            ListPropertyValueContext<ContainerEntry> forwardItem,
+            ContainerEntry recordItem)
         {
-            var recordMod = state.LoadOrder[context.ModKey].Mod;
-            if (recordMod == null) return;
-
-            // Update count metadata for items that are in the record and not removed
-            foreach (var forwardItem in currentForwardItems.Where(i => !i.IsRemoved))
-            {
-                var matchingRecordItem = recordItems.FirstOrDefault(recordItem =>
-                    recordItem.Item.Item.FormKey == forwardItem.Value.Item.Item.FormKey);
-
-                if (matchingRecordItem != null)
-                {
-                    // Update count if it's different and we have permissions
-                    if (matchingRecordItem.Item.Count != forwardItem.Value.Item.Count)
-                    {
-                        if (HasPermissionsToModify(recordMod, forwardItem.OwnerMod))
-                        {
-                            var oldCount = forwardItem.Value.Item.Count;
-                            var oldOwner = forwardItem.OwnerMod;
-                            forwardItem.Value.Item.Count = matchingRecordItem.Item.Count;
-                            forwardItem.OwnerMod = context.ModKey.ToString();
-                            LogCollector.Add(PropertyName, $"[{PropertyName}] {context.ModKey}: Updated count {oldCount} -> {matchingRecordItem.Item.Count} for {forwardItem.Value.Item.Item.FormKey} (was owned by {oldOwner}) Success");
-                        }
-                        else
-                        {
-                            LogCollector.Add(PropertyName, $"[{PropertyName}] {context.ModKey}: Cannot update count for {forwardItem.Value.Item.Item.FormKey} - no permission (owned by {forwardItem.OwnerMod})");
-                        }
-                    }
-                }
-            }
+            // Preserve CONT's existing keyed count policy: a newly different count
+            // can forward independently; returning to the baseline needs permission.
+            // Reconcile it here once so shared row replacement cannot overwrite COED.
+            var originalItem = listPropertyContext.OriginalValueContexts?.FirstOrDefault(item =>
+                item.Value.Item.Item.FormKey == recordItem.Item.Item.FormKey);
+            return originalItem == null
+                || originalItem.Value.Item.Count != recordItem.Item.Count
+                || HasPermissionsToModify(recordMod, forwardItem.OwnerMod);
         }
     }
 }
-

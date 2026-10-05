@@ -2,7 +2,7 @@
 
 [Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
 
-The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated.
+The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
 <a id="acti-activator"></a>
 
@@ -11,7 +11,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Name`, `MarkerColor`, `LoopingSound`, `ActivationSound`, `WaterType`, `ActivateTextOverride`, `InteractionKeyword` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
@@ -36,7 +36,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Name`, `OpenSound`, `CloseSound`, `LoopSound` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter` | Merge rows by key. |
@@ -63,7 +63,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Name`, `InteractionKeyword`, `AssociatedSpell`, `ModelFilename` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Destructible`, `PNAM`, `WorkbenchData` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Markers` | Select each whole collection separately. |
@@ -78,7 +78,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Name`, `Time`, `Radius`, `Color`, `FalloffExponent`, `FOV`, `NearClip`, `FlickerPeriod`, `FlickerIntensityAmplitude`, `FlickerMovementAmplitude`, `Value`, `Weight`, `FadeValue`, `Sound`, `Lens` | Select each value separately. |
-| `MajorFlags`, `Flags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Icons`, `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter` | Merge rows by key. |
@@ -92,7 +92,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Name`, `LoopingSound` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 

@@ -26,6 +26,7 @@ public class TalkingActivatorRecordHandler : AbstractRecordHandler
     {
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(TalkingActivator.MajorFlag)) },
+        // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<ITalkingActivator, ITalkingActivatorGetter>() },
         { "Name", new TranslatedStringReflectionPropertyHandler<ITalkingActivator, ITalkingActivatorGetter>("Name") },
         { "ModelAndBounds", new ModelBoundsHandler() },

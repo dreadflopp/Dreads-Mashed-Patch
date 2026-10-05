@@ -23,13 +23,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Kept specialized: generated Weather aggregate copying preserves indexed TimeOfDay members without reflecting over indexers.
 // - Intentionally excluded: NAM0DataTypeState is serialization state; Unknown is outside the semantic conflict surface.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary NAM0 layout.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class WeatherRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "DNAM", new SimpleReflectionBinaryDataPropertyHandler<IWeather, IWeatherGetter>("DNAM") },
         { "CNAM", new SimpleReflectionBinaryDataPropertyHandler<IWeather, IWeatherGetter>("CNAM") },
         { "ANAM", new SimpleReflectionBinaryDataPropertyHandler<IWeather, IWeatherGetter>("ANAM") },

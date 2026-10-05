@@ -33,7 +33,7 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
             {
                 return typedRecord;
             }
-            Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
+            LogCollector.AddError(propertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
             return null;
         }
 
@@ -43,7 +43,7 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
             {
                 return typedRecord;
             }
-            Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
+            LogCollector.AddError(propertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
             return null;
         }
 

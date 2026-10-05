@@ -18,7 +18,7 @@ public sealed class ReverbDataHandlerTests
         var recordHandler = new ReverbParametersRecordHandler();
 
         Assert.Equal(
-            ["EditorID", "MajorRecordFlagsRaw", "SkyrimMajorRecordFlags", "ReverbData"],
+            ["EditorID", "MajorRecordFlagsRaw", "ReverbData"],
             recordHandler.PropertyHandlers.Keys);
         Assert.IsType<ReverbDataHandler>(recordHandler.PropertyHandlers["ReverbData"]);
     }

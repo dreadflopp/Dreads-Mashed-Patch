@@ -20,6 +20,10 @@ namespace DreadsMashedPatch.RecordHandlers;
 //   complete-node ownership.
 // - Rationale: these fields jointly define the event branch and cannot safely be recombined independently;
 //   independent configuration forwarding is intentionally unavailable.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class StoryManagerEventNodeRecordHandler : AbstractRecordHandler
 {
     private static readonly IReadOnlySet<string> ConfigurationPropertyNames = new HashSet<string>(StringComparer.Ordinal)
@@ -38,8 +42,7 @@ public class StoryManagerEventNodeRecordHandler : AbstractRecordHandler
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Parent", new SimpleReflectionFormLinkPropertyHandler<IAStoryManagerNodeGetter, IStoryManagerEventNode, IStoryManagerEventNodeGetter>("Parent") },
         { "PreviousSibling", new SimpleReflectionFormLinkPropertyHandler<IAStoryManagerNodeGetter, IStoryManagerEventNode, IStoryManagerEventNodeGetter>("PreviousSibling") },
         { "Conditions", new ConditionsHandler<IStoryManagerEventNode, IStoryManagerEventNodeGetter>(record => record.Conditions, record => record.Conditions) },

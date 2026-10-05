@@ -20,17 +20,20 @@ namespace DreadsMashedPatch.RecordHandlers
     //   opaque Papyrus object-property Unused bytes do not create conflicts.
     // - Rationale: excluded fields remain from the winning override; DIAL VMAD is copied atomically so its generated
     //   adapter subtype, versioning, typed script values, and script fragments cannot be partially/default constructed.
+
+    // Header migration: raw/common/DialogResponses.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class DialogResponseRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(DialogResponses.MajorFlag)) },
             { "DATA", new SimpleReflectionBinaryDataPropertyHandler<IDialogResponses, IDialogResponsesGetter>("DATA") },
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() },
             { "Flags", new FlagsHandler() },
-            { "MajorFlags", new MajorFlagsHandler() },
+
             { "ResetHours", new SimpleReflectionPropertyHandler<float, IDialogResponses, IDialogResponsesGetter>("Flags.ResetHours") },
             { "Topic", new SimpleReflectionFormLinkPropertyHandler<IDialogTopicGetter, IDialogResponses, IDialogResponsesGetter>("Topic") },
             { "FavorLevel", new SimpleReflectionPropertyHandler<FavorLevel?, IDialogResponses, IDialogResponsesGetter>("FavorLevel") },
@@ -61,7 +64,7 @@ namespace DreadsMashedPatch.RecordHandlers
             return contexts;
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

@@ -34,7 +34,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 return raceRecord.Attacks.ToList();
             }
 
-            Console.WriteLine($"Error: Record does not implement INpcGetter or IRaceGetter for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement INpcGetter or IRaceGetter for {PropertyName}");
             return null;
         }
 
@@ -52,7 +52,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 return;
             }
 
-            Console.WriteLine($"Error: Record does not implement INpc or IRace for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement INpc or IRace for {PropertyName}");
         }
 
         private static void ReplaceAttacks(ICollection<Attack> target, List<IAttackGetter>? value)

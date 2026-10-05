@@ -14,14 +14,20 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: all properties via shared handlers.
     // - Kept specialized: none.
     // - Rationale: direct scalar/formlink fields match stable reflection patterns.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class HazardRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-            { "Name", new NameHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
+            { "Name", new TranslatedStringReflectionPropertyHandler<IHazard, IHazardGetter>("Name") },
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "ImageSpaceModifier", new SimpleReflectionFormLinkPropertyHandler<IImageSpaceAdapterGetter, IHazard, IHazardGetter>("ImageSpaceModifier") },
             { "Limit", new SimpleReflectionPropertyHandler<uint, IHazard, IHazardGetter>("Limit") },

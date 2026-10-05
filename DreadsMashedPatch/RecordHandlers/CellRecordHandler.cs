@@ -22,6 +22,17 @@ namespace DreadsMashedPatch.RecordHandlers
     //   navigation meshes, and group metadata outside this header policy and comparison.
     // - Intentionally excluded: WaterHeight and Landscape are runtime-managed; NavigationMeshes is navigation data.
     // - Rationale: excluded fields remain exactly as authored by the winning override.
+
+    // Header migration: raw/common/Cell.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // Output migration: all Tamriel policy copies use shared staging, including parent creation.
+    // CELL source selection and Mutagen child-excluding copy rules remain specialized.
+    // Filter-policy migration: priority snapshots now run in the shared path before this policy.
+    // Ordinary EDID-only corrections use baseline identifiers; Tamriel still needs its CELL history.
     public class CellRecordHandler : AbstractRecordHandler
     {
         internal static readonly ModKey SkyrimModKey = ModKey.FromNameAndExtension("Skyrim.esm");
@@ -53,11 +64,10 @@ namespace DreadsMashedPatch.RecordHandlers
             _propertyHandlers = new Dictionary<string, IPropertyHandler>
             {
                 { "EditorID", new EditorIDHandler() },
-                { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-                { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-                { "Name", new NameHandler() },
+                { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Cell.MajorFlag)) },
+                { "Name", new TranslatedStringReflectionPropertyHandler<ICell, ICellGetter>("Name") },
                 { "Flags", new SimpleReflectionFlagPropertyHandler<Cell.Flag, ICell, ICellGetter>("Flags") },
-                { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Cell.MajorFlag, ICell, ICellGetter>("MajorFlags") },
+
                 { "Regions", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IRegionGetter>, ICell, ICellGetter>("Regions", ListSemantics.SortedKeyed) },
                 { "Location", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, ICell, ICellGetter>("Location") },
                 { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, ICell, ICellGetter>("Owner") },
@@ -96,13 +106,6 @@ namespace DreadsMashedPatch.RecordHandlers
                 return false;
             }
 
-            if (recordContexts.Any(context => PatcherSettings.IsAlwaysWinningMod(context.ModKey)))
-            {
-                Console.WriteLine(
-                    "Tamriel persistent CELL policy: explicit Priority Mods rule takes precedence");
-                return false;
-            }
-
             var policy = PatcherSettings.TamrielPersistentCellPolicy;
             if (policy == Enums.TamrielPersistentCellPolicy.StandardForwarding)
             {
@@ -114,7 +117,7 @@ namespace DreadsMashedPatch.RecordHandlers
             {
                 Console.WriteLine(
                     $"Tamriel persistent CELL policy: copying winning header from {winningContext.ModKey}");
-                GetOverrideRecord(winningContext, state);
+                CommitOverride(winningContext, state);
                 return true;
             }
 
@@ -144,7 +147,7 @@ namespace DreadsMashedPatch.RecordHandlers
                 Console.WriteLine(
                     "Tamriel persistent CELL hybrid policy: winning header matches Skyrim.esm; " +
                     "copying Dawnguard.esm header");
-                GetOverrideRecord(dawnguardContext, state);
+                CommitOverride(dawnguardContext, state);
                 return true;
             }
 
@@ -158,7 +161,7 @@ namespace DreadsMashedPatch.RecordHandlers
                     "TamrielPersistentCell",
                     $"Could not find {preferredMod} in the override chain for {TamrielPersistentCellFormKey}; " +
                     $"copying the winning header from {winningContext.ModKey}");
-                GetOverrideRecord(winningContext, state);
+                CommitOverride(winningContext, state);
                 return true;
             }
 
@@ -174,7 +177,7 @@ namespace DreadsMashedPatch.RecordHandlers
                     $"over {winningContext.ModKey}");
             }
 
-            GetOverrideRecord(preferredContext, state);
+            CommitOverride(preferredContext, state);
             return true;
         }
 
@@ -194,7 +197,7 @@ namespace DreadsMashedPatch.RecordHandlers
             return contexts;
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

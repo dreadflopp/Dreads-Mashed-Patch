@@ -13,17 +13,23 @@ namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
     // - Generalized: Class scalar fields via reflection handlers.
-    // - Kept specialized: Name and fixed-key weight dictionaries.
+    // - Kept specialized: fixed-key weight dictionaries.
     // - Intentionally excluded: Unknown* fields are outside the semantic conflict surface.
     // - Rationale: dictionary properties are mutable collections without setters and require typed copy/equality.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Required null names become empty; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class ClassRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-            { "Name", new NameHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
+            { "Name", new TranslatedStringReflectionPropertyHandler<IClass, IClassGetter>("Name", required: true) },
             { "Description", new SimpleReflectionPropertyHandler<string, IClass, IClassGetter>("Description") },
             { "Icon", new SimpleReflectionPropertyHandler<string, IClass, IClassGetter>("Icon") },
             { "Teaches", new SimpleReflectionPropertyHandler<Skill?, IClass, IClassGetter>("Teaches") },

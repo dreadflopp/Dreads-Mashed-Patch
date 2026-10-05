@@ -14,13 +14,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: all properties via shared handlers.
     // - Kept specialized: none.
     // - Rationale: interface is straightforward links/enums with stable shared coverage.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class DualCastDataRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "ObjectBounds", new ObjectBoundsHandler() },
             { "Projectile", new SimpleReflectionFormLinkPropertyHandler<IProjectileGetter, IDualCastData, IDualCastDataGetter>("Projectile") },
             { "Explosion", new SimpleReflectionFormLinkPropertyHandler<IExplosionGetter, IDualCastData, IDualCastDataGetter>("Explosion") },

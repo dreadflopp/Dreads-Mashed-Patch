@@ -25,6 +25,10 @@ namespace DreadsMashedPatch.RecordHandlers
     //   LocationReference remains independently conflict-resolved because it is not part of the safe-disable bundle.
     // - Rationale: exact float equality creates invisible conflicts, and independent UDR fields can otherwise produce
     //   contradictory hybrids. Mutagen 0.54.4 exposes LocationReference as ILocationGetter.
+
+    // Header migration: raw/common/PlacedNpc.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class PlacedNpcRecordHandler : AbstractRecordHandler
     {
         protected override PropertyForwardingCoordination CoordinateForwardedProperties(
@@ -36,9 +40,7 @@ namespace DreadsMashedPatch.RecordHandlers
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-            { "MajorFlags", new MajorFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(PlacedNpc.MajorFlag)) },
             { "Base", new SimpleReflectionFormLinkPropertyHandler<INpcGetter, IPlacedNpc, IPlacedNpcGetter>("Base") },
             { "EncounterZone", new SimpleReflectionFormLinkPropertyHandler<IEncounterZoneGetter, IPlacedNpc, IPlacedNpcGetter>("EncounterZone") },
             { "RagdollData", new SimpleReflectionBinaryDataPropertyHandler<IPlacedNpc, IPlacedNpcGetter>("RagdollData") },
@@ -72,6 +74,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "IsIgnoredBySandbox2", new SimpleReflectionPropertyHandler<bool, IPlacedNpc, IPlacedNpcGetter>("IsIgnoredBySandbox2") },
             { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedNpc, IPlacedNpcGetter>("Scale") },
             { "Placement", new PlacementHandler() },
+            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() }
         };
 
@@ -91,7 +94,7 @@ namespace DreadsMashedPatch.RecordHandlers
             return contexts;
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

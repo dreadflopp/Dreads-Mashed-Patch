@@ -17,13 +17,16 @@ namespace DreadsMashedPatch.RecordHandlers
     //   and unordered list matching now preserves duplicate occurrence counts.
     // - Specialized: leveled-NPC entry sorting/data comparison remains record-specific; Flags stays on the approved flag handler.
     // - Rationale: entries are an unordered multiset, so equal values may legitimately occur more than once.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class LeveledNpcRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "ChanceNone", new SimpleReflectionPropertyHandler<Percent, ILeveledNpc, ILeveledNpcGetter>("ChanceNone") },
             { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.LeveledNpc.Flag, ILeveledNpc, ILeveledNpcGetter>("Flags") },
             { "Global", new SimpleReflectionFormLinkPropertyHandler<IGlobalGetter, ILeveledNpc, ILeveledNpcGetter>("Global") },

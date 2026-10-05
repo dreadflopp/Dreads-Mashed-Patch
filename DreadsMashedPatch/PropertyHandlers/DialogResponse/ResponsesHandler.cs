@@ -28,7 +28,7 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogResponse
             {
                 if (dialogResponses.Responses == null)
                 {
-                    Console.WriteLine($"[{PropertyName}] Warning: Responses collection is null on record {record.FormKey}");
+                    LogCollector.AddError(PropertyName, $"Responses collection is null on record {record.FormKey}");
                     return;
                 }
 
@@ -40,7 +40,7 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogResponse
                     {
                         if (response == null)
                         {
-                            Console.WriteLine($"[{PropertyName}] Warning: Skipping null response in list");
+                            LogCollector.AddError(PropertyName, "Cannot apply a null response row");
                             continue;
                         }
 

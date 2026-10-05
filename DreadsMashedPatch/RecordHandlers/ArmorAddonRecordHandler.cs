@@ -22,13 +22,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Intentionally excluded: model information (MO2T/MO3T/MO4T/MO5T) is generated metadata and does not independently drive forwarding.
     // - Rationale: semantic BodyTemplate values are forwardable, and independent gender/model fields prevent one change from masking another;
     //   model information travels with a forwarded filename, while the BodyTemplate binary-layout discriminator is not forwarded independently.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class ArmorAddonRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "WeightSliderEnabled.Male", new GenderedItemSideHandler<bool, IArmorAddon, IArmorAddonGetter>("WeightSliderEnabled", MaleFemaleGender.Male, record => record.WeightSliderEnabled, (record, value) => { if (value != null) record.WeightSliderEnabled = value; }, value => value) },
             { "WeightSliderEnabled.Female", new GenderedItemSideHandler<bool, IArmorAddon, IArmorAddonGetter>("WeightSliderEnabled", MaleFemaleGender.Female, record => record.WeightSliderEnabled, (record, value) => { if (value != null) record.WeightSliderEnabled = value; }, value => value) },
             { "WorldModel.Male.File", new GenderedModelFileHandler<IArmorAddon, IArmorAddonGetter>("WorldModel", MaleFemaleGender.Male, record => record.WorldModel, (record, value) => record.WorldModel = value) },
@@ -72,7 +75,7 @@ namespace DreadsMashedPatch.RecordHandlers
             return contexts;
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

@@ -24,13 +24,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Intentionally excluded: Unknown* fields are outside the semantic conflict surface.
 // - Rationale: procedure branches refer to package data indexes, so splitting the graph can invent invalid combinations;
 //   abstract Condition values still need typed copying, and InterruptFlags is a normal flag field.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class PackageRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "VirtualMachineAdapter", new GeneratedCopyReflectionPropertyHandler<IPackageAdapterGetter, PackageAdapter, IPackage, IPackageGetter>(
             "VirtualMachineAdapter", value => value.DeepCopy(), PackageAdapterMixIn.Equals) },
         { "Flags", new SimpleReflectionFlagPropertyHandler<Package.Flag, IPackage, IPackageGetter>("Flags") },

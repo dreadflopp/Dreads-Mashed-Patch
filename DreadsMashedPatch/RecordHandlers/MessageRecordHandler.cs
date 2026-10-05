@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Generalized: MESG text, binary data, links, flags, and scalars use shared semantic handlers.
 // - Kept specialized: MenuButtons retains aligned ordered rows and generated item copying.
 // - Rationale: button declaration order is meaningful and must be reconciled independently from scalar fields.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class MessageRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Description", new TranslatedStringReflectionPropertyHandler<IMessage, IMessageGetter>("Description") },
         { "Name", new TranslatedStringReflectionPropertyHandler<IMessage, IMessageGetter>("Name") },
         { "INAM", new SimpleReflectionBinaryDataPropertyHandler<IMessage, IMessageGetter>("INAM") },

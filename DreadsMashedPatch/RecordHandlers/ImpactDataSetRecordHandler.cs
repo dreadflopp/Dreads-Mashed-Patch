@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Kept specialized: Impacts is merged as an unordered Material-keyed mapping.
     // - Rationale: xEdit defines Material as the PNAM structural key and Impact as its value;
     //   full-pair list equality can emit duplicate Material entries instead of replacements.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class ImpactDataSetRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Impacts", new ImpactsHandler() }
         };
 

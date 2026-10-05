@@ -52,7 +52,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Book
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IBook for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IBook for {PropertyName}");
             }
         }
 
@@ -64,7 +64,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Book
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IBookGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IBookGetter for {PropertyName}");
             }
             return null;
         }

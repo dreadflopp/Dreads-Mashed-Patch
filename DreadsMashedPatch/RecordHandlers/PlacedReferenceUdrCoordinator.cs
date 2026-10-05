@@ -17,20 +17,20 @@ internal static class PlacedReferenceUdrCoordinator
     private const float UdrZ = -30000f;
     private const string PlacementProperty = "Placement";
     private const string EnableParentProperty = "EnableParent";
-    private const string SkyrimFlagsProperty = "SkyrimMajorRecordFlags";
+    private const string HeaderFlagsProperty = "MajorRecordFlagsRaw";
 
     public static PropertyForwardingCoordination Coordinate(
         IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> contexts,
         IReadOnlyDictionary<string, IPropertyContext> propertyContexts)
     {
-        if (!propertyContexts.TryGetValue(SkyrimFlagsProperty, out var rawFlagContext)
-            || rawFlagContext is not FlagPropertyContext<SkyrimMajorRecord.SkyrimMajorRecordFlag> flagContext)
+        if (!propertyContexts.TryGetValue(HeaderFlagsProperty, out var rawFlagContext)
+            || rawFlagContext is not IntFlagPropertyContext flagContext)
         {
             return PropertyForwardingCoordination.None;
         }
 
         var initiallyDisabled = flagContext.GetFlagContext(
-            SkyrimMajorRecord.SkyrimMajorRecordFlag.InitiallyDisabled);
+            (int)SkyrimMajorRecord.SkyrimMajorRecordFlag.InitiallyDisabled);
         if (initiallyDisabled == null)
         {
             return PropertyForwardingCoordination.None;

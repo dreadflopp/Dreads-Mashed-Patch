@@ -141,18 +141,15 @@ internal sealed class UiTextWriter : TextWriter
     {
         var trimmed = line.TrimStart();
 
-        if (trimmed.Contains("[Error]", StringComparison.OrdinalIgnoreCase)
-            || trimmed.StartsWith("Error", StringComparison.OrdinalIgnoreCase)
-            || trimmed.Contains("] Error ", StringComparison.OrdinalIgnoreCase)
+        if (LogCollector.IsDiagnostic(trimmed, "Error")
             || trimmed.StartsWith("Exception:", StringComparison.OrdinalIgnoreCase)
             || trimmed.StartsWith("Unhandled exception", StringComparison.OrdinalIgnoreCase)
-            || trimmed.Contains("FAILED after", StringComparison.OrdinalIgnoreCase))
+            || trimmed.StartsWith("FAILED after", StringComparison.OrdinalIgnoreCase))
         {
             return UiLogLineKind.Error;
         }
 
-        if (trimmed.Contains("[Warning]", StringComparison.OrdinalIgnoreCase)
-            || trimmed.Contains("Warning:", StringComparison.OrdinalIgnoreCase))
+        if (LogCollector.IsDiagnostic(trimmed, "Warning"))
         {
             return UiLogLineKind.Warning;
         }

@@ -16,19 +16,22 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Kept specialized: none.
 // - Intentionally excluded: Unknown is outside the semantic conflict surface.
 // - Rationale: the winning override retains excluded engine-managed data.
+
+// Header migration: raw/common/Relationship.MajorFlag flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class RelationshipRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Relationship.MajorFlag)) },
         { "Parent", new SimpleReflectionFormLinkPropertyHandler<INpcGetter, IRelationship, IRelationshipGetter>("Parent") },
         { "Child", new SimpleReflectionFormLinkPropertyHandler<INpcGetter, IRelationship, IRelationshipGetter>("Child") },
         { "Rank", new SimpleReflectionPropertyHandler<Relationship.RankType, IRelationship, IRelationshipGetter>("Rank") },
         { "Flags", new SimpleReflectionFlagPropertyHandler<Relationship.Flag, IRelationship, IRelationshipGetter>("Flags") },
         { "AssociationType", new SimpleReflectionFormLinkPropertyHandler<IAssociationTypeGetter, IRelationship, IRelationshipGetter>("AssociationType") },
-        { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Relationship.MajorFlag, IRelationship, IRelationshipGetter>("MajorFlags") }
+
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

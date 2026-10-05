@@ -19,7 +19,7 @@ public sealed class VirtualMachineAdapterHandler
     {
         if (record is not IDialogResponses dialogResponse)
         {
-            Console.WriteLine($"Error: Record does not implement IDialogResponses for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement IDialogResponses for {PropertyName}");
             return;
         }
 
@@ -48,7 +48,7 @@ public sealed class VirtualMachineAdapterHandler
             return dialogResponse.VirtualMachineAdapter;
         }
 
-        Console.WriteLine($"Error: Record does not implement IDialogResponsesGetter for {PropertyName}");
+        LogCollector.AddError(PropertyName, $"Error: Record does not implement IDialogResponsesGetter for {PropertyName}");
         return null;
     }
 

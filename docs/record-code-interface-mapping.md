@@ -1,13 +1,19 @@
 # Skyrim Record Code to Mutagen Interface Mapping
 
-This table maps Bethesda record codes to Mutagen getter interfaces and repo handler status.
+Reviewed on 2026-10-05 against the current working tree with Mutagen Skyrim 0.54.4. This table maps Bethesda record codes to Mutagen getter interfaces and actual processing routes. Property-level scope is in the [record index](record-patching/INDEX.md) and [coverage/comparison audit](record-patching/COVERAGE-COMPARISON-AUDIT.md).
 
 Status values:
-- Wired: Handler exists and is dispatched in Program.
-- Handler only: Handler exists but is not dispatched.
-- Missing: No record handler yet.
+
+- Wired: Supported handler route exists in Program; enabled settings and the shared initial filter still determine whether it runs.
+- Handler only: Handler exists but is explicitly excluded from normal dispatch.
+- Missing: No independent processing route or record handler.
+- Indirect: Represented by another record type, without a separate major-record route.
+- N/A: Structural plugin/group surface.
+
+DIAL, DLBR, INFO, DLVW, NAVM and PACK are wired but disabled by default. See [unsupported records](record-patching/unsupported.md) for exclusion reasons and the distinction between references and target contents.
 
 Notes:
+
 - `INFO` is `IDialogResponsesGetter` in Mutagen (not `IDialogResponseGetter`).
 - `FLST` uses `IFormListGetter`; this repo's handler class is named `FormIdRecordHandler`.
 - `ACHR` and `REFR` map to placed-record interfaces used by this patcher: `IPlacedNpcGetter` and `IPlacedObjectGetter`.
@@ -21,7 +27,7 @@ Notes:
 | ALCH | Potion | `IIngestibleGetter` | `IngestibleRecordHandler` | Wired | |
 | AMMO | Ammo | `IAmmunitionGetter` | `AmmunitionRecordHandler` | Wired | |
 | ANIO | Animation Object | `IAnimatedObjectGetter` | `AnimatedObjectRecordHandler` | Wired | |
-| APPA | Apparatus | `IAlchemicalApparatusGetter` | `AlchemicalApparatusRecordHandler` | Wired | Possibly unused |
+| APPA | Apparatus | `IAlchemicalApparatusGetter` | `AlchemicalApparatusRecordHandler` | Wired | |
 | ARMA | Armor Addon | `IArmorAddonGetter` | `ArmorAddonRecordHandler` | Wired | |
 | ARMO | Armor | `IArmorGetter` | `ArmorRecordHandler` | Wired | |
 | ARTO | Art Object | `IArtObjectGetter` | `ArtObjectRecordHandler` | Wired | |
@@ -44,7 +50,7 @@ Notes:
 | DIAL | Dialog Topic | `IDialogTopicGetter` | `DialogTopicRecordHandler` | Wired | |
 | DLBR | Dialog Branch | `IDialogBranchGetter` | `DialogBranchRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
 | DLVW | Dialog View | `IDialogViewGetter` | `DialogViewRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
-| DOBJ | Default Object Manager | `IDefaultObjectManagerGetter` | `DefaultObjectManagerRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
+| DOBJ | Default Object Manager | `IDefaultObjectManagerGetter` | `DefaultObjectManagerRecordHandler` | Handler only | Explicitly excluded; existing handler is dormant. |
 | DOOR | Door | `IDoorGetter` | `DoorRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
 | DUAL | Dual Cast Data | `IDualCastDataGetter` | `DualCastDataRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
 | ECZN | Encounter Zone | `IEncounterZoneGetter` | `EncounterZoneRecordHandler` | Wired | |
@@ -63,11 +69,12 @@ Notes:
 | GMST | Game Setting | `IGameSettingGetter` (or typed variants) | `GameSettingIntRecordHandler`, `GameSettingFloatRecordHandler`, `GameSettingStringRecordHandler`, `GameSettingBoolRecordHandler` | Wired | `IGameSettingBoolGetter`, etc. |
 | GRAS | Grass | `IGrassGetter` | `GrassRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
 | GRUP | Form Group | N/A | - | N/A | Structural container, not a major record handler target |
+| HAIR | Hair | `IHairGetter` | — | Missing | RACE hair references do not patch HAIR contents. |
 | HAZD | Hazard | `IHazardGetter` | `HazardRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
 | HDPT | Head Part | `IHeadPartGetter` | `HeadPartRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
 | IDLE | Idle Animation | `IIdleAnimationGetter` | `IdleAnimationRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
 | IDLM | Idle Marker | `IIdleMarkerGetter` | `IdleMarkerRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
-| IMAD | Image Space Modifier | `IImageSpaceAdapterGetter` | `ImageSpaceAdapterRecordHandler` | Wired | Concrete handler implemented and wired in Program.cs |
+| IMAD | Image Space Modifier | `IImageSpaceAdapterGetter` | `ImageSpaceAdapterRecordHandler` | Handler only | Explicitly excluded; existing handler is dormant. |
 | IMGS | Image Space | `IImageSpaceGetter` | `ImageSpaceRecordHandler` | Wired | |
 | INFO | Dialog Topic Info | `IDialogResponsesGetter` | `DialogResponseRecordHandler` | Wired | Handler name differs from interface |
 | INGR | Ingredient | `IIngredientGetter` | `IngredientRecordHandler` | Wired | |
@@ -75,13 +82,14 @@ Notes:
 | IPDS | Impact Data Set | `IImpactDataSetGetter` | `ImpactDataSetRecordHandler` | Wired | |
 | KEYM | Key | `IKeyGetter` | `KeyRecordHandler` | Wired | |
 | KYWD | Keyword | `IKeywordGetter` | `KeywordRecordHandler` | Wired | |
-| LAND | Landscape | `ILandscapeGetter` | `LandscapeRecordHandler` | Wired | |
+| LAND | Landscape | `ILandscapeGetter` | `LandscapeRecordHandler` | Handler only | Explicitly excluded; existing handler is dormant. |
 | LCRT | Location Ref Type | `ILocationReferenceTypeGetter` | `LocationReferenceTypeRecordHandler` | Wired | |
 | LCTN | Location | `ILocationGetter` | `LocationRecordHandler` | Wired | |
+| LENS | Lens Flare | `ILensFlareGetter` | — | Missing | LIGH/WTHR references do not patch flare contents. |
 | LGTM | Lighting Template | `ILightingTemplateGetter` | `LightingTemplateRecordHandler` | Wired | |
 | LIGH | Light | `ILightGetter` | `LightRecordHandler` | Wired | |
 | LSCR | Load Screen | `ILoadScreenGetter` | `LoadScreenRecordHandler` | Wired | |
-| LTEX | Land Texture | `ILandscapeTextureGetter` | `LandscapeTextureRecordHandler` | Wired | |
+| LTEX | Land Texture | `ILandscapeTextureGetter` | `LandscapeTextureRecordHandler` | Handler only | Explicitly excluded; existing handler is dormant. |
 | LVLI | Leveled Item | `ILeveledItemGetter` | `LeveledItemRecordHandler` | Wired | |
 | LVLN | Leveled Actor | `ILeveledNpcGetter` | `LeveledNpcRecordHandler` | Wired | |
 | LVSP | Leveled Spell | `ILeveledSpellGetter` | `LeveledSpellRecordHandler` | Wired | |
@@ -94,15 +102,21 @@ Notes:
 | MSTT | Movable Static | `IMoveableStaticGetter` | `MoveableStaticRecordHandler` | Wired | |
 | MUSC | Music Type | `IMusicTypeGetter` | `MusicTypeRecordHandler` | Wired | |
 | MUST | Music Track | `IMusicTrackGetter` | `MusicTrackRecordHandler` | Wired | |
-| NAVI | Navigation | `INavigationMeshInfoMapGetter` | `NavigationMeshInfoMapRecordHandler` | Wired | Master nav data |
+| NAVI | Navigation mesh information map | `INavigationMeshInfoMapGetter` | — | Missing | No patcher-owned merge or rebuild. NAVM forwarding does not provide one. |
 | NAVM | NavMesh | `INavigationMeshGetter` | `NavigationMeshRecordHandler` | Wired | |
-| NOTE | Note | `IBookGetter` | `BookRecordHandler` | Wired | Skyrim notes are BOOK subtype |
+| NOTE | Note | No separate Skyrim NOTE interface | — | Indirect | Notes represented as BOOK follow `IBookGetter` / `BookRecordHandler`. |
 | NPC_ | Actor | `INpcGetter` | `NpcRecordHandler` | Wired | |
 | OTFT | Outfit | `IOutfitGetter` | `OutfitRecordHandler` | Wired | |
-| PACK | AI Package | `IPackageGetter` | `PackageRecordHandler` | Wired | |
+| PACK | AI Package | `IPackageGetter` | `PackageRecordHandler` | Wired | Disabled by default; template graph also unregistered when enabled. |
 | PERK | Perk | `IPerkGetter` | `PerkRecordHandler` | Wired | |
-| PGRE | Placed Grenade | N/A (not standard Skyrim major record) | - | N/A | More relevant to FO3/FNV/FO4 families |
-| PHZD | Placed Hazard | `IPlacedHazardGetter` | `PlacedHazardRecordHandler` | Wired | |
+| PARW | Placed Arrow | `IPlacedArrowGetter` | — | Missing | Placed-trap query narrows away this variant. |
+| PBAR | Placed Barrier | `IPlacedBarrierGetter` | — | Missing | Placed-trap query narrows away this variant. |
+| PBEA | Placed Beam | `IPlacedBeamGetter` | — | Missing | Placed-trap query narrows away this variant. |
+| PCON | Placed Cone | `IPlacedConeGetter` | — | Missing | Placed-trap query narrows away this variant. |
+| PFLA | Placed Flame | `IPlacedFlameGetter` | — | Missing | Placed-trap query narrows away this variant. |
+| PGRE | Placed Trap | `IPlacedTrapGetter` | — | Missing | Skyrim major-record variant; placed-trap query narrows it away. |
+| PMIS | Placed Missile | `IPlacedMissileGetter` | — | Missing | Placed-trap query narrows away this variant. |
+| PHZD | Placed Hazard | `IPlacedHazardGetter` | `PlacedHazardRecordHandler` | Wired | Hazard plus all eighteen inherited placed fields, EditorID and approved header flags. PHZD has no UDR coordinator. |
 | PROJ | Projectile | `IProjectileGetter` | `ProjectileRecordHandler` | Wired | |
 | QUST | Quest | `IQuestGetter` | `QuestRecordHandler` | Wired | |
 | RACE | Race | `IRaceGetter` | `RaceRecordHandler` | Wired | |
@@ -121,7 +135,7 @@ Notes:
 | SNCT | Sound Category | `ISoundCategoryGetter` | `SoundCategoryRecordHandler` | Wired | |
 | SNDR | Sound Descriptor | `ISoundDescriptorGetter` | `SoundDescriptorRecordHandler` | Wired | |
 | SOPM | Sound Output Model | `ISoundOutputModelGetter` | `SoundOutputModelRecordHandler` | Wired | |
-| SOUN | Sound | `ISoundMarkerGetter` / `ISoundDescriptorGetter` depending usage | `SoundMarkerRecordHandler` | Wired | Wired for `ISoundMarkerGetter`; `ISoundDescriptorGetter` already handled by `SoundDescriptorRecordHandler` |
+| SOUN | Sound Marker | `ISoundMarkerGetter` | `SoundMarkerRecordHandler` | Wired | SNDR is separately routed through `ISoundDescriptorGetter`. |
 | SPEL | Spell | `ISpellGetter` | `SpellRecordHandler` | Wired | |
 | SPGD | Shader Particle Geometry | `IShaderParticleGeometryGetter` | `ShaderParticleGeometryRecordHandler` | Wired | |
 | STAT | Static | `IStaticGetter` | `StaticRecordHandler` | Wired | |
@@ -130,6 +144,7 @@ Notes:
 | TREE | Tree | `ITreeGetter` | `TreeRecordHandler` | Wired | |
 | TXST | Texture Set | `ITextureSetGetter` | `TextureSetRecordHandler` | Wired | |
 | VTYP | Voice Type | `IVoiceTypeGetter` | `VoiceTypeRecordHandler` | Wired | |
+| VOLI | Volumetric Lighting | `IVolumetricLightingGetter` | — | Missing | WTHR references do not patch lighting contents. |
 | WATR | Water Type | `IWaterGetter` | `WaterRecordHandler` | Wired | |
 | WEAP | Weapon | `IWeaponGetter` | `WeaponRecordHandler` | Wired | |
 | WOOP | Word Of Power | `IWordOfPowerGetter` | `WordOfPowerRecordHandler` | Wired | |

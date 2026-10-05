@@ -13,18 +13,24 @@ namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
     // - Generalized: Description and Skill use generated copying; Abbreviation remains a typed scalar.
-    // - Kept specialized: Name via the shared name handler; PerkTree via a record-specific structural handler.
+    // - Kept specialized: PerkTree via a record-specific structural handler.
     // - Intentionally excluded: CNAM is engine-managed binary data outside the semantic conflict surface.
     // - Rationale: PerkTree is a get-only mutable collection whose nested binary and list data require Mutagen's
     //   generated deep-copy and equality semantics.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class ActorValueInformationRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-            { "Name", new NameHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
+            { "Name", new TranslatedStringReflectionPropertyHandler<IActorValueInformation, IActorValueInformationGetter>("Name") },
             { "Description", new TranslatedStringReflectionPropertyHandler<IActorValueInformation, IActorValueInformationGetter>("Description") },
             { "Abbreviation", new SimpleReflectionPropertyHandler<string, IActorValueInformation, IActorValueInformationGetter>("Abbreviation") },
             { "Skill", new GeneratedCopyReflectionPropertyHandler<IActorValueSkillGetter, ActorValueSkill, IActorValueInformation, IActorValueInformationGetter>(

@@ -18,7 +18,7 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogResponse
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IDialogResponsesGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IDialogResponsesGetter for {PropertyName}");
             }
             return default(DialogResponses.Flag);
         }
@@ -37,7 +37,7 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogResponse
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IDialogResponses for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IDialogResponses for {PropertyName}");
             }
         }
 

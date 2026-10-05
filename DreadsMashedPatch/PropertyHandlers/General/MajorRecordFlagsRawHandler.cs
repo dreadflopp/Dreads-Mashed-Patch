@@ -13,8 +13,8 @@ using DreadsMashedPatch.Contexts.Interfaces;
 namespace DreadsMashedPatch.PropertyHandlers.General
 {
     /// <summary>
-    /// Handler for base TES5 MajorRecordFlagsRaw (integer flags like Persistent, Sky Marker, etc.)
-    /// These are separate from SkyrimMajorRecordFlags which are Skyrim-specific.
+    /// Sole record-header handler, combining base bits with common Skyrim and
+    /// record-specific enum aliases over the same MajorRecordFlagsRaw storage.
     /// </summary>
     public class MajorRecordFlagsRawHandler : IPropertyHandler<int>
     {
@@ -65,7 +65,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                 foreach (var value in Enum.GetValues(enumType))
                 {
-                    var flag = Convert.ToInt32(value);
+                    // NAVM uses uint bit 31: retain its bit pattern in the signed raw field.
+                    var flag = unchecked((int)Convert.ToInt64(value));
                     if (flag != 0)
                     {
                         flagDefinitions[flag] = Enum.GetName(enumType, value) ?? $"0x{flag:X8}";
@@ -176,27 +177,27 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
             if (context == null)
             {
-                Console.WriteLine($"Error: Context is null for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Context is null for {PropertyName}");
                 return;
             }
 
             if (propertyContext is not IntFlagPropertyContext intFlagPropertyContext)
             {
-                Console.WriteLine($"Error: Property context is not an IntFlagPropertyContext for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Property context is not an IntFlagPropertyContext for {PropertyName}");
                 return;
             }
 
             var forwardFlagContexts = intFlagPropertyContext.ForwardFlagContexts;
             if (forwardFlagContexts == null)
             {
-                Console.WriteLine($"Error: Property context is not properly initialized for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Property context is not properly initialized for {PropertyName}");
                 return;
             }
 
             var recordMod = state.LoadOrder[context.ModKey].Mod;
             if (recordMod == null)
             {
-                Console.WriteLine($"Error: Record mod is null for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record mod is null for {PropertyName}");
                 return;
             }
 

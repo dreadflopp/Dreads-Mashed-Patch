@@ -18,13 +18,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: translated text and constraints use generated copies; links/scalars use typed handlers.
     // - Kept specialized: Conditions uses the shared polymorphic condition handler.
     // - Rationale: Condition is abstract and must be copied through generated subtype dispatch.
+
+    // Header migration: raw/common/LoadScreen.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class LoadScreenRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(LoadScreen.MajorFlag)) },
             { "Icons", new SimpleReflectionIconsPropertyHandler<ILoadScreen, ILoadScreenGetter>("Icons") },
             { "Description", new TranslatedStringReflectionPropertyHandler<ILoadScreen, ILoadScreenGetter>("Description") },
             { "Conditions", new ConditionsHandler<ILoadScreen, ILoadScreenGetter>(record => record.Conditions, record => record.Conditions) },
@@ -35,7 +38,7 @@ namespace DreadsMashedPatch.RecordHandlers
                 "RotationOffsetConstraints", value => value.DeepCopy(), Int16MinMaxMixIn.Equals) },
             { "InitialTranslationOffset", new SimpleReflectionPropertyHandler<P3Float?, ILoadScreen, ILoadScreenGetter>("InitialTranslationOffset") },
             { "CameraPath", new SimpleReflectionAssetLinkPropertyHandler<SkyrimModelAssetType, ILoadScreen, ILoadScreenGetter>("CameraPath") },
-            { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.LoadScreen.MajorFlag, ILoadScreen, ILoadScreenGetter>("MajorFlags") }
+
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

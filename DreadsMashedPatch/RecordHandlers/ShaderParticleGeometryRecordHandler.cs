@@ -17,13 +17,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Kept specialized: none.
 // - Intentionally excluded: DATADataTypeState is Mutagen serialization state, not an xEdit field.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class ShaderParticleGeometryRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "GravityVelocity", new SimpleReflectionPropertyHandler<float, IShaderParticleGeometry, IShaderParticleGeometryGetter>("GravityVelocity") },
         { "RotationVelocity", new SimpleReflectionPropertyHandler<float, IShaderParticleGeometry, IShaderParticleGeometryGetter>("RotationVelocity") },
         { "ParticleSizeX", new SimpleReflectionPropertyHandler<float, IShaderParticleGeometry, IShaderParticleGeometryGetter>("ParticleSizeX") },

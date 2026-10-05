@@ -37,12 +37,15 @@ var jsonOptions = new JsonSerializerOptions
 };
 var coverageOverrides = LoadOverrides(overridesPath, jsonOptions);
 var usedOverrideKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-var auditedInheritedPropertyNames = new HashSet<string>(StringComparer.Ordinal)
+var headerPropertyNames = new HashSet<string>(StringComparer.Ordinal)
 {
     "EditorID",
     "MajorRecordFlagsRaw",
-    "SkyrimMajorRecordFlags"
+    "SkyrimMajorRecordFlags",
+    "MajorFlags"
 };
+var infrastructureInterfaces = typeof(ISkyrimMajorRecordGetter).GetInterfaces()
+    .Append(typeof(ISkyrimMajorRecordGetter)).ToHashSet();
 var propertyHandlerSources = BuildPropertyHandlerSources(propertyHandlersDirectory);
 
 foreach (var sourcePath in Directory.EnumerateFiles(handlersDirectory, "*RecordHandler.cs").OrderBy(Path.GetFileName))
@@ -69,12 +72,14 @@ foreach (var sourcePath in Directory.EnumerateFiles(handlersDirectory, "*RecordH
     var declaredProperties = getterType
         .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
         .Where(property => property.GetIndexParameters().Length == 0);
-    var inheritedProjectProperties = getterType
+    var inheritedProperties = getterType
         .GetInterfaces()
         .SelectMany(interfaceType => interfaceType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
-        .Where(property => auditedInheritedPropertyNames.Contains(property.Name));
+        .Where(property => property.GetIndexParameters().Length == 0)
+        .Where(property => headerPropertyNames.Contains(property.Name)
+            || !infrastructureInterfaces.Contains(property.DeclaringType!));
     var propertyReports = declaredProperties
-        .Concat(inheritedProjectProperties)
+        .Concat(inheritedProperties)
         .DistinctBy(property => property.Name)
         .OrderBy(property => property.Name)
         .Select(property => AuditProperty(
@@ -416,7 +421,7 @@ static string BuildMarkdown(List<HandlerReport> reports)
     builder.AppendLine();
     builder.AppendLine("This is a static registration audit. `Covered` is an exact registration, `AggregateCovered` is inferred from a specialized handler implementation, `Partial` indicates nested/split handling, and `MissingCandidate` has no detected handler. Reviewed aliases and non-property surfaces are classified through the tracked overrides file.");
     builder.AppendLine();
-    builder.AppendLine("Direct record properties plus the project-standard inherited `EditorID`, `MajorRecordFlagsRaw`, and `SkyrimMajorRecordFlags` fields are compared. Identity/version metadata is excluded.");
+    builder.AppendLine("Direct and inherited record/aspect properties are compared, including `EditorID`, `MajorRecordFlagsRaw`, `SkyrimMajorRecordFlags`, and `MajorFlags` aliases. Common major-record identity/version/runtime interfaces are excluded; their header properties remain audited. Registration coverage does not establish complete nested comparison, setter behavior or binary preservation.");
     builder.AppendLine();
     builder.AppendLine("Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Audit-RecordHandlerCoverage.ps1 -FailOnUnresolved`. This fails for stale overrides, audit errors, or any unexplained partial/missing candidate.");
     builder.AppendLine();

@@ -17,7 +17,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement INpcGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement INpcGetter for {PropertyName}");
             }
             return null;
         }
@@ -45,7 +45,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement INpc for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement INpc for {PropertyName}");
             }
         }
 

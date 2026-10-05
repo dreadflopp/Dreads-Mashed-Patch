@@ -17,13 +17,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Kept specialized: ordered curves, radial blur, depth of field, and Mult/Add pairs are atomic units.
     // - Intentionally excluded: Unknown* keyframe collections are outside the semantic conflict surface.
     // - Rationale: merging individual keyframes can invent curves and invalidates the DNAM-derived counts.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class ImageSpaceAdapterRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "AnimationSettings", new AnimationSettingsHandler() },
             { "BlurRadius", KeyFrameCurve("BlurRadius", a => a.BlurRadius, (a, v) => a.BlurRadius = v) },
             { "DoubleVisionStrength", KeyFrameCurve("DoubleVisionStrength", a => a.DoubleVisionStrength, (a, v) => a.DoubleVisionStrength = v) },

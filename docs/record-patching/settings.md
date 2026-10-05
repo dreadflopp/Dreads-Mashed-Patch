@@ -2,7 +2,7 @@
 
 [Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
 
-The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated.
+The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
 <a id="aact-actionrecord"></a>
 
@@ -58,7 +58,6 @@ Discovered through the global-record query and narrowed to the concrete value ty
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GlobalFloatRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -71,7 +70,6 @@ Discovered through the global-record query and narrowed to the concrete value ty
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GlobalIntRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -84,7 +82,6 @@ Discovered through the global-record query and narrowed to the concrete value ty
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GlobalShortRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -97,7 +94,6 @@ Discovered through the global-record query and narrowed to the concrete value ty
 | Properties | How they are patched |
 |---|---|
 | `TypeChar`, `Data` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GlobalUnknownRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -166,7 +162,7 @@ Discovered through the game-setting query and narrowed to the concrete value typ
 | Properties | How they are patched |
 |---|---|
 | `Description`, `LoadingScreenNif`, `InitialScale`, `InitialRotation`, `InitialTranslationOffset`, `CameraPath` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
+
 | `Icons`, `RotationOffsetConstraints` | Select each whole value separately. |
 | `Conditions` | Merge aligned rows in order. |
 

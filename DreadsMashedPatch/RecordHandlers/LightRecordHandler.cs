@@ -17,15 +17,21 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Kept specialized: light flags, icons, bounds, destructible data, and VM data.
     // - Rationale: the shared handler writes the model's data-relative path and copies the
     //   complete model without serializing Mutagen's implied "Meshes" asset root.
+
+    // Header migration: raw/common/Light.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class LightRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-            { "MajorFlags", new MajorFlagsHandler() },
-            { "Name", new NameHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Light.MajorFlag)) },
+            { "Name", new TranslatedStringReflectionPropertyHandler<ILight, ILightGetter>("Name") },
+            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() },
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Icons", new IconsHandler() },

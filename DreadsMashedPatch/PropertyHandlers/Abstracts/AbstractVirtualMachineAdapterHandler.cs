@@ -23,7 +23,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
             }
             return null;
         }
@@ -38,12 +38,19 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     return;
                 }
 
-                var destinationScripts = typedRecord is TRecordGetter typedGetter
-                    ? GetVirtualMachineAdapter(typedGetter)?.Scripts?.ToList() ?? []
-                    : [];
+                var destinationAdapter = typedRecord is TRecordGetter typedGetter
+                    ? GetVirtualMachineAdapter(typedGetter)
+                    : null;
+                var destinationScripts = destinationAdapter?.Scripts?.ToList() ?? [];
 
-                // Create a new adapter instance
+                // Like QUST/SCEN script setters, replacing scripts retains destination metadata.
+                // Metadata is winner-owned on this list-only path; defaults apply only on creation.
                 var newAdapter = CreateNewAdapter();
+                if (destinationAdapter != null)
+                {
+                    newAdapter.Version = destinationAdapter.Version;
+                    newAdapter.ObjectFormat = destinationAdapter.ObjectFormat;
+                }
 
                 // Add all scripts from the list
                 foreach (var script in value)
@@ -60,7 +67,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
             }
         }
 

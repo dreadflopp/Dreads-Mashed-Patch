@@ -251,24 +251,20 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
         /// </summary>
         /// <param name="state"></param>
         /// <param name="filteredWinningContexts"></param>
-        public void Process(IPatcherState<ISkyrimMod, ISkyrimModGetter> state, IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] filteredWinningContexts)
+        /// <param name="policySources">Shared run-scoped lookups; direct callers can omit this</param>
+        public PatchRunReport Process(IPatcherState<ISkyrimMod, ISkyrimModGetter> state, IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] filteredWinningContexts, RecordPolicySources? policySources = null)
         {
+            using var ownedPolicySources = policySources == null ? new RecordPolicySources(state) : null;
+            policySources ??= ownedPolicySources!;
+            using var runDiagnostics = new PatchDiagnostics();
             foreach (var discoveredWinningContext in filteredWinningContexts)
             {
+                using var diagnostics = new PatchDiagnostics(discoveredWinningContext.Record.FormKey);
                 try
                 {
-                    // Migration note: ignored plugins are removed once in the shared record
-                    // processing path. Record-specific context resolution stays specialized so
-                    // every family retains its Mutagen type surface.
-                    var recordContexts = GetRecordContexts(discoveredWinningContext, state)
-                        .Where(context => !PatcherSettings.IsIgnoredMod(context.ModKey))
-                        .ToArray();
-                    if (recordContexts.Length == 0)
-                    {
-                        continue;
-                    }
-
-                    var winningContext = recordContexts[0];
+                    var initialContexts = RecordPolicySources.GetInitialContexts(discoveredWinningContext, state);
+                    if (initialContexts.Length == 0) continue;
+                    var winningContext = initialContexts[0];
                     var deepDiveRecord = LoggingSettings.IsDeepDiveRecord(winningContext);
                     var detailedRecord = deepDiveRecord || LoggingSettings.Verbosity == PatcherLogVerbosity.Detailed;
                     var auditContextChanges = deepDiveRecord || LoggingSettings.Verbosity != PatcherLogVerbosity.Summary;
@@ -278,69 +274,48 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     Console.WriteLine($"Processing: {winningContext.Record.FormKey} ({winningContext.Record.EditorID})");
                     Console.WriteLine($"Record type: {RecordTypeCatalog.GetRecordDescription(winningContext.Record)}");
 
-                    if (TryApplyRecordPolicy(state, recordContexts))
+                    // Shared policy migration: explicit priority snapshots are handled before
+                    // vanilla/short-history exits and before loading the merge history.
+                    if (policySources.TryGetAlwaysWinningMod(winningContext.Record, out var priorityMod))
                     {
-                        continue;
-                    }
-
-                    // some break early checks if the pre-filtering failed
-                    if (Utility.IsVanilla(winningContext))
-                    {
-                        Console.WriteLine("Breaking early: Winning context is vanilla");
-                        continue;
-                    }
-
-                    // Global priority-mod policy: an overwritten configured source is copied
-                    // as one exact record snapshot. This intentionally bypasses property-level
-                    // merging so unregistered fields and coupled structures are preserved too.
-                    // Configuration order is authoritative between priority mods: the last
-                    // listed mod which edits this record wins, independent of their relative
-                    // load-order positions.
-                    var priorityContext = PatcherSettings.SelectAlwaysWinningContext(
-                        recordContexts,
-                        context => context.ModKey);
-                    if (priorityContext != null)
-                    {
-                        if (priorityContext.ModKey == winningContext.ModKey)
+                        if (priorityMod == winningContext.ModKey)
                         {
-                            Console.WriteLine(
-                                $"Always-win source {priorityContext.ModKey} is already the winning override; " +
-                                "no patch record is needed");
-                            continue;
+                            Console.WriteLine($"Always-win source {priorityMod} already wins; no patch record is needed");
                         }
-
-                        Console.WriteLine(
-                            $"Always-win override: copying the complete record from {priorityContext.ModKey} " +
-                            $"over {winningContext.ModKey}");
-                        GetOverrideRecord(priorityContext, state);
+                        else
+                        {
+                            Console.WriteLine($"Always-win override: copying the complete record from {priorityMod} over {winningContext.ModKey}");
+                            CommitOverride(policySources.GetPriorityContext(winningContext.Record, priorityMod), state);
+                        }
                         continue;
                     }
 
-                    var latestBaselineContext = recordContexts.FirstOrDefault(Utility.IsVanilla);
-                    var mustPreserveBaselineEditorId =
-                        PatcherSettings.EditorIdPolicy == EditorIdForwardingPolicy.PreserveBaseline
-                        && latestBaselineContext != null
-                        && PropertyHandlers.TryGetValue("EditorID", out var editorIdHandler)
-                        && !editorIdHandler.AreValuesEqual(
-                            editorIdHandler.GetValue(latestBaselineContext.Record),
-                            editorIdHandler.GetValue(winningContext.Record));
+                    var needsRecordPolicy = winningContext.Record is ICellGetter
+                        && CellRecordHandler.RequiresSmartPolicyProcessing(winningContext.Record.FormKey);
+                    if (!needsRecordPolicy && RecordPolicySources.ShouldSkipOrdinaryProcessing(initialContexts))
+                    {
+                        PreserveBaselineEditorIdIfNeeded(winningContext, state, policySources);
+                        continue;
+                    }
 
+                    // Typed full-history resolution remains reserved for ordinary merging
+                    // and Tamriel's specialized CELL policy.
+                    var recordContexts = GetRecordContexts(discoveredWinningContext, state)
+                        .Where(context => !PatcherSettings.IsIgnoredMod(context.ModKey))
+                        .ToArray();
+                    if (recordContexts.Length == 0) continue;
+                    winningContext = recordContexts[0];
+                    if (TryApplyRecordPolicy(state, recordContexts)) continue;
+                    if (RecordPolicySources.ShouldSkipOrdinaryProcessing(recordContexts))
+                    {
+                        PreserveBaselineEditorIdIfNeeded(winningContext, state, policySources);
+                        continue;
+                    }
+
+                    var hasBaselineEditorId = policySources.TryGetBaselineEditorId(winningContext.Record, out var baselineEditorId);
                     // Formatter diagnostics are warnings, so they must not depend on Detailed logging.
                     AuditFormatterWarnings(recordContexts, PropertyHandlers);
 
-                    if (recordContexts.Length <= 2 && !mustPreserveBaselineEditorId)
-                    {
-                        Console.WriteLine("Breaking early: 2 or less contexts");
-                        continue;
-                    }
-
-                    // Check if the mod before the winning context is vanilla
-                    var previousContext = recordContexts[1];
-                    if (Utility.IsVanilla(previousContext) && !mustPreserveBaselineEditorId)
-                    {
-                        Console.WriteLine("Breaking early: Previous context is vanilla");
-                        continue;
-                    }
                     Console.WriteLine($"Record contexts: {recordContexts.Length}");
                     Console.WriteLine($"Winning context: {winningContext.ModKey}");
 
@@ -587,13 +562,11 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                         var forwardValue = coordination.ForwardValues.TryGetValue(propertyName, out var coordinatedValue)
                             ? coordinatedValue
                             : propertyContext.GetForwardValue();
-                        if (propertyName == "EditorID"
-                            && PatcherSettings.EditorIdPolicy == EditorIdForwardingPolicy.PreserveBaseline
-                            && latestBaselineContext != null)
+                        if (propertyName == "EditorID" && hasBaselineEditorId)
                         {
                             // Shared EDID policy: every record family uses the latest configured
                             // official baseline. Record-specific handlers remain otherwise unchanged.
-                            forwardValue = handler.GetValue(latestBaselineContext.Record);
+                            forwardValue = baselineEditorId;
                         }
                         var shouldForward = !handler.AreValuesEqual(forwardValue, winningValue);
 
@@ -699,13 +672,14 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     if (detailedRecord) Console.WriteLine($"Properties to forward: {propertiesToForward.Count}");
                     if (propertiesToForward.Count > 0)
                     {
-                        var overrideRecord = GetOverrideRecord(winningContext, state);
-                        ApplyForwardedProperties(overrideRecord, propertiesToForward);
+                        diagnostics.Report.ThrowIfFailed();
+                        CommitOverride(winningContext, state, propertiesToForward);
                     }
 
                 }
                 catch (Exception ex)
                 {
+                    PatchDiagnostics.Error("Record", "Record was skipped", ex);
                     // Preserve any diagnostics collected before the record-level failure.
                     if (LogCollector.HasLogs())
                     {
@@ -729,8 +703,23 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     LogCollector.SetRecordLoggingContext(deepDiveRecord: false, detailedRecord: false);
                 }
             }
+            return runDiagnostics.Report;
         }
 
+
+        private void PreserveBaselineEditorIdIfNeeded(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state,
+            RecordPolicySources policySources)
+        {
+            if (PropertyHandlers.TryGetValue("EditorID", out var handler)
+                && policySources.TryGetBaselineEditorId(winningContext.Record, out var editorId)
+                && !handler.AreValuesEqual(editorId, handler.GetValue(winningContext.Record)))
+            {
+                Console.WriteLine("EDID policy: preserving the latest official baseline without loading the merge history");
+                CommitOverride(winningContext, state, new Dictionary<string, object?> { ["EditorID"] = editorId });
+            }
+        }
 
         /// <summary>
         /// Gets all record contexts for a given record across the load order.
@@ -741,132 +730,30 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,
             IPatcherState<ISkyrimMod, ISkyrimModGetter> state);
 
-        /// <summary>
-        /// Gets or creates an override record in the patch mod for the winning context.
-        /// Default implementation uses the generic GetOrAddAsOverride method.
-        /// Override this method if you need record-type-specific behavior.
-        /// </summary>
-        public virtual IMajorRecord GetOverrideRecord(
-            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,
-            IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
+        /// <summary>Stages context insertion and setters before publishing the complete output ancestry.</summary>
+        public void CommitOverride(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> sourceContext,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state,
+            Dictionary<string, object?>? propertiesToForward = null)
         {
-            return winningContext.GetOrAddAsOverride(state.PatchMod);
-        }
-
-        /// <summary>
-        /// Applies flag properties (MajorRecordFlagsRaw and SkyrimMajorRecordFlags) together.
-        /// These share the same record header in the file format, so setting one might affect the other.
-        /// This method ensures both are set together to preserve values correctly.
-        /// 
-        /// IMPORTANT: When setting SkyrimMajorRecordFlags, we always preserve MajorRecordFlagsRaw from the record
-        /// (which should be the winning value), even if MajorRecordFlagsRaw is not in propertiesToForward.
-        /// This prevents SkyrimMajorRecordFlags from overwriting MajorRecordFlagsRaw.
-        /// </summary>
-        /// <param name="record">The record to apply properties to</param>
-        /// <param name="propertiesToForward">Dictionary of properties to forward (will be modified to remove processed flags)</param>
-        protected virtual void ApplyFlagProperties(IMajorRecord record, Dictionary<string, object?> propertiesToForward)
-        {
-            bool hasMajorRecordFlagsRaw = propertiesToForward.TryGetValue("MajorRecordFlagsRaw", out var majorRecordFlagsRawValue);
-            bool hasSkyrimMajorRecordFlags = propertiesToForward.TryGetValue("SkyrimMajorRecordFlags", out var skyrimMajorRecordFlagsValue);
-
-            // Migrated handlers expose one composite raw-header path containing the
-            // common Skyrim flags and any record-specific aliases. Let that sole
-            // handler apply its owned-bit mask directly; running it through the old
-            // two-view coordination would reintroduce the winning Skyrim bits and
-            // make legitimate flag clears impossible.
-            if (hasMajorRecordFlagsRaw && !PropertyHandlers.ContainsKey("SkyrimMajorRecordFlags"))
+            PatchDiagnostics.ThrowIfFailed();
+            using var diagnostics = new PatchDiagnostics(sourceContext.Record.FormKey);
+            RecordOverrideTransaction.Apply(sourceContext, state.PatchMod, candidate =>
             {
-                if (majorRecordFlagsRawValue is int compositeFlags &&
-                    PropertyHandlers.TryGetValue("MajorRecordFlagsRaw", out var compositeHandler))
-                {
-                    compositeHandler.SetValue(record, compositeFlags);
-                }
-
-                propertiesToForward.Remove("MajorRecordFlagsRaw");
-                return;
-            }
-
-            // Always handle flags if either is being set, OR if SkyrimMajorRecordFlags is being set (to preserve MajorRecordFlagsRaw)
-            if (hasMajorRecordFlagsRaw || hasSkyrimMajorRecordFlags)
-            {
-                // Read current values from the record (which should be the winning values since we're applying to an override)
-                int currentMajorRecordFlagsRaw = record.MajorRecordFlagsRaw;
-                Mutagen.Bethesda.Skyrim.SkyrimMajorRecord.SkyrimMajorRecordFlag currentSkyrimMajorRecordFlags = 0;
-
-                if (record is ISkyrimMajorRecord skyrimRecord)
-                {
-                    currentSkyrimMajorRecordFlags = skyrimRecord.SkyrimMajorRecordFlags;
-                }
-
-                // Determine what values to set
-                int newMajorRecordFlagsRaw = hasMajorRecordFlagsRaw && majorRecordFlagsRawValue is int majorRecordFlagsRawInt
-                    ? majorRecordFlagsRawInt
-                    : currentMajorRecordFlagsRaw; // Always preserve current value if not being explicitly set
-
-                Mutagen.Bethesda.Skyrim.SkyrimMajorRecord.SkyrimMajorRecordFlag newSkyrimMajorRecordFlags = hasSkyrimMajorRecordFlags && skyrimMajorRecordFlagsValue is Mutagen.Bethesda.Skyrim.SkyrimMajorRecord.SkyrimMajorRecordFlag skyrimFlags
-                    ? skyrimFlags
-                    : currentSkyrimMajorRecordFlags;
-
-                // Set MajorRecordFlagsRaw first
-                record.MajorRecordFlagsRaw = newMajorRecordFlagsRaw;
-                if (LogCollector.IsDetailedMode && PropertyHandlers.TryGetValue("MajorRecordFlagsRaw", out var majorRecordFlagsRawHandler))
-                {
-                    if (hasMajorRecordFlagsRaw)
-                    {
-                        Console.WriteLine($"[MajorRecordFlagsRaw] Applying value: {majorRecordFlagsRawHandler.FormatValue(newMajorRecordFlagsRaw)}");
-                    }
-                    else if (hasSkyrimMajorRecordFlags)
-                    {
-                        // Even if not forwarding MajorRecordFlagsRaw, log that we're preserving it
-                        Console.WriteLine($"[MajorRecordFlagsRaw] Preserving value: {majorRecordFlagsRawHandler.FormatValue(newMajorRecordFlagsRaw)} (not in propertiesToForward, but preserving to prevent overwrite)");
-                    }
-                }
-
-                // Then set SkyrimMajorRecordFlags (this might internally reconstruct flags, so we set MajorRecordFlagsRaw again after)
-                if (record is ISkyrimMajorRecord skyrimRecordForFlags)
-                {
-                    skyrimRecordForFlags.SkyrimMajorRecordFlags = newSkyrimMajorRecordFlags;
-                    if (LogCollector.IsDetailedMode && hasSkyrimMajorRecordFlags && PropertyHandlers.TryGetValue("SkyrimMajorRecordFlags", out var skyrimMajorRecordFlagsHandler))
-                    {
-                        Console.WriteLine($"[SkyrimMajorRecordFlags] Applying value: {skyrimMajorRecordFlagsHandler.FormatValue(newSkyrimMajorRecordFlags)}");
-                    }
-
-                    // ALWAYS re-apply MajorRecordFlagsRaw after setting SkyrimMajorRecordFlags to ensure it's preserved
-                    // (in case Mutagen's internal logic reconstructed the flags)
-                    // This is critical even if MajorRecordFlagsRaw wasn't in propertiesToForward
-                    int majorRecordFlagsRawAfterSkyrim = record.MajorRecordFlagsRaw;
-
-                    if (majorRecordFlagsRawAfterSkyrim != newMajorRecordFlagsRaw)
-                    {
-                        // Mutagen may have set additional bits in MajorRecordFlagsRaw when we set SkyrimMajorRecordFlags
-                        // We need to preserve BOTH:
-                        // 1. The bits we want from newMajorRecordFlagsRaw (e.g., Persistent = 0x400)
-                        // 2. The bits Mutagen set for SkyrimMajorRecordFlags (e.g., InitiallyDisabled = 0x800)
-                        // Solution: OR them together to preserve both sets of flags
-                        int mergedFlags = newMajorRecordFlagsRaw | majorRecordFlagsRawAfterSkyrim;
-                        record.MajorRecordFlagsRaw = mergedFlags;
-                    }
-                }
-
-                // Remove from dictionary so we don't process them again
-                propertiesToForward.Remove("MajorRecordFlagsRaw");
-                propertiesToForward.Remove("SkyrimMajorRecordFlags");
-            }
+                if (propertiesToForward != null) ApplyForwardedProperties(candidate, propertiesToForward);
+                diagnostics.Report.ThrowIfFailed();
+            });
         }
 
         /// <summary>
         /// Applies forwarded properties to the record.
-        /// Default implementation handles flag properties specially, then processes all other properties.
+        /// Each property is applied through its registered handler, including the composite header flags.
         /// Override this method if you need custom property application logic.
         /// </summary>
         /// <param name="record">The record to apply properties to</param>
         /// <param name="propertiesToForward">Dictionary of properties to forward</param>
         public virtual void ApplyForwardedProperties(IMajorRecord record, Dictionary<string, object?> propertiesToForward)
         {
-            // Handle flag properties first (they need special coordination)
-            ApplyFlagProperties(record, propertiesToForward);
-
-            // Process all other properties normally
             foreach (var (propertyName, value) in propertiesToForward)
             {
                 if (PropertyHandlers.TryGetValue(propertyName, out var handler))
@@ -874,14 +761,22 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     try
                     {
                         if (LogCollector.IsDetailedMode) Console.WriteLine($"[{propertyName}] Applying value: {FormatForLogWithWarning(propertyName, handler, value, "apply", deepDiveRecord: LogCollector.IsDeepDiveMode)}, Type: {value?.GetType()}");
+                        using var diagnostics = new PatchDiagnostics(record.FormKey);
                         handler.SetValue(record, value);
+                        diagnostics.Report.ThrowIfFailed();
+                        // Null setters have record-specific absence/default normalization. Non-null
+                        // values must survive writing under the handler's own semantic comparer.
+                        if (value != null && !handler.AreValuesEqual(handler.GetValue(record), value))
+                        {
+                            throw new InvalidOperationException($"Property {propertyName} did not retain the selected value.");
+                        }
+                        diagnostics.Report.ThrowIfFailed();
                     }
                     catch (Exception ex)
                     {
-                        LogCollector.AddWarning(
-                            propertyName,
-                            $"Property was not applied to record {record.FormKey}",
-                            ex);
+                        LogCollector.AddError(propertyName, $"Could not apply property to record {record.FormKey}", ex);
+                        throw new InvalidOperationException(
+                            $"Property {propertyName} was not applied to record {record.FormKey}", ex);
                     }
                 }
             }

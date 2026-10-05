@@ -14,13 +14,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: ImpactDataSet and Tag via reflection handlers.
     // - Kept specialized: none.
     // - Rationale: record is simple scalar/formlink surface with stable shared handlers.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class FootstepRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "ImpactDataSet", new SimpleReflectionFormLinkPropertyHandler<IImpactDataSetGetter, IFootstep, IFootstepGetter>("ImpactDataSet") },
             { "Tag", new SimpleReflectionPropertyHandler<string, IFootstep, IFootstepGetter>("Tag") }
         };

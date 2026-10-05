@@ -21,14 +21,20 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Kept specialized: none.
 // - Intentionally excluded: UnusedNoisemaps, DNAMDataTypeState, and Unknown* fields are outside the semantic conflict surface.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary DNAM layout.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Name migration: translated Name uses generated copying to retain every selected language.
+// Optional null names remove the value; comparison follows Mutagen's language policy.
+// Other specialized fields/flags retain their policies; translations are selected as one value.
 public class WaterRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Name", new NameHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
+        { "Name", new TranslatedStringReflectionPropertyHandler<IWater, IWaterGetter>("Name") },
         { "Opacity", new SimpleReflectionPropertyHandler<byte, IWater, IWaterGetter>("Opacity") },
         { "Flags", new SimpleReflectionPropertyHandler<Water.Flag?, IWater, IWaterGetter>("Flags") },
         { "MNAM", new SimpleReflectionBinaryDataPropertyHandler<IWater, IWaterGetter>("MNAM") },

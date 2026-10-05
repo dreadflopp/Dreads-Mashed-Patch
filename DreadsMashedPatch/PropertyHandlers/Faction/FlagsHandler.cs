@@ -17,7 +17,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Faction
                 return factionRecord.Flags;
             }
 
-            Console.WriteLine($"Error: Record does not implement IFactionGetter for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement IFactionGetter for {PropertyName}");
             return Mutagen.Bethesda.Skyrim.Faction.FactionFlag.HiddenFromPC; // Default value
         }
 
@@ -29,7 +29,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Faction
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IFaction for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IFaction for {PropertyName}");
             }
         }
 

@@ -16,15 +16,16 @@ Use the [record index](INDEX.md) to find a record by its four-letter signature. 
 | Textures, impacts and other visual effects | [Visuals](visuals.md) |
 | Activators, furniture and other objects | [Objects](objects.md) |
 | Settings, globals, lists and messages | [Settings](settings.md) |
+| Coverage gaps, comparison limits and audit evidence | [Coverage/comparison audit](COVERAGE-COMPARISON-AUDIT.md) |
 
 ## Which records reach the patch
 
 1. The desktop app prepares the input list, including installed plugins from Skyrim.ccc. Synthesis loads the input plugins before the output plugin, `MashedPatch.esp`; the output plugin and later plugins are outside that input cutoff. Enabled record families are queried, including supported records nested under cells, worldspaces and dialogue topics.
-2. Ignored plugins are removed from each record’s override history. The **effective winner** is the last remaining version. Normally the record is skipped if this winner is an official/vanilla source, there are at most two eligible versions, or the version immediately before the winner is vanilla. Tamriel’s special persistent-cell policy can bypass this initial filter.
-3. For a record that reaches its handler, a matching always-win plugin selects a source record instead of merging properties. The last matching entry in the configured priority list wins. If that source is already the effective winner, no override is needed. The initial filter can prevent priority and EditorID policies from running; see [policy limitations](KNOWN-ISSUES.md#policies-skipped-by-the-initial-filter).
+2. Ignored plugins are removed from each record’s override history. The **effective winner** is the last remaining version. Ordinary merging is skipped if this winner is an official/vanilla source, there are at most two eligible versions, or the version immediately before the winner is vanilla. Eligible always-win sources, differing preserved baseline EditorIDs and Tamriel’s special persistent-cell policy bypass this initial filter. Policy eligibility uses typed identifier caches while the filter retains at most three eligible contexts.
+3. A matching always-win plugin selects a source record before the ordinary early exits, instead of merging properties. The last matching entry in the configured priority list wins. If that source is already the effective winner, no override is needed. When PreserveBaseline requires an EditorID-only correction on an otherwise skipped record, the winner is copied and only EditorID is changed, without loading its full history. See [policy filtering](KNOWN-ISSUES.md#policies-skipped-by-the-initial-filter).
 4. Otherwise the properties below are processed from oldest to newest. Special record rules may reset all registered properties to a newer version or coordinate related fields. The result is compared with the effective winner.
-5. If a change remains, the patcher creates an override from the effective winner, then applies the selected flags and other changed properties. NPC records use the patch’s NPC collection to obtain their override; other records use their resolved context. Parent containers are created as required. Unregistered properties are not independently merged from earlier mods.
-6. Synthesis writes the patch, splitting output if necessary for master limits. The desktop app stages the files before replacing the previous output. Caught property or record errors can still leave partial changes in this output; file staging is not per-record rollback.
+5. If a change remains, the patcher stages a detached override from the effective winner and applies the selected flags and other changed properties. Every record, including NPC, uses its resolved context through the shared commit path. Required parent containers are staged too; the completed record and ancestry are published only after successful application and validation. Unregistered properties are not independently merged from earlier mods.
+6. Failed record candidates are discarded while other records continue processing for diagnostics. Any recorded patching error rejects the run before publication. After successful processing, Synthesis writes the patch, splitting output if necessary for master limits. The desktop app commits its staged files only with a successful run report and no pipeline errors; failures preserve the previous primary and split outputs. See [failure handling](KNOWN-ISSUES.md#errors-can-leave-partial-overrides).
 
 DIAL, DLBR, INFO, DLVW, NAVM and PACK are **supported but disabled by default**. Their guide sections describe behavior when enabled. DOBJ, LAND, LTEX and IMAD are explicitly excluded and cannot be enabled through this supported-record path.
 
@@ -53,15 +54,15 @@ Property names match the record model so that you can identify exact fields. A d
 | Serialization/unused state | No separate merge decision for layout or unused fields. Copy and writer behavior can affect them. |
 | Child/group surfaces | These are not merged as property lists. Supported child records have their own processing paths. |
 
-Null and empty are not interchangeable everywhere. Some handlers track presence; others clear a collection or decline to write null. In particular, the keyword setter does nothing for a null selection. The tables do not promise that null universally removes a field.
+Null and empty are not interchangeable everywhere. Some handlers track presence; others normalize to empty or a record-specific default. The shared keyword setter writes null as absence and preserves a present-empty list. The tables do not promise that null universally removes every field.
 
 ## Properties shared across records
 
 | Property or value kind | Handling |
 |---|---|
 | EditorID | Independently selected, subject to settings. The default suppresses an override whose only change is EditorID. Normal forwarding and preserving the latest official baseline’s EditorID are alternatives. Official-baseline membership is configurable. |
-| Record-header flags | Every record handler registers raw header flags. Most also register the common Skyrim view, and some a record-specific view. These overlap in storage. ARMO, PERK, STAT, TACT, TXST and WRLD use a composite raw-header path; the other path has a [confirmed flag-clearing issue](KNOWN-ISSUES.md#record-header-flags). |
-| Text | Many string comparisons ignore trailing whitespace. Optional names written by the shared Name handler become English-only translated strings. Translated-string reflection handlers copy all available languages, but comparison follows Mutagen’s default-language/all-language setting. See [translation loss](KNOWN-ISSUES.md#optional-name-translations). |
+| Record-header flags | Every handler uses one composite `MajorRecordFlagsRaw` registration. Base, common Skyrim and applicable `MajorFlags` enum bits resolve with per-bit ownership; unowned bits stay as in the effective winner. Clears and unsigned bit 31 are supported. See the [completed header fix](KNOWN-ISSUES.md#record-header-flags). |
+| Text | Many plain-string comparisons ignore trailing whitespace. Translated names select and copy one complete source value, retaining its target language and all available translations. Comparison follows Mutagen’s default-language/all-language setting and does not trim text. Optional null names remove the value; required null names become empty. MATT Name remains a plain string. See the [completed translation fix](KNOWN-ISSUES.md#optional-name-translations). |
 | Numbers | Ordinary reflection floats use a 0.0001 comparison tolerance; the specialized Weight handler uses 0.001. Not every numeric or grouped value shares that tolerance. |
 | Models and icons | Whole values, including ordered alternate textures/model data or icon paths. ARMA explicitly splits its models. Asset paths use path-aware comparison. |
 | ModelAndBounds | An accepted model filename/geometry change brings bounds from that source. A bounds-only change can still forward separately. It is not an unconditional atomic model-plus-bounds decision. |
@@ -69,9 +70,11 @@ Null and empty are not interchangeable everywhere. Some handlers track presence;
 | ObjectBounds | Complete bounds, not individual coordinates. |
 | Destructible | Complete structure, including stages and their models/references. |
 | Binary payloads | Complete byte values; never merged byte by byte. |
-| VirtualMachineAdapter treated as keyed rows | Scripts match by name. Each script’s flags and complete properties are one authored value; individual script properties/arrays are not merged. Applying ordinary list-style adapters reconstructs them with metadata defaults, a [known issue](KNOWN-ISSUES.md#script-adapter-metadata). |
+| VirtualMachineAdapter treated as keyed rows | Scripts match by name. Each script’s flags and complete properties are one authored value; individual script properties/arrays are not merged. Replacing scripts in ordinary list-style adapters preserves the destination Version/ObjectFormat; only creation without a destination uses Mutagen defaults (5/2). Metadata is not independently selected on this path. See the [completed metadata fix](KNOWN-ISSUES.md#script-adapter-metadata). |
 | Other script adapters | INFO, PACK and PERK select whole adapters. QUST and SCEN split presence and child fields explicitly; their record notes describe the gates and ownership rules. Papyrus unused bytes do not determine script equality; copying preserves destination unused values where its policy supports that. |
 | Form identity and general record metadata | Not independent merge decisions. This includes version-control and runtime/registration members. Record-specific omissions appear in the tables. |
+
+The [keyword-removal fix](REVIEW.md#coverage-fix-verification) applies to all eighteen shared-setter registrations: selected null removes the keyword field, while selected empty removes rows and retains list presence. Declared/virtual-master permissions and WEAP exclusivity retain their existing policies. Output lists and links are detached. Shared post-write validation still checks only non-null values; other setters retain their documented normalization rules.
 
 ## Placed-reference coordination
 
@@ -79,4 +82,4 @@ ACHR and REFR coordinate safe deletion handling. A safe UDR state combines Initi
 
 ## Scope and evidence
 
-These guides describe source baseline `823a8f3`, reviewed on 2026-10-04 with Mutagen Skyrim 0.54.4. The [inventory](INVENTORY.md) remains the authoritative coverage checklist. Implementation was rechecked through input preparation, queries, source resolution, selection, setters and output writing; see the [review evidence](REVIEW.md). Property support does not establish gameplay safety for every combination or byte-for-byte preservation of omitted fields.
+These guides were initially reviewed against source baseline `823a8f3`, updated for the five completed fixes on 2026-10-04, and updated on 2026-10-05 after the [keyword, PHZD and inherited-audit fixes](REVIEW.md#coverage-fix-verification), with Mutagen Skyrim 0.54.4. The [inventory](INVENTORY.md) remains the authoritative coverage checklist. Implementation was rechecked through input preparation, queries, source resolution, selection, setters and output writing; see the [review evidence](REVIEW.md). Property support does not establish gameplay safety for every combination or byte-for-byte preservation of omitted fields.

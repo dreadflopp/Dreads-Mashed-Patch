@@ -15,13 +15,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: Quest, Category, StartingTopic via reflection handlers.
     // - Kept specialized: Flags via project-approved flag handler.
     // - Rationale: preserve explicit enum flag handling policy.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class DialogBranchRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Quest", new SimpleReflectionFormLinkPropertyHandler<IQuestGetter, IDialogBranch, IDialogBranchGetter>("Quest") },
             { "Category", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.DialogBranch.CategoryType?, IDialogBranch, IDialogBranchGetter>("Category") },
             { "Flags", new FlagsHandler() },

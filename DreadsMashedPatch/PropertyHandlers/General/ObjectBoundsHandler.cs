@@ -42,7 +42,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IObjectBounded for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IObjectBounded for {PropertyName}");
             }
         }
 
@@ -58,7 +58,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IObjectBoundedGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IObjectBoundedGetter for {PropertyName}");
             }
             return null;
         }

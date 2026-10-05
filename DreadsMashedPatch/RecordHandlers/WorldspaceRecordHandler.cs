@@ -20,6 +20,9 @@ namespace DreadsMashedPatch.RecordHandlers
     //   ownership boundaries so null local values cannot be combined with incompatible inheritance flags.
     // - Rationale: xEdit models these as removable/required structures, and generated Mutagen copies are required
     //   to preserve overlay form links and aggregate payloads.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class WorldspaceRecordHandler : AbstractRecordHandler
     {
         private static readonly IReadOnlySet<string> StructuralPropertyNames = new HashSet<string>(StringComparer.Ordinal)
@@ -40,7 +43,7 @@ namespace DreadsMashedPatch.RecordHandlers
         {
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Worldspace.MajorFlag)) },
-            { "Name", new NameHandler() },
+            { "Name", new TranslatedStringReflectionPropertyHandler<IWorldspace, IWorldspaceGetter>("Name") },
             { "Location", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IWorldspace, IWorldspaceGetter>("Location") },
             { "Water", new SimpleReflectionFormLinkPropertyHandler<IWaterGetter, IWorldspace, IWorldspaceGetter>("Water") },
             { "LodData", new LodDataHandler() },

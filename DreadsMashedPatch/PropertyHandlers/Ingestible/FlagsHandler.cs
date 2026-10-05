@@ -18,7 +18,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Ingestible
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IIngestible for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IIngestible for {PropertyName}");
             }
         }
 
@@ -30,7 +30,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Ingestible
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IIngestibleGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IIngestibleGetter for {PropertyName}");
             }
             return Mutagen.Bethesda.Skyrim.Ingestible.Flag.NoAutoCalc;
         }

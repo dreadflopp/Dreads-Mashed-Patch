@@ -27,7 +27,7 @@ public sealed class ClassWeightsHandler<TKey> : AbstractPropertyHandler<IReadOnl
     {
         if (record is not IClassGetter classRecord)
         {
-            Console.WriteLine($"Error: Record does not implement IClassGetter for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement IClassGetter for {PropertyName}");
             return null;
         }
 
@@ -39,7 +39,7 @@ public sealed class ClassWeightsHandler<TKey> : AbstractPropertyHandler<IReadOnl
     {
         if (record is not IClass classRecord)
         {
-            Console.WriteLine($"Error: Record does not implement IClass for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement IClass for {PropertyName}");
             return;
         }
 

@@ -15,13 +15,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: all footstep lists use the shared atomic form-link-list handler.
     // - Kept specialized: none.
     // - Rationale: each logical list is an ordered value with meaningful duplicates; Mutagen derives XCNT and DATA during serialization.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class FootstepSetRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "WalkForwardFootsteps", new AtomicFormLinkListPropertyHandler<IFootstepGetter, IFootstepSet, IFootstepSetGetter>("WalkForwardFootsteps") },
             { "RunForwardFootsteps", new AtomicFormLinkListPropertyHandler<IFootstepGetter, IFootstepSet, IFootstepSetGetter>("RunForwardFootsteps") },
             { "WalkForwardAlternateFootsteps", new AtomicFormLinkListPropertyHandler<IFootstepGetter, IFootstepSet, IFootstepSetGetter>("WalkForwardAlternateFootsteps") },

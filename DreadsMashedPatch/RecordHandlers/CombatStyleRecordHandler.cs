@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Kept specialized: none.
     // - Intentionally excluded: CSGDDataTypeState is Mutagen serialization state, not an xEdit field.
     // - Rationale: semantic fields are forwarded while the winning record retains its binary CSGD layout.
+
+    // Header migration: raw/common/CombatStyle.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class CombatStyleRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(CombatStyle.MajorFlag)) },
             { "OffensiveMult", new SimpleReflectionPropertyHandler<float, ICombatStyle, ICombatStyleGetter>("OffensiveMult", 0.0001f) },
             { "DefensiveMult", new SimpleReflectionPropertyHandler<float, ICombatStyle, ICombatStyleGetter>("DefensiveMult", 0.0001f) },
             { "GroupOffensiveMult", new SimpleReflectionPropertyHandler<float, ICombatStyle, ICombatStyleGetter>("GroupOffensiveMult", 0.0001f) },
@@ -42,7 +45,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Flight", new GeneratedCopyReflectionPropertyHandler<ICombatStyleFlightGetter, CombatStyleFlight, ICombatStyle, ICombatStyleGetter>(
                 "Flight", value => value.DeepCopy(), CombatStyleFlightMixIn.Equals) },
             { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.CombatStyle.Flag, ICombatStyle, ICombatStyleGetter>("Flags") },
-            { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.CombatStyle.MajorFlag, ICombatStyle, ICombatStyleGetter>("MajorFlags") }
+
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

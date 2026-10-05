@@ -16,7 +16,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Static
             }
             else
             {
-                System.Console.WriteLine($"Error: Record does not implement IStatic for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IStatic for {PropertyName}");
             }
         }
 
@@ -28,7 +28,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Static
             }
             else
             {
-                System.Console.WriteLine($"Error: Record does not implement IStaticGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IStaticGetter for {PropertyName}");
             }
             return default(Mutagen.Bethesda.Skyrim.Static.Flag);
         }

@@ -2,7 +2,7 @@
 
 [Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
 
-The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated.
+The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
 <a id="dial-dialogtopic"></a>
 
@@ -67,7 +67,7 @@ Responses are separately queried INFO records, not a merged DIAL child list.
 | Properties | How they are patched |
 |---|---|
 | `IdleTimer` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Animations` | Select each whole collection separately. |
 
@@ -84,7 +84,7 @@ Responses, Conditions and LinkTo align across versions. Responses also harmonize
 | Properties | How they are patched |
 |---|---|
 | `ResetHours`, `Topic`, `FavorLevel`, `ResponseData`, `Prompt`, `Speaker`, `WalkAwayTopic`, `AudioOutputOverride` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `DATA`, `VirtualMachineAdapter` | Select each whole value separately. |
 | `LinkTo`, `Responses`, `Conditions` | Merge aligned rows in order. |
 | `UnknownData` | Not independently forwarded. |
@@ -98,7 +98,7 @@ Responses, Conditions and LinkTo align across versions. Responses also harmonize
 
 **Disabled by default; these rules apply when enabled.**
 
-The package template graph is inactive even when packages are enabled: PackageTemplate, DataInputVersion, Data, XnamMarker and ProcedureTree are not forwarded independently. The source cites writer reordering of package data. VMAD, IdleAnimations and the three event structures are separate whole values.
+The package template graph is inactive even when packages are enabled: PackageTemplate, DataInputVersion, Data, XnamMarker and ProcedureTree are not forwarded independently. The local writer and binary regression confirm key-sorted data rows instead of the source declaration order, while preserving index/value associations. This does not establish an in-game failure. Winner/priority snapshots still use that writer; disabling graph selection does not guarantee physical row-order preservation. See the [PACK audit](COVERAGE-COMPARISON-AUDIT.md#pack-arma-and-navi-boundaries). VMAD, IdleAnimations and the three event structures are separate whole values.
 
 | Properties | How they are patched |
 |---|---|

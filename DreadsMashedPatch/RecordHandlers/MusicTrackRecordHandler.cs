@@ -19,13 +19,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Generalized: MUST scalar, aggregate, and serialized asset-path fields use shared semantic handlers.
 // - Kept specialized: conditions retain CTDA alignment; cue points retain typed handling; Tracks is atomic.
 // - Rationale: xEdit declares track order semantic without an entry key, so the sequence has one owner.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class MusicTrackRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Type", new SimpleReflectionPropertyHandler<MusicTrack.TypeEnum, IMusicTrack, IMusicTrackGetter>("Type") },
         { "Duration", new SimpleReflectionPropertyHandler<float?, IMusicTrack, IMusicTrackGetter>("Duration") },
         { "FadeOut", new SimpleReflectionPropertyHandler<float?, IMusicTrack, IMusicTrackGetter>("FadeOut") },

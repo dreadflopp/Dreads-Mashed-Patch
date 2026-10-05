@@ -260,15 +260,16 @@ public sealed class ErrorRegressionTests
     [Fact]
     public void RequiredNamesAreHandledWithoutOptionalNamedAspect()
     {
-        var handler = new NameHandler();
+        var keyHandler = new KeyRecordHandler().PropertyHandlers["Name"];
+        var classHandler = new ClassRecordHandler().PropertyHandlers["Name"];
         var key = new Key(new FormKey(TestModKey, 0x602), SkyrimRelease.SkyrimSE);
         var classRecord = new SkyrimClass(new FormKey(TestModKey, 0x603), SkyrimRelease.SkyrimSE);
 
-        handler.SetValue(key, "Test Key");
-        handler.SetValue(classRecord, "Test Class");
+        keyHandler.SetValue(key, (Mutagen.Bethesda.Strings.TranslatedString)"Test Key");
+        classHandler.SetValue(classRecord, (Mutagen.Bethesda.Strings.TranslatedString)"Test Class");
 
-        Assert.Equal("Test Key", handler.GetValue(key));
-        Assert.Equal("Test Class", handler.GetValue(classRecord));
+        Assert.Equal("Test Key", Assert.IsAssignableFrom<Mutagen.Bethesda.Strings.ITranslatedStringGetter>(keyHandler.GetValue(key)).String);
+        Assert.Equal("Test Class", Assert.IsAssignableFrom<Mutagen.Bethesda.Strings.ITranslatedStringGetter>(classHandler.GetValue(classRecord)).String);
     }
 
     [Fact]
@@ -291,10 +292,10 @@ public sealed class ErrorRegressionTests
     [Fact]
     public void InheritedGlobalAndStoryPropertiesResolve()
     {
-        var globalHandler = Assert.IsType<SimpleReflectionFlagPropertyHandler<Global.MajorFlag, IGlobalInt, IGlobalIntGetter>>(
-            new GlobalIntRecordHandler().PropertyHandlers["MajorFlags"]);
+        var globalHandler = Assert.IsType<MajorRecordFlagsRawHandler>(
+            new GlobalIntRecordHandler().PropertyHandlers["MajorRecordFlagsRaw"]);
         var global = new GlobalInt(new FormKey(TestModKey, 0x605), SkyrimRelease.SkyrimSE);
-        globalHandler.SetValue(global, Global.MajorFlag.Constant);
+        globalHandler.SetValue(global, (int)Global.MajorFlag.Constant);
         Assert.Equal(Global.MajorFlag.Constant, global.MajorFlags);
 
         var parentHandler = Assert.IsType<SimpleReflectionFormLinkPropertyHandler<IAStoryManagerNodeGetter, IStoryManagerBranchNode, IStoryManagerBranchNodeGetter>>(

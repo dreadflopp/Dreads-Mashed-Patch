@@ -21,6 +21,10 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Coupled forwarding: changes to the indexed scene graph establish a complete record ownership boundary.
 // - Rationale: actions, actors, phases, parent-quest aliases, last-action index, and VMAD phase fragments
 //   cross-reference one another; typed generated copies preserve nested conditions and package lists.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class SceneRecordHandler : AbstractRecordHandler
 {
     private const string VirtualMachineAdapterPrefix = "VirtualMachineAdapter.";
@@ -42,8 +46,7 @@ public class SceneRecordHandler : AbstractRecordHandler
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { VirtualMachineAdapterPresence, new SceneVirtualMachineAdapterPresenceHandler() },
         { "VirtualMachineAdapter.Version", new SimpleReflectionPropertyHandler<short, IScene, ISceneGetter>("VirtualMachineAdapter.Version") },
         { "VirtualMachineAdapter.ObjectFormat", new SimpleReflectionPropertyHandler<ushort, IScene, ISceneGetter>("VirtualMachineAdapter.ObjectFormat") },

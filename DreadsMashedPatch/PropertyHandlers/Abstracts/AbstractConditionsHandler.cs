@@ -58,7 +58,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     var condition = value[index];
                     if (condition == null)
                     {
-                        LogCollector.AddWarning(PropertyName, $"Skipped null condition at index {index} while applying the property");
+                        LogCollector.AddError(PropertyName, $"Skipped null condition at index {index} while applying the property");
                         continue;
                     }
 
@@ -68,7 +68,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     }
                     catch (Exception ex)
                     {
-                        LogCollector.AddWarning(
+                        LogCollector.AddError(
                             PropertyName,
                             $"Skipped malformed condition at index {index} while applying the property",
                             ex);

@@ -19,13 +19,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Intentionally non-migrated: LoopAndRumble is LNAM, not part of the BNAM grouping.
     // - Rationale: paired pitch and attenuation settings describe one adjustment, while grouping the
     //   entire packed BNAM would unnecessarily couple Priority to unrelated acoustic changes.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class SoundDescriptorRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Type", new SimpleReflectionPropertyHandler<SoundDescriptor.DescriptorType?, ISoundDescriptor, ISoundDescriptorGetter>("Type") },
             { "Category", new SimpleReflectionFormLinkPropertyHandler<ISoundCategoryGetter, ISoundDescriptor, ISoundDescriptorGetter>("Category") },
             { "AlternateSoundFor", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, ISoundDescriptor, ISoundDescriptorGetter>("AlternateSoundFor") },
@@ -56,7 +59,7 @@ namespace DreadsMashedPatch.RecordHandlers
             return contexts;
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

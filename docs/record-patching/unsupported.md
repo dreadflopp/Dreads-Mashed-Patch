@@ -13,7 +13,7 @@ A reference to another record does not patch that record’s contents. Likewise,
 | HAIR — Hair | No independent processing route. RACE merges hair references only. |
 | LENS — Lens flare | No independent processing route. LIGH Lens and WTHR SunGlareLensFlare select references, not flare sprites/parameters. |
 | VOLI — Volumetric lighting | No independent processing route. WTHR selects a complete time-of-day reference structure, not the referenced lighting records. |
-| NAVI — Navigation mesh information map | No independent route or patcher-owned reconstruction found. NAVM and REFR navigation-door links do not implement a NAVI merge. Implicit library-writer behavior is not established. |
+| NAVI — Navigation mesh information map | No independent route or patcher-owned reconstruction found. NAVM and REFR navigation-door links do not implement a NAVI merge. The local writer serializes populated NAVI groups; that is not a rebuild. No real navigation consistency test was run; broader writer-hook behavior remains unestablished. See the [NAVI audit](COVERAGE-COMPARISON-AUDIT.md#pack-arma-and-navi-boundaries). |
 | PARW, PBAR, PBEA, PCON, PFLA, PGRE, PMIS — Placed arrows, barriers, beams, cones, flames, traps and missiles | The placed-trap query can encounter these variants, but narrowing retains only PHZD. No independent property forwarding for these seven types. |
 | TES4 / GRUP | Plugin header and structural groups are managed by output/copy machinery, not independent record conflict handlers. |
 | NOTE | No separate NOTE major-record type in the inspected Skyrim model. Notes represented as BOOK follow the book rules. |
@@ -26,7 +26,7 @@ Some supported records also use indirect routes:
 |---|---|
 | GLOB | Global query narrowed to Float, Int, Short or Unknown. Each has its own Data handling. |
 | GMST | Game-setting query narrowed to Bool, Float, Int or String. |
-| PHZD | Placed-trap query narrowed to hazards. Only Hazard and shared EditorID/header handling are registered; inherited placed data is omitted. |
+| PHZD | Placed-trap query narrowed to hazards. Hazard, all eighteen inherited placed fields and shared metadata/header handling are registered. The sibling variants are still narrowed away. |
 | FLST | Routed to FormIdRecordHandler. |
 | INFO | Routed to singular-named DialogResponseRecordHandler, separately from DIAL child lists. |
 | ACHR / REFR | Placed NPC/object handlers, independently queried even beneath cells. |

@@ -21,13 +21,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 //   typed copying and xEdit's direction normalization.
 // - Rationale: generic reflection cannot assign overlay IReadOnlyList<P2Float> values to Mutagen's
 //   mutable ExtendedList<P2Float>, and xEdit normalizes reversed polygon point sequences after load.
+
+// Header migration: raw/common/Region.MajorFlag flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class RegionRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Region.MajorFlag)) },
         { "MapColor", new SimpleReflectionPropertyHandler<Color?, IRegion, IRegionGetter>("MapColor") },
         { "Worldspace", new SimpleReflectionFormLinkPropertyHandler<IWorldspaceGetter, IRegion, IRegionGetter>("Worldspace") },
         { "RegionAreas", new RegionAreasHandler() },
@@ -37,7 +40,6 @@ public class RegionRecordHandler : AbstractRecordHandler
         { "Land", new GeneratedCopyReflectionPropertyHandler<IRegionLandGetter, RegionLand, IRegion, IRegionGetter>("Land", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
         { "Grasses", new GeneratedCopyReflectionPropertyHandler<IRegionGrassesGetter, RegionGrasses, IRegion, IRegionGetter>("Grasses", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
         { "Sounds", new GeneratedCopyReflectionPropertyHandler<IRegionSoundsGetter, RegionSounds, IRegion, IRegionGetter>("Sounds", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
-        { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Region.MajorFlag, IRegion, IRegionGetter>("MajorFlags") }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

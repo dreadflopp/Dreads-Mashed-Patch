@@ -96,14 +96,18 @@ public sealed class PlacedReferenceUdrCoordinatorTests
 
     private static Dictionary<string, IPropertyContext> CreateFlagContexts(bool isSet, ModKey owner)
     {
-        var flags = new FlagPropertyContext<SkyrimMajorRecord.SkyrimMajorRecordFlag>();
-        flags.SetFlagContext(
-            SkyrimMajorRecord.SkyrimMajorRecordFlag.InitiallyDisabled,
-            isSet,
-            owner.ToString());
+        var flags = new IntFlagPropertyContext
+        {
+            ForwardFlagContexts =
+            [
+                new IntFlagPropertyValueContext(
+                    (int)SkyrimMajorRecord.SkyrimMajorRecordFlag.InitiallyDisabled,
+                    "InitiallyDisabled", isSet, owner.ToString())
+            ]
+        };
         return new Dictionary<string, IPropertyContext>
         {
-            ["SkyrimMajorRecordFlags"] = flags
+            ["MajorRecordFlagsRaw"] = flags
         };
     }
 

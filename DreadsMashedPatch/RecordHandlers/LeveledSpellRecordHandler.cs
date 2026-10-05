@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: entry owner copying/equality now uses Mutagen's OwnerTarget implementation, including UntypedOwner.
     // - Specialized: leveled-spell entry sorting/data comparison remains record-specific; Flags stays on the approved flag handler.
     // - Rationale: generated union behavior replaces obsolete raw reflection without changing list or flag policy.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class LeveledSpellRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "ObjectBounds", new ObjectBoundsHandler() },
             { "ChanceNone", new SimpleReflectionPropertyHandler<Percent, ILeveledSpell, ILeveledSpellGetter>("ChanceNone") },
             { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.LeveledSpell.Flag, ILeveledSpell, ILeveledSpellGetter>("Flags") },

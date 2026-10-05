@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: ECZN owner/location links and level/rank scalars use shared semantic handlers.
     // - Kept specialized: Flags retains the approved record-specific flag handler.
     // - Intentionally excluded: DATADataTypeState is serializer layout state.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class EncounterZoneRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IEncounterZone, IEncounterZoneGetter>("Owner") },
             { "Location", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IEncounterZone, IEncounterZoneGetter>("Location") },
             { "Rank", new SimpleReflectionPropertyHandler<byte, IEncounterZone, IEncounterZoneGetter>("Rank") },
@@ -47,7 +50,7 @@ namespace DreadsMashedPatch.RecordHandlers
             return contexts;
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

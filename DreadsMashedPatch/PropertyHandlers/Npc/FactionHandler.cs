@@ -142,7 +142,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             {
                 return npc.Factions.ToList();
             }
-            Console.WriteLine($"Error: Record is not an NPC for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record is not an NPC for {PropertyName}");
             return null;
         }
 

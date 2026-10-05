@@ -135,7 +135,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             if (record is not TRecordGetter typedRecord)
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
                 return default;
             }
 
@@ -194,13 +194,13 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             if (record is not TRecord typedRecord)
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
                 return;
             }
 
             if (_setterProperty == null)
             {
-                Console.WriteLine($"Error: Property '{PropertyName}' is read-only or not found on {typeof(TRecord).Name}");
+                LogCollector.AddError(PropertyName, $"Error: Property '{PropertyName}' is read-only or not found on {typeof(TRecord).Name}");
                 return;
             }
 
@@ -226,7 +226,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                             var newInstance = System.Activator.CreateInstance(pathType);
                             if (newInstance == null)
                             {
-                                Console.WriteLine($"Error: Could not create instance of {pathType.Name} for property path '{PropertyName}'");
+                                LogCollector.AddError(PropertyName, $"Error: Could not create instance of {pathType.Name} for property path '{PropertyName}'");
                                 return;
                             }
 
@@ -247,7 +247,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                 if (currentObject == null)
                 {
-                    Console.WriteLine($"Error: Could not navigate to property '{PropertyName}'");
+                    LogCollector.AddError(PropertyName, $"Error: Could not navigate to property '{PropertyName}'");
                     return;
                 }
 

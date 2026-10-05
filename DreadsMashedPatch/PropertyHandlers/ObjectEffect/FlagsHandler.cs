@@ -18,7 +18,7 @@ namespace DreadsMashedPatch.PropertyHandlers.ObjectEffect
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IObjectEffect for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IObjectEffect for {PropertyName}");
             }
         }
 
@@ -30,7 +30,7 @@ namespace DreadsMashedPatch.PropertyHandlers.ObjectEffect
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IObjectEffectGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IObjectEffectGetter for {PropertyName}");
             }
             return Mutagen.Bethesda.Skyrim.ObjectEffect.Flag.NoAutoCalc; // Default value
         }

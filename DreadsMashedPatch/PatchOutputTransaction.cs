@@ -23,6 +23,14 @@ public sealed class PatchOutputTransaction : IDisposable
 
     public string StagedOutputPath { get; }
 
+    /// <summary>Publishes staged files only when record processing succeeded.</summary>
+    public int Commit(PatchRunReport report)
+    {
+        ArgumentNullException.ThrowIfNull(report);
+        report.ThrowIfFailed();
+        return Commit();
+    }
+
     public int Commit()
     {
         if (_committed)

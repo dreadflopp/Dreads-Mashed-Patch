@@ -17,7 +17,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Ingredient
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IIngredientGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IIngredientGetter for {PropertyName}");
             }
             return default(Mutagen.Bethesda.Skyrim.Ingredient.Flag);
         }
@@ -30,7 +30,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Ingredient
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IIngredient for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IIngredient for {PropertyName}");
             }
         }
 

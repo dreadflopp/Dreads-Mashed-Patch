@@ -82,7 +82,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             if (record is not TRecordGetter typedRecord)
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
                 return null;
             }
 
@@ -143,13 +143,13 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             if (record is not TRecord typedRecord)
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
                 return;
             }
 
             if (_setterProperty == null)
             {
-                Console.WriteLine($"Error: Property '{PropertyName}' is read-only or not found on {typeof(TRecord).Name}");
+                LogCollector.AddError(PropertyName, $"Error: Property '{PropertyName}' is read-only or not found on {typeof(TRecord).Name}");
                 return;
             }
 
@@ -481,7 +481,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
             catch (Exception ex)
             {
-                LogCollector.AddWarning(
+                LogCollector.AddError(
                     PropertyName,
                     $"Could not create list type {listType.Name} for items of type {itemType.Name}",
                     ex);

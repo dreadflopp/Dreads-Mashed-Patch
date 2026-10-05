@@ -56,7 +56,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             {
                 if (_setterProperty == null)
                 {
-                    Console.WriteLine($"Error: Property 'VirtualMachineAdapter' is read-only or not found on {typeof(TRecord).Name}");
+                    LogCollector.AddError(PropertyName, $"Error: Property 'VirtualMachineAdapter' is read-only or not found on {typeof(TRecord).Name}");
                     return;
                 }
 

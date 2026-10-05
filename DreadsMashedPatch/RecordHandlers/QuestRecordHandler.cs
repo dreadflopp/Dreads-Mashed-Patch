@@ -24,6 +24,10 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Rationale: aliases, objectives, stages, fragments, conditions, and event data cross-reference one another and
 //   must not be independently combined into a graph that never existed in any source plugin;
 //   independent forwarding is intentionally not configurable.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class QuestRecordHandler : AbstractRecordHandler
 {
     private const string VirtualMachineAdapterPrefix = "VirtualMachineAdapter.";
@@ -56,8 +60,7 @@ public class QuestRecordHandler : AbstractRecordHandler
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Name", new TranslatedStringReflectionPropertyHandler<IQuest, IQuestGetter>("Name") },
         { "VirtualMachineAdapter.Presence", new QuestVirtualMachineAdapterPresenceHandler() },
         { "VirtualMachineAdapter.Version", new SimpleReflectionPropertyHandler<short, IQuest, IQuestGetter>("VirtualMachineAdapter.Version") },

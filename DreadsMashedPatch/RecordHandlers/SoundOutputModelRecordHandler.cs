@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Kept specialized: none; generated aggregate copies preserve overlay-only nested values such as attenuation byte slices and channels.
 // - Intentionally non-migrated: none.
 // - Rationale: generic reflection cannot safely convert nested ReadOnlyMemorySlice or overlay objects to their mutable counterparts.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class SoundOutputModelRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Data", new GeneratedCopyReflectionPropertyHandler<ISoundOutputDataGetter, SoundOutputData, ISoundOutputModel, ISoundOutputModelGetter>("Data", value => value.DeepCopy(), SoundOutputDataMixIn.Equals) },
         { "FNAM", new SimpleReflectionBinaryDataPropertyHandler<ISoundOutputModel, ISoundOutputModelGetter>("FNAM") },
         { "Type", new SimpleReflectionPropertyHandler<SoundOutputModel.TypeEnum?, ISoundOutputModel, ISoundOutputModelGetter>("Type") },

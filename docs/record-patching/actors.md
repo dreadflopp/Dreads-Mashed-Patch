@@ -2,7 +2,7 @@
 
 [Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
 
-The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated.
+The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
 <a id="astp-associationtype"></a>
 
@@ -68,7 +68,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `OffensiveMult`, `DefensiveMult`, `GroupOffensiveMult`, `EquipmentScoreMultMelee`, `EquipmentScoreMultMagic`, `EquipmentScoreMultRanged`, `EquipmentScoreMultShout`, `EquipmentScoreMultUnarmed`, `EquipmentScoreMultStaff`, `AvoidThreatChance`, `CSMD`, `LongRangeStrafeMult` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Melee`, `CloseRange`, `Flight` | Select each whole value separately. |
 | `CSGDDataTypeState` | Serialization/unused state; no independent decision. |
 
@@ -92,7 +92,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Name`, `Icon` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/EyesRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -117,7 +117,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Name`, `Type`, `TextureSet`, `Color`, `ValidRaces` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Model` | Select each whole value separately. |
 | `ExtraParts` | Merge rows by key. |
 | `Parts` | Merge aligned rows in order. |
@@ -155,12 +155,12 @@ Entries match by (Level, Reference), with complete row payloads/counts.
 
 ## NPC_ — Npc
 
-Configuration.Flags selects only Essential/Protected together; other configuration bits are retained by the setter. Essential wins if both are set. The default permits protection upgrades and requires ownership permission for downgrades; HighestWins and ordinary forwarding are alternatives. Level is one fixed/player-level value. Factions and Perks match by reference and require permission for rank changes. Items match by item reference, reconcile duplicates, and handle count, extra-data presence, condition and coherent owner data with permission checks. Attacks match by AttackEvent.
+Configuration.Flags selects only Essential/Protected together; other configuration bits are retained by the setter. Essential wins if both are set. The default permits protection upgrades and requires ownership permission for downgrades; HighestWins and ordinary forwarding are alternatives. Level is one fixed/player-level value. Factions and Perks match by reference and require permission for rank changes. Items use the [shared CONT/NPC inventory handler](../../DreadsMashedPatch/PropertyHandlers/Abstracts/AbstractInventoryItemsHandler.cs): they match by item reference, reserve unchanged duplicate rows before matching remaining occurrences, and handle count, extra-data presence, condition and coherent owner data with permission checks. Source snapshots and output rows are complete independent generated copies. Attacks match by AttackEvent.
 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `TextureLighting`, `Race`, `Height`, `Weight`, `Voice`, `Template`, `ShortName`, `NAM5`, `SoundLevel`, `WornArmor`, `AttackRace`, `HairColor`, `DefaultOutfit`, `FarAwayModel`, `GuardWarnOverridePackageList`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction`, `HeadTexture` | Select each value separately. |
-| `MajorFlags`, `Configuration.TemplateFlags` | Merge registered flag bits separately. |
+| `Configuration.TemplateFlags` | Merge registered flag bits separately. |
 | `Configuration.Level`, `FaceMorph`, `FaceParts`, `Destructible`, `ObjectBounds`, `Sound` | Select each whole value separately. |
 | `Configuration.Flags` | Select Essential/Protected together; preserve other bits. See the protection rule above. |
 | `PlayerSkills.SkillValues`, `PlayerSkills.SkillOffsets` | Select each whole collection separately. |
@@ -189,7 +189,7 @@ SkillBoosts owns all seven physical skill slots. Padding is ignored; output is s
 | Properties | How they are patched |
 |---|---|
 | `Name`, `Description`, `Skin`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `NumberOfTintsInList`, `FacegenMainClamp`, `FacegenFaceClamp`, `AttackRace`, `BodyPartData`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `EquipmentFlags`, `UnarmedEquipSlot`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `MorphRace`, `ArmorRace` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `BodyTemplate`, `Height`, `Weight`, `MountData`, `SkeletalModel`, `Voices`, `DecapitateArmors`, `DefaultHairColors`, `BodyData`, `BehaviorGraph`, `FaceFxPhonemes`, `HeadData` | Select each whole value separately. |
 | `Starting`, `Regen`, `BipedObjectNames` | Select each whole collection separately. |
 | `ActorEffect`, `Keywords`, `SkillBoosts`, `MovementTypeNames`, `Attacks`, `Hairs`, `Eyes`, `MovementTypes`, `EquipmentSlots` | Merge rows by key. |
@@ -205,7 +205,7 @@ SkillBoosts owns all seven physical skill slots. Padding is ignored; output is s
 | Properties | How they are patched |
 |---|---|
 | `Parent`, `Child`, `Rank`, `AssociationType` | Select each value separately. |
-| `Flags`, `MajorFlags` | Merge registered flag bits separately. |
+| `Flags` | Merge registered flag bits separately. |
 | `Unknown` | Not independently forwarded. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/RelationshipRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).

@@ -18,7 +18,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Race
                 return raceRecord.Starting;
             }
 
-            Console.WriteLine($"Error: Record does not implement IRaceGetter for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record does not implement IRaceGetter for {PropertyName}");
             return null;
         }
 
@@ -26,7 +26,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Race
         {
             if (record is not IRace raceRecord)
             {
-                Console.WriteLine($"Error: Record does not implement IRace for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IRace for {PropertyName}");
                 return;
             }
 

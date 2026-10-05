@@ -21,13 +21,17 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Rationale: semantic BodyTemplate values are forwardable; its binary-layout discriminator is not forwarded independently.
     //   Armature may intentionally contain multiple components, but independently authored lists must not be unioned into
     //   an equipped model combination that no source plugin declared.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class ArmorRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Mutagen.Bethesda.Skyrim.Armor.MajorFlag)) },
-            { "Name", new NameHandler() },
+            { "Name", new TranslatedStringReflectionPropertyHandler<IArmor, IArmorGetter>("Name") },
+            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IArmor, IArmorGetter>() },
             { "ObjectEffect", new SimpleReflectionFormLinkPropertyHandler<IEffectRecordGetter, IArmor, IArmorGetter>("ObjectEffect") },
             { "EnchantmentAmount", new SimpleReflectionPropertyHandler<ushort?, IArmor, IArmorGetter>("EnchantmentAmount") },

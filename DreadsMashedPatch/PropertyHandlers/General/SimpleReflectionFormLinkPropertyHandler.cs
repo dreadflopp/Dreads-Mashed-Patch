@@ -48,7 +48,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             if (record is not TRecordGetter typedRecord)
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
                 return null;
             }
 
@@ -95,13 +95,13 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             if (record is not TRecord typedRecord)
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
                 return;
             }
 
             if (_setterProperty == null)
             {
-                Console.WriteLine($"Error: Property '{PropertyName}' is read-only or not found on {typeof(TRecord).Name}");
+                LogCollector.AddError(PropertyName, $"Error: Property '{PropertyName}' is read-only or not found on {typeof(TRecord).Name}");
                 return;
             }
 
@@ -156,7 +156,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         return;
                     }
 
-                    Console.WriteLine($"Error: Could not construct link value for property '{PropertyName}'");
+                    LogCollector.AddError(PropertyName, $"Error: Could not construct link value for property '{PropertyName}'");
                 }
                 else
                 {

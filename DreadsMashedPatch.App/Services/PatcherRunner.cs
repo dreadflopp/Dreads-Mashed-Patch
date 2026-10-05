@@ -101,6 +101,7 @@ public sealed class PatcherRunner
                 SplitIfMaxMastersExceeded = true
             };
 
+            PatchRunReport? patchReport = null;
             var result = await Task.Run(async () =>
             {
                 var originalOut = Console.Out;
@@ -112,7 +113,11 @@ public sealed class PatcherRunner
                 try
                 {
                     var pipeline = SynthesisPipeline.Instance
-                        .AddPatch<ISkyrimMod, ISkyrimModGetter>(Program.RunPatch);
+                        .AddPatch<ISkyrimMod, ISkyrimModGetter>(state =>
+                        {
+                            patchReport = Program.RunPatchWithReport(state);
+                            patchReport.ThrowIfFailed();
+                        });
                     await pipeline.Run(arguments);
                 }
                 finally
@@ -124,7 +129,16 @@ public sealed class PatcherRunner
 
                 return new PatcherRunResult(writer.WarningCount, writer.ErrorCount);
             });
-            var replacedOutputs = stagedOutput.Commit();
+            if (patchReport == null)
+            {
+                throw new InvalidOperationException("The patch pipeline did not run the patcher; output was not published.");
+            }
+            patchReport.ThrowIfFailed();
+            if (result.ErrorCount > 0)
+            {
+                throw new InvalidOperationException("The patch pipeline reported errors. Previous output files were preserved.");
+            }
+            var replacedOutputs = stagedOutput.Commit(patchReport);
             writeLog($"Replaced {replacedOutputs} previous patch output file(s).{Environment.NewLine}");
             return result;
         }

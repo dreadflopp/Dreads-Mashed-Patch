@@ -17,13 +17,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: links, scalar fields, flags, and grass list via reflection handlers.
     // - Kept specialized: none.
     // - Rationale: the surface is compact and fits the generic link/list handlers.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class LandscapeTextureRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "TextureSet", new SimpleReflectionFormLinkPropertyHandler<ITextureSetGetter, ILandscapeTexture, ILandscapeTextureGetter>("TextureSet") },
             { "MaterialType", new SimpleReflectionFormLinkPropertyHandler<IMaterialTypeGetter, ILandscapeTexture, ILandscapeTextureGetter>("MaterialType") },
             { "HavokFriction", new SimpleReflectionPropertyHandler<byte, ILandscapeTexture, ILandscapeTextureGetter>("HavokFriction") },

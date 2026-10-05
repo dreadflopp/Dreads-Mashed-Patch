@@ -21,6 +21,10 @@ namespace DreadsMashedPatch.RecordHandlers;
 //   quest rows remain mergeable while that configuration is stable.
 // - Rationale: quest FormID is xEdit's row key, but selection controls and list contents must not be mixed
 //   across a configuration boundary, so independent configuration forwarding is intentionally unavailable.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class StoryManagerQuestNodeRecordHandler : AbstractRecordHandler
 {
     private static readonly IReadOnlySet<string> ConfigurationPropertyNames = new HashSet<string>(StringComparer.Ordinal)
@@ -40,8 +44,7 @@ public class StoryManagerQuestNodeRecordHandler : AbstractRecordHandler
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Parent", new SimpleReflectionFormLinkPropertyHandler<IAStoryManagerNodeGetter, IStoryManagerQuestNode, IStoryManagerQuestNodeGetter>("Parent") },
         { "PreviousSibling", new SimpleReflectionFormLinkPropertyHandler<IAStoryManagerNodeGetter, IStoryManagerQuestNode, IStoryManagerQuestNodeGetter>("PreviousSibling") },
         { "Conditions", new ConditionsHandler<IStoryManagerQuestNode, IStoryManagerQuestNodeGetter>(record => record.Conditions, record => record.Conditions) },

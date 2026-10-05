@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Kept specialized: none.
 // - Intentionally excluded: SPEDDataTypeState is Mutagen serialization state, not an xEdit field.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary SPED layout.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class MovementTypeRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Name", new SimpleReflectionPropertyHandler<string?, IMovementType, IMovementTypeGetter>("Name") },
         { "LeftWalk", new SimpleReflectionPropertyHandler<float, IMovementType, IMovementTypeGetter>("LeftWalk") },
         { "LeftRun", new SimpleReflectionPropertyHandler<float, IMovementType, IMovementTypeGetter>("LeftRun") },

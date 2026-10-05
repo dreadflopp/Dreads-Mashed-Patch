@@ -65,7 +65,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             }
             else
             {
-                Console.WriteLine($"Error: Record is not an NPC for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record is not an NPC for {PropertyName}");
             }
         }
 
@@ -82,7 +82,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             }
             else
             {
-                Console.WriteLine($"Error: Record is not an NPC for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record is not an NPC for {PropertyName}");
             }
             return ProtectionStatus.None;
         }
@@ -111,14 +111,14 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
 
             if (context == null || context.Record is not INpcGetter npc)
             {
-                Console.WriteLine($"Error: Context is null for {PropertyName} or record is not an NPC");
+                LogCollector.AddError(PropertyName, $"Error: Context is null for {PropertyName} or record is not an NPC");
                 return;
             }
 
             var forwardContext = simplePropertyContext.ForwardValueContext;
             if (forwardContext == null)
             {
-                Console.WriteLine($"Error: Property context is not properly initialized for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Property context is not properly initialized for {PropertyName}");
                 return;
             }
 

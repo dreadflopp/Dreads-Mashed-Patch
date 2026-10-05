@@ -40,7 +40,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             {
                 return typedRecord;
             }
-            Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
+            LogCollector.AddError(propertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
             return null;
         }
 
@@ -50,7 +50,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             {
                 return typedRecord;
             }
-            Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
+            LogCollector.AddError(propertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {propertyName}");
             return null;
         }
 
@@ -93,7 +93,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
         {
             if (context == null)
             {
-                Console.WriteLine($"Error: Context is null for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Context is null for {PropertyName}");
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             var recordValue = GetValue(context.Record);
             if (simplePropertyContext.OriginalValueContext == null || simplePropertyContext.ForwardValueContext == null)
             {
-                Console.WriteLine($"Error: Property context is not properly initialized for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Property context is not properly initialized for {PropertyName}");
                 return;
             }
 

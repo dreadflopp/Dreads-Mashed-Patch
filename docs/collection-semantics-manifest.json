@@ -1210,6 +1210,61 @@
     "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
   },
   {
+    "RecordHandler": "PlacedHazardRecordHandler",
+    "Property": "DistantLodData",
+    "ValueType": "System.Collections.Generic.IReadOnlyList\u003CSystem.Single\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GeneratedCopyReflectionPropertyHandler\u003CSystem.Collections.Generic.IReadOnlyList\u003CSystem.Single\u003E, Noggog.ExtendedList\u003CSystem.Single\u003E, Mutagen.Bethesda.Skyrim.IPlacedHazard, Mutagen.Bethesda.Skyrim.IPlacedHazardGetter\u003E",
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "PlacedHazardRecordHandler",
+    "Property": "LinkedReferences",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.ILinkedReferencesGetter\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GeneratedCopyReflectionListPropertyHandler\u003CMutagen.Bethesda.Skyrim.ILinkedReferencesGetter, Mutagen.Bethesda.Skyrim.LinkedReferences, Mutagen.Bethesda.Skyrim.IPlacedHazard, Mutagen.Bethesda.Skyrim.IPlacedHazardGetter\u003E",
+    "MergeMode": "SortedKeyed",
+    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
+    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "PlacedHazardRecordHandler",
+    "Property": "LocationRefTypes",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.ILocationReferenceTypeGetter\u003E\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.SimpleReflectionListPropertyHandler\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.ILocationReferenceTypeGetter\u003E, Mutagen.Bethesda.Skyrim.IPlacedHazard, Mutagen.Bethesda.Skyrim.IPlacedHazardGetter\u003E",
+    "MergeMode": "AlignedOrdered",
+    "IdentityPolicy": "Occurrence-specific aligned row key",
+    "CardinalityPolicy": "Ordered sequence; duplicate occurrences retained",
+    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "PlacedHazardRecordHandler",
+    "Property": "Reflections",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IWaterReflectionGetter\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GeneratedCopyReflectionListPropertyHandler\u003CMutagen.Bethesda.Skyrim.IWaterReflectionGetter, Mutagen.Bethesda.Skyrim.WaterReflection, Mutagen.Bethesda.Skyrim.IPlacedHazard, Mutagen.Bethesda.Skyrim.IPlacedHazardGetter\u003E",
+    "MergeMode": "SortedKeyed",
+    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
+    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "PlacedHazardRecordHandler",
+    "Property": "VirtualMachineAdapter",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IScriptEntryGetter\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.SimpleReflectionVirtualMachineAdapterHandler\u003CMutagen.Bethesda.Skyrim.IPlacedHazard, Mutagen.Bethesda.Skyrim.IPlacedHazardGetter\u003E",
+    "MergeMode": "SortedKeyed",
+    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
+    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
     "RecordHandler": "PlacedNpcRecordHandler",
     "Property": "LinkedReferences",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.ILinkedReferencesGetter\u003E",

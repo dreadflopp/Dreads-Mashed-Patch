@@ -18,13 +18,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: flags/form links use typed handlers; height-map and layer values use generated copy/equality.
     // - Kept specialized: vertex normal/color arrays.
     // - Rationale: overlays require generated mutable layer copies and typed mutable Array2d copies.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class LandscapeRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Flags", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.Landscape.Flag?, ILandscape, ILandscapeGetter>("Flags") },
             { "VertexNormals", new LandscapeArray2dHandler(vertexNormals: true) },
             { "VertexHeightMap", new GeneratedCopyReflectionPropertyHandler<ILandscapeVertexHeightMapGetter, LandscapeVertexHeightMap, ILandscape, ILandscapeGetter>(

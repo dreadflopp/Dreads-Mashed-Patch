@@ -18,15 +18,22 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: VM/bounds/name/model, keywords, binary data, links, and generated copies for workbench/marker data.
     // - Kept specialized: Destructible and nullable furniture flags via dedicated handlers.
     // - Rationale: generated copies safely materialize overlay marker rows while preserving destructible and flag semantics.
+
+    // Header migration: raw/common/Furniture.MajorFlag flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Name migration: translated Name uses generated copying to retain every selected language.
+    // Optional null names remove the value; comparison follows Mutagen's language policy.
+    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class FurnitureRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Furniture.MajorFlag)) },
+            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IFurniture, IFurnitureGetter>() },
-            { "Name", new NameHandler() },
+            { "Name", new TranslatedStringReflectionPropertyHandler<IFurniture, IFurnitureGetter>("Name") },
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Destructible", new DestructibleHandler() },
             { "Keywords", new KeywordListHandler() },
@@ -39,7 +46,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Markers", new AtomicGeneratedCopyReflectionListPropertyHandler<IFurnitureMarkerGetter, FurnitureMarker, IFurniture, IFurnitureGetter>(
                 "Markers", value => value.DeepCopy(), FurnitureMarkerMixIn.Equals, canBeNull: true) },
             { "ModelFilename", new SimpleReflectionAssetLinkPropertyHandler<SkyrimModelAssetType, IFurniture, IFurnitureGetter>("ModelFilename") },
-            { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.Furniture.MajorFlag, IFurniture, IFurnitureGetter>("MajorFlags") }
+
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

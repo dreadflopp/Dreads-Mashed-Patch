@@ -35,7 +35,7 @@ namespace DreadsMashedPatch.PropertyHandlers.EffectShader
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IEffectShaderGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IEffectShaderGetter for {PropertyName}");
             }
             return null;
         }
@@ -168,7 +168,7 @@ namespace DreadsMashedPatch.PropertyHandlers.EffectShader
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IEffectShader for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IEffectShader for {PropertyName}");
             }
         }
 

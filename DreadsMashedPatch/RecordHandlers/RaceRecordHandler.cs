@@ -22,13 +22,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 //   use Mutagen's typed deep copy so binary-overlay AttackData is materialized as mutable AttackData.
 // - Intentionally excluded: DATADataTypeState and ExportingExtraNam2 are serialization state; Unknown is outside the semantic conflict surface.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout and empty NAM2 marker state.
+
+// Header migration: raw/common/Race.MajorFlag flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class RaceRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Race.MajorFlag)) },
         { "Name", new TranslatedStringReflectionPropertyHandler<IRace, IRaceGetter>("Name") },
         { "Description", new TranslatedStringReflectionPropertyHandler<IRace, IRaceGetter>("Description") },
         { "ActorEffect", new SimpleReflectionListPropertyHandler<IFormLinkGetter<ISpellRecordGetter>, IRace, IRaceGetter>("ActorEffect", ListSemantics.SortedKeyed) },
@@ -98,7 +101,7 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "HeadData", new GenderedItemHandler<IHeadDataGetter?, HeadData?, IRace, IRaceGetter>("HeadData", record => record.HeadData, (record, value) => record.HeadData = value, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
         { "MorphRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, IRace, IRaceGetter>("MorphRace") },
         { "ArmorRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, IRace, IRaceGetter>("ArmorRace") },
-        { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Race.MajorFlag, IRace, IRaceGetter>("MajorFlags") }
+
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

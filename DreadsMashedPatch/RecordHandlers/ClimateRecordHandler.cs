@@ -15,13 +15,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: times, volatility, moons, phase length via reflection handlers.
     // - Kept specialized: WeatherTypes list + sun textures + model via dedicated/shared handlers.
     // - Rationale: preserve complex list/asset semantics while keeping scalar fields simple.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class ClimateRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "WeatherTypes", new WeatherTypesHandler() },
             { "SunTexture", new SunTextureHandler() },
             { "SunGlareTexture", new SunGlareTextureHandler() },

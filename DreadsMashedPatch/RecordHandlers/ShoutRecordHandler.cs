@@ -14,20 +14,26 @@ namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
 // - Generalized: SHOU text, links, and metadata use shared semantic handlers.
-// - Kept specialized: WordsOfPower is an atomic non-alignable sequence; MajorFlags retains the approved flag handler.
+// - Kept specialized: WordsOfPower is an atomic non-alignable sequence; header flags use the approved composite raw handler.
 // - Rationale: xEdit marks the word sequence as declaration-ordered without a safe row identity.
+
+// Header migration: raw/common/Shout.MajorFlag flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Name migration: translated Name uses generated copying to retain every selected language.
+// Optional null names remove the value; comparison follows Mutagen's language policy.
+// Other specialized fields/flags retain their policies; translations are selected as one value.
 public class ShoutRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "Name", new NameHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Shout.MajorFlag)) },
+        { "Name", new TranslatedStringReflectionPropertyHandler<IShout, IShoutGetter>("Name") },
         { "MenuDisplayObject", new SimpleReflectionFormLinkPropertyHandler<IStaticGetter, IShout, IShoutGetter>("MenuDisplayObject") },
         { "Description", new TranslatedStringReflectionPropertyHandler<IShout, IShoutGetter>("Description") },
         { "WordsOfPower", new WordsOfPowerHandler() },
-        { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Shout.MajorFlag, IShout, IShoutGetter>("MajorFlags") }
+
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

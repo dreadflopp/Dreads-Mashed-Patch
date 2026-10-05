@@ -21,7 +21,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecordGetter).Name} for {PropertyName}");
             }
             return null;
         }
@@ -42,7 +42,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement {typeof(TRecord).Name} for {PropertyName}");
             }
         }
 

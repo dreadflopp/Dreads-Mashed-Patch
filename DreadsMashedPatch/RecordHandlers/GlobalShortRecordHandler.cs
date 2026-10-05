@@ -16,14 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Generalized: GLOB short variant via scalar reflection handlers.
 // - Kept specialized: typed Data handling remains per concrete GLOB variant.
 // - Rationale: concrete Data type differs across Global variants.
+
+// Header migration: raw/common/Global.MajorFlag flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class GlobalShortRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-        { "MajorFlags", new SimpleReflectionFlagPropertyHandler<Global.MajorFlag, IGlobalShort, IGlobalShortGetter>("MajorFlags") },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Global.MajorFlag)) },
         { "Data", new SimpleReflectionPropertyHandler<short?, IGlobalShort, IGlobalShortGetter>("Data") }
     };
 

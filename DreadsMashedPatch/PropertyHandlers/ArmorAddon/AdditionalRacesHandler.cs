@@ -37,7 +37,7 @@ namespace DreadsMashedPatch.PropertyHandlers.ArmorAddon
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IArmorAddon for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IArmorAddon for {PropertyName}");
             }
         }
 
@@ -52,7 +52,7 @@ namespace DreadsMashedPatch.PropertyHandlers.ArmorAddon
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IArmorAddonGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IArmorAddonGetter for {PropertyName}");
             }
             return null;
         }

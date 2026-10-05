@@ -1,5 +1,14 @@
 # Best Practices
 
+## Record application and output failures
+
+Use the shared `AbstractRecordHandler.CommitOverride` path for every output mutation, including whole-record policies. It stages Mutagen context insertion and setters before publishing, so failed candidates cannot leave changed CELL/WRLD/DIAL ancestry or overwrite earlier successful output. Use `LogCollector.AddError` for unrecovered read/write/copy failures; it records structured run errors independently of log flushing. Do not catch setter failures as warnings or silently drop malformed output rows. Supported fallback diagnostics may remain nonfatal when they recover the complete selected value.
+
+`ApplyForwardedProperties` is a mutation hook for detached candidates, not a publication API. It propagates failures and checks non-null writes with the registered handler's semantic comparer. Existing null/default normalization and record-specific graph validation remain specialized. `Process` and `Program.RunPatchWithReport` return structured errors; `Program.RunPatch` rejects failed runs. Desktop publication requires a successful report and zero pipeline errors through the existing staged file transaction.
+
+See [failure handling and verification](../../docs/record-patching/KNOWN-ISSUES.md#errors-can-leave-partial-overrides) and the [current property inventory](../../docs/record-patching/INVENTORY.md). The examples below illustrate handler techniques; the inventory and active registrations define current coverage.
+
+
 ## Quick Reference for AI Assistants
 
 ### Handler Type Selection
@@ -643,7 +652,7 @@ public class PatrolHandler : AbstractPropertyHandler<IPatrolGetter?>
 // "I need the interface for IPatrolGetter to properly implement the PatrolHandler. Could you please provide it?"
 // Then implement based on the actual interface structure
 ```
-**Best Practice**: When working with complex types like `IPatrolGetter`, `IAttackGetter`, `IPerkPlacementGetter`, etc., always ask the user for the interface definitions to understand available properties and methods. This prevents compilation errors and ensures proper implementation. The user has explicitly requested this as a best practice: "Remember to ask for interfaces if you can't find them, ask if there is something you can't do rather than adding TODO or setting things to null."
+**Best Practice**: Reuse the existing handler pattern and inspect the local Mutagen decompiled reference when repository usage cannot establish an interface/property surface. Regenerate it with `scripts/Export-MutagenDecompiled.ps1` when needed. Ask for snippets or documentation only if the behavior remains unclear; do not invent members or replace unsupported values with null.
 
 ### 22. **Avoid .Equals() on Complex Types**
 **Error**: Using `.Equals()` on complex Mutagen types, leading to reference equality issues
@@ -729,17 +738,17 @@ var newKeywords = new ExtendedList<IFormLinkGetter<IKeywordGetter>>();
 **Error**: Assuming all record types have their own MajorFlag type
 ```csharp
 // ❌ WRONG - MagicEffect.MajorFlag doesn't exist
-public class MajorFlagsHandler : AbstractFlagPropertyHandler<Mutagen.Bethesda.Skyrim.MagicEffect.MajorFlag>
+typeof(MagicEffect.MajorFlag)
 // CS0426: The type name 'MajorFlag' does not exist in the type 'MagicEffect'
 ```
-**Solution**: Check if the record type actually has a MajorFlag type, or use SkyrimMajorRecordFlags instead
+**Solution**: Use one composite header registration. Include the common enum and the record-specific enum only when Mutagen exposes it (including inherited enums).
 ```csharp
-// ✅ CORRECT - Some records only use SkyrimMajorRecordFlags
-// Remove MajorFlagsHandler entirely and only use SkyrimMajorRecordFlagsHandler
-{ "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
-// Don't include MajorFlags if the record type doesn't have its own MajorFlag enum
+// MGEF has no record-specific MajorFlag enum.
+{ "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
+// WEAP supplies its typed bits to the same handler.
+{ "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Weapon.MajorFlag)) },
 ```
-**Best Practice**: Not all record types have their own `MajorFlag` enum. Some only use `SkyrimMajorRecordFlags`. Check the actual interface or test compilation before creating a `MajorFlagsHandler`. If `RecordType.MajorFlag` doesn't exist, don't create a handler for it.
+These are alternatives for different record handlers. Never register overlapping common or typed header views alongside the composite. Keep approved flag handlers for non-header flags. Consult the local decompiled Mutagen reference for exact enum surfaces; unowned winner bits must remain intact.
 
 ### 26. **VirtualMachineAdapter Type Conversion Issues**
 **Error**: Type conversion issues with VirtualMachineAdapter interfaces
@@ -929,7 +938,7 @@ protected override void UpdateEffectsCollection(IObjectEffect record, List<IEffe
 7. **Skip Problematic Types**: Don't force implementation of complex binary data or abstract types
 8. **Test AssetLink Access**: Use `ToString()` for AssetLink paths, not `RawPath`
 9. **Check Constructor Access**: Some types have protected constructors and cannot be instantiated
-10. **Always Ask for Interfaces**: When working with complex types like `IAttackGetter`, `IPerkPlacementGetter`, etc., always ask the user for the interface definitions to understand available properties and methods. This prevents compilation errors and ensures proper implementation.
+10. **Verify Interfaces Locally First**: Consult existing registrations and the generated `DecompiledMutagen/` reference; ask the user only when behavior remains unclear after those checks.
 11. **Never Use .Equals() on Complex Types**: Always compare specific properties (like `FormKey`) instead of using `.Equals()` on complex Mutagen types to avoid reference equality issues
 12. **Check FormLink Property Types**: Verify whether properties are `IFormLinkGetter<T>` (non-nullable) or `IFormLinkNullableGetter<T>` (nullable) to use the correct handler type
 13. **Include Noggog Using Statement**: Always add `using Noggog;` when working with `ExtendedList<T>`, `GenderedItem<T>`, or other Noggog types
@@ -1002,3 +1011,8 @@ public override bool AreValuesEqual(ComplexType? value1, ComplexType? value2)
 ```
 
 This approach ensures consistent, type-safe property handlers that integrate properly with the Dread's Mashed Patch system while avoiding problematic implementations.
+## Translated names
+
+Use `TranslatedStringReflectionPropertyHandler<TRecord, TRecordGetter>` for translated Name surfaces. Keep `ITranslatedStringGetter` values in selection contexts; converting them to `string` loses the translations before the setter runs. The handler selects one complete source value and deep-copies its target language and all available translations. Its equality follows `TranslatedString.DefaultLanguageComparisonOnly`, without text normalization.
+
+Use `required: true` for CLAS/EYES/FLOR/KEYM Name so a selected null becomes a fresh empty translated string in Mutagen's configured default language. Optional translated names write null as removal. MATT Name is a plain string and uses `SimpleReflectionPropertyHandler<string, IMaterialType, IMaterialTypeGetter>`. See [migration verification](../../docs/record-patching/REVIEW.md#name-translation-migration-verification).

@@ -12,10 +12,20 @@ public sealed class TranslatedStringReflectionPropertyHandler<TRecord, TRecordGe
     where TRecord : class, IMajorRecord
     where TRecordGetter : class, IMajorRecordGetter
 {
-    public TranslatedStringReflectionPropertyHandler(string propertyName)
+    private readonly bool _required;
+
+    public TranslatedStringReflectionPropertyHandler(string propertyName, bool required = false)
         : base(propertyName, value => value.DeepCopy(), AreTranslatedStringsEqual)
     {
+        _required = required;
     }
+
+    // Required names retain the former null-to-empty behavior without reducing
+    // non-null names to their default-language string.
+    public override void SetValue(IMajorRecord record, ITranslatedStringGetter? value)
+        => base.SetValue(record, value ?? (_required
+            ? new TranslatedString(TranslatedString.DefaultLanguage, string.Empty)
+            : null));
 
     private static bool AreTranslatedStringsEqual(
         ITranslatedStringGetter left,

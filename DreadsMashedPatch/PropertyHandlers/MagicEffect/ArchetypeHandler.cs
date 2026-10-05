@@ -28,7 +28,7 @@ namespace DreadsMashedPatch.PropertyHandlers.MagicEffect
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IMagicEffect for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IMagicEffect for {PropertyName}");
             }
         }
 
@@ -40,7 +40,7 @@ namespace DreadsMashedPatch.PropertyHandlers.MagicEffect
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IMagicEffectGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IMagicEffectGetter for {PropertyName}");
             }
             return null;
         }

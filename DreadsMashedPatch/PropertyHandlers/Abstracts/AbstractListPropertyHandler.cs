@@ -71,7 +71,7 @@ public abstract class AbstractListPropertyHandler<T> : IPropertyHandler<List<T>>
         var recordMod = state.LoadOrder[context.ModKey].Mod;
         if (recordMod == null)
         {
-            Console.WriteLine($"Error: Record mod is null for {PropertyName}");
+            LogCollector.AddError(PropertyName, $"Error: Record mod is null for {PropertyName}");
             return;
         }
 

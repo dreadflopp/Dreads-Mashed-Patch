@@ -15,13 +15,16 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Generalized: VTYP flags and metadata use shared semantic handlers.
 // - Kept specialized: none; Flags remains on the project-approved flag handler path.
 // - Rationale: the record exposes no coupled aggregate or list properties.
+
+// Header migration: raw/common flags share one masked integer handler.
+// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class VoiceTypeRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
-        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-        { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+        { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Flags", new SimpleReflectionFlagPropertyHandler<VoiceType.Flag, IVoiceType, IVoiceTypeGetter>("Flags") }
     };
 

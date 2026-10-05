@@ -2,9 +2,9 @@
 
 This report compares the generated runtime inventory with the independently maintained pinned-xEdit expectations.
 
-- Runtime registrations: 168
-- xEdit expectations: 168
-- Matched: 168
+- Runtime registrations: 173
+- xEdit expectations: 173
+- Matched: 173
 - Unresolved: 0
 - Mismatched: 0
 - Missing/invalid: 0
@@ -121,6 +121,11 @@ This report compares the generated runtime inventory with the independently main
 | `PackageRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `PerkRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `PerkRecordHandler.Effects` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `PlacedHazardRecordHandler.DistantLodData` | Matched | Atomic | Atomic | The slots form a fixed XLOD value; atomic ownership avoids combining coordinates from different source records. |
+| `PlacedHazardRecordHandler.LinkedReferences` | Matched | SortedKeyed | SortedKeyed | PHZD uses ReferenceRecord, which sorts by Keyword/Ref; reuse ACHR keyed replacement rather than REFR positional mode. |
+| `PlacedHazardRecordHandler.LocationRefTypes` | Matched | AlignedOrdered | AlignedOrdered | Reuse ACHR/REFR ordered location-reference-type forwarding; preserve source declaration order. |
+| `PlacedHazardRecordHandler.Reflections` | Matched | SortedKeyed | SortedKeyed | Water is the xEdit row key; reflection/refraction flags travel with the complete selected row. |
+| `PlacedHazardRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Reuse ordinary VMAD script-name ownership and destination metadata preservation. |
 | `PlacedNpcRecordHandler.LinkedReferences` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `PlacedNpcRecordHandler.LocationRefTypes` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `PlacedNpcRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |

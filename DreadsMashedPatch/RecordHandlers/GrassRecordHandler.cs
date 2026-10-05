@@ -16,13 +16,16 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Kept specialized: none.
     // - Intentionally excluded: Unknown* fields are outside the semantic conflict surface.
     // - Rationale: surface is scalar/formlink/binary data suitable for reflection handlers.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class GrassRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Density", new SimpleReflectionPropertyHandler<byte, IGrass, IGrassGetter>("Density") },
             { "MinSlope", new SimpleReflectionPropertyHandler<byte, IGrass, IGrassGetter>("MinSlope") },

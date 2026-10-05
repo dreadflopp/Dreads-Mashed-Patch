@@ -18,7 +18,7 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogTopic
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IDialogTopicGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IDialogTopicGetter for {PropertyName}");
             }
             return default(Mutagen.Bethesda.Skyrim.DialogTopic.TopicFlag);
         }
@@ -31,7 +31,7 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogTopic
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement IDialogTopic for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement IDialogTopic for {PropertyName}");
             }
         }
 

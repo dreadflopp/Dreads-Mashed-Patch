@@ -34,7 +34,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement ICell for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement ICell for {PropertyName}");
             }
         }
 
@@ -46,7 +46,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement ICellGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement ICellGetter for {PropertyName}");
             }
             return null;
         }

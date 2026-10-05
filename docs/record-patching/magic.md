@@ -2,7 +2,7 @@
 
 [Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
 
-The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated.
+The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
 <a id="ench-objecteffect"></a>
 
@@ -65,7 +65,7 @@ Entries match by (Level, Reference), with complete row payloads/counts.
 
 ## MGEF — Magic Effect
 
-Archetype copies the selected subtype whole, but only Type, ActorValue and AssociationKey determine whether it changed. Other subtype differences alone do not trigger forwarding.
+Archetype copies the selected subtype whole. Type, ActorValue and AssociationKey determine whether it changed; these cover the current Mutagen 0.54.4 subtype surfaces, whose typed Association is represented by AssociationKey. No additional semantic subtype fields were found in the [known-issue re-evaluation](KNOWN-ISSUES.md#re-evaluation-and-verification).
 
 | Properties | How they are patched |
 |---|---|
@@ -118,7 +118,7 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 | Properties | How they are patched |
 |---|---|
 | `Name`, `MenuDisplayObject`, `Description` | Select each value separately. |
-| `MajorFlags` | Merge registered flag bits separately. |
+
 | `WordsOfPower` | Select each whole collection separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ShoutRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).

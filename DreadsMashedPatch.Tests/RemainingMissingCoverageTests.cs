@@ -17,7 +17,7 @@ public sealed class RemainingMissingCoverageTests
 
         var formListHandlers = new FormIdRecordHandler().PropertyHandlers;
         Assert.IsType<MajorRecordFlagsRawHandler>(formListHandlers["MajorRecordFlagsRaw"]);
-        Assert.IsType<SkyrimMajorRecordFlagsHandler>(formListHandlers["SkyrimMajorRecordFlags"]);
+        Assert.DoesNotContain("SkyrimMajorRecordFlags", formListHandlers.Keys);
     }
 
     [Theory]

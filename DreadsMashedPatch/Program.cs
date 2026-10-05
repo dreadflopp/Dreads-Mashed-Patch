@@ -15,6 +15,7 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.PropertyHandlers.FormList;
 using DreadsMashedPatch.Contexts;
 using Mutagen.Bethesda.Plugins.Aspects;
+using Loqui;
 
 namespace DreadsMashedPatch
 {
@@ -157,51 +158,24 @@ namespace DreadsMashedPatch
         /// </summary>
         /// <param name="winningContext">The winning context for the record</param>
         /// <param name="state">The patcher state</param>
+        /// <param name="policySources">Run-scoped identifier caches for policy eligibility</param>
         /// <returns>True if processing can be skipped early, false otherwise</returns>
         protected static bool ShouldBreakEarly(
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,
-            IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state,
+            RecordPolicySources policySources)
         {
             try
             {
-                var contexts = winningContext.Record.ToLink()
-                    .ResolveAllContexts<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>(state.LinkCache)
-                    .Where(context => !PatcherSettings.IsIgnoredMod(context.ModKey))
-                    .Take(3)
-                    .ToArray();
-
-                if (contexts.Length == 0)
-                {
+                if (!PatcherSettings.IsRecordTypeEnabled(((ILoquiObject)winningContext.Record).Registration.GetterType))
                     return true;
-                }
+                var contexts = RecordPolicySources.GetInitialContexts(winningContext, state);
+                if (contexts.Length == 0) return true;
 
-                // Ignore-list filtering can expose a different effective winner.
-                if (Utility.IsVanilla(contexts[0]))
-                {
-                    //Console.WriteLine("Breaking early: Winning context is vanilla");
-                    return true;
-                }
-
-                // If we can't determine early break from winning context alone, 
-                // we need to load contexts (but only the first 3 for efficiency)
-                //var contexts = GetRecordContextsForEarlyBreak(winningContext, state);
-                // If we have ≤2 contexts, we can break early
-                if (contexts.Length <= 2)
-                {
-                    // Console.WriteLine("Breaking early: 2 or less contexts");
-                    return true;
-                }
-
-                // Check if the mod before the winning context is vanilla
-                var previousContext = contexts[1]; // Index 1 is the one before winning (index 2)
-                if (Utility.IsVanilla(previousContext))
-                {
-                    //Console.WriteLine("Breaking early: Previous context is vanilla");
-                    return true;
-                }
-
-                // No early break conditions met
-                return false;
+                // Policy eligibility uses targeted identifier lookups, never a full history.
+                if (policySources.TryGetAlwaysWinningMod(contexts[0].Record, out _)) return false;
+                return RecordPolicySources.ShouldSkipOrdinaryProcessing(contexts)
+                    && !policySources.RequiresBaselineEditorIdOverride(contexts[0].Record);
             }
             catch (Exception ex)
             {
@@ -292,6 +266,18 @@ namespace DreadsMashedPatch
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
+            RunPatchWithReport(state).ThrowIfFailed();
+        }
+
+        public static PatchRunReport RunPatchWithReport(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
+        {
+            using var diagnostics = new PatchDiagnostics();
+            RunPatchCore(state);
+            return diagnostics.Report;
+        }
+
+        private static void RunPatchCore(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
+        {
             Console.WriteLine("Starting Mashed Patch patcher...");
             var vanillaBaseline = Utility.InitializeVanillaMods(
                 state.LoadOrder.ListedOrder.Select(x => x.ModKey),
@@ -301,6 +287,7 @@ namespace DreadsMashedPatch
                 $"Official baseline: {vanillaBaseline.PresentCount} plugins present, " +
                 $"{vanillaBaseline.MissingCount} absent; Creation Club is " +
                 $"{(vanillaBaseline.IncludesCreationClub ? "included" : "treated as mods")}");
+            using var policySources = new RecordPolicySources(state);
             Console.WriteLine($"Editor ID policy: {PatcherSettings.EditorIdPolicy}");
             Console.WriteLine(
                 $"Master rules: {PatcherSettings.VirtualMasterRelationshipCount} relationships for " +
@@ -686,361 +673,361 @@ namespace DreadsMashedPatch
             // Filter out contexts that would break early
             Console.WriteLine("Filtering contexts (this may take a while)...");
             Console.WriteLine("Filtering Ingestibles...");
-            var filteredIngestibleContexts = ingestibleContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredIngestibleContexts = ingestibleContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Ingestible contexts: {ingestibleContexts.Length} -> {filteredIngestibleContexts.Length} (filtered: {ingestibleContexts.Length - filteredIngestibleContexts.Length})");
             Console.WriteLine("Filtering Ingredients...");
-            var filteredIngredientContexts = ingredientContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredIngredientContexts = ingredientContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Ingredient contexts: {ingredientContexts.Length} -> {filteredIngredientContexts.Length} (filtered: {ingredientContexts.Length - filteredIngredientContexts.Length})");
             Console.WriteLine("Filtering Object Effects...");
-            var filteredObjectEffectContexts = objectEffectContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredObjectEffectContexts = objectEffectContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Object Effect contexts: {objectEffectContexts.Length} -> {filteredObjectEffectContexts.Length} (filtered: {objectEffectContexts.Length - filteredObjectEffectContexts.Length})");
             Console.WriteLine("Filtering Packages...");
-            var filteredPackageContexts = packageContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredPackageContexts = packageContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Package contexts: {packageContexts.Length} -> {filteredPackageContexts.Length} (filtered: {packageContexts.Length - filteredPackageContexts.Length})");
             Console.WriteLine("Filtering Perks...");
-            var filteredPerkContexts = perkContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredPerkContexts = perkContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Perk contexts: {perkContexts.Length} -> {filteredPerkContexts.Length} (filtered: {perkContexts.Length - filteredPerkContexts.Length})");
             Console.WriteLine("Filtering Races...");
-            var filteredRaceContexts = raceContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredRaceContexts = raceContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Race contexts: {raceContexts.Length} -> {filteredRaceContexts.Length} (filtered: {raceContexts.Length - filteredRaceContexts.Length})");
             Console.WriteLine("Filtering Regions...");
-            var filteredRegionContexts = regionContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredRegionContexts = regionContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Region contexts: {regionContexts.Length} -> {filteredRegionContexts.Length} (filtered: {regionContexts.Length - filteredRegionContexts.Length})");
             Console.WriteLine("Filtering Worldspaces...");
-            var filteredWorldspaceContexts = worldspaceContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredWorldspaceContexts = worldspaceContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Worldspace contexts: {worldspaceContexts.Length} -> {filteredWorldspaceContexts.Length} (filtered: {worldspaceContexts.Length - filteredWorldspaceContexts.Length})");
             Console.WriteLine("Filtering Containers...");
-            var filteredContainerContexts = containerContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredContainerContexts = containerContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Container contexts: {containerContexts.Length} -> {filteredContainerContexts.Length} (filtered: {containerContexts.Length - filteredContainerContexts.Length})");
             Console.WriteLine("Filtering Cells...");
             var filteredCellContexts = cellContexts
                 .Where(context => CellRecordHandler.RequiresSmartPolicyProcessing(context.Record.FormKey)
-                    || !ShouldBreakEarly(context, state))
+                    || !ShouldBreakEarly(context, state, policySources))
                 .ToArray();
             Console.WriteLine($"Cell contexts: {cellContexts.Length} -> {filteredCellContexts.Length} (filtered: {cellContexts.Length - filteredCellContexts.Length})");
             Console.WriteLine("Filtering Weapons...");
-            var filteredWeaponContexts = weaponContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredWeaponContexts = weaponContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Weapon contexts: {weaponContexts.Length} -> {filteredWeaponContexts.Length} (filtered: {weaponContexts.Length - filteredWeaponContexts.Length})");
             Console.WriteLine("Filtering Placed Objects...");
-            var filteredPlacedObjectContexts = placedObjectContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredPlacedObjectContexts = placedObjectContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Placed Object contexts: {placedObjectContexts.Length} -> {filteredPlacedObjectContexts.Length} (filtered: {placedObjectContexts.Length - filteredPlacedObjectContexts.Length})");
             Console.WriteLine("Filtering Placed NPCs...");
-            var filteredPlacedNpcContexts = placedNpcContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredPlacedNpcContexts = placedNpcContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Placed NPC contexts: {placedNpcContexts.Length} -> {filteredPlacedNpcContexts.Length} (filtered: {placedNpcContexts.Length - filteredPlacedNpcContexts.Length})");
             Console.WriteLine("Filtering NPCs...");
-            var filteredNpcContexts = npcContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredNpcContexts = npcContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"NPC contexts: {npcContexts.Length} -> {filteredNpcContexts.Length} (filtered: {npcContexts.Length - filteredNpcContexts.Length})");
             Console.WriteLine("Filtering Dialog Topics...");
-            var filteredDialogTopicContexts = dialogTopicContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredDialogTopicContexts = dialogTopicContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Dialog Topic contexts: {dialogTopicContexts.Length} -> {filteredDialogTopicContexts.Length} (filtered: {dialogTopicContexts.Length - filteredDialogTopicContexts.Length})");
             Console.WriteLine("Filtering Dialog Responses...");
-            var filteredDialogResponseContexts = dialogResponseContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredDialogResponseContexts = dialogResponseContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Dialog Response contexts: {dialogResponseContexts.Length} -> {filteredDialogResponseContexts.Length} (filtered: {dialogResponseContexts.Length - filteredDialogResponseContexts.Length})");
             Console.WriteLine("Filtering Form Lists...");
-            var filteredFormListContexts = formListContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredFormListContexts = formListContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Form List contexts: {formListContexts.Length} -> {filteredFormListContexts.Length} (filtered: {formListContexts.Length - filteredFormListContexts.Length})");
             Console.WriteLine("Filtering Sound Descriptors...");
-            var filteredSoundDescriptorContexts = soundDescriptorContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredSoundDescriptorContexts = soundDescriptorContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Sound Descriptor contexts: {soundDescriptorContexts.Length} -> {filteredSoundDescriptorContexts.Length} (filtered: {soundDescriptorContexts.Length - filteredSoundDescriptorContexts.Length})");
             Console.WriteLine("Filtering Effect Shaders...");
-            var filteredEffectShaderContexts = effectShaderContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredEffectShaderContexts = effectShaderContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Effect Shader contexts: {effectShaderContexts.Length} -> {filteredEffectShaderContexts.Length} (filtered: {effectShaderContexts.Length - filteredEffectShaderContexts.Length})");
             Console.WriteLine("Filtering Armor Addons...");
-            var filteredArmorAddonContexts = armorAddonContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredArmorAddonContexts = armorAddonContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Armor Addon contexts: {armorAddonContexts.Length} -> {filteredArmorAddonContexts.Length} (filtered: {armorAddonContexts.Length - filteredArmorAddonContexts.Length})");
             Console.WriteLine("Filtering Armors...");
-            var filteredArmorContexts = armorContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredArmorContexts = armorContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Armor contexts: {armorContexts.Length} -> {filteredArmorContexts.Length} (filtered: {armorContexts.Length - filteredArmorContexts.Length})");
             Console.WriteLine("Filtering Ammunition...");
-            var filteredAmmunitionContexts = ammunitionContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredAmmunitionContexts = ammunitionContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Ammunition contexts: {ammunitionContexts.Length} -> {filteredAmmunitionContexts.Length} (filtered: {ammunitionContexts.Length - filteredAmmunitionContexts.Length})");
             Console.WriteLine("Filtering Books...");
-            var filteredBookContexts = bookContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredBookContexts = bookContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Book contexts: {bookContexts.Length} -> {filteredBookContexts.Length} (filtered: {bookContexts.Length - filteredBookContexts.Length})");
             Console.WriteLine("Filtering Spells...");
-            var filteredSpellContexts = spellContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredSpellContexts = spellContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Spell contexts: {spellContexts.Length} -> {filteredSpellContexts.Length} (filtered: {spellContexts.Length - filteredSpellContexts.Length})");
             Console.WriteLine("Filtering Locations...");
-            var filteredLocationContexts = locationContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredLocationContexts = locationContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Location contexts: {locationContexts.Length} -> {filteredLocationContexts.Length} (filtered: {locationContexts.Length - filteredLocationContexts.Length})");
             Console.WriteLine("Filtering Factions...");
-            var filteredFactionContexts = factionContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredFactionContexts = factionContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Faction contexts: {factionContexts.Length} -> {filteredFactionContexts.Length} (filtered: {factionContexts.Length - filteredFactionContexts.Length})");
             Console.WriteLine("Filtering Encounter Zones...");
-            var filteredEncounterZoneContexts = encounterZoneContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredEncounterZoneContexts = encounterZoneContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Encounter Zone contexts: {encounterZoneContexts.Length} -> {filteredEncounterZoneContexts.Length} (filtered: {encounterZoneContexts.Length - filteredEncounterZoneContexts.Length})");
             Console.WriteLine("Filtering Activators...");
-            var filteredActivatorContexts = activatorContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredActivatorContexts = activatorContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Activator contexts: {activatorContexts.Length} -> {filteredActivatorContexts.Length} (filtered: {activatorContexts.Length - filteredActivatorContexts.Length})");
             Console.WriteLine("Filtering Lights...");
-            var filteredLightContexts = lightContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredLightContexts = lightContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Light contexts: {lightContexts.Length} -> {filteredLightContexts.Length} (filtered: {lightContexts.Length - filteredLightContexts.Length})");
             Console.WriteLine("Filtering Magic Effects...");
-            var filteredMagicEffectContexts = magicEffectContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMagicEffectContexts = magicEffectContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Magic Effect contexts: {magicEffectContexts.Length} -> {filteredMagicEffectContexts.Length} (filtered: {magicEffectContexts.Length - filteredMagicEffectContexts.Length})");
             Console.WriteLine("Filtering Projectiles...");
-            var filteredProjectileContexts = projectileContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredProjectileContexts = projectileContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Projectile contexts: {projectileContexts.Length} -> {filteredProjectileContexts.Length} (filtered: {projectileContexts.Length - filteredProjectileContexts.Length})");
             Console.WriteLine("Filtering Quests...");
-            var filteredQuestContexts = questContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredQuestContexts = questContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Quest contexts: {questContexts.Length} -> {filteredQuestContexts.Length} (filtered: {questContexts.Length - filteredQuestContexts.Length})");
             Console.WriteLine("Filtering Texture Sets...");
-            var filteredTextureSetContexts = textureSetContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredTextureSetContexts = textureSetContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Texture Set contexts: {textureSetContexts.Length} -> {filteredTextureSetContexts.Length} (filtered: {textureSetContexts.Length - filteredTextureSetContexts.Length})");
             Console.WriteLine("Filtering Misc Items...");
-            var filteredMiscItemContexts = miscItemContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMiscItemContexts = miscItemContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Misc Item contexts: {miscItemContexts.Length} -> {filteredMiscItemContexts.Length} (filtered: {miscItemContexts.Length - filteredMiscItemContexts.Length})");
             Console.WriteLine("Filtering Keys...");
-            var filteredKeyContexts = keyContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredKeyContexts = keyContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Key contexts: {keyContexts.Length} -> {filteredKeyContexts.Length} (filtered: {keyContexts.Length - filteredKeyContexts.Length})");
             Console.WriteLine("Filtering Statics...");
-            var filteredStaticContexts = staticContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredStaticContexts = staticContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Static contexts: {staticContexts.Length} -> {filteredStaticContexts.Length} (filtered: {staticContexts.Length - filteredStaticContexts.Length})");
             Console.WriteLine("Filtering Leveled Items...");
-            var filteredLeveledItemContexts = leveledItemContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredLeveledItemContexts = leveledItemContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Leveled Item contexts: {leveledItemContexts.Length} -> {filteredLeveledItemContexts.Length} (filtered: {leveledItemContexts.Length - filteredLeveledItemContexts.Length})");
             Console.WriteLine("Filtering Action Records...");
-            var filteredActionRecordContexts = actionRecordContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredActionRecordContexts = actionRecordContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Action Record contexts: {actionRecordContexts.Length} -> {filteredActionRecordContexts.Length} (filtered: {actionRecordContexts.Length - filteredActionRecordContexts.Length})");
             Console.WriteLine("Filtering Addon Nodes...");
-            var filteredAddonNodeContexts = addonNodeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredAddonNodeContexts = addonNodeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Addon Node contexts: {addonNodeContexts.Length} -> {filteredAddonNodeContexts.Length} (filtered: {addonNodeContexts.Length - filteredAddonNodeContexts.Length})");
             Console.WriteLine("Filtering Animated Objects...");
-            var filteredAnimatedObjectContexts = animatedObjectContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredAnimatedObjectContexts = animatedObjectContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Animated Object contexts: {animatedObjectContexts.Length} -> {filteredAnimatedObjectContexts.Length} (filtered: {animatedObjectContexts.Length - filteredAnimatedObjectContexts.Length})");
             Console.WriteLine("Filtering Alchemical Apparatus...");
-            var filteredAlchemicalApparatusContexts = alchemicalApparatusContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredAlchemicalApparatusContexts = alchemicalApparatusContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Alchemical Apparatus contexts: {alchemicalApparatusContexts.Length} -> {filteredAlchemicalApparatusContexts.Length} (filtered: {alchemicalApparatusContexts.Length - filteredAlchemicalApparatusContexts.Length})");
             Console.WriteLine("Filtering Art Objects...");
-            var filteredArtObjectContexts = artObjectContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredArtObjectContexts = artObjectContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Art Object contexts: {artObjectContexts.Length} -> {filteredArtObjectContexts.Length} (filtered: {artObjectContexts.Length - filteredArtObjectContexts.Length})");
             Console.WriteLine("Filtering Acoustic Spaces...");
-            var filteredAcousticSpaceContexts = acousticSpaceContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredAcousticSpaceContexts = acousticSpaceContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Acoustic Space contexts: {acousticSpaceContexts.Length} -> {filteredAcousticSpaceContexts.Length} (filtered: {acousticSpaceContexts.Length - filteredAcousticSpaceContexts.Length})");
             Console.WriteLine("Filtering Association Types...");
-            var filteredAssociationTypeContexts = associationTypeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredAssociationTypeContexts = associationTypeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Association Type contexts: {associationTypeContexts.Length} -> {filteredAssociationTypeContexts.Length} (filtered: {associationTypeContexts.Length - filteredAssociationTypeContexts.Length})");
             Console.WriteLine("Filtering Actor Value Information...");
-            var filteredActorValueInformationContexts = actorValueInformationContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredActorValueInformationContexts = actorValueInformationContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Actor Value Information contexts: {actorValueInformationContexts.Length} -> {filteredActorValueInformationContexts.Length} (filtered: {actorValueInformationContexts.Length - filteredActorValueInformationContexts.Length})");
             Console.WriteLine("Filtering Body Part Data...");
-            var filteredBodyPartDataContexts = bodyPartDataContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredBodyPartDataContexts = bodyPartDataContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Body Part Data contexts: {bodyPartDataContexts.Length} -> {filteredBodyPartDataContexts.Length} (filtered: {bodyPartDataContexts.Length - filteredBodyPartDataContexts.Length})");
             Console.WriteLine("Filtering Camera Shots...");
-            var filteredCameraShotContexts = cameraShotContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredCameraShotContexts = cameraShotContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Camera Shot contexts: {cameraShotContexts.Length} -> {filteredCameraShotContexts.Length} (filtered: {cameraShotContexts.Length - filteredCameraShotContexts.Length})");
             Console.WriteLine("Filtering Classes...");
-            var filteredClassContexts = classContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredClassContexts = classContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Class contexts: {classContexts.Length} -> {filteredClassContexts.Length} (filtered: {classContexts.Length - filteredClassContexts.Length})");
             Console.WriteLine("Filtering Color Records...");
-            var filteredColorRecordContexts = colorRecordContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredColorRecordContexts = colorRecordContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Color Record contexts: {colorRecordContexts.Length} -> {filteredColorRecordContexts.Length} (filtered: {colorRecordContexts.Length - filteredColorRecordContexts.Length})");
             Console.WriteLine("Filtering Climates...");
-            var filteredClimateContexts = climateContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredClimateContexts = climateContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Climate contexts: {climateContexts.Length} -> {filteredClimateContexts.Length} (filtered: {climateContexts.Length - filteredClimateContexts.Length})");
             Console.WriteLine("Filtering Constructible Objects...");
-            var filteredConstructibleObjectContexts = constructibleObjectContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredConstructibleObjectContexts = constructibleObjectContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Constructible Object contexts: {constructibleObjectContexts.Length} -> {filteredConstructibleObjectContexts.Length} (filtered: {constructibleObjectContexts.Length - filteredConstructibleObjectContexts.Length})");
             Console.WriteLine("Filtering Collision Layers...");
-            var filteredCollisionLayerContexts = collisionLayerContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredCollisionLayerContexts = collisionLayerContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Collision Layer contexts: {collisionLayerContexts.Length} -> {filteredCollisionLayerContexts.Length} (filtered: {collisionLayerContexts.Length - filteredCollisionLayerContexts.Length})");
             Console.WriteLine("Filtering Camera Paths...");
-            var filteredCameraPathContexts = cameraPathContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredCameraPathContexts = cameraPathContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Camera Path contexts: {cameraPathContexts.Length} -> {filteredCameraPathContexts.Length} (filtered: {cameraPathContexts.Length - filteredCameraPathContexts.Length})");
             Console.WriteLine("Filtering Combat Styles...");
-            var filteredCombatStyleContexts = combatStyleContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredCombatStyleContexts = combatStyleContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Combat Style contexts: {combatStyleContexts.Length} -> {filteredCombatStyleContexts.Length} (filtered: {combatStyleContexts.Length - filteredCombatStyleContexts.Length})");
             Console.WriteLine("Filtering Debris...");
-            var filteredDebrisContexts = debrisContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredDebrisContexts = debrisContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Debris contexts: {debrisContexts.Length} -> {filteredDebrisContexts.Length} (filtered: {debrisContexts.Length - filteredDebrisContexts.Length})");
             Console.WriteLine("Filtering Dialog Branches...");
-            var filteredDialogBranchContexts = dialogBranchContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredDialogBranchContexts = dialogBranchContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Dialog Branch contexts: {dialogBranchContexts.Length} -> {filteredDialogBranchContexts.Length} (filtered: {dialogBranchContexts.Length - filteredDialogBranchContexts.Length})");
             Console.WriteLine("Filtering Dialog Views...");
-            var filteredDialogViewContexts = dialogViewContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredDialogViewContexts = dialogViewContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Dialog View contexts: {dialogViewContexts.Length} -> {filteredDialogViewContexts.Length} (filtered: {dialogViewContexts.Length - filteredDialogViewContexts.Length})");
             Console.WriteLine("Filtering Doors...");
-            var filteredDoorContexts = doorContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredDoorContexts = doorContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Door contexts: {doorContexts.Length} -> {filteredDoorContexts.Length} (filtered: {doorContexts.Length - filteredDoorContexts.Length})");
             Console.WriteLine("Filtering Dual Cast Data...");
-            var filteredDualCastDataContexts = dualCastDataContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredDualCastDataContexts = dualCastDataContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Dual Cast Data contexts: {dualCastDataContexts.Length} -> {filteredDualCastDataContexts.Length} (filtered: {dualCastDataContexts.Length - filteredDualCastDataContexts.Length})");
             Console.WriteLine("Filtering Equip Types...");
-            var filteredEquipTypeContexts = equipTypeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredEquipTypeContexts = equipTypeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Equip Type contexts: {equipTypeContexts.Length} -> {filteredEquipTypeContexts.Length} (filtered: {equipTypeContexts.Length - filteredEquipTypeContexts.Length})");
             Console.WriteLine("Filtering Explosions...");
-            var filteredExplosionContexts = explosionContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredExplosionContexts = explosionContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Explosion contexts: {explosionContexts.Length} -> {filteredExplosionContexts.Length} (filtered: {explosionContexts.Length - filteredExplosionContexts.Length})");
             Console.WriteLine("Filtering Eyes...");
-            var filteredEyesContexts = eyesContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredEyesContexts = eyesContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Eyes contexts: {eyesContexts.Length} -> {filteredEyesContexts.Length} (filtered: {eyesContexts.Length - filteredEyesContexts.Length})");
             Console.WriteLine("Filtering Flora...");
-            var filteredFloraContexts = floraContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredFloraContexts = floraContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Flora contexts: {floraContexts.Length} -> {filteredFloraContexts.Length} (filtered: {floraContexts.Length - filteredFloraContexts.Length})");
             Console.WriteLine("Filtering Footsteps...");
-            var filteredFootstepContexts = footstepContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredFootstepContexts = footstepContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Footstep contexts: {footstepContexts.Length} -> {filteredFootstepContexts.Length} (filtered: {footstepContexts.Length - filteredFootstepContexts.Length})");
             Console.WriteLine("Filtering Footstep Sets...");
-            var filteredFootstepSetContexts = footstepSetContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredFootstepSetContexts = footstepSetContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Footstep Set contexts: {footstepSetContexts.Length} -> {filteredFootstepSetContexts.Length} (filtered: {footstepSetContexts.Length - filteredFootstepSetContexts.Length})");
             Console.WriteLine("Filtering Furniture...");
-            var filteredFurnitureContexts = furnitureContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredFurnitureContexts = furnitureContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Furniture contexts: {furnitureContexts.Length} -> {filteredFurnitureContexts.Length} (filtered: {furnitureContexts.Length - filteredFurnitureContexts.Length})");
             Console.WriteLine("Filtering Global Ints...");
-            var filteredGlobalIntContexts = globalIntContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGlobalIntContexts = globalIntContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Global Int contexts: {globalIntContexts.Length} -> {filteredGlobalIntContexts.Length} (filtered: {globalIntContexts.Length - filteredGlobalIntContexts.Length})");
             Console.WriteLine("Filtering Global Shorts...");
-            var filteredGlobalShortContexts = globalShortContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGlobalShortContexts = globalShortContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Global Short contexts: {globalShortContexts.Length} -> {filteredGlobalShortContexts.Length} (filtered: {globalShortContexts.Length - filteredGlobalShortContexts.Length})");
             Console.WriteLine("Filtering Global Floats...");
-            var filteredGlobalFloatContexts = globalFloatContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGlobalFloatContexts = globalFloatContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Global Float contexts: {globalFloatContexts.Length} -> {filteredGlobalFloatContexts.Length} (filtered: {globalFloatContexts.Length - filteredGlobalFloatContexts.Length})");
             Console.WriteLine("Filtering Global Unknowns...");
-            var filteredGlobalUnknownContexts = globalUnknownContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGlobalUnknownContexts = globalUnknownContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Global Unknown contexts: {globalUnknownContexts.Length} -> {filteredGlobalUnknownContexts.Length} (filtered: {globalUnknownContexts.Length - filteredGlobalUnknownContexts.Length})");
             Console.WriteLine("Filtering Game Setting Ints...");
-            var filteredGameSettingIntContexts = gameSettingIntContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGameSettingIntContexts = gameSettingIntContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Game Setting Int contexts: {gameSettingIntContexts.Length} -> {filteredGameSettingIntContexts.Length} (filtered: {gameSettingIntContexts.Length - filteredGameSettingIntContexts.Length})");
             Console.WriteLine("Filtering Game Setting Floats...");
-            var filteredGameSettingFloatContexts = gameSettingFloatContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGameSettingFloatContexts = gameSettingFloatContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Game Setting Float contexts: {gameSettingFloatContexts.Length} -> {filteredGameSettingFloatContexts.Length} (filtered: {gameSettingFloatContexts.Length - filteredGameSettingFloatContexts.Length})");
             Console.WriteLine("Filtering Game Setting Strings...");
-            var filteredGameSettingStringContexts = gameSettingStringContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGameSettingStringContexts = gameSettingStringContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Game Setting String contexts: {gameSettingStringContexts.Length} -> {filteredGameSettingStringContexts.Length} (filtered: {gameSettingStringContexts.Length - filteredGameSettingStringContexts.Length})");
             Console.WriteLine("Filtering Game Setting Bools...");
-            var filteredGameSettingBoolContexts = gameSettingBoolContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGameSettingBoolContexts = gameSettingBoolContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Game Setting Bool contexts: {gameSettingBoolContexts.Length} -> {filteredGameSettingBoolContexts.Length} (filtered: {gameSettingBoolContexts.Length - filteredGameSettingBoolContexts.Length})");
             Console.WriteLine("Filtering Grass...");
-            var filteredGrassContexts = grassContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredGrassContexts = grassContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Grass contexts: {grassContexts.Length} -> {filteredGrassContexts.Length} (filtered: {grassContexts.Length - filteredGrassContexts.Length})");
             Console.WriteLine("Filtering Hazards...");
-            var filteredHazardContexts = hazardContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredHazardContexts = hazardContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Hazard contexts: {hazardContexts.Length} -> {filteredHazardContexts.Length} (filtered: {hazardContexts.Length - filteredHazardContexts.Length})");
             Console.WriteLine("Filtering Head Parts...");
-            var filteredHeadPartContexts = headPartContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredHeadPartContexts = headPartContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Head Part contexts: {headPartContexts.Length} -> {filteredHeadPartContexts.Length} (filtered: {headPartContexts.Length - filteredHeadPartContexts.Length})");
             Console.WriteLine("Filtering Idle Animations...");
-            var filteredIdleAnimationContexts = idleAnimationContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredIdleAnimationContexts = idleAnimationContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Idle Animation contexts: {idleAnimationContexts.Length} -> {filteredIdleAnimationContexts.Length} (filtered: {idleAnimationContexts.Length - filteredIdleAnimationContexts.Length})");
             Console.WriteLine("Filtering Idle Markers...");
-            var filteredIdleMarkerContexts = idleMarkerContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredIdleMarkerContexts = idleMarkerContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Idle Marker contexts: {idleMarkerContexts.Length} -> {filteredIdleMarkerContexts.Length} (filtered: {idleMarkerContexts.Length - filteredIdleMarkerContexts.Length})");
             Console.WriteLine("Filtering Lighting Templates...");
-            var filteredLightingTemplateContexts = lightingTemplateContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredLightingTemplateContexts = lightingTemplateContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Lighting Template contexts: {lightingTemplateContexts.Length} -> {filteredLightingTemplateContexts.Length} (filtered: {lightingTemplateContexts.Length - filteredLightingTemplateContexts.Length})");
             Console.WriteLine("Filtering Load Screens...");
-            var filteredLoadScreenContexts = loadScreenContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredLoadScreenContexts = loadScreenContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Load Screen contexts: {loadScreenContexts.Length} -> {filteredLoadScreenContexts.Length} (filtered: {loadScreenContexts.Length - filteredLoadScreenContexts.Length})");
             Console.WriteLine("Filtering Leveled NPCs...");
-            var filteredLeveledNpcContexts = leveledNpcContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredLeveledNpcContexts = leveledNpcContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Leveled NPC contexts: {leveledNpcContexts.Length} -> {filteredLeveledNpcContexts.Length} (filtered: {leveledNpcContexts.Length - filteredLeveledNpcContexts.Length})");
             Console.WriteLine("Filtering Leveled Spells...");
-            var filteredLeveledSpellContexts = leveledSpellContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredLeveledSpellContexts = leveledSpellContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Leveled Spell contexts: {leveledSpellContexts.Length} -> {filteredLeveledSpellContexts.Length} (filtered: {leveledSpellContexts.Length - filteredLeveledSpellContexts.Length})");
             Console.WriteLine("Filtering Moveable Statics...");
-            var filteredMoveableStaticContexts = moveableStaticContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMoveableStaticContexts = moveableStaticContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Moveable Static contexts: {moveableStaticContexts.Length} -> {filteredMoveableStaticContexts.Length} (filtered: {moveableStaticContexts.Length - filteredMoveableStaticContexts.Length})");
             Console.WriteLine("Filtering Movement Types...");
-            var filteredMovementTypeContexts = movementTypeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMovementTypeContexts = movementTypeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Movement Type contexts: {movementTypeContexts.Length} -> {filteredMovementTypeContexts.Length} (filtered: {movementTypeContexts.Length - filteredMovementTypeContexts.Length})");
             Console.WriteLine("Filtering Music Types...");
-            var filteredMusicTypeContexts = musicTypeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMusicTypeContexts = musicTypeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Music Type contexts: {musicTypeContexts.Length} -> {filteredMusicTypeContexts.Length} (filtered: {musicTypeContexts.Length - filteredMusicTypeContexts.Length})");
             Console.WriteLine("Filtering Music Tracks...");
-            var filteredMusicTrackContexts = musicTrackContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMusicTrackContexts = musicTrackContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Music Track contexts: {musicTrackContexts.Length} -> {filteredMusicTrackContexts.Length} (filtered: {musicTrackContexts.Length - filteredMusicTrackContexts.Length})");
             Console.WriteLine("Filtering Navigation Meshes...");
-            var filteredNavigationMeshContexts = navigationMeshContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredNavigationMeshContexts = navigationMeshContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Navigation Mesh contexts: {navigationMeshContexts.Length} -> {filteredNavigationMeshContexts.Length} (filtered: {navigationMeshContexts.Length - filteredNavigationMeshContexts.Length})");
             Console.WriteLine("Filtering Outfits...");
-            var filteredOutfitContexts = outfitContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredOutfitContexts = outfitContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Outfit contexts: {outfitContexts.Length} -> {filteredOutfitContexts.Length} (filtered: {outfitContexts.Length - filteredOutfitContexts.Length})");
             Console.WriteLine("Filtering Placed Hazards...");
-            var filteredPlacedHazardContexts = placedHazardContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredPlacedHazardContexts = placedHazardContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Placed Hazard contexts: {placedHazardContexts.Length} -> {filteredPlacedHazardContexts.Length} (filtered: {placedHazardContexts.Length - filteredPlacedHazardContexts.Length})");
             Console.WriteLine("Filtering Sound Categories...");
-            var filteredSoundCategoryContexts = soundCategoryContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredSoundCategoryContexts = soundCategoryContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Sound Category contexts: {soundCategoryContexts.Length} -> {filteredSoundCategoryContexts.Length} (filtered: {soundCategoryContexts.Length - filteredSoundCategoryContexts.Length})");
             Console.WriteLine("Filtering Sound Output Models...");
-            var filteredSoundOutputModelContexts = soundOutputModelContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredSoundOutputModelContexts = soundOutputModelContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Sound Output Model contexts: {soundOutputModelContexts.Length} -> {filteredSoundOutputModelContexts.Length} (filtered: {soundOutputModelContexts.Length - filteredSoundOutputModelContexts.Length})");
             Console.WriteLine("Filtering Sound Markers...");
-            var filteredSoundMarkerContexts = soundMarkerContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredSoundMarkerContexts = soundMarkerContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Sound Marker contexts: {soundMarkerContexts.Length} -> {filteredSoundMarkerContexts.Length} (filtered: {soundMarkerContexts.Length - filteredSoundMarkerContexts.Length})");
             Console.WriteLine("Filtering Shader Particle Geometry...");
-            var filteredShaderParticleGeometryContexts = shaderParticleGeometryContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredShaderParticleGeometryContexts = shaderParticleGeometryContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Shader Particle Geometry contexts: {shaderParticleGeometryContexts.Length} -> {filteredShaderParticleGeometryContexts.Length} (filtered: {shaderParticleGeometryContexts.Length - filteredShaderParticleGeometryContexts.Length})");
             Console.WriteLine("Filtering Scenes...");
-            var filteredSceneContexts = sceneContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredSceneContexts = sceneContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Scene contexts: {sceneContexts.Length} -> {filteredSceneContexts.Length} (filtered: {sceneContexts.Length - filteredSceneContexts.Length})");
             Console.WriteLine("Filtering Scrolls...");
-            var filteredScrollContexts = scrollContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredScrollContexts = scrollContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Scroll contexts: {scrollContexts.Length} -> {filteredScrollContexts.Length} (filtered: {scrollContexts.Length - filteredScrollContexts.Length})");
             Console.WriteLine("Filtering Shouts...");
-            var filteredShoutContexts = shoutContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredShoutContexts = shoutContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Shout contexts: {shoutContexts.Length} -> {filteredShoutContexts.Length} (filtered: {shoutContexts.Length - filteredShoutContexts.Length})");
             Console.WriteLine("Filtering Soul Gems...");
-            var filteredSoulGemContexts = soulGemContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredSoulGemContexts = soulGemContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Soul Gem contexts: {soulGemContexts.Length} -> {filteredSoulGemContexts.Length} (filtered: {soulGemContexts.Length - filteredSoulGemContexts.Length})");
             Console.WriteLine("Filtering Story Manager Branch Nodes...");
-            var filteredStoryManagerBranchNodeContexts = storyManagerBranchNodeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredStoryManagerBranchNodeContexts = storyManagerBranchNodeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Story Manager Branch Node contexts: {storyManagerBranchNodeContexts.Length} -> {filteredStoryManagerBranchNodeContexts.Length} (filtered: {storyManagerBranchNodeContexts.Length - filteredStoryManagerBranchNodeContexts.Length})");
             Console.WriteLine("Filtering Story Manager Event Nodes...");
-            var filteredStoryManagerEventNodeContexts = storyManagerEventNodeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredStoryManagerEventNodeContexts = storyManagerEventNodeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Story Manager Event Node contexts: {storyManagerEventNodeContexts.Length} -> {filteredStoryManagerEventNodeContexts.Length} (filtered: {storyManagerEventNodeContexts.Length - filteredStoryManagerEventNodeContexts.Length})");
             Console.WriteLine("Filtering Story Manager Quest Nodes...");
-            var filteredStoryManagerQuestNodeContexts = storyManagerQuestNodeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredStoryManagerQuestNodeContexts = storyManagerQuestNodeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Story Manager Quest Node contexts: {storyManagerQuestNodeContexts.Length} -> {filteredStoryManagerQuestNodeContexts.Length} (filtered: {storyManagerQuestNodeContexts.Length - filteredStoryManagerQuestNodeContexts.Length})");
             Console.WriteLine("Filtering Trees...");
-            var filteredTreeContexts = treeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredTreeContexts = treeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Tree contexts: {treeContexts.Length} -> {filteredTreeContexts.Length} (filtered: {treeContexts.Length - filteredTreeContexts.Length})");
             Console.WriteLine("Filtering Voice Types...");
-            var filteredVoiceTypeContexts = voiceTypeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredVoiceTypeContexts = voiceTypeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Voice Type contexts: {voiceTypeContexts.Length} -> {filteredVoiceTypeContexts.Length} (filtered: {voiceTypeContexts.Length - filteredVoiceTypeContexts.Length})");
             Console.WriteLine("Filtering Waters...");
-            var filteredWaterContexts = waterContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredWaterContexts = waterContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Water contexts: {waterContexts.Length} -> {filteredWaterContexts.Length} (filtered: {waterContexts.Length - filteredWaterContexts.Length})");
             Console.WriteLine("Filtering Weathers...");
-            var filteredWeatherContexts = weatherContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredWeatherContexts = weatherContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Weather contexts: {weatherContexts.Length} -> {filteredWeatherContexts.Length} (filtered: {weatherContexts.Length - filteredWeatherContexts.Length})");
             Console.WriteLine("Filtering Words Of Power...");
-            var filteredWordOfPowerContexts = wordOfPowerContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredWordOfPowerContexts = wordOfPowerContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Word Of Power contexts: {wordOfPowerContexts.Length} -> {filteredWordOfPowerContexts.Length} (filtered: {wordOfPowerContexts.Length - filteredWordOfPowerContexts.Length})");
             Console.WriteLine("Filtering Relationships...");
-            var filteredRelationshipContexts = relationshipContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredRelationshipContexts = relationshipContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Relationship contexts: {relationshipContexts.Length} -> {filteredRelationshipContexts.Length} (filtered: {relationshipContexts.Length - filteredRelationshipContexts.Length})");
             Console.WriteLine("Filtering Reverb Parameters...");
-            var filteredReverbParametersContexts = reverbParametersContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredReverbParametersContexts = reverbParametersContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Reverb Parameters contexts: {reverbParametersContexts.Length} -> {filteredReverbParametersContexts.Length} (filtered: {reverbParametersContexts.Length - filteredReverbParametersContexts.Length})");
             Console.WriteLine("Filtering Visual Effects...");
-            var filteredVisualEffectContexts = visualEffectContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredVisualEffectContexts = visualEffectContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Visual Effect contexts: {visualEffectContexts.Length} -> {filteredVisualEffectContexts.Length} (filtered: {visualEffectContexts.Length - filteredVisualEffectContexts.Length})");
             Console.WriteLine("Filtering Material Objects...");
-            var filteredMaterialObjectContexts = materialObjectContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMaterialObjectContexts = materialObjectContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Material Object contexts: {materialObjectContexts.Length} -> {filteredMaterialObjectContexts.Length} (filtered: {materialObjectContexts.Length - filteredMaterialObjectContexts.Length})");
             Console.WriteLine("Filtering Material Types...");
-            var filteredMaterialTypeContexts = materialTypeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMaterialTypeContexts = materialTypeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Material Type contexts: {materialTypeContexts.Length} -> {filteredMaterialTypeContexts.Length} (filtered: {materialTypeContexts.Length - filteredMaterialTypeContexts.Length})");
             Console.WriteLine("Filtering Messages...");
-            var filteredMessageContexts = messageContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredMessageContexts = messageContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Message contexts: {messageContexts.Length} -> {filteredMessageContexts.Length} (filtered: {messageContexts.Length - filteredMessageContexts.Length})");
             Console.WriteLine("Filtering Keywords...");
-            var filteredKeywordContexts = keywordContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredKeywordContexts = keywordContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Keyword contexts: {keywordContexts.Length} -> {filteredKeywordContexts.Length} (filtered: {keywordContexts.Length - filteredKeywordContexts.Length})");
             Console.WriteLine("Filtering Location Reference Types...");
-            var filteredLocationReferenceTypeContexts = locationReferenceTypeContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredLocationReferenceTypeContexts = locationReferenceTypeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Location Reference Type contexts: {locationReferenceTypeContexts.Length} -> {filteredLocationReferenceTypeContexts.Length} (filtered: {locationReferenceTypeContexts.Length - filteredLocationReferenceTypeContexts.Length})");
             Console.WriteLine("Filtering Image Spaces...");
-            var filteredImageSpaceContexts = imageSpaceContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredImageSpaceContexts = imageSpaceContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Image Space contexts: {imageSpaceContexts.Length} -> {filteredImageSpaceContexts.Length} (filtered: {imageSpaceContexts.Length - filteredImageSpaceContexts.Length})");
             Console.WriteLine("Filtering Impacts...");
-            var filteredImpactContexts = impactContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredImpactContexts = impactContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Impact contexts: {impactContexts.Length} -> {filteredImpactContexts.Length} (filtered: {impactContexts.Length - filteredImpactContexts.Length})");
             Console.WriteLine("Filtering Impact Data Sets...");
-            var filteredImpactDataSetContexts = impactDataSetContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredImpactDataSetContexts = impactDataSetContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Impact Data Set contexts: {impactDataSetContexts.Length} -> {filteredImpactDataSetContexts.Length} (filtered: {impactDataSetContexts.Length - filteredImpactDataSetContexts.Length})");
             Console.WriteLine("Filtering Talking Activators...");
-            var filteredTalkingActivatorContexts = talkingActivatorContexts.Where(context => !ShouldBreakEarly(context, state)).ToArray();
+            var filteredTalkingActivatorContexts = talkingActivatorContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
             Console.WriteLine($"Talking Activator contexts: {talkingActivatorContexts.Length} -> {filteredTalkingActivatorContexts.Length} (filtered: {talkingActivatorContexts.Length - filteredTalkingActivatorContexts.Length})");
 
 
@@ -1061,475 +1048,475 @@ namespace DreadsMashedPatch
                     {
                         case Type t when t == typeof(INpcGetter):
                             var npcHandler = new NpcRecordHandler();
-                            npcHandler.Process(state, filteredNpcContexts);
+                            npcHandler.Process(state, filteredNpcContexts, policySources);
                             break;
                         case Type t when t == typeof(IContainerGetter):
                             var containerHandler = new ContainerRecordHandler();
-                            containerHandler.Process(state, filteredContainerContexts);
+                            containerHandler.Process(state, filteredContainerContexts, policySources);
                             break;
                         case Type t when t == typeof(IWeaponGetter):
                             var weaponHandler = new WeaponRecordHandler();
-                            weaponHandler.Process(state, filteredWeaponContexts);
+                            weaponHandler.Process(state, filteredWeaponContexts, policySources);
                             break;
                         case Type t when t == typeof(ICellGetter):
                             var cellHandler = new CellRecordHandler();
-                            cellHandler.Process(state, filteredCellContexts);
+                            cellHandler.Process(state, filteredCellContexts, policySources);
                             break;
                         case Type t when t == typeof(IPlacedObjectGetter):
                             var placedObjectHandler = new PlacedObjectRecordHandler();
-                            placedObjectHandler.Process(state, filteredPlacedObjectContexts);
+                            placedObjectHandler.Process(state, filteredPlacedObjectContexts, policySources);
                             break;
                         case Type t when t == typeof(IPlacedNpcGetter):
                             var placedNpcHandler = new PlacedNpcRecordHandler();
-                            placedNpcHandler.Process(state, filteredPlacedNpcContexts);
+                            placedNpcHandler.Process(state, filteredPlacedNpcContexts, policySources);
                             break;
                         case Type t when t == typeof(IIngestibleGetter):
                             var ingestibleHandler = new IngestibleRecordHandler();
-                            ingestibleHandler.Process(state, filteredIngestibleContexts);
+                            ingestibleHandler.Process(state, filteredIngestibleContexts, policySources);
                             break;
                         case Type t when t == typeof(IIngredientGetter):
                             var ingredientHandler = new IngredientRecordHandler();
-                            ingredientHandler.Process(state, filteredIngredientContexts);
+                            ingredientHandler.Process(state, filteredIngredientContexts, policySources);
                             break;
                         case Type t when t == typeof(IObjectEffectGetter):
                             var objectEffectHandler = new ObjectEffectRecordHandler();
-                            objectEffectHandler.Process(state, filteredObjectEffectContexts);
+                            objectEffectHandler.Process(state, filteredObjectEffectContexts, policySources);
                             break;
                         case Type t when t == typeof(IPackageGetter):
                             var packageHandler = new PackageRecordHandler();
-                            packageHandler.Process(state, filteredPackageContexts);
+                            packageHandler.Process(state, filteredPackageContexts, policySources);
                             break;
                         case Type t when t == typeof(IPerkGetter):
                             var perkHandler = new PerkRecordHandler();
-                            perkHandler.Process(state, filteredPerkContexts);
+                            perkHandler.Process(state, filteredPerkContexts, policySources);
                             break;
                         case Type t when t == typeof(IRaceGetter):
                             var raceHandler = new RaceRecordHandler();
-                            raceHandler.Process(state, filteredRaceContexts);
+                            raceHandler.Process(state, filteredRaceContexts, policySources);
                             break;
                         case Type t when t == typeof(IRegionGetter):
                             var regionHandler = new RegionRecordHandler();
-                            regionHandler.Process(state, filteredRegionContexts);
+                            regionHandler.Process(state, filteredRegionContexts, policySources);
                             break;
                         case Type t when t == typeof(IWorldspaceGetter):
                             var worldspaceHandler = new WorldspaceRecordHandler();
-                            worldspaceHandler.Process(state, filteredWorldspaceContexts);
+                            worldspaceHandler.Process(state, filteredWorldspaceContexts, policySources);
                             break;
                         case Type t when t == typeof(IDialogTopicGetter):
                             var dialogTopicHandler = new DialogTopicRecordHandler();
-                            dialogTopicHandler.Process(state, filteredDialogTopicContexts);
+                            dialogTopicHandler.Process(state, filteredDialogTopicContexts, policySources);
                             break;
                         case Type t when t == typeof(IDialogResponsesGetter):
                             var dialogResponseHandler = new DialogResponseRecordHandler();
-                            dialogResponseHandler.Process(state, filteredDialogResponseContexts);
+                            dialogResponseHandler.Process(state, filteredDialogResponseContexts, policySources);
                             break;
                         case Type t when t == typeof(IFormListGetter):
                             var formListHandler = new FormIdRecordHandler();
-                            formListHandler.Process(state, filteredFormListContexts);
+                            formListHandler.Process(state, filteredFormListContexts, policySources);
                             break;
                         case Type t when t == typeof(ISoundDescriptorGetter):
                             var soundDescriptorHandler = new SoundDescriptorRecordHandler();
-                            soundDescriptorHandler.Process(state, filteredSoundDescriptorContexts);
+                            soundDescriptorHandler.Process(state, filteredSoundDescriptorContexts, policySources);
                             break;
                         case Type t when t == typeof(IEffectShaderGetter):
                             var effectShaderHandler = new EffectShaderRecordHandler();
-                            effectShaderHandler.Process(state, filteredEffectShaderContexts);
+                            effectShaderHandler.Process(state, filteredEffectShaderContexts, policySources);
                             break;
                         case Type t when t == typeof(IArmorAddonGetter):
                             var armorAddonHandler = new ArmorAddonRecordHandler();
-                            armorAddonHandler.Process(state, filteredArmorAddonContexts);
+                            armorAddonHandler.Process(state, filteredArmorAddonContexts, policySources);
                             break;
                         case Type t when t == typeof(IArmorGetter):
                             var armorHandler = new ArmorRecordHandler();
-                            armorHandler.Process(state, filteredArmorContexts);
+                            armorHandler.Process(state, filteredArmorContexts, policySources);
                             break;
                         case Type t when t == typeof(IAmmunitionGetter):
                             var ammunitionHandler = new AmmunitionRecordHandler();
-                            ammunitionHandler.Process(state, filteredAmmunitionContexts);
+                            ammunitionHandler.Process(state, filteredAmmunitionContexts, policySources);
                             break;
                         case Type t when t == typeof(IBookGetter):
                             var bookHandler = new BookRecordHandler();
-                            bookHandler.Process(state, filteredBookContexts);
+                            bookHandler.Process(state, filteredBookContexts, policySources);
                             break;
                         case Type t when t == typeof(ISpellGetter):
                             var spellHandler = new SpellRecordHandler();
-                            spellHandler.Process(state, filteredSpellContexts);
+                            spellHandler.Process(state, filteredSpellContexts, policySources);
                             break;
                         case Type t when t == typeof(ILocationGetter):
                             var locationHandler = new LocationRecordHandler();
-                            locationHandler.Process(state, filteredLocationContexts);
+                            locationHandler.Process(state, filteredLocationContexts, policySources);
                             break;
                         case Type t when t == typeof(IFactionGetter):
                             var factionHandler = new FactionRecordHandler();
-                            factionHandler.Process(state, filteredFactionContexts);
+                            factionHandler.Process(state, filteredFactionContexts, policySources);
                             break;
                         case Type t when t == typeof(IEncounterZoneGetter):
                             var encounterZoneHandler = new EncounterZoneRecordHandler();
-                            encounterZoneHandler.Process(state, filteredEncounterZoneContexts);
+                            encounterZoneHandler.Process(state, filteredEncounterZoneContexts, policySources);
                             break;
                         case Type t when t == typeof(IActivatorGetter):
                             var activatorHandler = new ActivatorRecordHandler();
-                            activatorHandler.Process(state, filteredActivatorContexts);
+                            activatorHandler.Process(state, filteredActivatorContexts, policySources);
                             break;
                         case Type t when t == typeof(ILightGetter):
                             var lightHandler = new LightRecordHandler();
-                            lightHandler.Process(state, filteredLightContexts);
+                            lightHandler.Process(state, filteredLightContexts, policySources);
                             break;
                         case Type t when t == typeof(IMagicEffectGetter):
                             var magicEffectHandler = new MagicEffectRecordHandler();
-                            magicEffectHandler.Process(state, filteredMagicEffectContexts);
+                            magicEffectHandler.Process(state, filteredMagicEffectContexts, policySources);
                             break;
                         case Type t when t == typeof(IProjectileGetter):
                             var projectileHandler = new ProjectileRecordHandler();
-                            projectileHandler.Process(state, filteredProjectileContexts);
+                            projectileHandler.Process(state, filteredProjectileContexts, policySources);
                             break;
                         case Type t when t == typeof(IQuestGetter):
                             var questHandler = new QuestRecordHandler();
-                            questHandler.Process(state, filteredQuestContexts);
+                            questHandler.Process(state, filteredQuestContexts, policySources);
                             break;
                         case Type t when t == typeof(ITextureSetGetter):
                             var textureSetHandler = new TextureSetRecordHandler();
-                            textureSetHandler.Process(state, filteredTextureSetContexts);
+                            textureSetHandler.Process(state, filteredTextureSetContexts, policySources);
                             break;
                         case Type t when t == typeof(IMiscItemGetter):
                             var miscItemHandler = new MiscItemRecordHandler();
-                            miscItemHandler.Process(state, filteredMiscItemContexts);
+                            miscItemHandler.Process(state, filteredMiscItemContexts, policySources);
                             break;
                         case Type t when t == typeof(IKeyGetter):
                             var keyHandler = new KeyRecordHandler();
-                            keyHandler.Process(state, filteredKeyContexts);
+                            keyHandler.Process(state, filteredKeyContexts, policySources);
                             break;
                         case Type t when t == typeof(IStaticGetter):
                             var staticHandler = new StaticRecordHandler();
-                            staticHandler.Process(state, filteredStaticContexts);
+                            staticHandler.Process(state, filteredStaticContexts, policySources);
                             break;
                         case Type t when t == typeof(ILeveledItemGetter):
                             var leveledItemHandler = new LeveledItemRecordHandler();
-                            leveledItemHandler.Process(state, filteredLeveledItemContexts);
+                            leveledItemHandler.Process(state, filteredLeveledItemContexts, policySources);
                             break;
                         case Type t when t == typeof(IActionRecordGetter):
                             var actionRecordHandler = new ActionRecordHandler();
-                            actionRecordHandler.Process(state, filteredActionRecordContexts);
+                            actionRecordHandler.Process(state, filteredActionRecordContexts, policySources);
                             break;
                         case Type t when t == typeof(IAddonNodeGetter):
                             var addonNodeHandler = new AddonNodeRecordHandler();
-                            addonNodeHandler.Process(state, filteredAddonNodeContexts);
+                            addonNodeHandler.Process(state, filteredAddonNodeContexts, policySources);
                             break;
                         case Type t when t == typeof(IAnimatedObjectGetter):
                             var animatedObjectHandler = new AnimatedObjectRecordHandler();
-                            animatedObjectHandler.Process(state, filteredAnimatedObjectContexts);
+                            animatedObjectHandler.Process(state, filteredAnimatedObjectContexts, policySources);
                             break;
                         case Type t when t == typeof(IAlchemicalApparatusGetter):
                             var alchemicalApparatusHandler = new AlchemicalApparatusRecordHandler();
-                            alchemicalApparatusHandler.Process(state, filteredAlchemicalApparatusContexts);
+                            alchemicalApparatusHandler.Process(state, filteredAlchemicalApparatusContexts, policySources);
                             break;
                         case Type t when t == typeof(IArtObjectGetter):
                             var artObjectHandler = new ArtObjectRecordHandler();
-                            artObjectHandler.Process(state, filteredArtObjectContexts);
+                            artObjectHandler.Process(state, filteredArtObjectContexts, policySources);
                             break;
                         case Type t when t == typeof(IAcousticSpaceGetter):
                             var acousticSpaceHandler = new AcousticSpaceRecordHandler();
-                            acousticSpaceHandler.Process(state, filteredAcousticSpaceContexts);
+                            acousticSpaceHandler.Process(state, filteredAcousticSpaceContexts, policySources);
                             break;
                         case Type t when t == typeof(IAssociationTypeGetter):
                             var associationTypeHandler = new AssociationTypeRecordHandler();
-                            associationTypeHandler.Process(state, filteredAssociationTypeContexts);
+                            associationTypeHandler.Process(state, filteredAssociationTypeContexts, policySources);
                             break;
                         case Type t when t == typeof(IActorValueInformationGetter):
                             var actorValueInformationHandler = new ActorValueInformationRecordHandler();
-                            actorValueInformationHandler.Process(state, filteredActorValueInformationContexts);
+                            actorValueInformationHandler.Process(state, filteredActorValueInformationContexts, policySources);
                             break;
                         case Type t when t == typeof(IBodyPartDataGetter):
                             var bodyPartDataHandler = new BodyPartDataRecordHandler();
-                            bodyPartDataHandler.Process(state, filteredBodyPartDataContexts);
+                            bodyPartDataHandler.Process(state, filteredBodyPartDataContexts, policySources);
                             break;
                         case Type t when t == typeof(ICameraShotGetter):
                             var cameraShotHandler = new CameraShotRecordHandler();
-                            cameraShotHandler.Process(state, filteredCameraShotContexts);
+                            cameraShotHandler.Process(state, filteredCameraShotContexts, policySources);
                             break;
                         case Type t when t == typeof(IClassGetter):
                             var classHandler = new ClassRecordHandler();
-                            classHandler.Process(state, filteredClassContexts);
+                            classHandler.Process(state, filteredClassContexts, policySources);
                             break;
                         case Type t when t == typeof(IColorRecordGetter):
                             var colorRecordHandler = new ColorRecordHandler();
-                            colorRecordHandler.Process(state, filteredColorRecordContexts);
+                            colorRecordHandler.Process(state, filteredColorRecordContexts, policySources);
                             break;
                         case Type t when t == typeof(IClimateGetter):
                             var climateHandler = new ClimateRecordHandler();
-                            climateHandler.Process(state, filteredClimateContexts);
+                            climateHandler.Process(state, filteredClimateContexts, policySources);
                             break;
                         case Type t when t == typeof(IConstructibleObjectGetter):
                             var constructibleObjectHandler = new ConstructibleObjectRecordHandler();
-                            constructibleObjectHandler.Process(state, filteredConstructibleObjectContexts);
+                            constructibleObjectHandler.Process(state, filteredConstructibleObjectContexts, policySources);
                             break;
                         case Type t when t == typeof(ICollisionLayerGetter):
                             var collisionLayerHandler = new CollisionLayerRecordHandler();
-                            collisionLayerHandler.Process(state, filteredCollisionLayerContexts);
+                            collisionLayerHandler.Process(state, filteredCollisionLayerContexts, policySources);
                             break;
                         case Type t when t == typeof(ICameraPathGetter):
                             var cameraPathHandler = new CameraPathRecordHandler();
-                            cameraPathHandler.Process(state, filteredCameraPathContexts);
+                            cameraPathHandler.Process(state, filteredCameraPathContexts, policySources);
                             break;
                         case Type t when t == typeof(ICombatStyleGetter):
                             var combatStyleHandler = new CombatStyleRecordHandler();
-                            combatStyleHandler.Process(state, filteredCombatStyleContexts);
+                            combatStyleHandler.Process(state, filteredCombatStyleContexts, policySources);
                             break;
                         case Type t when t == typeof(IDebrisGetter):
                             var debrisHandler = new DebrisRecordHandler();
-                            debrisHandler.Process(state, filteredDebrisContexts);
+                            debrisHandler.Process(state, filteredDebrisContexts, policySources);
                             break;
                         case Type t when t == typeof(IDialogBranchGetter):
                             var dialogBranchHandler = new DialogBranchRecordHandler();
-                            dialogBranchHandler.Process(state, filteredDialogBranchContexts);
+                            dialogBranchHandler.Process(state, filteredDialogBranchContexts, policySources);
                             break;
                         case Type t when t == typeof(IDialogViewGetter):
                             var dialogViewHandler = new DialogViewRecordHandler();
-                            dialogViewHandler.Process(state, filteredDialogViewContexts);
+                            dialogViewHandler.Process(state, filteredDialogViewContexts, policySources);
                             break;
                         case Type t when t == typeof(IDoorGetter):
                             var doorHandler = new DoorRecordHandler();
-                            doorHandler.Process(state, filteredDoorContexts);
+                            doorHandler.Process(state, filteredDoorContexts, policySources);
                             break;
                         case Type t when t == typeof(IDualCastDataGetter):
                             var dualCastDataHandler = new DualCastDataRecordHandler();
-                            dualCastDataHandler.Process(state, filteredDualCastDataContexts);
+                            dualCastDataHandler.Process(state, filteredDualCastDataContexts, policySources);
                             break;
                         case Type t when t == typeof(IEquipTypeGetter):
                             var equipTypeHandler = new EquipTypeRecordHandler();
-                            equipTypeHandler.Process(state, filteredEquipTypeContexts);
+                            equipTypeHandler.Process(state, filteredEquipTypeContexts, policySources);
                             break;
                         case Type t when t == typeof(IExplosionGetter):
                             var explosionHandler = new ExplosionRecordHandler();
-                            explosionHandler.Process(state, filteredExplosionContexts);
+                            explosionHandler.Process(state, filteredExplosionContexts, policySources);
                             break;
                         case Type t when t == typeof(IEyesGetter):
                             var eyesHandler = new EyesRecordHandler();
-                            eyesHandler.Process(state, filteredEyesContexts);
+                            eyesHandler.Process(state, filteredEyesContexts, policySources);
                             break;
                         case Type t when t == typeof(IFloraGetter):
                             var floraHandler = new FloraRecordHandler();
-                            floraHandler.Process(state, filteredFloraContexts);
+                            floraHandler.Process(state, filteredFloraContexts, policySources);
                             break;
                         case Type t when t == typeof(IFootstepGetter):
                             var footstepHandler = new FootstepRecordHandler();
-                            footstepHandler.Process(state, filteredFootstepContexts);
+                            footstepHandler.Process(state, filteredFootstepContexts, policySources);
                             break;
                         case Type t when t == typeof(IFootstepSetGetter):
                             var footstepSetHandler = new FootstepSetRecordHandler();
-                            footstepSetHandler.Process(state, filteredFootstepSetContexts);
+                            footstepSetHandler.Process(state, filteredFootstepSetContexts, policySources);
                             break;
                         case Type t when t == typeof(IFurnitureGetter):
                             var furnitureHandler = new FurnitureRecordHandler();
-                            furnitureHandler.Process(state, filteredFurnitureContexts);
+                            furnitureHandler.Process(state, filteredFurnitureContexts, policySources);
                             break;
                         case Type t when t == typeof(IGlobalIntGetter):
                             var globalIntHandler = new GlobalIntRecordHandler();
-                            globalIntHandler.Process(state, filteredGlobalIntContexts);
+                            globalIntHandler.Process(state, filteredGlobalIntContexts, policySources);
                             break;
                         case Type t when t == typeof(IGlobalShortGetter):
                             var globalShortHandler = new GlobalShortRecordHandler();
-                            globalShortHandler.Process(state, filteredGlobalShortContexts);
+                            globalShortHandler.Process(state, filteredGlobalShortContexts, policySources);
                             break;
                         case Type t when t == typeof(IGlobalFloatGetter):
                             var globalFloatHandler = new GlobalFloatRecordHandler();
-                            globalFloatHandler.Process(state, filteredGlobalFloatContexts);
+                            globalFloatHandler.Process(state, filteredGlobalFloatContexts, policySources);
                             break;
                         case Type t when t == typeof(IGlobalUnknownGetter):
                             var globalUnknownHandler = new GlobalUnknownRecordHandler();
-                            globalUnknownHandler.Process(state, filteredGlobalUnknownContexts);
+                            globalUnknownHandler.Process(state, filteredGlobalUnknownContexts, policySources);
                             break;
                         case Type t when t == typeof(IGameSettingIntGetter):
                             var gameSettingIntHandler = new GameSettingIntRecordHandler();
-                            gameSettingIntHandler.Process(state, filteredGameSettingIntContexts);
+                            gameSettingIntHandler.Process(state, filteredGameSettingIntContexts, policySources);
                             break;
                         case Type t when t == typeof(IGameSettingFloatGetter):
                             var gameSettingFloatHandler = new GameSettingFloatRecordHandler();
-                            gameSettingFloatHandler.Process(state, filteredGameSettingFloatContexts);
+                            gameSettingFloatHandler.Process(state, filteredGameSettingFloatContexts, policySources);
                             break;
                         case Type t when t == typeof(IGameSettingStringGetter):
                             var gameSettingStringHandler = new GameSettingStringRecordHandler();
-                            gameSettingStringHandler.Process(state, filteredGameSettingStringContexts);
+                            gameSettingStringHandler.Process(state, filteredGameSettingStringContexts, policySources);
                             break;
                         case Type t when t == typeof(IGameSettingBoolGetter):
                             var gameSettingBoolHandler = new GameSettingBoolRecordHandler();
-                            gameSettingBoolHandler.Process(state, filteredGameSettingBoolContexts);
+                            gameSettingBoolHandler.Process(state, filteredGameSettingBoolContexts, policySources);
                             break;
                         case Type t when t == typeof(IGrassGetter):
                             var grassHandler = new GrassRecordHandler();
-                            grassHandler.Process(state, filteredGrassContexts);
+                            grassHandler.Process(state, filteredGrassContexts, policySources);
                             break;
                         case Type t when t == typeof(IHazardGetter):
                             var hazardHandler = new HazardRecordHandler();
-                            hazardHandler.Process(state, filteredHazardContexts);
+                            hazardHandler.Process(state, filteredHazardContexts, policySources);
                             break;
                         case Type t when t == typeof(IHeadPartGetter):
                             var headPartHandler = new HeadPartRecordHandler();
-                            headPartHandler.Process(state, filteredHeadPartContexts);
+                            headPartHandler.Process(state, filteredHeadPartContexts, policySources);
                             break;
                         case Type t when t == typeof(IIdleAnimationGetter):
                             var idleAnimationHandler = new IdleAnimationRecordHandler();
-                            idleAnimationHandler.Process(state, filteredIdleAnimationContexts);
+                            idleAnimationHandler.Process(state, filteredIdleAnimationContexts, policySources);
                             break;
                         case Type t when t == typeof(IIdleMarkerGetter):
                             var idleMarkerHandler = new IdleMarkerRecordHandler();
-                            idleMarkerHandler.Process(state, filteredIdleMarkerContexts);
+                            idleMarkerHandler.Process(state, filteredIdleMarkerContexts, policySources);
                             break;
                         case Type t when t == typeof(ILightingTemplateGetter):
                             var lightingTemplateHandler = new LightingTemplateRecordHandler();
-                            lightingTemplateHandler.Process(state, filteredLightingTemplateContexts);
+                            lightingTemplateHandler.Process(state, filteredLightingTemplateContexts, policySources);
                             break;
                         case Type t when t == typeof(ILoadScreenGetter):
                             var loadScreenHandler = new LoadScreenRecordHandler();
-                            loadScreenHandler.Process(state, filteredLoadScreenContexts);
+                            loadScreenHandler.Process(state, filteredLoadScreenContexts, policySources);
                             break;
                         case Type t when t == typeof(ILeveledNpcGetter):
                             var leveledNpcHandler = new LeveledNpcRecordHandler();
-                            leveledNpcHandler.Process(state, filteredLeveledNpcContexts);
+                            leveledNpcHandler.Process(state, filteredLeveledNpcContexts, policySources);
                             break;
                         case Type t when t == typeof(ILeveledSpellGetter):
                             var leveledSpellHandler = new LeveledSpellRecordHandler();
-                            leveledSpellHandler.Process(state, filteredLeveledSpellContexts);
+                            leveledSpellHandler.Process(state, filteredLeveledSpellContexts, policySources);
                             break;
                         case Type t when t == typeof(IMoveableStaticGetter):
                             var moveableStaticHandler = new MoveableStaticRecordHandler();
-                            moveableStaticHandler.Process(state, filteredMoveableStaticContexts);
+                            moveableStaticHandler.Process(state, filteredMoveableStaticContexts, policySources);
                             break;
                         case Type t when t == typeof(IMovementTypeGetter):
                             var movementTypeHandler = new MovementTypeRecordHandler();
-                            movementTypeHandler.Process(state, filteredMovementTypeContexts);
+                            movementTypeHandler.Process(state, filteredMovementTypeContexts, policySources);
                             break;
                         case Type t when t == typeof(IMusicTypeGetter):
                             var musicTypeHandler = new MusicTypeRecordHandler();
-                            musicTypeHandler.Process(state, filteredMusicTypeContexts);
+                            musicTypeHandler.Process(state, filteredMusicTypeContexts, policySources);
                             break;
                         case Type t when t == typeof(IMusicTrackGetter):
                             var musicTrackHandler = new MusicTrackRecordHandler();
-                            musicTrackHandler.Process(state, filteredMusicTrackContexts);
+                            musicTrackHandler.Process(state, filteredMusicTrackContexts, policySources);
                             break;
                         case Type t when t == typeof(INavigationMeshGetter):
                             var navigationMeshHandler = new NavigationMeshRecordHandler();
-                            navigationMeshHandler.Process(state, filteredNavigationMeshContexts);
+                            navigationMeshHandler.Process(state, filteredNavigationMeshContexts, policySources);
                             break;
                         case Type t when t == typeof(IOutfitGetter):
                             var outfitHandler = new OutfitRecordHandler();
-                            outfitHandler.Process(state, filteredOutfitContexts);
+                            outfitHandler.Process(state, filteredOutfitContexts, policySources);
                             break;
                         case Type t when t == typeof(IPlacedHazardGetter):
                             var placedHazardHandler = new PlacedHazardRecordHandler();
-                            placedHazardHandler.Process(state, filteredPlacedHazardContexts);
+                            placedHazardHandler.Process(state, filteredPlacedHazardContexts, policySources);
                             break;
                         case Type t when t == typeof(ISoundCategoryGetter):
                             var soundCategoryHandler = new SoundCategoryRecordHandler();
-                            soundCategoryHandler.Process(state, filteredSoundCategoryContexts);
+                            soundCategoryHandler.Process(state, filteredSoundCategoryContexts, policySources);
                             break;
                         case Type t when t == typeof(ISoundOutputModelGetter):
                             var soundOutputModelHandler = new SoundOutputModelRecordHandler();
-                            soundOutputModelHandler.Process(state, filteredSoundOutputModelContexts);
+                            soundOutputModelHandler.Process(state, filteredSoundOutputModelContexts, policySources);
                             break;
                         case Type t when t == typeof(ISoundMarkerGetter):
                             var soundMarkerHandler = new SoundMarkerRecordHandler();
-                            soundMarkerHandler.Process(state, filteredSoundMarkerContexts);
+                            soundMarkerHandler.Process(state, filteredSoundMarkerContexts, policySources);
                             break;
                         case Type t when t == typeof(IShaderParticleGeometryGetter):
                             var shaderParticleGeometryHandler = new ShaderParticleGeometryRecordHandler();
-                            shaderParticleGeometryHandler.Process(state, filteredShaderParticleGeometryContexts);
+                            shaderParticleGeometryHandler.Process(state, filteredShaderParticleGeometryContexts, policySources);
                             break;
                         case Type t when t == typeof(ISceneGetter):
                             var sceneHandler = new SceneRecordHandler();
-                            sceneHandler.Process(state, filteredSceneContexts);
+                            sceneHandler.Process(state, filteredSceneContexts, policySources);
                             break;
                         case Type t when t == typeof(IScrollGetter):
                             var scrollHandler = new ScrollRecordHandler();
-                            scrollHandler.Process(state, filteredScrollContexts);
+                            scrollHandler.Process(state, filteredScrollContexts, policySources);
                             break;
                         case Type t when t == typeof(IShoutGetter):
                             var shoutHandler = new ShoutRecordHandler();
-                            shoutHandler.Process(state, filteredShoutContexts);
+                            shoutHandler.Process(state, filteredShoutContexts, policySources);
                             break;
                         case Type t when t == typeof(ISoulGemGetter):
                             var soulGemHandler = new SoulGemRecordHandler();
-                            soulGemHandler.Process(state, filteredSoulGemContexts);
+                            soulGemHandler.Process(state, filteredSoulGemContexts, policySources);
                             break;
                         case Type t when t == typeof(IStoryManagerBranchNodeGetter):
                             var storyManagerBranchNodeHandler = new StoryManagerBranchNodeRecordHandler();
-                            storyManagerBranchNodeHandler.Process(state, filteredStoryManagerBranchNodeContexts);
+                            storyManagerBranchNodeHandler.Process(state, filteredStoryManagerBranchNodeContexts, policySources);
                             break;
                         case Type t when t == typeof(IStoryManagerEventNodeGetter):
                             var storyManagerEventNodeHandler = new StoryManagerEventNodeRecordHandler();
-                            storyManagerEventNodeHandler.Process(state, filteredStoryManagerEventNodeContexts);
+                            storyManagerEventNodeHandler.Process(state, filteredStoryManagerEventNodeContexts, policySources);
                             break;
                         case Type t when t == typeof(IStoryManagerQuestNodeGetter):
                             var storyManagerQuestNodeHandler = new StoryManagerQuestNodeRecordHandler();
-                            storyManagerQuestNodeHandler.Process(state, filteredStoryManagerQuestNodeContexts);
+                            storyManagerQuestNodeHandler.Process(state, filteredStoryManagerQuestNodeContexts, policySources);
                             break;
                         case Type t when t == typeof(ITreeGetter):
                             var treeHandler = new TreeRecordHandler();
-                            treeHandler.Process(state, filteredTreeContexts);
+                            treeHandler.Process(state, filteredTreeContexts, policySources);
                             break;
                         case Type t when t == typeof(IVoiceTypeGetter):
                             var voiceTypeHandler = new VoiceTypeRecordHandler();
-                            voiceTypeHandler.Process(state, filteredVoiceTypeContexts);
+                            voiceTypeHandler.Process(state, filteredVoiceTypeContexts, policySources);
                             break;
                         case Type t when t == typeof(IWaterGetter):
                             var waterHandler = new WaterRecordHandler();
-                            waterHandler.Process(state, filteredWaterContexts);
+                            waterHandler.Process(state, filteredWaterContexts, policySources);
                             break;
                         case Type t when t == typeof(IWeatherGetter):
                             var weatherHandler = new WeatherRecordHandler();
-                            weatherHandler.Process(state, filteredWeatherContexts);
+                            weatherHandler.Process(state, filteredWeatherContexts, policySources);
                             break;
                         case Type t when t == typeof(IWordOfPowerGetter):
                             var wordOfPowerHandler = new WordOfPowerRecordHandler();
-                            wordOfPowerHandler.Process(state, filteredWordOfPowerContexts);
+                            wordOfPowerHandler.Process(state, filteredWordOfPowerContexts, policySources);
                             break;
                         case Type t when t == typeof(IRelationshipGetter):
                             var relationshipHandler = new RelationshipRecordHandler();
-                            relationshipHandler.Process(state, filteredRelationshipContexts);
+                            relationshipHandler.Process(state, filteredRelationshipContexts, policySources);
                             break;
                         case Type t when t == typeof(IReverbParametersGetter):
                             var reverbParametersHandler = new ReverbParametersRecordHandler();
-                            reverbParametersHandler.Process(state, filteredReverbParametersContexts);
+                            reverbParametersHandler.Process(state, filteredReverbParametersContexts, policySources);
                             break;
                         case Type t when t == typeof(IVisualEffectGetter):
                             var visualEffectHandler = new VisualEffectRecordHandler();
-                            visualEffectHandler.Process(state, filteredVisualEffectContexts);
+                            visualEffectHandler.Process(state, filteredVisualEffectContexts, policySources);
                             break;
                         case Type t when t == typeof(IMaterialObjectGetter):
                             var materialObjectHandler = new MaterialObjectRecordHandler();
-                            materialObjectHandler.Process(state, filteredMaterialObjectContexts);
+                            materialObjectHandler.Process(state, filteredMaterialObjectContexts, policySources);
                             break;
                         case Type t when t == typeof(IMaterialTypeGetter):
                             var materialTypeHandler = new MaterialTypeRecordHandler();
-                            materialTypeHandler.Process(state, filteredMaterialTypeContexts);
+                            materialTypeHandler.Process(state, filteredMaterialTypeContexts, policySources);
                             break;
                         case Type t when t == typeof(IMessageGetter):
                             var messageHandler = new MessageRecordHandler();
-                            messageHandler.Process(state, filteredMessageContexts);
+                            messageHandler.Process(state, filteredMessageContexts, policySources);
                             break;
                         case Type t when t == typeof(IKeywordGetter):
                             var keywordHandler = new KeywordRecordHandler();
-                            keywordHandler.Process(state, filteredKeywordContexts);
+                            keywordHandler.Process(state, filteredKeywordContexts, policySources);
                             break;
                         case Type t when t == typeof(ILocationReferenceTypeGetter):
                             var locationReferenceTypeHandler = new LocationReferenceTypeRecordHandler();
-                            locationReferenceTypeHandler.Process(state, filteredLocationReferenceTypeContexts);
+                            locationReferenceTypeHandler.Process(state, filteredLocationReferenceTypeContexts, policySources);
                             break;
                         case Type t when t == typeof(IImageSpaceGetter):
                             var imageSpaceHandler = new ImageSpaceRecordHandler();
-                            imageSpaceHandler.Process(state, filteredImageSpaceContexts);
+                            imageSpaceHandler.Process(state, filteredImageSpaceContexts, policySources);
                             break;
                         case Type t when t == typeof(IImpactGetter):
                             var impactHandler = new ImpactRecordHandler();
-                            impactHandler.Process(state, filteredImpactContexts);
+                            impactHandler.Process(state, filteredImpactContexts, policySources);
                             break;
                         case Type t when t == typeof(IImpactDataSetGetter):
                             var impactDataSetHandler = new ImpactDataSetRecordHandler();
-                            impactDataSetHandler.Process(state, filteredImpactDataSetContexts);
+                            impactDataSetHandler.Process(state, filteredImpactDataSetContexts, policySources);
                             break;
                         case Type t when t == typeof(ITalkingActivatorGetter):
                             var talkingActivatorHandler = new TalkingActivatorRecordHandler();
-                            talkingActivatorHandler.Process(state, filteredTalkingActivatorContexts);
+                            talkingActivatorHandler.Process(state, filteredTalkingActivatorContexts, policySources);
                             break;
                         default:
                             Console.WriteLine($"Warning: No handler implemented for {recordLabel}");
@@ -1541,6 +1528,7 @@ namespace DreadsMashedPatch
                 }
                 catch (Exception ex)
                 {
+                    PatchDiagnostics.Error(RecordTypeCatalog.GetSignature(recordType), "Record type processing failed", ex);
                     Console.WriteLine(
                         $"Error processing {RecordTypeCatalog.GetSignature(recordType)} - " +
                         $"{RecordTypeCatalog.GetDisplayName(recordType)} records:");
@@ -1549,10 +1537,9 @@ namespace DreadsMashedPatch
                 }
             }
 
-            Console.WriteLine("\nMashed Patch patcher completed.");
+            Console.WriteLine("\nMashed Patch record processing completed.");
         }
     }
 }
-
 
 

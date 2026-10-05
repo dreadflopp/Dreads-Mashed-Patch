@@ -31,6 +31,10 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Removed: duplicate Placement.Position and Placement.Rotation registrations; the cohesive Placement handler is the sole path.
     // - Rationale: PlacementBinaryOverlay has no useful ToString(), generated exact float equality reports changes
     //   below xEdit-visible precision, and independent UDR fields can otherwise produce contradictory hybrid states.
+
+    // Header migration: raw/common flags share one masked integer handler.
+    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
+    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class PlacedObjectRecordHandler : AbstractRecordHandler
     {
         protected override PropertyForwardingCoordination CoordinateForwardedProperties(
@@ -42,8 +46,7 @@ namespace DreadsMashedPatch.RecordHandlers
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
-            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler() },
-            { "SkyrimMajorRecordFlags", new SkyrimMajorRecordFlagsHandler() },
+            { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Base", new SimpleReflectionFormLinkPropertyHandler<IPlaceableObjectGetter, IPlacedObject, IPlacedObjectGetter>("Base") },
             { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedObject, IPlacedObjectGetter>("Owner") },
             { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedObject, IPlacedObjectGetter>("Scale") },
@@ -102,6 +105,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "MapMarker", new GeneratedCopyReflectionPropertyHandler<IMapMarkerGetter, MapMarker, IPlacedObject, IPlacedObjectGetter>(
                 "MapMarker", value => value.DeepCopy(), MapMarkerMixIn.Equals) },
             { "Placement", new PlacementHandler() },
+            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedObject, IPlacedObjectGetter>() },
             { "EnableParent", new GeneratedCopyReflectionPropertyHandler<IEnableParentGetter, EnableParent, IPlacedObject, IPlacedObjectGetter>(
                 "EnableParent", value => value.DeepCopy(), EnableParentMixIn.Equals) },
@@ -133,7 +137,7 @@ namespace DreadsMashedPatch.RecordHandlers
                 .ToArray();
         }
 
-        // GetOverrideRecord and ApplyForwardedProperties are now handled by the base class
+        // CommitOverride and ApplyForwardedProperties are now handled by the base class
         // The base class automatically handles flag property coordination
     }
 }

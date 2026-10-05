@@ -18,7 +18,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Spell
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement ISpell for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement ISpell for {PropertyName}");
             }
         }
 
@@ -30,7 +30,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Spell
             }
             else
             {
-                Console.WriteLine($"Error: Record does not implement ISpellGetter for {PropertyName}");
+                LogCollector.AddError(PropertyName, $"Error: Record does not implement ISpellGetter for {PropertyName}");
             }
             return SpellDataFlag.ManualCostCalc;
         }
