@@ -19,6 +19,132 @@ Placement keeps position and rotation together at the project’s comparison pre
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedNpcRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
+<a id="parw-placedarrow"></a>
+
+## PARW — Placed Arrow
+
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+
+| Properties | How they are patched |
+|---|---|
+| `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
+| `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
+| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
+| `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
+| `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
+| `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
+| `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedArrowRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+
+<a id="pbar-placedbarrier"></a>
+
+## PBAR — Placed Barrier
+
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+
+| Properties | How they are patched |
+|---|---|
+| `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
+| `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
+| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
+| `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
+| `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
+| `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
+| `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedBarrierRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+
+<a id="pbea-placedbeam"></a>
+
+## PBEA — Placed Beam
+
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+
+| Properties | How they are patched |
+|---|---|
+| `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
+| `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
+| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
+| `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
+| `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
+| `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
+| `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedBeamRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+
+<a id="pcon-placedcone"></a>
+
+## PCON — Placed Cone
+
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+
+| Properties | How they are patched |
+|---|---|
+| `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
+| `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
+| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
+| `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
+| `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
+| `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
+| `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedConeRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+
+<a id="pfla-placedflame"></a>
+
+## PFLA — Placed Flame
+
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+
+| Properties | How they are patched |
+|---|---|
+| `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
+| `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
+| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
+| `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
+| `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
+| `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
+| `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedFlameRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+
+<a id="pgre-placedtrap"></a>
+
+## PGRE — Placed Trap
+
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+
+| Properties | How they are patched |
+|---|---|
+| `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
+| `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
+| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
+| `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
+| `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
+| `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
+| `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedTrapRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+
+<a id="pmis-placedmissile"></a>
+
+## PMIS — Placed Missile
+
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+
+| Properties | How they are patched |
+|---|---|
+| `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
+| `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
+| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
+| `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
+| `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
+| `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
+| `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedMissileRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+
 <a id="phzd-placedhazard"></a>
 
 ## PHZD — Placed Hazard

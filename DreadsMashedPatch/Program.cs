@@ -25,7 +25,6 @@ namespace DreadsMashedPatch
             new Dictionary<Type, string>
             {
                 [typeof(IDefaultObjectManagerGetter)] = "Default object mappings are merged by the Skyrim runtime.",
-                [typeof(ILandscapeTextureGetter)] = "Landscape texture records are excluded by the runtime-field forwarding policy.",
                 [typeof(ILandscapeGetter)] = "Landscape records are excluded by the runtime-field forwarding policy.",
                 [typeof(IImageSpaceAdapterGetter)] = "Image Space Adapter records are disabled because Mutagen does not preserve missing DNAM subrecords and writes zero-valued DNAM data instead."
             };
@@ -149,7 +148,17 @@ namespace DreadsMashedPatch
                 typeof(ILocationReferenceTypeGetter),
                 typeof(IImageSpaceGetter),
                 typeof(IImpactGetter),
-                typeof(IImpactDataSetGetter)
+                typeof(IImpactDataSetGetter),
+                typeof(IVolumetricLightingGetter),
+                typeof(ILensFlareGetter),
+                typeof(ILandscapeTextureGetter),
+                typeof(IPlacedArrowGetter),
+                typeof(IPlacedBarrierGetter),
+                typeof(IPlacedBeamGetter),
+                typeof(IPlacedConeGetter),
+                typeof(IPlacedFlameGetter),
+                typeof(IPlacedTrapGetter),
+                typeof(IPlacedMissileGetter)
             };
 
         /// <summary>
@@ -579,12 +588,12 @@ namespace DreadsMashedPatch
             var outfitContexts = LoadContextsSafely(
                 state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, IOutfit, IOutfitGetter>(state.LinkCache),
                 "outfitContexts");
-            // PlacedHazard shares APlacedTrap's registration with several sibling placed
-            // projectile types, so use the same base-query-then-narrow pattern here.
-            var placedTrapContexts = LoadContextsSafely(
+            // Placed hazards and projectiles share APlacedTrap registration. Query the base
+            // once, then narrow each enabled concrete variant to avoid sibling overlay casts.
+            var placedTrapBaseContexts = LoadContextsSafely(
                 state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, IAPlacedTrap, IAPlacedTrapGetter>(state.LinkCache),
                 "placedTrapContexts");
-            var placedHazardContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedHazard, IPlacedHazardGetter>(placedTrapContexts);
+            var placedHazardContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedHazard, IPlacedHazardGetter>(placedTrapBaseContexts);
             var soundCategoryContexts = LoadContextsSafely(
                 state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, ISoundCategory, ISoundCategoryGetter>(state.LinkCache),
                 "soundCategoryContexts");
@@ -669,6 +678,23 @@ namespace DreadsMashedPatch
             var talkingActivatorContexts = LoadContextsSafely(
                 state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, ITalkingActivator, ITalkingActivatorGetter>(state.LinkCache),
                 "talkingActivatorContexts");
+
+            var volumetricLightingContexts = LoadContextsSafely(
+                state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, IVolumetricLighting, IVolumetricLightingGetter>(state.LinkCache),
+                "volumetricLightingContexts");
+            var lensFlareContexts = LoadContextsSafely(
+                state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, ILensFlare, ILensFlareGetter>(state.LinkCache),
+                "lensFlareContexts");
+            var landscapeTextureContexts = LoadContextsSafely(
+                state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, ILandscapeTexture, ILandscapeTextureGetter>(state.LinkCache),
+                "landscapeTextureContexts");
+            var placedArrowContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedArrow, IPlacedArrowGetter>(placedTrapBaseContexts);
+            var placedBarrierContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedBarrier, IPlacedBarrierGetter>(placedTrapBaseContexts);
+            var placedBeamContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedBeam, IPlacedBeamGetter>(placedTrapBaseContexts);
+            var placedConeContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedCone, IPlacedConeGetter>(placedTrapBaseContexts);
+            var placedFlameContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedFlame, IPlacedFlameGetter>(placedTrapBaseContexts);
+            var placedTrapContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedTrap, IPlacedTrapGetter>(placedTrapBaseContexts);
+            var placedMissileContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedMissile, IPlacedMissileGetter>(placedTrapBaseContexts);
 
             // Filter out contexts that would break early
             Console.WriteLine("Filtering contexts (this may take a while)...");
@@ -1032,6 +1058,27 @@ namespace DreadsMashedPatch
 
 
             Console.WriteLine();
+
+            var filteredVolumetricLightingContexts = volumetricLightingContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"VolumetricLighting contexts: {volumetricLightingContexts.Length} -> {filteredVolumetricLightingContexts.Length} (filtered: {volumetricLightingContexts.Length - filteredVolumetricLightingContexts.Length})");
+            var filteredLensFlareContexts = lensFlareContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"LensFlare contexts: {lensFlareContexts.Length} -> {filteredLensFlareContexts.Length} (filtered: {lensFlareContexts.Length - filteredLensFlareContexts.Length})");
+            var filteredLandscapeTextureContexts = landscapeTextureContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"LandscapeTexture contexts: {landscapeTextureContexts.Length} -> {filteredLandscapeTextureContexts.Length} (filtered: {landscapeTextureContexts.Length - filteredLandscapeTextureContexts.Length})");
+            var filteredPlacedArrowContexts = placedArrowContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"PlacedArrow contexts: {placedArrowContexts.Length} -> {filteredPlacedArrowContexts.Length} (filtered: {placedArrowContexts.Length - filteredPlacedArrowContexts.Length})");
+            var filteredPlacedBarrierContexts = placedBarrierContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"PlacedBarrier contexts: {placedBarrierContexts.Length} -> {filteredPlacedBarrierContexts.Length} (filtered: {placedBarrierContexts.Length - filteredPlacedBarrierContexts.Length})");
+            var filteredPlacedBeamContexts = placedBeamContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"PlacedBeam contexts: {placedBeamContexts.Length} -> {filteredPlacedBeamContexts.Length} (filtered: {placedBeamContexts.Length - filteredPlacedBeamContexts.Length})");
+            var filteredPlacedConeContexts = placedConeContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"PlacedCone contexts: {placedConeContexts.Length} -> {filteredPlacedConeContexts.Length} (filtered: {placedConeContexts.Length - filteredPlacedConeContexts.Length})");
+            var filteredPlacedFlameContexts = placedFlameContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"PlacedFlame contexts: {placedFlameContexts.Length} -> {filteredPlacedFlameContexts.Length} (filtered: {placedFlameContexts.Length - filteredPlacedFlameContexts.Length})");
+            var filteredPlacedTrapContexts = placedTrapContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"PlacedTrap contexts: {placedTrapContexts.Length} -> {filteredPlacedTrapContexts.Length} (filtered: {placedTrapContexts.Length - filteredPlacedTrapContexts.Length})");
+            var filteredPlacedMissileContexts = placedMissileContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();
+            Console.WriteLine($"PlacedMissile contexts: {placedMissileContexts.Length} -> {filteredPlacedMissileContexts.Length} (filtered: {placedMissileContexts.Length - filteredPlacedMissileContexts.Length})");
 
             foreach (var recordType in enabledRecordTypes)
             {
@@ -1517,6 +1564,46 @@ namespace DreadsMashedPatch
                         case Type t when t == typeof(ITalkingActivatorGetter):
                             var talkingActivatorHandler = new TalkingActivatorRecordHandler();
                             talkingActivatorHandler.Process(state, filteredTalkingActivatorContexts, policySources);
+                            break;
+                        case Type t when t == typeof(IVolumetricLightingGetter):
+                            var volumetricLightingHandler = new VolumetricLightingRecordHandler();
+                            volumetricLightingHandler.Process(state, filteredVolumetricLightingContexts, policySources);
+                            break;
+                        case Type t when t == typeof(ILensFlareGetter):
+                            var lensFlareHandler = new LensFlareRecordHandler();
+                            lensFlareHandler.Process(state, filteredLensFlareContexts, policySources);
+                            break;
+                        case Type t when t == typeof(ILandscapeTextureGetter):
+                            var landscapeTextureHandler = new LandscapeTextureRecordHandler();
+                            landscapeTextureHandler.Process(state, filteredLandscapeTextureContexts, policySources);
+                            break;
+                        case Type t when t == typeof(IPlacedArrowGetter):
+                            var placedArrowHandler = new PlacedArrowRecordHandler();
+                            placedArrowHandler.Process(state, filteredPlacedArrowContexts, policySources);
+                            break;
+                        case Type t when t == typeof(IPlacedBarrierGetter):
+                            var placedBarrierHandler = new PlacedBarrierRecordHandler();
+                            placedBarrierHandler.Process(state, filteredPlacedBarrierContexts, policySources);
+                            break;
+                        case Type t when t == typeof(IPlacedBeamGetter):
+                            var placedBeamHandler = new PlacedBeamRecordHandler();
+                            placedBeamHandler.Process(state, filteredPlacedBeamContexts, policySources);
+                            break;
+                        case Type t when t == typeof(IPlacedConeGetter):
+                            var placedConeHandler = new PlacedConeRecordHandler();
+                            placedConeHandler.Process(state, filteredPlacedConeContexts, policySources);
+                            break;
+                        case Type t when t == typeof(IPlacedFlameGetter):
+                            var placedFlameHandler = new PlacedFlameRecordHandler();
+                            placedFlameHandler.Process(state, filteredPlacedFlameContexts, policySources);
+                            break;
+                        case Type t when t == typeof(IPlacedTrapGetter):
+                            var placedTrapHandler = new PlacedTrapRecordHandler();
+                            placedTrapHandler.Process(state, filteredPlacedTrapContexts, policySources);
+                            break;
+                        case Type t when t == typeof(IPlacedMissileGetter):
+                            var placedMissileHandler = new PlacedMissileRecordHandler();
+                            placedMissileHandler.Process(state, filteredPlacedMissileContexts, policySources);
                             break;
                         default:
                             Console.WriteLine($"Warning: No handler implemented for {recordLabel}");

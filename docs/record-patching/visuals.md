@@ -113,6 +113,21 @@ Impacts merges mappings by material with ownership checks. Invalid, null or dupl
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ImpactDataSetRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
+<a id="lens-lensflare"></a>
+
+## LENS — Lens Flare
+
+The complete flare definition is one authored value. Global parameters and the ordered sprite sequence select together, preventing mixtures of different flare designs. Shared EditorID and header flags remain independent.
+
+| Properties | How they are patched |
+|---|---|
+| `FlareDefinition` | Select `ColorInfluence`, `FadeDistanceRadiusScale` and `Sprites` together from one source. Null and present-empty sprites remain distinct; order and duplicate rows are retained. |
+| `Sprites` contents | Each copied row retains its ID, texture and complete nullable Data: tint RGB, Width, Height, Position, AngularFade, Opacity and Flags. These fields and embedded flags have no independent merge path. |
+
+Sprite equality uses serialized RGB (alpha is not stored in LFSD), all other Data fields, IDs, order and duplicates. Textures use the project's case/slash-aware GivenPath comparison; selected copies retain the authored path. Mutagen writes the derived LFSP sprite count. There is no per-row alignment or per-bit sprite flag merge.
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LensFlareRecordHandler.cs); [atomic snapshot and comparison](../../DreadsMashedPatch/PropertyHandlers/LensFlare/FlareDefinitionHandler.cs); [verification](REVIEW.md#additional-record-support-verification).
+
 <a id="mato-materialobject"></a>
 
 ## MATO — Material Object
@@ -171,3 +186,15 @@ TextureDefinition keeps all eight texture paths and nullable Flags together. Tho
 | `ObjectBounds`, `TextureDefinition`, `Decal` | Select each whole value separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/TextureSetRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+
+<a id="voli-volumetriclighting"></a>
+
+## VOLI — Volumetric Lighting
+
+The twelve nullable lighting parameters form one complete preset. Color, density, phase and sampling controls select together so that an earlier component cannot leak into a later authored preset. Shared EditorID and header flags remain independent.
+
+| Properties | How they are patched |
+|---|---|
+| `LightingPreset` | Select all twelve parameters together: `Intensity`, `CustomColorContribution`, `ColorR`, `ColorG`, `ColorB`, `DensityContribution`, `DensitySize`, `DensityWindSpeed`, `DensityFallingSpeed`, `PhaseFunctionContribution`, `PhaseFunctionScattering`, `SamplingRepartitionRangeFactor`. Presence and exact float values participate in comparison. |
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/VolumetricLightingRecordHandler.cs); [atomic snapshot](../../DreadsMashedPatch/PropertyHandlers/VolumetricLighting/LightingPresetHandler.cs); [verification](REVIEW.md#additional-record-support-verification).

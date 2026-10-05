@@ -20,6 +20,8 @@ historical decisions also remain in [ordering audit](history/LIST_ORDERING_AUDIT
 The manifest includes constructible dormant handlers, including LAND. Use the
 [supported/excluded routes](record-patching/unsupported.md) to determine what runs.
 
+The current manifest has 208 registrations and 208 reviewed expectations, including five shared ReferenceRecord collections for each of the seven placed-projectile variants. LTEX grasses use sorted Grass FormID keys. LENS sprites are nested inside `FlareDefinition`, an atomic record value, so they are documented and tested separately rather than appearing as a directly registered collection. Sprite order, duplicates and presence travel together with both flare globals.
+
 ## Modes
 
 - `SortedKeyed`: rows are identified and emitted using the xEdit sort key.

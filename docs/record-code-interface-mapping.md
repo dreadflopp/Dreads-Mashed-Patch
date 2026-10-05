@@ -85,11 +85,11 @@ Notes:
 | LAND | Landscape | `ILandscapeGetter` | `LandscapeRecordHandler` | Handler only | Explicitly excluded; existing handler is dormant. |
 | LCRT | Location Ref Type | `ILocationReferenceTypeGetter` | `LocationReferenceTypeRecordHandler` | Wired | |
 | LCTN | Location | `ILocationGetter` | `LocationRecordHandler` | Wired | |
-| LENS | Lens Flare | `ILensFlareGetter` | — | Missing | LIGH/WTHR references do not patch flare contents. |
+| LENS | Lens Flare | `ILensFlareGetter` | `LensFlareRecordHandler` | Wired | Complete atomic flare definition. |
 | LGTM | Lighting Template | `ILightingTemplateGetter` | `LightingTemplateRecordHandler` | Wired | |
 | LIGH | Light | `ILightGetter` | `LightRecordHandler` | Wired | |
 | LSCR | Load Screen | `ILoadScreenGetter` | `LoadScreenRecordHandler` | Wired | |
-| LTEX | Land Texture | `ILandscapeTextureGetter` | `LandscapeTextureRecordHandler` | Handler only | Explicitly excluded; existing handler is dormant. |
+| LTEX | Land Texture | `ILandscapeTextureGetter` | `LandscapeTextureRecordHandler` | Wired | Authored scalars, sorted grasses and nullable snow flags; LAND remains excluded. |
 | LVLI | Leveled Item | `ILeveledItemGetter` | `LeveledItemRecordHandler` | Wired | |
 | LVLN | Leveled Actor | `ILeveledNpcGetter` | `LeveledNpcRecordHandler` | Wired | |
 | LVSP | Leveled Spell | `ILeveledSpellGetter` | `LeveledSpellRecordHandler` | Wired | |
@@ -109,13 +109,13 @@ Notes:
 | OTFT | Outfit | `IOutfitGetter` | `OutfitRecordHandler` | Wired | |
 | PACK | AI Package | `IPackageGetter` | `PackageRecordHandler` | Wired | Disabled by default; template graph also unregistered when enabled. |
 | PERK | Perk | `IPerkGetter` | `PerkRecordHandler` | Wired | |
-| PARW | Placed Arrow | `IPlacedArrowGetter` | — | Missing | Placed-trap query narrows away this variant. |
-| PBAR | Placed Barrier | `IPlacedBarrierGetter` | — | Missing | Placed-trap query narrows away this variant. |
-| PBEA | Placed Beam | `IPlacedBeamGetter` | — | Missing | Placed-trap query narrows away this variant. |
-| PCON | Placed Cone | `IPlacedConeGetter` | — | Missing | Placed-trap query narrows away this variant. |
-| PFLA | Placed Flame | `IPlacedFlameGetter` | — | Missing | Placed-trap query narrows away this variant. |
-| PGRE | Placed Trap | `IPlacedTrapGetter` | — | Missing | Skyrim major-record variant; placed-trap query narrows it away. |
-| PMIS | Placed Missile | `IPlacedMissileGetter` | — | Missing | Placed-trap query narrows away this variant. |
+| PARW | Placed Arrow | `IPlacedArrowGetter` | `PlacedArrowRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
+| PBAR | Placed Barrier | `IPlacedBarrierGetter` | `PlacedBarrierRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
+| PBEA | Placed Beam | `IPlacedBeamGetter` | `PlacedBeamRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
+| PCON | Placed Cone | `IPlacedConeGetter` | `PlacedConeRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
+| PFLA | Placed Flame | `IPlacedFlameGetter` | `PlacedFlameRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
+| PGRE | Placed Trap | `IPlacedTrapGetter` | `PlacedTrapRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
+| PMIS | Placed Missile | `IPlacedMissileGetter` | `PlacedMissileRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
 | PHZD | Placed Hazard | `IPlacedHazardGetter` | `PlacedHazardRecordHandler` | Wired | Hazard plus all eighteen inherited placed fields, EditorID and approved header flags. PHZD has no UDR coordinator. |
 | PROJ | Projectile | `IProjectileGetter` | `ProjectileRecordHandler` | Wired | |
 | QUST | Quest | `IQuestGetter` | `QuestRecordHandler` | Wired | |
@@ -144,7 +144,7 @@ Notes:
 | TREE | Tree | `ITreeGetter` | `TreeRecordHandler` | Wired | |
 | TXST | Texture Set | `ITextureSetGetter` | `TextureSetRecordHandler` | Wired | |
 | VTYP | Voice Type | `IVoiceTypeGetter` | `VoiceTypeRecordHandler` | Wired | |
-| VOLI | Volumetric Lighting | `IVolumetricLightingGetter` | — | Missing | WTHR references do not patch lighting contents. |
+| VOLI | Volumetric Lighting | `IVolumetricLightingGetter` | `VolumetricLightingRecordHandler` | Wired | Complete atomic lighting preset. |
 | WATR | Water Type | `IWaterGetter` | `WaterRecordHandler` | Wired | |
 | WEAP | Weapon | `IWeaponGetter` | `WeaponRecordHandler` | Wired | |
 | WOOP | Word Of Power | `IWordOfPowerGetter` | `WordOfPowerRecordHandler` | Wired | |

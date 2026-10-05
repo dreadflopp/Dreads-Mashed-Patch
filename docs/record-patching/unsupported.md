@@ -8,28 +8,20 @@ A reference to another record does not patch that record’s contents. Likewise,
 |---|---|
 | DOBJ — Default objects | Explicitly excluded. The source cites runtime merging of default-object mappings. The existing handler is dormant. |
 | LAND — Landscape | Explicitly excluded under the project’s runtime-field policy, even beneath a processed CELL. Its handler is dormant. |
-| LTEX — Landscape texture | Explicitly excluded under the same policy. Its handler is dormant. |
 | IMAD — Image-space adapter | Explicitly excluded; the source cites Mutagen handling of absent DNAM. Its handler is dormant. |
 | HAIR — Hair | No independent processing route. RACE merges hair references only. |
-| LENS — Lens flare | No independent processing route. LIGH Lens and WTHR SunGlareLensFlare select references, not flare sprites/parameters. |
-| VOLI — Volumetric lighting | No independent processing route. WTHR selects a complete time-of-day reference structure, not the referenced lighting records. |
 | NAVI — Navigation mesh information map | No independent route or patcher-owned reconstruction found. NAVM and REFR navigation-door links do not implement a NAVI merge. The local writer serializes populated NAVI groups; that is not a rebuild. No real navigation consistency test was run; broader writer-hook behavior remains unestablished. See the [NAVI audit](COVERAGE-COMPARISON-AUDIT.md#pack-arma-and-navi-boundaries). |
-| PARW, PBAR, PBEA, PCON, PFLA, PGRE, PMIS — Placed arrows, barriers, beams, cones, flames, traps and missiles | The placed-trap query can encounter these variants, but narrowing retains only PHZD. No independent property forwarding for these seven types. |
 | TES4 / GRUP | Plugin header and structural groups are managed by output/copy machinery, not independent record conflict handlers. |
 | NOTE | No separate NOTE major-record type in the inspected Skyrim model. Notes represented as BOOK follow the book rules. |
 
-The exclusion reasons above report what the code says; they are not independent verification of engine or writer behavior. The original omission rationale for HAIR, LENS, NAVI, VOLI and the seven placed variants is **uncertain**. Current lack of support does not mean that adding support would be inappropriate.
+The exclusion reasons above report what the code says; they are not independent verification of engine or writer behavior. HAIR and NAVI remain without independent routes for the reasons reviewed below.
 
 ## Should these remain unsupported?
 
-Assessment on 2026-10-05 using the dispatch code, Mutagen 0.54.4 decompiled getter/writer surfaces, and the pinned xEdit definitions. These are recommendations for future work; the processing routes above remain unchanged.
+Assessment on 2026-10-05 using the dispatch code, Mutagen 0.54.4 decompiled getter/writer surfaces, and the pinned xEdit definitions. The remaining exclusions are assessed below. VOLI, LENS, LTEX and the seven placed-projectile variants are now supported and enabled by default; see their [record tables](INDEX.md) and [implementation verification](REVIEW.md#additional-record-support-verification).
 
 | Records | Recommendation and evidence |
 |---|---|
-| VOLI | Candidate for support. Mutagen exposes twelve nullable lighting parameters, and xEdit defines them as authored fields. Review whether related color/density parameters should select together, then reuse scalar or aggregate handlers and verify binary output. No serialization blocker was found in this interface review. |
-| LENS | Candidate for support. Two nullable parameters and a sprite collection are exposed. xEdit defines an ordered, count-coupled sprite array; selecting the complete array is a reasonable starting policy, subject to copy/count/presence verification. Sprite fields and flags would travel inside their complete values. |
-| PARW, PBAR, PBEA, PCON, PFLA, PGRE, PMIS | Candidates for support. Each exposes a Projectile link plus the same inherited placed fields already handled for PHZD. xEdit uses its shared ReferenceRecord definition for these signatures. Reuse the existing PHZD field patterns after verifying each concrete setter, query/narrowing route, nested output and header flags. This does not imply extending ACHR/REFR UDR policy. |
-| LTEX | Reconsider the blanket exclusion. The dormant handler covers texture/material links, friction/restitution, specular exponent, grasses and snow flags. The existing reason names a runtime policy but does not establish why these authored properties must be excluded. Validate field coupling and serialization before enabling its route. |
 | LAND | Keep excluded from generic property merging for now. Height data, normals, colors and texture layers require coordinated terrain handling. The dormant handler still has unordered Layers/Textures exceptions; its existence does not establish a safe terrain merge. Whole-record selection could be investigated separately. |
 | NAVI | Keep unsupported until a navigation-consistency policy exists. Its map entries include navmesh links, edge/door connections and optional island data. Independent list merging or copying does not establish consistency with the selected NAVM data. |
 | IMAD | Keep excluded until the writer issue is resolved or safely bounded. The current decompiled writer emits DNAM unconditionally, so absence is not preserved. That is a serialization limitation, not proof that image-space adapters can never be supported. |
@@ -47,7 +39,8 @@ Some supported records also use indirect routes:
 |---|---|
 | GLOB | Global query narrowed to Float, Int, Short or Unknown. Each has its own Data handling. |
 | GMST | Game-setting query narrowed to Bool, Float, Int or String. |
-| PHZD | Placed-trap query narrowed to hazards. Hazard, all eighteen inherited placed fields and shared metadata/header handling are registered. The sibling variants are still narrowed away. |
+| PHZD | Placed-trap query narrowed to hazards. Hazard, all eighteen inherited placed fields and shared metadata/header handling are registered. All seven placed-projectile siblings have their own concrete narrowing and handlers. |
+| PARW / PBAR / PBEA / PCON / PFLA / PGRE / PMIS | Shared placed-trap query narrowed separately to each concrete variant. Projectile, all eighteen inherited fields and shared metadata/header handling are registered. No ACHR/REFR UDR coordination. |
 | FLST | Routed to FormIdRecordHandler. |
 | INFO | Routed to singular-named DialogResponseRecordHandler, separately from DIAL child lists. |
 | ACHR / REFR | Placed NPC/object handlers, independently queried even beneath cells. |

@@ -2,7 +2,7 @@
 
 [Patching guide](README.md) · [Unsupported records](unsupported.md)
 
-All 118 supported variants (112 signatures) are listed here, including families disabled by default.
+All 128 supported variants (122 signatures) are listed here, including families disabled by default.
 
 | Signature | Record | Guide |
 |---|---|---|
@@ -72,9 +72,11 @@ All 118 supported variants (112 signatures) are listed here, including families 
 | KYWD | Keyword | [Settings, lists and other records](settings.md#kywd-keyword) |
 | LCRT | LocationReferenceType | [World and environment](world.md#lcrt-locationreferencetype) |
 | LCTN | Location | [World and environment](world.md#lctn-location) |
+| LENS | LensFlare | [Visual effects and assets](visuals.md#lens-lensflare) |
 | LGTM | LightingTemplate | [World and environment](world.md#lgtm-lightingtemplate) |
 | LIGH | Light | [Objects and interaction](objects.md#ligh-light) |
 | LSCR | LoadScreen | [Settings, lists and other records](settings.md#lscr-loadscreen) |
+| LTEX | LandscapeTexture | [World and environment](world.md#ltex-landscapetexture) |
 | LVLI | LeveledItem | [Items and equipment](items.md#lvli-leveleditem) |
 | LVLN | LeveledNpc | [Actors and character data](actors.md#lvln-levelednpc) |
 | LVSP | LeveledSpell | [Magic and projectiles](magic.md#lvsp-leveledspell) |
@@ -91,8 +93,15 @@ All 118 supported variants (112 signatures) are listed here, including families 
 | NPC_ | Npc | [Actors and character data](actors.md#npc_-npc) |
 | OTFT | Outfit | [Actors and character data](actors.md#otft-outfit) |
 | PACK | Package | [Quests, dialogue and AI](quests.md#pack-package) |
+| PARW | PlacedArrow | [Placed records](placed.md#parw-placedarrow) |
+| PBAR | PlacedBarrier | [Placed records](placed.md#pbar-placedbarrier) |
+| PBEA | PlacedBeam | [Placed records](placed.md#pbea-placedbeam) |
+| PCON | PlacedCone | [Placed records](placed.md#pcon-placedcone) |
 | PERK | Perk | [Quests, dialogue and AI](quests.md#perk-perk) |
+| PFLA | PlacedFlame | [Placed records](placed.md#pfla-placedflame) |
+| PGRE | PlacedTrap | [Placed records](placed.md#pgre-placedtrap) |
 | PHZD | PlacedHazard | [Placed records](placed.md#phzd-placedhazard) |
+| PMIS | PlacedMissile | [Placed records](placed.md#pmis-placedmissile) |
 | PROJ | Projectile | [Magic and projectiles](magic.md#proj-projectile) |
 | QUST | Quest | [Quests, dialogue and AI](quests.md#qust-quest) |
 | RACE | Race | [Actors and character data](actors.md#race-race) |
@@ -118,6 +127,7 @@ All 118 supported variants (112 signatures) are listed here, including families 
 | TACT | TalkingActivator | [Objects and interaction](objects.md#tact-talkingactivator) |
 | TREE | Tree | [World and environment](world.md#tree-tree) |
 | TXST | TextureSet | [Visual effects and assets](visuals.md#txst-textureset) |
+| VOLI | VolumetricLighting | [Visual effects and assets](visuals.md#voli-volumetriclighting) |
 | VTYP | VoiceType | [Actors and character data](actors.md#vtyp-voicetype) |
 | WATR | Water | [World and environment](world.md#watr-water) |
 | WEAP | Weapon | [Items and equipment](items.md#weap-weapon) |

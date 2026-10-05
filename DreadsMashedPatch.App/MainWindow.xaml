@@ -103,7 +103,7 @@
                                     <Run FontWeight="SemiBold" Text="Amethyst:"/>
                                     <Run Text=" Deploy your active profile before running the patcher."/>
                                 </TextBlock>
-                                <TextBlock Text="The paths below are examples. Replace the placeholders and adjust the folders to match your installation and active profile."
+                                <TextBlock Text="Use the normal-install examples unless your list uses Stock Game or Game Root. Steam libraries, GOG installations, and manager folders may be elsewhere; browse to your actual installation and active profile."
                                            TextWrapping="Wrap" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
@@ -114,7 +114,7 @@
                             <StackPanel>
                                 <TextBlock Text="Wabbajack / Stock Game: select the game installation your list uses"
                                            FontWeight="Bold" TextWrapping="Wrap"/>
-                                <TextBlock Text="Select your list's copied game folder and its Data folder, even if you have another Skyrim installation in Steam. Detect paths may find the Steam installation instead. Select the active profile's plugins.txt, then verify the paths before patching."
+                                <TextBlock Text="If your list uses a copied installation, select that game folder and its Data folder. Otherwise, select your normal Steam or GOG installation. Detect paths may find the Steam installation instead. Select the active profile's plugins.txt, then verify the paths before patching."
                                            TextWrapping="Wrap" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
@@ -146,10 +146,16 @@
                         <TextBlock Style="{StaticResource HelpText}">
                             <Run Text="Contains SkyrimSE.exe or SkyrimVR.exe and, when present, Skyrim.ccc."/>
                             <LineBreak/>
-                            <Run FontWeight="SemiBold" Text="MO2 example:"/>
+                            <Run FontWeight="SemiBold" Text="Normal installation (Windows):"/>
+                            <Run Text=" C:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="Normal installation (Proton):"/>
+                            <Run Text=" Z:\home\&lt;username&gt;\.local\share\Steam\steamapps\common\Skyrim Special Edition"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="MO2 Stock Game example:"/>
                             <Run Text=" C:\Modlists\&lt;list name&gt;\Stock Game"/>
                             <LineBreak/>
-                            <Run FontWeight="SemiBold" Text="Amethyst example (Proton):"/>
+                            <Run FontWeight="SemiBold" Text="Amethyst Game Root example (Proton):"/>
                             <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\.wj\&lt;list name&gt;\root\Game Root"/>
                         </TextBlock>
 
@@ -165,10 +171,16 @@
                         <TextBlock Style="{StaticResource HelpText}">
                             <Run Text="Contains the plugins used by your game or mod list."/>
                             <LineBreak/>
-                            <Run FontWeight="SemiBold" Text="MO2 example:"/>
+                            <Run FontWeight="SemiBold" Text="Normal installation (Windows):"/>
+                            <Run Text=" C:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition\Data"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="Normal installation (Proton):"/>
+                            <Run Text=" Z:\home\&lt;username&gt;\.local\share\Steam\steamapps\common\Skyrim Special Edition\Data"/>
+                            <LineBreak/>
+                            <Run FontWeight="SemiBold" Text="MO2 Stock Game example:"/>
                             <Run Text=" C:\Modlists\&lt;list name&gt;\Stock Game\Data"/>
                             <LineBreak/>
-                            <Run FontWeight="SemiBold" Text="Amethyst example (Proton):"/>
+                            <Run FontWeight="SemiBold" Text="Amethyst Game Root example (Proton):"/>
                             <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\.wj\&lt;list name&gt;\root\Game Root\Data"/>
                         </TextBlock>
 
@@ -185,7 +197,7 @@
                             <Run Text="Select the plugins.txt file used by your active profile or game installation."/>
                             <LineBreak/>
                             <Run FontWeight="SemiBold" Text="MO2 example:"/>
-                            <Run Text=" C:\Modlists\&lt;list name&gt;\profiles\&lt;profile name&gt;\plugins.txt"/>
+                            <Run Text=" C:\Modding\MO2\profiles\&lt;profile name&gt;\plugins.txt"/>
                             <LineBreak/>
                             <Run FontWeight="SemiBold" Text="Amethyst example (Proton):"/>
                             <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\profiles\&lt;profile name&gt;\plugins.txt"/>
@@ -203,7 +215,7 @@
                             <Run Text="Stores the generated patch plugins. With MO2 or Amethyst, create an empty mod for the patch using your mod manager's interface, then select that mod's folder."/>
                             <LineBreak/>
                             <Run FontWeight="SemiBold" Text="MO2 example:"/>
-                            <Run Text=" C:\Modlists\&lt;list name&gt;\mods\Mashed Patch"/>
+                            <Run Text=" C:\Modding\MO2\mods\Mashed Patch"/>
                             <LineBreak/>
                             <Run FontWeight="SemiBold" Text="Amethyst example (Proton):"/>
                             <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\mods\Mashed Patch"/>

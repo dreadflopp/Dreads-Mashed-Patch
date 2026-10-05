@@ -12,7 +12,7 @@ Use the [record index](INDEX.md) to find a record by its four-letter signature. 
 | Weapons, armor, inventory and crafting | [Items](items.md) |
 | Spells, effects and projectiles | [Magic](magic.md) |
 | Cells, worldspaces, weather and navigation | [World](world.md) |
-| Placed actors, objects and hazards | [Placed records](placed.md) |
+| Placed actors, objects, hazards and projectiles | [Placed records](placed.md) |
 | Quests, scenes, dialogue, perks and packages | [Quests and AI](quests.md) |
 | Sound and music | [Audio](audio.md) |
 | Textures, impacts and other visual effects | [Visuals](visuals.md) |
@@ -29,7 +29,9 @@ Use the [record index](INDEX.md) to find a record by its four-letter signature. 
 5. If a change remains, the patcher stages a detached override from the effective winner and applies the selected flags and other changed properties. Every record, including NPC, uses its resolved context through the shared commit path. Required parent containers are staged too; the completed record and ancestry are published only after successful application and validation. Unregistered properties are not independently merged from earlier mods.
 6. Failed record candidates are discarded while other records continue processing for diagnostics. Any recorded patching error rejects the run before publication. After successful processing, Synthesis writes the patch, splitting output if necessary for master limits. The desktop app commits its staged files only with a successful run report and no pipeline errors; failures preserve the previous primary and split outputs. See [failure handling](KNOWN-ISSUES.md#errors-can-leave-partial-overrides).
 
-DIAL, DLBR, INFO, DLVW, NAVM and PACK are **supported but disabled by default**. Their guide sections describe behavior when enabled. DOBJ, LAND, LTEX and IMAD are explicitly excluded and cannot be enabled through this supported-record path.
+DIAL, DLBR, INFO, DLVW, NAVM and PACK are **supported but disabled by default**. Their guide sections describe behavior when enabled. DOBJ, LAND and IMAD are explicitly excluded and cannot be enabled through this supported-record path.
+
+VOLI, LENS, LTEX and all seven placed-projectile variants are supported and enabled by default. VOLI selects a complete lighting preset; LENS selects both globals and all sprites together. The placed variants narrow separately from the shared placed-trap query and reuse PHZD’s reviewed fields. LTEX handles authored texture/material data independently of LAND.
 
 ## How a value is selected
 
@@ -80,8 +82,8 @@ The [keyword-removal fix](REVIEW.md#coverage-fix-verification) applies to all ei
 
 ## Placed-reference coordination
 
-ACHR and REFR coordinate safe deletion handling. A safe UDR state combines InitiallyDisabled, Z = -30000 at comparison precision, and an enable parent opposite to the player. When such a state occurs in the history, the owner of the selected InitiallyDisabled bit can also supply Placement and EnableParent. Coherent restoration is handled too. An ordinary disabled reference does not automatically trigger this rule. PHZD does not use it.
+ACHR and REFR coordinate safe deletion handling. A safe UDR state combines InitiallyDisabled, Z = -30000 at comparison precision, and an enable parent opposite to the player. When such a state occurs in the history, the owner of the selected InitiallyDisabled bit can also supply Placement and EnableParent. Coherent restoration is handled too. An ordinary disabled reference does not automatically trigger this rule. PHZD and the seven placed-projectile variants do not use it.
 
 ## Scope and evidence
 
-These guides were initially reviewed against source baseline `823a8f3`, updated for the five completed fixes on 2026-10-04, and updated on 2026-10-05 after the [keyword, PHZD and inherited-audit fixes](REVIEW.md#coverage-fix-verification), with Mutagen Skyrim 0.54.4. The [inventory](INVENTORY.md) remains the authoritative coverage checklist. Implementation was rechecked through input preparation, queries, source resolution, selection, setters and output writing; see the [review evidence](REVIEW.md). Property support does not establish gameplay safety for every combination or byte-for-byte preservation of omitted fields.
+These guides were initially reviewed against source baseline `823a8f3`, updated for the five completed fixes on 2026-10-04, and updated on 2026-10-05 after the [keyword, PHZD and inherited-audit fixes](REVIEW.md#coverage-fix-verification), and the [VOLI, LENS, LTEX and placed-projectile additions](REVIEW.md#additional-record-support-verification), with Mutagen Skyrim 0.54.4. The [inventory](INVENTORY.md) remains the authoritative coverage checklist. Implementation was rechecked through input preparation, queries, source resolution, selection, setters and output writing; see the [review evidence](REVIEW.md). Property support does not establish gameplay safety for every combination or byte-for-byte preservation of omitted fields.

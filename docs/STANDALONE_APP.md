@@ -4,7 +4,7 @@
 
 The current version is still being tested. Inspect every generated output plugin in xEdit, correct patching that does not match your intended modlist behavior, and report bugs through the repository's Issues tab. Download the executable from the Nexus placeholder linked on the project front page.
 
-Mashed Patch is a Windows desktop patcher. It is not intended to be added to or launched by the Synthesis application. The desktop host uses Mutagen and the Synthesis pipeline libraries internally to construct the load order and write the output plugin, while retaining one patch implementation in `DreadsMashedPatch.Program.RunPatch`.
+Mashed Patch is a Windows desktop patcher. It is not intended to be added to or launched by the Synthesis application. Choose your settings in the desktop app, then run it to generate the patch. The [README settings guide](../README.md#settings) explains every user-facing option.
 
 ## Running
 
@@ -19,7 +19,7 @@ Run output is stored in `%LOCALAPPDATA%\DreadsMashedPatch\Logs`. `DreadsMashedPa
 
 ### Mod Organizer 2
 
-Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. For Wabbajack lists, select the list's Stock Game folder and its Data folder, then select the active MO2 profile's `plugins.txt`. Create an empty mod for the patch using MO2's interface, then select that mod's folder as the patch output folder.
+Add `DreadsMashedPatch.exe` to MO2 as an executable and launch it through MO2. Select your normal Skyrim installation and its Data folder, or the list's Stock Game copy if it uses one. Select the active MO2 profile's `plugins.txt`. Create an empty mod for the patch using MO2's interface, then select that mod's folder as the patch output folder.
 
 ### Wabbajack and Stock Game paths
 
@@ -27,7 +27,7 @@ Some lists launch a copied game installation, often named **Stock Game** or **Ga
 
 ### Proton and Amethyst
 
-Launch the Windows executable in a Proton prefix that can access the selected game and profile paths, either directly or through Amethyst's external applications feature. Deploy the active profile first. Confirm the actual game folder (including a list's Stock Game copy), deployed Data folder, and active `plugins.txt` manually. An example Amethyst load-order path is `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\profiles\<profile name>\plugins.txt`; adjust it to match your installation and active profile. Create an empty mod for the patch using Amethyst's interface, then select that mod's folder as the patch output folder. Startup and General-tab rendering have been smoke-tested under Proton 10.0 in a fresh prefix at the default window size; this does not verify patching or mod-manager integration.
+Launch the Windows executable in a Proton prefix that can access the selected game and profile paths, either directly or through Amethyst's external applications feature. Deploy the active profile first. Confirm the actual game folder (including a list's Stock Game copy), deployed Data folder, and active `plugins.txt` manually. An example Amethyst load-order path is `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\profiles\<profile name>\plugins.txt`; adjust it to match your installation and active profile. Create an empty mod for the patch using Amethyst's interface, then select that mod's folder as the patch output folder.
 
 ### Without a mod manager
 
@@ -39,22 +39,29 @@ Select your Skyrim installation's Data folder in both the **Data folder** and **
 - **Data folder:** Contains the plugins used by your game or mod list.
 - **Patch output folder:** Stores the generated patch plugins. With MO2 or Amethyst, create an empty mod for the patch using your mod manager's interface, then select that mod's folder. Without a mod manager, select your Skyrim installation's Data folder.
 
-The General tab has a shared **Mod manager setup** notice: launch the patcher through MO2 to access your active profile's virtual files, or deploy your active Amethyst profile before running the patcher. The paths below are examples. Replace the placeholders and adjust the folders to match your installation and active profile. The Amethyst game path follows the `.wj/<list name>/root/Game Root` layout.
+The General tab has a shared **Mod manager setup** notice: launch the patcher through MO2 to access your active profile's virtual files, or deploy your active Amethyst profile before running the patcher. The paths below are examples. Replace the placeholders and adjust the folders to match your installation and active profile. Use the normal-install examples when your manager launches your Steam installation. Use the copied-install examples only when your list launches a separate Stock Game or Game Root folder.
 
-| Field | MO2 example | Amethyst example (Proton) |
+#### Normal installation (no Stock Game or Game Root)
+
+| Field | MO2 example (Windows) | Amethyst example (Proton) |
+| --- | --- | --- |
+| Skyrim game folder | `C:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition` | `Z:\home\<username>\.local\share\Steam\steamapps\common\Skyrim Special Edition` |
+| Data folder | `C:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition\Data` | `Z:\home\<username>\.local\share\Steam\steamapps\common\Skyrim Special Edition\Data` |
+| Load order file (plugins.txt) | `C:\Modding\MO2\profiles\<profile name>\plugins.txt` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\profiles\<profile name>\plugins.txt` |
+| Patch output folder | `C:\Modding\MO2\mods\Mashed Patch` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\mods\Mashed Patch` |
+
+Steam libraries, GOG installations, MO2 instances, and Amethyst storage can live elsewhere. Browse to your actual folders. With MO2, launch through MO2 so the normal Data path exposes the profile's virtual files. With Amethyst, use the Data folder where your active profile is deployed.
+
+Without a mod manager, the normal game and Data examples still apply. Use `%LOCALAPPDATA%\Skyrim Special Edition\plugins.txt` (or the corresponding GOG/VR folder) for the load order and the game's Data folder for output. Under Proton, `%LOCALAPPDATA%` belongs to the game prefix; select that prefix's active `plugins.txt`.
+
+#### Copied installation (Stock Game or Game Root)
+
+| Field | MO2 example (Windows) | Amethyst example (Proton) |
 | --- | --- | --- |
 | Skyrim game folder | `C:\Modlists\<list name>\Stock Game` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\.wj\<list name>\root\Game Root` |
 | Data folder | `C:\Modlists\<list name>\Stock Game\Data` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\.wj\<list name>\root\Game Root\Data` |
 | Load order file (plugins.txt) | `C:\Modlists\<list name>\profiles\<profile name>\plugins.txt` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\profiles\<profile name>\plugins.txt` |
 | Patch output folder | `C:\Modlists\<list name>\mods\Mashed Patch` | `Z:\home\<username>\Games\Amethyst\Skyrim Special Edition\mods\Mashed Patch` |
-
-### Typography on Windows and Proton
-
-Both application windows use embedded, static TrueType Noto Sans fonts at 14 device-independent pixels for body text. Logs and multiline plugin/keyword fields use Noto Sans Mono at 13 pixels; record signatures and elapsed time use the same embedded monospace family. Regular, semibold, bold, and italic UI faces and regular/semibold monospace faces are included, so these styles do not require installing fonts in Windows or a Proton prefix. Glyphs outside the bundled families' coverage still use WPF font fallback.
-
-The shared window style uses display text formatting, grayscale antialiasing, layout rounding, and device-pixel snapping. Grayscale avoids dependence on the prefix's ClearType/subpixel configuration. Buttons, fields, tabs, headings, and help text share spacing rules. System file dialogs, message boxes, and window decorations retain platform-provided typography because WPF application styles do not control those surfaces.
-
-Typography migration note: both windows share one typography/rendering style; all former Consolas assignments use the bundled monospace resource or shared textbox style. The installation picker reuses the existing section-heading style. System dialogs remain platform-managed; patch logic and record-specific handlers retain their existing implementation. Font sources and the redistribution license are in `DreadsMashedPatch.App/Assets/Fonts`; the license is also embedded and copied alongside published output.
 
 ### Output and path verification
 
@@ -66,11 +73,9 @@ Listings are parsed with Mutagen, and plugin identities are compared using `ModK
 
 Pasted path text can include surrounding double quotes or mixed `/` and `\` separators. The app normalizes these for its runtime. Under Wine/Proton, existing Unix absolute paths are mapped through `Z:` when that mapped file or folder is accessible. All four path Browse buttons share the same normalization and use an absolute existing starting directory. If the shell dialog rejects it, Browse retries once without a starting directory; a persistent failure produces a handled error message. Clearing a path field also opens Browse without a starting directory.
 
-Browse migration note: game, input, output, and plugins.txt browsing share one path-input and dialog-fallback implementation; the separate raw `InitialDirectory` assignments were removed. Master-rule import/export dialogs retain their existing behavior because they do not accept pasted starting-directory fields. Game-folder inference uses the same safe path handling. Record handlers and flag policies are unchanged.
-
 ## Record selection
 
-Most supported record families are enabled by default. DIAL, DLBR, INFO, DLVW, NAVM and PACK start disabled in new configurations because their coupled data needs extra care. Their behavior when enabled and remaining limits are in the [record tables](record-patching/INDEX.md). The UI groups them by the four-character signatures used by xEdit, such as `QUST` for quests. Settings store only disabled families, so record families added in future versions are automatically enabled. The list supports search, arrow-key navigation, and Space to toggle the selected row. `Ctrl+F` focuses the search box.
+Most supported record families are enabled by default, including VOLI, LENS, LTEX and all seven placed-projectile variants. DIAL, DLBR, INFO, DLVW, NAVM and PACK start disabled in new configurations because their coupled data needs extra care. Their behavior when enabled and remaining limits are in the [record tables](record-patching/INDEX.md). The UI groups them by the four-character signatures used by xEdit, such as `QUST` for quests. Settings store only disabled families, so record families added in future versions are automatically enabled. The list supports search, arrow-key navigation, and Space to toggle the selected row. `Ctrl+F` focuses the search box.
 
 ## Diagnostics
 
@@ -82,62 +87,12 @@ The primary output name is fixed as `MashedPatch.esp`. If the patch needs more t
 
 Use **Create empty patch output** on the General tab before the first full run when the plugin must be positioned in a mod manager. The action removes the primary and recognized split outputs, then writes one empty, masterless plugin at the stable primary filename.
 
-Path/output migration note: full runs and empty-output creation now share one explicit destination setting and the existing output transaction. The Data folder setting remains separate; Synthesis still handles imports, deduplication, load-order trimming, and output splitting. Creation Club file parsing is shared by preparation and verification. No record handlers or flag policies changed. The old output destination derived from the Data folder and obsolete Creation Club parsing loop were removed.
-
 Plugins on the **Priority Mods** tab win at record scope. If another plugin overwrites one of their records, Mashed Patch copies the complete record snapshot from the matching priority mod occurring last in the configured list instead of merging individual properties. No patch record is needed when that selected source is already the winning override.
 
 At the start of every run, the patcher builds its official baseline from the base game, DLC, `SkyrimVR.esm`, and optionally the installed entries from `Skyrim.ccc`. It then intersects that set with the final Synthesis load order, so missing plugins are ignored. The **Treat Creation Club content as official baseline** policy is enabled by default to preserve the original behaviour; disabling it makes Creation Club conflicts eligible for forwarding like ordinary mods.
 
 The **Editor IDs (EDID)** policy offers three behaviors. **Preserve the official Editor ID** restores the EDID from the latest plugin in the configured official baseline. This keeps official identifiers stable when mods rename them. **Forward Editor ID changes** retains normal field forwarding. **Forward only on an existing patch record** (the default for new configurations) forwards an EDID when some other property also needs an override, but never creates an EDID-only patch record.
 
-Migration note: EDID policy selection is generalized in the shared record-processing path for every supported record type. Record-specific property handlers and all non-EDID fields remain specialized as before; only the final EDID decision is governed centrally so there is one implementation path.
-
 The **Tamriel persistent cell** policy applies only to `000D74:Skyrim.esm`, the persistent CELL for the Tamriel worldspace. This record is frequently included wholesale by otherwise unrelated mods, which can repeatedly restore older CELL states. The recommended hybrid option uses normal property forwarding unless the winning CELL header is equivalent to Skyrim.esm; in that case it copies Dawnguard.esm's header instead. The other options always copy Dawnguard.esm, copy Skyrim.esm, copy the winning override, or always use normal property forwarding. Header equivalence and copying deliberately exclude persistent and temporary references, landscape, navigation meshes, and group metadata. This specific rule takes precedence over ordinary early exits, while an explicit Priority Mods rule remains authoritative; all other CELL records are unaffected.
 
 The **Master Rules** tab supports intentional overwrite relationships that plugin headers do not declare. Each rule names one plugin to treat as a master and the target mods that receive that authority. New configurations include curated rules for USSEP-aware mods and Creation Club overhauls that rely on `Unofficial Skyrim Creation Club Content Patch.esl`. Empty rules have no effect and can be populated later. The **Restore default rules** button replaces the edited list with a fresh copy of that default set. Rules are compiled once per run into a target-to-virtual-masters lookup; imported plugin headers are never modified. If the relationship is already present in a target plugin's real masters list, the rule is harmless and does not add or duplicate header entries.
-
-## Build and publish
-
-For regenerating the ignored Mutagen and xEdit references on Windows or Linux,
-see [Rebuilding external reference sources](REFERENCE_SOURCES.md).
-
-On Windows, run the existing launcher from the repository root for a clean Release build, test run, and self-contained publish:
-
-```bat
-.\Build-Standalone.cmd
-```
-
-The launcher permits this repository's PowerShell script to run for that process only; it does not change the system execution policy. The script removes only the known generated `bin`/`obj` directories and the canonical `artifacts\DreadsMashedPatch-win-x64` publish directory. It then restores packages, builds the solution, runs the tests, and publishes the current standalone executable.
-
-On Linux, install the .NET 10 SDK and run:
-
-```bash
-bash ./Build-Standalone.sh
-```
-
-The Linux script requires .NET 10. It uses the SDK on `PATH` if compatible, otherwise it checks the repository's `.tools/dotnet` installation. It prints the selected SDK and reports a clear error if neither is compatible. This avoids selecting a system .NET 9 SDK when a local .NET 10 SDK is available.
-
-The Linux script restores, builds, tests, and publishes the same `win-x64` Windows executable to `artifacts/DreadsMashedPatch-win-x64`. It does not clean `bin` or `obj`. `EnableWindowsTargeting` lets the SDK obtain Windows targeting packs on Linux; it does not make WPF a native Linux UI. Run the published executable through Wine or Proton to test the interface.
-
-Build and run tests on Windows:
-
-```powershell
-dotnet build "DreadsMashedPatch.sln"
-dotnet test "DreadsMashedPatch.Tests/DreadsMashedPatch.Tests.csproj"
-```
-
-On Linux, `dotnet test DreadsMashedPatch.Tests/DreadsMashedPatch.Tests.csproj` runs the platform-neutral patcher tests without building the WPF app. `dotnet build DreadsMashedPatch.sln` also compiles the Windows-targeted WPF app when its targeting packs are available.
-
-Publish a self-contained 64-bit Windows executable:
-
-```powershell
-dotnet publish "DreadsMashedPatch.App/DreadsMashedPatch.App.csproj" -c Release -o "artifacts/DreadsMashedPatch-win-x64"
-```
-
-Trimming is deliberately disabled because the patcher and Mutagen use reflection. Native WPF dependencies are bundled for extraction by the self-contained executable.
-
-## Implementation note
-
-- Generalized: runtime settings, record-family selection, diagnostics configuration, standalone state creation, and output writing are exposed through the desktop host.
-- Specialized: every existing record and property handler remains the only implementation for its record-specific forwarding behavior.
-- Reason: the UI configures and invokes the established patch path; it does not duplicate forwarding logic.

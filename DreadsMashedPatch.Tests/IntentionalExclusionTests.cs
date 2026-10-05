@@ -59,7 +59,6 @@ public class IntentionalExclusionTests
         var excludedTypes = new[]
         {
             typeof(IDefaultObjectManagerGetter),
-            typeof(ILandscapeTextureGetter),
             typeof(ILandscapeGetter),
             typeof(IImageSpaceAdapterGetter)
         };

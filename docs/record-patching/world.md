@@ -93,6 +93,22 @@ Lighting includes its inheritance flags and Versioning. WaterHeight is not indep
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LightingTemplateRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
+<a id="ltex-landscapetexture"></a>
+
+## LTEX — Landscape Texture
+
+LTEX is supported independently of excluded LAND terrain geometry. The xEdit definition describes texture/material links, two HNAM scalar fields, a SNAM scalar, sorted GNAM grass references, and nullable SSE INAM snow flags. Friction and restitution remain separate authored decisions even though they share HNAM.
+
+| Properties | How they are patched |
+|---|---|
+| `TextureSet`, `MaterialType`, `HavokFriction`, `HavokRestitution`, `TextureSpecularExponent` | Select each value separately. |
+| `Grasses` | Merge by Grass FormID and emit in sorted order, retaining duplicate occurrences. |
+| `Flags` | Use the approved nullable flag handler for IsSnow, with flag presence tracked separately from the bit value. Absent INAM and present zero are distinct. |
+
+Mutagen exposes HNAM/SNAM scalars without nullable subrecord presence; copying/writing can normalize absent scalar subrecords. INAM serialization requires a compatible SSE FormVersion (43 or later). Support does not promise preservation of unsupported on-disk representations.
+
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LandscapeTextureRecordHandler.cs); [xEdit review and binary verification](REVIEW.md#additional-record-support-verification).
+
 <a id="navm-navigationmesh"></a>
 
 ## NAVM — Navigation Mesh
@@ -172,7 +188,7 @@ LodData groups LodWater and LodWaterHeight; a water link without a height is rej
 
 ## WTHR — Weather
 
-CloudTextures and Clouds are separate whole lists. Each named color structure, ImageSpaces, VolumetricLighting and DirectionalAmbientLightingColors keeps its time-of-day components together. References to VOLI and LENS do not patch those records themselves.
+CloudTextures and Clouds are separate whole lists. Each named color structure, ImageSpaces, VolumetricLighting and DirectionalAmbientLightingColors keeps its time-of-day components together. These references select identities; the referenced [VOLI](visuals.md#voli-volumetriclighting) and [LENS](visuals.md#lens-lensflare) records have separate enabled processing routes.
 
 | Properties | How they are patched |
 |---|---|

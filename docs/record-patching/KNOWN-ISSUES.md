@@ -11,6 +11,9 @@ Reviewed on 2026-10-05 against the current implementation with Mutagen Skyrim 0.
 | PACK | Disabled by default. Even when enabled, PackageTemplate, DataInputVersion, Data, XnamMarker and ProcedureTree have no active property registration. Mutagen writes indexed data in key order; the binary regression preserves index/value associations, but gameplay impact remains unproven. Winner/priority copies still use that writer. |
 | NAVM / NAVI | NAVM is disabled by default and selects whole geometry/connectivity data when enabled. There is no independent NAVI processing route or patcher-owned reconstruction. NAVM and REFR navigation-door-link forwarding do not establish navigation-map consistency. |
 | DIAL / DLBR / INFO / DLVW | Disabled by default. Enabling them permits the documented property rules but can combine coupled data from different authors; validation does not establish dialogue correctness. |
+| VOLI / LENS | Complete lighting/flare presets select atomically. LENS order, duplicates, nullable presence and sprite payloads are retained; tint comparison follows serialized RGB, with Opacity separate. No independent leaf, sprite-row or embedded flag merge. |
+| LTEX | HNAM/SNAM scalars do not expose nullable subrecord presence and writing may normalize absent representations. Nullable SSE INAM snow flags require FormVersion 43 or later. LAND remains excluded. |
+| Placed projectiles / PHZD | All inherited fields are supported. ACHR/REFR UDR coordination is not applied to these variants. |
 | ARMA | All four model filename handlers copy associated data bytes but ignore byte-only differences. This is an explicit retained policy. Alternate textures merge separately. |
 | Ordinary script-list VMAD | Scripts merge by name as complete rows. Version/ObjectFormat remain destination-owned, so metadata-only edits are not independently forwarded. INFO/PACK/PERK whole adapters and QUST/SCEN explicit child fields have different policies. |
 | Null/default writes | Setters have property-specific normalization. Shared post-write validation checks non-null values only. The repaired keyword setter preserves absent versus present-empty lists, but there is no universal null-removal guarantee. |
@@ -31,7 +34,7 @@ These sections retain link targets used by the record tables. Full migration dec
 
 ### Record-header flags
 
-Fixed on 2026-10-04. All 122 concrete handlers use one approved composite `MajorRecordFlagsRawHandler`; overlapping header registrations and OR-based application were removed. Selected clears cannot be reintroduced by another header view, and unowned bits remain winner-owned. ACHR/REFR UDR coordination reads the integer flag context. [Completion evidence](REVIEW.md#record-header-migration-verification).
+Fixed on 2026-10-04. The 122 concrete handlers at that baseline were migrated to one approved composite `MajorRecordFlagsRawHandler`; overlapping header registrations and OR-based application were removed. Selected clears cannot be reintroduced by another header view, and unowned bits remain winner-owned. ACHR/REFR UDR coordination reads the integer flag context. [Completion evidence](REVIEW.md#record-header-migration-verification).
 
 ### Container item extra data
 
@@ -60,6 +63,10 @@ Fixed on 2026-10-05. Group lookup uses the registered getter type instead of a b
 ### Keyword removal and PHZD coverage
 
 Fixed on 2026-10-05. All eighteen shared keyword-setter registrations apply selected absence, retain present-empty lists, and copy detached links. PHZD registers all eighteen inherited placed fields through existing handlers; UDR remains scoped to ACHR/REFR. The coverage audit now scans inherited record/aspect fields and classifies typed GLOB discriminators. [Completion evidence](REVIEW.md#coverage-fix-verification).
+
+### VOLI, LENS, LTEX and placed-projectile support
+
+Added on 2026-10-05. All ten variants have supported query/filter/dispatch paths and approved composite header flags. VOLI/LENS group their coupled authored parameters; placed projectiles reuse PHZD field patterns; LTEX uses nullable snow flags and sorted grasses. [Decision notes, source review and verification](REVIEW.md#additional-record-support-verification).
 
 ## Re-evaluation and verification
 

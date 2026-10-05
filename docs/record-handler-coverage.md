@@ -1,6 +1,6 @@
 # Record handler property coverage audit
 
-Generated: 2026-10-05 18:49:57 +02:00
+Generated: 2026-10-05 19:51:59 +02:00
 
 This is a static registration audit. `Covered` is an exact registration, `AggregateCovered` is inferred from a specialized handler implementation, `Partial` indicates nested/split handling, and `MissingCandidate` has no detected handler. Reviewed aliases and non-property surfaces are classified through the tracked overrides file.
 
@@ -78,6 +78,7 @@ Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File sc
 | KeywordRecordHandler.cs | IKeywordGetter | 3 | 0 | 0 | 0 | 1 |  |
 | LandscapeRecordHandler.cs | ILandscapeGetter | 8 | 0 | 0 | 0 | 1 |  |
 | LandscapeTextureRecordHandler.cs | ILandscapeTextureGetter | 9 | 0 | 0 | 0 | 1 |  |
+| LensFlareRecordHandler.cs | ILensFlareGetter | 2 | 3 | 0 | 0 | 1 |  |
 | LeveledItemRecordHandler.cs | ILeveledItemGetter | 7 | 0 | 0 | 0 | 1 |  |
 | LeveledNpcRecordHandler.cs | ILeveledNpcGetter | 6 | 2 | 0 | 0 | 1 |  |
 | LeveledSpellRecordHandler.cs | ILeveledSpellGetter | 6 | 0 | 0 | 0 | 1 |  |
@@ -101,9 +102,16 @@ Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File sc
 | OutfitRecordHandler.cs | IOutfitGetter | 3 | 0 | 0 | 0 | 1 |  |
 | PackageRecordHandler.cs | IPackageGetter | 21 | 0 | 0 | 0 | 10 |  |
 | PerkRecordHandler.cs | IPerkGetter | 14 | 0 | 0 | 0 | 2 |  |
+| PlacedArrowRecordHandler.cs | IPlacedArrowGetter | 21 | 0 | 0 | 0 | 2 |  |
+| PlacedBarrierRecordHandler.cs | IPlacedBarrierGetter | 21 | 0 | 0 | 0 | 2 |  |
+| PlacedBeamRecordHandler.cs | IPlacedBeamGetter | 21 | 0 | 0 | 0 | 2 |  |
+| PlacedConeRecordHandler.cs | IPlacedConeGetter | 21 | 0 | 0 | 0 | 2 |  |
+| PlacedFlameRecordHandler.cs | IPlacedFlameGetter | 21 | 0 | 0 | 0 | 2 |  |
 | PlacedHazardRecordHandler.cs | IPlacedHazardGetter | 21 | 0 | 0 | 0 | 2 |  |
+| PlacedMissileRecordHandler.cs | IPlacedMissileGetter | 21 | 0 | 0 | 0 | 2 |  |
 | PlacedNpcRecordHandler.cs | IPlacedNpcGetter | 31 | 0 | 0 | 0 | 2 |  |
 | PlacedObjectRecordHandler.cs | IPlacedObjectGetter | 60 | 0 | 0 | 0 | 2 |  |
+| PlacedTrapRecordHandler.cs | IPlacedTrapGetter | 21 | 0 | 0 | 0 | 2 |  |
 | ProjectileRecordHandler.cs | IProjectileGetter | 12 | 21 | 0 | 0 | 2 |  |
 | QuestRecordHandler.cs | IQuestGetter | 16 | 1 | 0 | 0 | 3 |  |
 | RaceRecordHandler.cs | IRaceGetter | 65 | 7 | 0 | 0 | 5 |  |
@@ -129,6 +137,7 @@ Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File sc
 | TreeRecordHandler.cs | ITreeGetter | 11 | 2 | 0 | 0 | 3 |  |
 | VisualEffectRecordHandler.cs | IVisualEffectGetter | 5 | 0 | 0 | 0 | 1 |  |
 | VoiceTypeRecordHandler.cs | IVoiceTypeGetter | 3 | 0 | 0 | 0 | 1 |  |
+| VolumetricLightingRecordHandler.cs | IVolumetricLightingGetter | 2 | 12 | 0 | 0 | 1 |  |
 | WaterRecordHandler.cs | IWaterGetter | 61 | 0 | 0 | 0 | 10 |  |
 | WeaponRecordHandler.cs | IWeaponGetter | 27 | 5 | 0 | 0 | 3 |  |
 | WeatherRecordHandler.cs | IWeatherGetter | 61 | 0 | 0 | 0 | 3 |  |
@@ -776,6 +785,14 @@ Getter: `ILandscapeTextureGetter`
 |---|---|---|---|---|---|
 | `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
 
+## LensFlareRecordHandler.cs
+
+Getter: `ILensFlareGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+
 ## LeveledItemRecordHandler.cs
 
 Getter: `ILeveledItemGetter`
@@ -998,9 +1015,63 @@ Getter: `IPerkGetter`
 | `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | PERK-specific major flags are a typed view over MajorRecordFlagsRaw and are owned by that single composite flag handler. |
 | `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Common Skyrim major flags are a typed view over MajorRecordFlagsRaw and are owned by the PERK composite flag handler. |
 
+## PlacedArrowRecordHandler.cs
+
+Getter: `IPlacedArrowGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+
+## PlacedBarrierRecordHandler.cs
+
+Getter: `IPlacedBarrierGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+
+## PlacedBeamRecordHandler.cs
+
+Getter: `IPlacedBeamGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+
+## PlacedConeRecordHandler.cs
+
+Getter: `IPlacedConeGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+
+## PlacedFlameRecordHandler.cs
+
+Getter: `IPlacedFlameGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+
 ## PlacedHazardRecordHandler.cs
 
 Getter: `IPlacedHazardGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+
+## PlacedMissileRecordHandler.cs
+
+Getter: `IPlacedMissileGetter`
 
 | Property | Type | Status | Possible handler keys | Nested leaves | Reason |
 |---|---|---|---|---|---|
@@ -1024,6 +1095,15 @@ Getter: `IPlacedObjectGetter`
 |---|---|---|---|---|---|
 | `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
 | `Unknown` | `Int16` | IntentionalExclusion |  | Unknown | Unknown engine field outside the supported semantic conflict surface; the winning override is preserved. |
+
+## PlacedTrapRecordHandler.cs
+
+Getter: `IPlacedTrapGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
 
 ## ProjectileRecordHandler.cs
 
@@ -1250,6 +1330,14 @@ Getter: `IVoiceTypeGetter`
 |---|---|---|---|---|---|
 | `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
 
+## VolumetricLightingRecordHandler.cs
+
+Getter: `IVolumetricLightingGetter`
+
+| Property | Type | Status | Possible handler keys | Nested leaves | Reason |
+|---|---|---|---|---|---|
+| `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
+
 ## WaterRecordHandler.cs
 
 Getter: `IWaterGetter`
@@ -1383,6 +1471,7 @@ Getter: `IWorldspaceGetter`
 - **KeywordRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Color`
 - **LandscapeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Flags`, `VertexNormals`, `VertexHeightMap`, `VertexColors`, `Layers`, `Textures`
 - **LandscapeTextureRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `TextureSet`, `MaterialType`, `HavokFriction`, `HavokRestitution`, `TextureSpecularExponent`, `Grasses`, `Flags`
+- **LensFlareRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `FlareDefinition`
 - **LeveledItemRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `ObjectBounds`, `ChanceNone`, `Flags`, `Global`, `Entries`
 - **LeveledNpcRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `ChanceNone`, `Flags`, `Global`, `Entries`, `ModelAndBounds`
 - **LeveledSpellRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `ObjectBounds`, `ChanceNone`, `Flags`, `Entries`
@@ -1406,9 +1495,16 @@ Getter: `IWorldspaceGetter`
 - **OutfitRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Items`
 - **PackageRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `VirtualMachineAdapter`, `Flags`, `Type`, `InterruptOverride`, `PreferredSpeed`, `InterruptFlags`, `ScheduleMonth`, `ScheduleDayOfWeek`, `ScheduleDate`, `ScheduleHour`, `ScheduleMinute`, `ScheduleDurationInMinutes`, `Conditions`, `IdleAnimations`, `CombatStyle`, `OwnerQuest`, `OnBegin`, `OnEnd`, `OnChange`
 - **PerkRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `VirtualMachineAdapter`, `Name`, `Description`, `Icons`, `Conditions`, `Trait`, `Level`, `NumRanks`, `Playable`, `Hidden`, `NextPerk`, `Effects`
+- **PlacedArrowRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Projectile`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
+- **PlacedBarrierRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Projectile`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
+- **PlacedBeamRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Projectile`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
+- **PlacedConeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Projectile`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
+- **PlacedFlameRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Projectile`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
 - **PlacedHazardRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Hazard`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
+- **PlacedMissileRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Projectile`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
 - **PlacedNpcRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Base`, `EncounterZone`, `RagdollData`, `RagdollBipedData`, `Patrol`, `LevelModifier`, `MerchantContainer`, `Count`, `Radius`, `Health`, `LinkedReferences`, `ActivateParents`, `LinkedReferenceColor`, `PersistentLocation`, `LocationReference`, `IsIgnoredBySandbox`, `LocationRefTypes`, `HeadTrackingWeight`, `Horse`, `FavorCost`, `EnableParent`, `Owner`, `FactionRank`, `Emittance`, `MultiBoundReference`, `IsIgnoredBySandbox2`, `Scale`, `Placement`, `VirtualMachineAdapter`
 - **PlacedObjectRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Base`, `Owner`, `Scale`, `LocationReference`, `LinkedReferences`, `LinkedRooms`, `ImageSpace`, `LightingTemplate`, `BoundHalfExtents`, `Primitive`, `OcclusionPlane`, `Portals`, `RoomPortal`, `Radius`, `Reflections`, `LitWater`, `Emittance`, `TeleportMessageBox`, `MultiBoundReference`, `SpawnContainer`, `LeveledItemBaseObject`, `PersistentLocation`, `EncounterZone`, `NavigationDoorLink`, `LocationRefTypes`, `IsMultiBoundPrimitive`, `IsIgnoredBySandbox`, `IsOpenByDefault`, `FactionRank`, `ItemCount`, `Charge`, `HeadTrackingWeight`, `FavorCost`, `CollisionLayer`, `LevelModifier`, `TeleportDestination`, `ActivateParents`, `Lock`, `AttachRef`, `Action`, `LightData`, `Alpha`, `Patrol`, `MapMarker`, `Placement`, `VirtualMachineAdapter`, `EnableParent`, `WaterVelocity`, `XCZR`, `XCZC`, `XORD`, `RagdollData`, `RagdollBipedData`, `XWCN`, `XWCS`, `XCVL`, `XCZA`, `DistantLodData`
+- **PlacedTrapRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Projectile`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
 - **ProjectileRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `ModelAndBounds`, `Destructible`, `Flags`, `Trajectory`, `Light`, `MuzzleFlashBehavior`, `TracerChance`, `ExplosionBehavior`, `Sound`, `FadeDuration`, `ImpactForce`, `PickupBehavior`, `DisableBehavior`, `Collision`, `DecalData`, `SoundLevel`
 - **QuestRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `VirtualMachineAdapter.Presence`, `VirtualMachineAdapter.Version`, `VirtualMachineAdapter.ObjectFormat`, `VirtualMachineAdapter.Scripts`, `VirtualMachineAdapter.ExtraBindDataVersion`, `VirtualMachineAdapter.FileName`, `VirtualMachineAdapter.Fragments`, `VirtualMachineAdapter.Aliases`, `Flags`, `Priority`, `Type`, `Event`, `TextDisplayGlobals`, `Filter`, `NextAliasID`, `Description`, `DialogConditions`, `EventConditions`, `Stages`, `Objectives`, `Aliases`
 - **RaceRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `Description`, `ActorEffect`, `Skin`, `BodyTemplate`, `Keywords`, `SkillBoosts`, `Height`, `Weight`, `Flags`, `Starting`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `Regen`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `MountData`, `SkeletalModel`, `MovementTypeNames`, `Voices`, `DecapitateArmors`, `DefaultHairColors`, `NumberOfTintsInList`, `FacegenMainClamp`, `FacegenFaceClamp`, `AttackRace`, `Attacks`, `BodyData`, `Hairs`, `Eyes`, `BodyPartData`, `BehaviorGraph`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `BipedObjectNames`, `MovementTypes`, `EquipmentFlags`, `EquipmentSlots`, `UnarmedEquipSlot`, `FaceFxPhonemes`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `HeadData`, `MorphRace`, `ArmorRace`
@@ -1434,6 +1530,7 @@ Getter: `IWorldspaceGetter`
 - **TreeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `VirtualMachineAdapter`, `ModelAndBounds`, `Ingredient`, `HarvestSound`, `Production`, `Name`, `TrunkFlexibility`, `BranchFlexibility`, `LeafAmplitude`, `LeafFrequency`
 - **VisualEffectRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `EffectArt`, `Shader`, `Flags`
 - **VoiceTypeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Flags`
+- **VolumetricLightingRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `LightingPreset`
 - **WaterRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `Opacity`, `Flags`, `MNAM`, `Material`, `OpenSound`, `Spell`, `ImageSpace`, `DamagePerSecond`, `SpecularSunPower`, `WaterReflectivity`, `WaterFresnel`, `FogAboveWaterDistanceNearPlane`, `FogAboveWaterDistanceFarPlane`, `ShallowColor`, `DeepColor`, `ReflectionColor`, `DisplacementStartingSize`, `DisplacementFoce`, `DisplacementVelocity`, `DisplacementFalloff`, `DisplacementDampner`, `NoiseFalloff`, `NoiseLayerOneWindDirection`, `NoiseLayerTwoWindDirection`, `NoiseLayerThreeWindDirection`, `NoiseLayerOneWindSpeed`, `NoiseLayerTwoWindSpeed`, `NoiseLayerThreeWindSpeed`, `FogAboveWaterAmount`, `FogUnderWaterAmount`, `FogUnderWaterDistanceNearPlane`, `FogUnderWaterDistanceFarPlane`, `WaterRefractionMagnitude`, `SpecularPower`, `SpecularRadius`, `SpecularBrightness`, `NoiseLayerOneUvScale`, `NoiseLayerTwoUvScale`, `NoiseLayerThreeUvScale`, `NoiseLayerOneAmplitudeScale`, `NoiseLayerTwoAmplitudeScale`, `NoiseLayerThreeAmplitudeScale`, `WaterReflectionMagnitude`, `SpecularSunSparkleMagnitude`, `SpecularSunSpecularMagnitude`, `DepthReflections`, `DepthRefraction`, `DepthNormals`, `DepthSpecularLighting`, `SpecularSunSparklePower`, `NoiseFlowmapScale`, `GNAM`, `LinearVelocity`, `AngularVelocity`, `NoiseLayerOneTexture`, `NoiseLayerTwoTexture`, `NoiseLayerThreeTexture`, `FlowNormalsNoiseTexture`
 - **WeaponRecordHandler.cs**: `EditorID`, `Name`, `MajorRecordFlagsRaw`, `ModelAndBounds`, `Icons`, `Keywords`, `VirtualMachineAdapter`, `ObjectEffect`, `EnchantmentAmount`, `Destructible`, `EquipmentType`, `BlockBashImpact`, `AlternateBlockMaterial`, `PickUpSound`, `PutDownSound`, `Description`, `ScopeModel`, `ImpactDataSet`, `FirstPersonModel`, `AttackSound`, `AttackSound2D`, `AttackLoopSound`, `AttackFailSound`, `IdleSound`, `EquipSound`, `UnequipSound`, `BasicStats.Value`, `BasicStats.Weight`, `BasicStats.Damage`, `DetectionSoundLevel`, `Template`, `Data.AnimationType`, `Data.Speed`, `Data.Reach`, `Data.Flags`, `Data.SightFOV`, `Data.BaseVATStoHitChance`, `Data.AttackAnimation`, `Data.NumProjectiles`, `Data.EmbeddedWeaponAV`, `Data.RangeMin`, `Data.RangeMax`, `Data.OnHit`, `Data.AnimationAttackMult`, `Data.RumbleLeftMotorStrength`, `Data.RumbleRightMotorStrength`, `Data.RumbleDuration`, `Data.Skill`, `Data.Resist`, `Data.Stagger`, `Critical.Damage`, `Critical.PercentMult`, `Critical.Flags`, `Critical.Effect`
 - **WeatherRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `DNAM`, `CNAM`, `ANAM`, `BNAM`, `LNAM`, `Precipitation`, `VisualEffect`, `ONAM`, `CloudTextures`, `Clouds`, `SkyUpperColor`, `FogNearColor`, `UnknownColor`, `AmbientColor`, `SunlightColor`, `SunColor`, `StarsColor`, `SkyLowerColor`, `HorizonColor`, `EffectLightingColor`, `CloudLodDiffuseColor`, `CloudLodAmbientColor`, `FogFarColor`, `SkyStaticsColor`, `WaterMultiplierColor`, `SunGlareColor`, `MoonGlareColor`, `FogDistanceDayNear`, `FogDistanceDayFar`, `FogDistanceNightNear`, `FogDistanceNightFar`, `FogDistanceDayPower`, `FogDistanceNightPower`, `FogDistanceDayMax`, `FogDistanceNightMax`, `WindSpeed`, `TransDelta`, `SunGlare`, `SunDamage`, `PrecipitationBeginFadeIn`, `PrecipitationEndFadeOut`, `ThunderLightningBeginFadeIn`, `ThunderLightningEndFadeOut`, `ThunderLightningFrequency`, `Flags`, `LightningColor`, `VisualEffectBegin`, `VisualEffectEnd`, `WindDirection`, `WindDirectionRange`, `Sounds`, `SkyStatics`, `ImageSpaces`, `VolumetricLighting`, `DirectionalAmbientLightingColors`, `NAM2`, `NAM3`, `Aurora`, `SunGlareLensFlare`

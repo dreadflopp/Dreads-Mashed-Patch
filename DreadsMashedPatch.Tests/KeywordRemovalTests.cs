@@ -133,7 +133,7 @@ internal static class CoverageTestHistory
     }
 
 #pragma warning disable CS0618
-    internal static SynthesisState<ISkyrimMod, ISkyrimModGetter> State(params SkyrimMod[] mods)
+    internal static SynthesisState<ISkyrimMod, ISkyrimModGetter> State(params ISkyrimModGetter[] mods)
     {
         var patch = new SkyrimMod(ModKey.FromNameAndExtension("CoverageFixTests.esp"), SkyrimRelease.SkyrimSE);
         var listings = mods.Cast<ISkyrimModGetter>().Append(patch).Select(mod => new ModListing<ISkyrimModGetter>(mod)).ToArray();

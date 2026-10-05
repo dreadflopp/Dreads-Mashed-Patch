@@ -16,7 +16,10 @@ namespace DreadsMashedPatch.RecordHandlers
     // Migration note:
     // - Generalized: links, scalar fields, flags, and grass list via reflection handlers.
     // - Kept specialized: none.
-    // - Rationale: the surface is compact and fits the generic link/list handlers.
+    // - Rationale: xEdit TNAM/MNAM links and HNAM/SNAM scalars are authored independent fields;
+    //   GNAM is sorted by Grass FormID. Nullable INAM snow bits/presence use the approved nullable flag handler.
+    // - Intentionally non-migrated: no LTEX gameplay fields; LAND geometry/layers remain a separate excluded record.
+    // - Cleanup: replaces the non-nullable snow-flag registration completely; no old active flag path remains.
 
     // Header migration: raw/common flags share one masked integer handler.
     // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
@@ -33,7 +36,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "HavokRestitution", new SimpleReflectionPropertyHandler<byte, ILandscapeTexture, ILandscapeTextureGetter>("HavokRestitution") },
             { "TextureSpecularExponent", new SimpleReflectionPropertyHandler<byte, ILandscapeTexture, ILandscapeTextureGetter>("TextureSpecularExponent") },
             { "Grasses", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IGrassGetter>, ILandscapeTexture, ILandscapeTextureGetter>("Grasses", ListSemantics.SortedKeyed) },
-            { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.LandscapeTexture.Flag, ILandscapeTexture, ILandscapeTextureGetter>("Flags") }
+            { "Flags", new SimpleReflectionNullableFlagPropertyHandler<Mutagen.Bethesda.Skyrim.LandscapeTexture.Flag, ILandscapeTexture, ILandscapeTextureGetter>("Flags") }
         };
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

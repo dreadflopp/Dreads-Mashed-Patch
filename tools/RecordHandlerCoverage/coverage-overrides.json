@@ -2092,5 +2092,101 @@
     "property": "TypeChar",
     "status": "SerializationState",
     "reason": "Read-only GLOB subtype discriminator fixed by the concrete record class (f/l/s); independently selecting a character would require replacing the record variant."
+  },
+  {
+    "handler": "PlacedArrowRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedArrowRecordHandler.cs",
+    "property": "MajorFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedBarrierRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedBarrierRecordHandler.cs",
+    "property": "MajorFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedBeamRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedBeamRecordHandler.cs",
+    "property": "MajorFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedConeRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedConeRecordHandler.cs",
+    "property": "MajorFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedFlameRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedFlameRecordHandler.cs",
+    "property": "MajorFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedTrapRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedTrapRecordHandler.cs",
+    "property": "MajorFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedMissileRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "PlacedMissileRecordHandler.cs",
+    "property": "MajorFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "VolumetricLightingRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "LensFlareRecordHandler.cs",
+    "property": "SkyrimMajorRecordFlags",
+    "status": "AliasOrDuplicate",
+    "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
   }
 ]
