@@ -1,5 +1,9 @@
 # Mashed Patch standalone application
 
+[Project front page](../README.md) · [Documentation index](README.md)
+
+The current version is still being tested. Inspect every generated output plugin in xEdit, correct patching that does not match your intended modlist behavior, and report bugs through the repository's Issues tab. Download the executable from the Nexus placeholder linked on the project front page.
+
 Mashed Patch is a Windows desktop patcher. It is not intended to be added to or launched by the Synthesis application. The desktop host uses Mutagen and the Synthesis pipeline libraries internally to construct the load order and write the output plugin, while retaining one patch implementation in `DreadsMashedPatch.Program.RunPatch`.
 
 ## Running
@@ -27,7 +31,7 @@ Launch the Windows executable in a Proton prefix that can access the selected ga
 
 ### Without a mod manager
 
-Select your Skyrim installation's Data folder in both the **Data folder** and **Patch output folder** fields. Select the game's active `plugins.txt`, usually in `%LOCALAPPDATA%\Skyrim Special Edition` or the corresponding GOG or VR folder. Enable the generated patch plugins and set their load-order position before running the full patcher.
+Select your Skyrim installation's Data folder in both the **Data folder** and **Patch output folder** fields. Select the game's active `plugins.txt`, usually in `%LOCALAPPDATA%\Skyrim Special Edition` or the corresponding GOG or VR folder. Use **Create empty patch output** if you need to position the primary plugin first. Enable it and set its load-order position before running the full patcher; enable any numbered output plugins after a successful run.
 
 ### Selecting folders
 
@@ -66,7 +70,7 @@ Browse migration note: game, input, output, and plugins.txt browsing share one p
 
 ## Record selection
 
-Every supported record family is enabled by default. The UI groups them by the four-character signatures used by xEdit, such as `QUST` for quests. Settings store only disabled families, so record families added in future versions are automatically enabled. The list supports search, arrow-key navigation, and Space to toggle the selected row. `Ctrl+F` focuses the search box.
+Most supported record families are enabled by default. DIAL, DLBR, INFO, DLVW, NAVM and PACK start disabled in new configurations because their coupled data needs extra care. Their behavior when enabled and remaining limits are in the [record tables](record-patching/INDEX.md). The UI groups them by the four-character signatures used by xEdit, such as `QUST` for quests. Settings store only disabled families, so record families added in future versions are automatically enabled. The list supports search, arrow-key navigation, and Space to toggle the selected row. `Ctrl+F` focuses the search box.
 
 ## Diagnostics
 
@@ -84,7 +88,7 @@ Plugins on the **Priority Mods** tab win at record scope. If another plugin over
 
 At the start of every run, the patcher builds its official baseline from the base game, DLC, `SkyrimVR.esm`, and optionally the installed entries from `Skyrim.ccc`. It then intersects that set with the final Synthesis load order, so missing plugins are ignored. The **Treat Creation Club content as official baseline** policy is enabled by default to preserve the original behaviour; disabling it makes Creation Club conflicts eligible for forwarding like ordinary mods.
 
-The **Editor IDs (EDID)** policy offers three behaviors. **Preserve the official Editor ID** (the default) restores the EDID from the latest plugin in the configured official baseline. This is a defensive compatibility measure because some game behavior can unexpectedly resolve an EDID rather than only a FormID; renamed EDIDs have caused dialogue and NPC speech failures in released mods, as documented in the [Scion changelog](https://www.nexusmods.com/skyrimspecialedition/mods/41639?tab=logs). **Forward Editor ID changes** retains normal field forwarding. **Forward only on an existing patch record** forwards an EDID when some other property also needs an override, but never creates an EDID-only patch record.
+The **Editor IDs (EDID)** policy offers three behaviors. **Preserve the official Editor ID** restores the EDID from the latest plugin in the configured official baseline. This keeps official identifiers stable when mods rename them. **Forward Editor ID changes** retains normal field forwarding. **Forward only on an existing patch record** (the default for new configurations) forwards an EDID when some other property also needs an override, but never creates an EDID-only patch record.
 
 Migration note: EDID policy selection is generalized in the shared record-processing path for every supported record type. Record-specific property handlers and all non-EDID fields remain specialized as before; only the final EDID decision is governed centrally so there is one implementation path.
 

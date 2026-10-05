@@ -1,5 +1,7 @@
 # Rebuilding external reference sources
 
+[Documentation index](README.md) · [Development guide](DEVELOPMENT.md)
+
 The reference sources are intentionally excluded from Git. Regenerate them after
 cloning the repository or updating dependencies. They are for investigation only;
 do not edit them or add their projects to the solution.
@@ -96,5 +98,9 @@ pwsh -NoProfile -File scripts/Audit-RecordHandlerCoverage.ps1
 ```
 
 On Windows PowerShell, use `powershell -NoProfile -ExecutionPolicy Bypass -File`
-instead. Review both `docs/record-handler-coverage.md` and
-`docs/record-handler-coverage.json` before committing them.
+instead. Add `-FailOnUnresolved` for strict classification checks. Review both
+`docs/record-handler-coverage.md` and `docs/record-handler-coverage.json` before
+committing them. The static scanner can detect commented-out registrations;
+confirm executable dictionaries and dispatch before documenting support.
+For collection manifest regeneration and verification, see
+[Collection semantics](COLLECTION_SEMANTICS.md#workflow).

@@ -9,7 +9,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -22,7 +22,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -48,7 +48,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -61,7 +61,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -74,7 +74,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -139,7 +139,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -152,7 +152,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -165,7 +165,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -191,7 +191,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -204,7 +204,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -217,7 +217,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -230,7 +230,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -243,7 +243,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -256,7 +256,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -295,7 +295,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -308,7 +308,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -321,7 +321,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -334,7 +334,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -347,7 +347,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -360,7 +360,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -373,7 +373,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -386,7 +386,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -399,7 +399,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -412,7 +412,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -425,7 +425,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -438,7 +438,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -464,7 +464,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -477,7 +477,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -490,7 +490,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -503,7 +503,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -516,7 +516,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -529,7 +529,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -542,7 +542,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -555,7 +555,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -568,7 +568,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -581,7 +581,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -594,7 +594,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -607,7 +607,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -620,7 +620,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -633,7 +633,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -646,7 +646,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -659,7 +659,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -672,7 +672,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -685,7 +685,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -698,7 +698,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -711,7 +711,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -724,7 +724,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -815,7 +815,7 @@
         "IdentityKey":  "Zero-based position",
         "Alignability":  "Positional; no outer row key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -828,7 +828,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -841,7 +841,7 @@
         "IdentityKey":  "Zero-based position",
         "Alignability":  "Positional; no outer row key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -854,7 +854,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -867,7 +867,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -880,7 +880,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -893,7 +893,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -906,7 +906,7 @@
         "IdentityKey":  "Full semantic value pending dedicated LAND model",
         "Alignability":  "Unresolved",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Known LAND exception: xEdit identity is union/context dependent and is intentionally not generalized."
     },
     {
@@ -919,7 +919,7 @@
         "IdentityKey":  "Full semantic value pending dedicated LAND model",
         "Alignability":  "Unresolved",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Known LAND exception: xEdit identity is union/context dependent and is intentionally not generalized."
     },
     {
@@ -958,7 +958,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -971,7 +971,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -984,7 +984,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -997,7 +997,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1010,7 +1010,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1023,7 +1023,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1036,7 +1036,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1049,7 +1049,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1062,7 +1062,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1075,7 +1075,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1088,7 +1088,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1101,7 +1101,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1127,7 +1127,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1140,7 +1140,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1153,7 +1153,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1166,7 +1166,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1192,7 +1192,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -1205,7 +1205,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -1218,7 +1218,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1231,7 +1231,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1244,7 +1244,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1270,7 +1270,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1283,7 +1283,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1296,7 +1296,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1309,7 +1309,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1361,7 +1361,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1374,7 +1374,7 @@
         "IdentityKey":  "Zero-based position",
         "Alignability":  "Positional; no outer row key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1387,7 +1387,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1400,7 +1400,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1413,7 +1413,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1426,7 +1426,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1439,7 +1439,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1452,7 +1452,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1465,7 +1465,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1478,7 +1478,7 @@
         "IdentityKey":  "Zero-based position",
         "Alignability":  "Positional; no outer row key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1491,7 +1491,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1504,7 +1504,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1517,7 +1517,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1530,7 +1530,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -1543,7 +1543,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1556,7 +1556,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1569,7 +1569,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1582,7 +1582,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1595,7 +1595,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1608,7 +1608,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1621,7 +1621,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1634,7 +1634,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1647,7 +1647,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1660,7 +1660,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1673,7 +1673,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1686,7 +1686,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1699,7 +1699,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1725,7 +1725,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1738,7 +1738,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1751,7 +1751,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1764,7 +1764,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1777,7 +1777,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1790,7 +1790,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1816,7 +1816,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1842,7 +1842,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -1855,7 +1855,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -1868,7 +1868,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -1881,7 +1881,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1894,7 +1894,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -1907,7 +1907,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1920,7 +1920,7 @@
         "IdentityKey":  "Zero-based position",
         "Alignability":  "Positional; no outer row key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1933,7 +1933,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1946,7 +1946,7 @@
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
     },
     {
@@ -1959,7 +1959,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1972,7 +1972,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1985,7 +1985,7 @@
         "IdentityKey":  "Zero-based position",
         "Alignability":  "Positional; no outer row key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -1998,7 +1998,7 @@
         "IdentityKey":  "Zero-based position",
         "Alignability":  "Positional; no outer row key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2011,7 +2011,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2024,7 +2024,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2037,7 +2037,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2050,7 +2050,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2063,7 +2063,7 @@
         "IdentityKey":  "Record-specific alignment key plus occurrence",
         "Alignability":  "Alignable declaration order",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2076,7 +2076,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2089,7 +2089,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2102,7 +2102,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2115,7 +2115,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2128,7 +2128,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
@@ -2167,7 +2167,7 @@
         "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
         "Alignability":  "Sorted by xEdit key",
         "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "LIST_ORDERING_AUDIT.md and LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
+        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {

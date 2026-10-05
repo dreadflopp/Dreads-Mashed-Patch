@@ -162,7 +162,6 @@ Discovered through the game-setting query and narrowed to the concrete value typ
 | Properties | How they are patched |
 |---|---|
 | `Description`, `LoadingScreenNif`, `InitialScale`, `InitialRotation`, `InitialTranslationOffset`, `CameraPath` | Select each value separately. |
-
 | `Icons`, `RotationOffsetConstraints` | Select each whole value separately. |
 | `Conditions` | Merge aligned rows in order. |
 

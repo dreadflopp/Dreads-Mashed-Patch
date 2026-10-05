@@ -1,5 +1,7 @@
 # Asset path migration
 
+> Historical migration evidence. For current behavior, use the [record tables](../record-patching/INDEX.md), [collection guide](../COLLECTION_SEMANTICS.md), and [known limits](../record-patching/KNOWN-ISSUES.md). Historical recommendations and test gates describe the migration, not a fresh validation of every record.
+
 ## Policy
 
 All Mutagen asset links are copied from `GivenPath`, because that is the string

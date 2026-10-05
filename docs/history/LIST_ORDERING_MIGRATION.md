@@ -1,5 +1,7 @@
 # List ordering migration
 
+> Historical migration evidence. For current behavior, use the [record tables](../record-patching/INDEX.md), [collection guide](../COLLECTION_SEMANTICS.md), and [known limits](../record-patching/KNOWN-ISSUES.md). Historical recommendations and test gates describe the migration, not a fresh validation of every record.
+
 ## Shared behavior
 
 - `Unordered` merges entries by full semantic equality and does not reorder.
@@ -7,7 +9,7 @@
   the same key, and emits active entries in lexicographic StructSK order.
 - FormID key components are compared in load-order space and then by local ID.
 - `AlignedOrdered` uses the progressive xEdit Myers alignment documented in
-  `LIST_ALIGNMENT.md`. Occurrence-specific row IDs locate entries and full
+  [alignment guide](../LIST_ALIGNMENT.md). Occurrence-specific row IDs locate entries and full
   content equality detects changes within a row; permission checks still govern
   removals, restorations, moves, and reversions.
 - `ExactOrdered` uses zero-based positional identity and atomic entry replacement
@@ -53,8 +55,8 @@
 - `Landscape.Layers` and `Landscape.Textures` remain `Unordered`: their xEdit
   identity is union/context dependent and cannot be represented by a generic
   key without a dedicated LAND model.
-- `Water.UnusedNoisemaps` remains `Unordered`: no exact writable Skyrim xEdit
-  collection mapping was confirmed.
+- `Water.UnusedNoisemaps` is not registered in the current WATR handler.
+  The earlier unordered classification is superseded by its explicit exclusion.
 - `DialogView.Topics` is not registered because the current Mutagen
   `IDialogViewGetter`/`IDialogView` surface does not expose that collection.
 

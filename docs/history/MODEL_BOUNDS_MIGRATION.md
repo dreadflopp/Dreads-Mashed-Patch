@@ -1,5 +1,7 @@
 # Model and Object-Bounds Coordination
 
+> Historical migration evidence. For current behavior, use the [record tables](../record-patching/INDEX.md), [collection guide](../COLLECTION_SEMANTICS.md), and [known limits](../record-patching/KNOWN-ISSUES.md). Historical recommendations and test gates describe the migration, not a fresh validation of every record.
+
 The following record handlers now use one `ModelBoundsHandler` ownership path. A successfully
 forwarded model-filename change takes the bounds from the same override. Bounds-only edits remain
 independently mergeable, and model metadata or alternate-texture changes do not claim bounds.

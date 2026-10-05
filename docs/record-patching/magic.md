@@ -118,7 +118,6 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 | Properties | How they are patched |
 |---|---|
 | `Name`, `MenuDisplayObject`, `Description` | Select each value separately. |
-
 | `WordsOfPower` | Select each whole collection separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ShoutRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).

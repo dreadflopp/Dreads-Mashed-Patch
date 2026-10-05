@@ -153,7 +153,6 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight` | Select each value separately. |
-
 | `Icons`, `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
@@ -182,7 +181,6 @@ Entries match by (Level, Reference), with complete row payloads/counts. Entries 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight` | Select each value separately. |
-
 | `Icons`, `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
@@ -196,7 +194,6 @@ Entries match by (Level, Reference), with complete row payloads/counts. Entries 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight`, `ContainedSoul`, `MaximumCapacity`, `LinkedTo` | Select each value separately. |
-
 | `Icons`, `Destructible` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Keywords` | Merge rows by key. |

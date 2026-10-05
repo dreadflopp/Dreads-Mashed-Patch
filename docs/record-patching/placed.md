@@ -13,7 +13,6 @@ Placement keeps position and rotation together at the project’s comparison pre
 | Properties | How they are patched |
 |---|---|
 | `Base`, `EncounterZone`, `LevelModifier`, `MerchantContainer`, `Count`, `Radius`, `Health`, `PersistentLocation`, `LocationReference`, `IsIgnoredBySandbox`, `HeadTrackingWeight`, `Horse`, `FavorCost`, `Owner`, `FactionRank`, `Emittance`, `MultiBoundReference`, `IsIgnoredBySandbox2`, `Scale` | Select each value separately. |
-
 | `RagdollData`, `RagdollBipedData`, `Patrol`, `ActivateParents`, `LinkedReferenceColor`, `EnableParent`, `Placement` | Select each whole value separately. |
 | `LinkedReferences`, `VirtualMachineAdapter` | Merge rows by key. |
 | `LocationRefTypes` | Merge aligned rows in order. |

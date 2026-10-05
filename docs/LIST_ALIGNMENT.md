@@ -10,6 +10,7 @@ column, not values in the plugin.
 `ExactOrdered` arrays are the exception: when xEdit exposes no entry sort key,
 there is no sequence identity to align. Dread's Mashed Patch compares those entries
 by zero-based position and treats the complete value at each position atomically.
+Sound Descriptor paths and REFR linked references use this mode.
 
 Dread's Mashed Patch uses those accumulated rows to locate and order the active
 entries written to the patch. Ownership remains a separate decision: alignment
@@ -23,7 +24,7 @@ value occupying the same row.
 The active implementation is `XEditSequenceAligner`, used by every list handler
 whose `Semantics` is `ListSemantics.AlignedOrdered`. This describes the aligner,
 not a claim that every registration is correctly classified or has the exact
-xEdit row key. See `LIST_ORDERING_AUDIT.md` for that property-level audit.
+xEdit row key. See [historical ordering audit](history/LIST_ORDERING_AUDIT.md) for that property-level audit.
 
 1. Initialize one alignment row for every item in the original record.
 2. Process record overrides from original to winning, using the contexts already
@@ -99,10 +100,10 @@ changes.
 
 References:
 
-- xEdit array alignment: <https://github.com/TES5Edit/TES5Edit/blob/dev-4.1.6/xEdit/xeMainForm.pas#L7339-L7458>
-- xEdit Myers diff: <https://github.com/TES5Edit/TES5Edit/blob/dev-4.1.6/External/Diff/Diff.pas#L443-L554>
-- Skyrim condition keys: <https://github.com/TES5Edit/TES5Edit/blob/dev-4.1.6/Core/wbDefinitionsTES5.pas#L3879-L3936>
-- Original alignment release note: <https://github.com/TES5Edit/TES5Edit/blob/dev-4.1.6/whatsnew.md#L2139-L2162>
+- xEdit array alignment: <https://github.com/TES5Edit/TES5Edit/blob/93cc0bc5a1251936c3c7859eee3150eda12a62d7/xEdit/xeMainForm.pas#L7339-L7458>
+- xEdit Myers diff: <https://github.com/TES5Edit/TES5Edit/blob/93cc0bc5a1251936c3c7859eee3150eda12a62d7/External/Diff/Diff.pas#L443-L554>
+- Skyrim condition keys: <https://github.com/TES5Edit/TES5Edit/blob/93cc0bc5a1251936c3c7859eee3150eda12a62d7/Core/wbDefinitionsTES5.pas#L3879-L3936>
+- Original alignment release note: <https://github.com/TES5Edit/TES5Edit/blob/93cc0bc5a1251936c3c7859eee3150eda12a62d7/whatsnew.md#L2139-L2162>
 
 ## Previous implementations
 
@@ -148,14 +149,14 @@ adding `x=-1` could leave protected `z<200` before the new `x`, producing
 - Generalized: all `AlignedOrdered` list handlers use one progressive xEdit-style
   sequence aligner and one row-ID reconciliation path. Exact parity also requires
   the correct property classification and row key documented in
-  `LIST_ORDERING_AUDIT.md`.
+  [historical ordering audit](history/LIST_ORDERING_AUDIT.md).
 - Specialized: conditions override row identity with Skyrim's xEdit condition
   key. Quest aliases retain ID-based property merging, and dialog responses retain
   response-specific normalization and copying after shared row reconciliation.
 - Scalar aligned records: Camera Path Shots, Dialog Response
   LinkTo, Dialog View Branches, Equip Type SlotParents, FormList Items, NPC
-  Packages, placed-reference LocationRefTypes, Quest TextDisplayGlobals, and
-  Sound Descriptor paths retain their existing identities and copying behavior.
+  Packages, placed-reference LocationRefTypes, and Quest TextDisplayGlobals
+  retain their existing identities and copying behavior.
 - Atomic exception: Armor Armature preserves the complete ordered Armor Addon
   list from one owner. Multiple entries remain supported when a source plugin
   declares them together, but independent lists are never unioned.

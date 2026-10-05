@@ -3103,132 +3103,132 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 64
+        "SourceLine": 66
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 65
+        "SourceLine": 67
       },
       {
         "Key": "Name",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 66
+        "SourceLine": 68
       },
       {
         "Key": "Flags",
         "HandlerType": "SimpleReflectionFlagPropertyHandler",
-        "SourceLine": 67
+        "SourceLine": 69
       },
       {
         "Key": "Regions",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 69
+        "SourceLine": 71
       },
       {
         "Key": "Location",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 70
+        "SourceLine": 72
       },
       {
         "Key": "Owner",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 71
+        "SourceLine": 73
       },
       {
         "Key": "Water",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 72
+        "SourceLine": 74
       },
       {
         "Key": "Lighting",
         "HandlerType": "LightingHandler",
-        "SourceLine": 73
+        "SourceLine": 75
       },
       {
         "Key": "LightingTemplate",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 74
+        "SourceLine": 76
       },
       {
         "Key": "AcousticSpace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 75
+        "SourceLine": 77
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 76
+        "SourceLine": 78
       },
       {
         "Key": "Music",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 77
+        "SourceLine": 79
       },
       {
         "Key": "ImageSpace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 78
+        "SourceLine": 80
       },
       {
         "Key": "SkyAndWeatherFromRegion",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 79
+        "SourceLine": 81
       },
       {
         "Key": "Grid",
         "HandlerType": "GridHandler",
-        "SourceLine": 80
+        "SourceLine": 82
       },
       {
         "Key": "MaxHeightData",
         "HandlerType": "MaxHeightDataHandler",
-        "SourceLine": 81
+        "SourceLine": 83
       },
       {
         "Key": "WaterNoiseTexture",
         "HandlerType": "WaterNoiseTextureHandler",
-        "SourceLine": 82
+        "SourceLine": 84
       },
       {
         "Key": "WaterVelocity",
         "HandlerType": "WaterVelocityHandler",
-        "SourceLine": 83
+        "SourceLine": 85
       },
       {
         "Key": "XWCN",
         "HandlerType": "WaterCurrentCountHandler",
-        "SourceLine": 84
+        "SourceLine": 86
       },
       {
         "Key": "XWCS",
         "HandlerType": "WaterCurrentCountOldHandler",
-        "SourceLine": 85
+        "SourceLine": 87
       },
       {
         "Key": "OcclusionData",
         "HandlerType": "OcclusionDataHandler",
-        "SourceLine": 86
+        "SourceLine": 88
       },
       {
         "Key": "LNAM",
         "HandlerType": "LNAMHandler",
-        "SourceLine": 87
+        "SourceLine": 89
       },
       {
         "Key": "FactionRank",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 88
+        "SourceLine": 90
       },
       {
         "Key": "LockList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 89
+        "SourceLine": 91
       },
       {
         "Key": "WaterEnvironmentMap",
         "HandlerType": "WaterEnvironmentMapHandler",
-        "SourceLine": 90
+        "SourceLine": 92
       }
     ],
     "Properties": [

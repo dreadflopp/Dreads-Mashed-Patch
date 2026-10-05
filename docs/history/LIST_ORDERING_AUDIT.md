@@ -1,20 +1,22 @@
 # List ordering audit
 
+> Historical migration evidence. For current behavior, use the [record tables](../record-patching/INDEX.md), [collection guide](../COLLECTION_SEMANTICS.md), and [known limits](../record-patching/KNOWN-ISSUES.md). Historical recommendations and test gates describe the migration, not a fresh validation of every record.
+
 ## Status
 
 This audit is closed. It records the pre-migration findings that led to the
 implemented list semantics. Tables and recommendations below are historical
 input, not pending work. The authoritative post-migration registrations,
 intentional exceptions, removed code, and verification gate are documented in
-`LIST_ORDERING_MIGRATION.md`; the active alignment algorithm is documented in
-`LIST_ALIGNMENT.md`.
+[ordering migration](LIST_ORDERING_MIGRATION.md); the active alignment algorithm is documented in
+[alignment guide](../LIST_ALIGNMENT.md).
 
 ## Scope and source
 
 This audit covers list properties registered by the active record and property
 handlers. It originally compared their `ListOrdering` and item equality with
 xEdit's Skyrim definitions. The migration described here is now implemented;
-see `LIST_ORDERING_MIGRATION.md` for the resulting registrations and exceptions.
+see [ordering migration](LIST_ORDERING_MIGRATION.md) for the resulting registrations and exceptions.
 
 The reference is TES5Edit `dev-4.1.6`, pinned by the export script to commit
 `93cc0bc5a1251936c3c7859eee3150eda12a62d7`. Regenerate the ignored local source
@@ -90,7 +92,7 @@ edited value as a removal plus an addition.
 
 At audit time the following handlers used `None`, although xEdit defines a
 declaration order. The migration applied aligned, exact-position, or atomic
-handling as summarized in `LIST_ORDERING_MIGRATION.md`.
+handling as summarized in [ordering migration](LIST_ORDERING_MIGRATION.md).
 
 ### Historical direct PreserveModOrder candidates
 
@@ -221,6 +223,6 @@ when declaration order is irrelevant.
   `Water.UnusedNoisemaps` retain their documented exceptions; Dialog View Topics
   remains unavailable on the writable Mutagen surface.
 - Removed dead code: the old `ListOrdering` enum, superseded ordering paths, and
-  obsolete per-entry handlers listed in `LIST_ORDERING_MIGRATION.md` were removed.
+  obsolete per-entry handlers listed in [ordering migration](LIST_ORDERING_MIGRATION.md) were removed.
 - Diagnostics: the solution build and tests are the migration gate. The coverage
   and serialization-state audits classify remaining non-semantic surfaces.

@@ -103,7 +103,6 @@ Data keeps all geometry and connectivity together; vertices and triangles do not
 
 | Properties | How they are patched |
 |---|---|
-
 | `Data`, `ONAM`, `PNAM`, `NNAM` | Select each whole value separately. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/NavigationMeshRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
@@ -117,7 +116,6 @@ RegionAreas keeps area order and each polygon together; comparison normalizes po
 | Properties | How they are patched |
 |---|---|
 | `MapColor`, `Worldspace` | Select each value separately. |
-
 | `Objects`, `Weather`, `Map`, `Land`, `Grasses`, `Sounds` | Select each whole value separately. |
 | `RegionAreas` | Select each whole collection separately. |
 
@@ -130,7 +128,6 @@ RegionAreas keeps area order and each polygon together; comparison normalizes po
 | Properties | How they are patched |
 |---|---|
 | `Ingredient`, `HarvestSound`, `Name`, `TrunkFlexibility`, `BranchFlexibility`, `LeafAmplitude`, `LeafFrequency` | Select each value separately. |
-
 | `Production` | Select each whole value separately. |
 | `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `VirtualMachineAdapter` | Merge rows by key. |
@@ -141,6 +138,8 @@ RegionAreas keeps area order and each polygon together; comparison normalizes po
 <a id="watr-water"></a>
 
 ## WATR — Water
+
+Flags is currently selected as one complete nullable scalar value, rather than merged per bit. UnusedNoisemaps is intentionally unregistered.
 
 | Properties | How they are patched |
 |---|---|

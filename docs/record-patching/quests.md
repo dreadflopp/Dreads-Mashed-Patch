@@ -52,11 +52,14 @@ Responses are separately queried INFO records, not a merged DIAL child list.
 
 ## IDLE — Idle Animation
 
+RelatedIdles is intentionally unregistered; the source cites runtime handling. The static coverage report detects its commented-out registration, which does not make it active.
+
 | Properties | How they are patched |
 |---|---|
 | `Filename`, `AnimationEvent`, `LoopingSecondsMin`, `LoopingSecondsMax`, `AnimationGroupSection`, `ReplayDelay` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
 | `Conditions` | Merge aligned rows in order. |
+| `RelatedIdles` | Not independently forwarded. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/IdleAnimationRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -129,7 +132,7 @@ The package template graph is inactive even when packages are enabled: PackageTe
 
 ## QUST — Quest
 
-Adapter presence gates its child fields. Structural changes are proposed and validated for alias IDs/references, stage/objective indices, fragment stage/log-entry references and supported object formats. Stages include log entries; objectives include targets and conditions; aliases are complete rows. The ownership reset below limits independent list merging. Validation does not provide general rollback of an already-created override.
+Adapter presence gates its child fields. Structural changes are proposed and validated for alias IDs/references, stage/objective indices, fragment stage/log-entry references and supported object formats. Stages include log entries; objectives include targets and conditions; aliases are complete rows. The ownership reset below limits independent list merging. Application and validation run inside the shared record transaction; a failed candidate is discarded, and recorded errors reject the run before output publication.
 
 **Ownership reset:** a change to `VirtualMachineAdapter.Presence`, `VirtualMachineAdapter.Version`, `VirtualMachineAdapter.ObjectFormat`, `VirtualMachineAdapter.Scripts`, `VirtualMachineAdapter.ExtraBindDataVersion`, `VirtualMachineAdapter.FileName`, `VirtualMachineAdapter.Fragments`, `VirtualMachineAdapter.Aliases`, `Type`, `Event`, `TextDisplayGlobals`, `DialogConditions`, `EventConditions`, `Stages`, `Objectives`, `NextAliasID`, `Aliases` resets all registered properties to that override before processing later overrides. Unregistered fields still start from the final winner.
 

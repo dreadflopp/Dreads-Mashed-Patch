@@ -1,11 +1,11 @@
-# Collection semantics audit
+# Collection semantics and verification
 
 ## Purpose
 
-Every active record-handler property whose handled value is a collection is
-tracked in the generated `docs/collection-semantics-manifest.json`. Independent
-pinned-xEdit expectations live in `docs/xedit-collection-expectations.json`.
-The generated `docs/collection-semantics-comparison.md` compares the two. This makes
+Every registered record-handler property whose handled value is a collection is
+tracked in the generated [collection-semantics-manifest.json](collection-semantics-manifest.json). Independent
+pinned-xEdit expectations live in [xedit-collection-expectations.json](xedit-collection-expectations.json).
+The generated [collection-semantics-comparison.md](collection-semantics-comparison.md) compares the two. This makes
 collection behavior an explicit, reviewable contract instead of relying on the
 CLR collection type: a Mutagen `IReadOnlyList` can represent a sorted xEdit
 array, an alignable declaration-order array, positional fields, or one atomic
@@ -14,8 +14,11 @@ structure.
 The runtime manifest is deliberately observational and is not an xEdit source
 of truth. The expectation file records xEdit shape, identity, alignability,
 count/coupling concerns, source evidence, and rationale. The authoritative
-historical decisions also remain in `LIST_ORDERING_AUDIT.md` and
-`LIST_ORDERING_MIGRATION.md`.
+historical decisions also remain in [ordering audit](history/LIST_ORDERING_AUDIT.md) and
+[ordering migration](history/LIST_ORDERING_MIGRATION.md).
+
+The manifest includes constructible dormant handlers, including LAND. Use the
+[supported/excluded routes](record-patching/unsupported.md) to determine what runs.
 
 ## Modes
 
@@ -35,8 +38,9 @@ nullability, duplicate, or ownership behavior.
 
 ## Workflow
 
-After adding, removing, or changing a collection handler, regenerate the
-manifest:
+Run these commands from the repository root. On Linux, replace
+`powershell.exe -NoProfile -ExecutionPolicy Bypass` with `pwsh -NoProfile`.
+After adding, removing, or changing a collection handler, regenerate the manifest:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Audit-CollectionSemantics.ps1

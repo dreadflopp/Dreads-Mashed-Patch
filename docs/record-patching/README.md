@@ -1,8 +1,10 @@
 # How records are patched
 
+[Project front page](../../README.md) · [Documentation index](../README.md)
+
 Dread’s Mashed Patch combines changes to selected properties from your load order. Most properties are handled separately. Some values, groups and collections are selected together to keep their contents consistent. **Atomic means “choose the complete value from one source,” not “always use the last plugin.”**
 
-Use the [record index](INDEX.md) to find a record by its four-letter signature. The guides list every supported record variant, its property rules and its omissions. [Known issues](KNOWN-ISSUES.md) describe confirmed differences between a selected change and the output. [Unsupported records](unsupported.md) covers the remaining record families and indirect handling.
+Use the [record index](INDEX.md) to find a record by its four-letter signature. The guides list every supported record variant, its property rules and its omissions. [Known issues and limits](KNOWN-ISSUES.md) distinguish current boundaries from resolved defects. [Unsupported records](unsupported.md) covers the remaining record families and indirect handling.
 
 | Subject | Guide |
 |---|---|
