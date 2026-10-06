@@ -19,7 +19,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
     public class MajorRecordFlagsRawHandler : IPropertyHandler<int>
     {
         public string PropertyName => "MajorRecordFlagsRaw";
-        public bool RequiresFullLoadOrderProcessing => true;
 
         /// <summary>
         /// Base TES5 record flags that are stored in MajorRecordFlagsRaw.

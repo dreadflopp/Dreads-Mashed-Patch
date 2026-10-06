@@ -13,7 +13,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
     public abstract class AbstractFlagPropertyHandler<TFlag> : IPropertyHandler<TFlag> where TFlag : struct, Enum
     {
         public abstract string PropertyName { get; }
-        public bool RequiresFullLoadOrderProcessing => true;
 
         public abstract void SetValue(IMajorRecord record, TFlag value);
         public abstract TFlag GetValue(IMajorRecordGetter record);

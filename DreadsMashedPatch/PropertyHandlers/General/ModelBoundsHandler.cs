@@ -34,7 +34,6 @@ public sealed class ModelBoundsHandler : IPropertyHandler
         new(new WorldModelHandler(), GetArmorWorldModelGeometryIdentity);
 
     public string PropertyName => $"{_modelHandler.PropertyName}AndBounds";
-    public bool RequiresFullLoadOrderProcessing => true;
 
     public object GetValue(IMajorRecordGetter record) =>
         new ModelBoundsValue(_modelHandler.GetValue(record), _boundsHandler.GetValue(record));

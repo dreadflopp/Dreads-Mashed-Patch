@@ -11,7 +11,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Interfaces
     public interface IPropertyHandler
     {
         string PropertyName { get; }
-        bool RequiresFullLoadOrderProcessing { get; }
 
         // Non-generic versions for the registry
         void SetValue(IMajorRecord record, object? value);

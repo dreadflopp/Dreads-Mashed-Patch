@@ -46,7 +46,6 @@ public sealed class SimpleReflectionNullableFlagPropertyHandler<TFlag, TRecord, 
     }
 
     public string PropertyName { get; }
-    public bool RequiresFullLoadOrderProcessing => true;
 
     public TFlag? GetValue(IMajorRecordGetter record)
     {

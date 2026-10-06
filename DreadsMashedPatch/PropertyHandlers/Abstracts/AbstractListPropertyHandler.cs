@@ -24,7 +24,6 @@ public enum ListSemantics
 public abstract class AbstractListPropertyHandler<T> : IPropertyHandler<List<T>> where T : class
 {
     public abstract string PropertyName { get; }
-    public bool RequiresFullLoadOrderProcessing => true;
     public virtual ListSemantics Semantics => ListSemantics.Unordered;
     protected virtual bool CanBeNull => false;
 

@@ -12,8 +12,6 @@ public sealed class ImpactsHandler : IPropertyHandler<List<IImpactDataGetter>>
 {
     public string PropertyName => "Impacts";
 
-    public bool RequiresFullLoadOrderProcessing => true;
-
     public List<IImpactDataGetter>? GetValue(IMajorRecordGetter record)
     {
         return record is IImpactDataSetGetter impactDataSet

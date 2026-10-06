@@ -23,7 +23,6 @@ public sealed class FlagsHandler : IPropertyHandler<TextureSetFlag?>
         (mask, flag) => mask | Convert.ToInt64(flag));
 
     public string PropertyName => "Flags";
-    public bool RequiresFullLoadOrderProcessing => true;
 
     public TextureSetFlag? GetValue(IMajorRecordGetter record)
         => record is ITextureSetGetter textureSet

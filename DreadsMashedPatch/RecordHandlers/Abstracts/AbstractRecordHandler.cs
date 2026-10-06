@@ -319,47 +319,13 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     Console.WriteLine($"Record contexts: {recordContexts.Length}");
                     Console.WriteLine($"Winning context: {winningContext.ModKey}");
 
-                    // Initialize property states and quick initial check for simple properties
+                    // Initialize property states before visiting the complete override history
                     var originalContext = recordContexts.Last();
                     Console.WriteLine($"Original context: {originalContext.ModKey}");
                     var usesAtomicOwnership = AtomicOwnershipTriggerProperties.Count > 0;
                     InitializePropertyContexts(
                         originalContext,
                         usesAtomicOwnership ? originalContext : winningContext);
-
-                    // Quick initial check for simple properties
-                    // all simple properties (not lists) should be resolved if the original and winning values are different
-                    bool allResolved = !usesAtomicOwnership;
-                    bool requiresPass1 = usesAtomicOwnership;
-                    if (!usesAtomicOwnership)
-                    {
-                        foreach (var (propName, handler) in PropertyHandlers)
-                        {
-                            if (!handler.RequiresFullLoadOrderProcessing)
-                            {
-                                var originalValue = handler.GetValue(originalContext.Record);
-                                var winningValue = handler.GetValue(winningContext.Record);
-                                var propContext = PropertyContexts[propName];
-
-                                if (!handler.AreValuesEqual(originalValue, winningValue))
-                                {
-                                    propContext.IsResolved = true;
-                                    if (detailedRecord)
-                                    {
-                                        LogCollector.Add(propName, $"[{propName}] {winningContext.Record.FormKey} Resolved, nothing to forward. Original: {FormatForLogWithWarning(propName, handler, originalValue, "quick-check original", deepDiveRecord)}, Winning: {FormatForLogWithWarning(propName, handler, winningValue, "quick-check winning", deepDiveRecord)}");
-                                    }
-                                }
-                                else
-                                {
-                                    allResolved = false;
-                                }
-                            }
-                            else
-                            {
-                                requiresPass1 = true;
-                            }
-                        }
-                    }
 
                     // print original and winning values for all properties
                     foreach (var (propName, handler) in PropertyHandlers)
@@ -376,164 +342,55 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                         LogCollector.PrintAllAndClear();
                     }
 
-                    // Pass 1: Process from original to winning (for lists and unresolved properties)
-                    // Pass 1 is required for lists and flags
-                    // Check if we have any list properties to process. If not we can skip pass 1.
-                    if (!requiresPass1)
-                    {
-                        if (detailedRecord) Console.WriteLine("Skipping first pass: No list or flag properties to process");
-                    }
-                    else
-                    {
-                        if (detailedRecord) Console.WriteLine("Processing first pass");
+                    // Every handler uses the complete history, from original to winning.
+                    // IsResolved still permits record-specific policies to stop early.
+                    if (detailedRecord) Console.WriteLine("Processing forward pass");
 
-                        // iterate from original to winning
-                        var chronologicalPreviousContext = originalContext;
-                        foreach (var context in recordContexts.Reverse().Skip(1))
+                    // iterate from original to winning
+                    var chronologicalPreviousContext = originalContext;
+                    foreach (var context in recordContexts.Reverse().Skip(1))
+                    {
+                        // bugfix, skip if context is output mod
+                        if (context.ModKey.ToString() == state.PatchMod.ModKey.ToString())
                         {
-                            // bugfix, skip if context is output mod
-                            if (context.ModKey.ToString() == state.PatchMod.ModKey.ToString())
-                            {
-                                continue;
-                            }
-
-                            var changedAtomicProperties = ResetPropertyContextsIfAtomicOwnershipTriggered(
-                                chronologicalPreviousContext,
-                                context);
-                            if (changedAtomicProperties.Count > 0)
-                            {
-                                Console.WriteLine(
-                                    $"Atomic ownership reset: {context.ModKey} owns the complete record because " +
-                                    $"{string.Join(", ", changedAtomicProperties)} changed");
-                                chronologicalPreviousContext = context;
-                                continue;
-                            }
-
-                            // Update the property contexts, skip if resolved
-                            foreach (var (propName, handler) in PropertyHandlers)
-                            {
-                                var propContext = PropertyContexts[propName];
-                                if (propContext.IsResolved) continue;
-
-                                var mod = state.LoadOrder[context.ModKey].Mod;
-                                if (detailedRecord)
-                                {
-                                    LogCollector.Add(propName, $"[{propName}] Processing mod: {context.ModKey} with value: {FormatForLogWithWarning(propName, handler, handler.GetValue(context.Record), "pass1 context value", deepDiveRecord)} with masters: {(mod != null ? string.Join(", ", mod.MasterReferences.Select(m => m.Master.FileName)) : "")}");
-                                }
-
-                                handler.UpdatePropertyContext(context, state, propContext);
-                            }
-
-                            chronologicalPreviousContext = context;
+                            continue;
                         }
 
-                        // Process properties after pass 1. Every property should be resolved after pass 1
+                        var changedAtomicProperties = ResetPropertyContextsIfAtomicOwnershipTriggered(
+                            chronologicalPreviousContext,
+                            context);
+                        if (changedAtomicProperties.Count > 0)
+                        {
+                            Console.WriteLine(
+                                $"Atomic ownership reset: {context.ModKey} owns the complete record because " +
+                                $"{string.Join(", ", changedAtomicProperties)} changed");
+                            chronologicalPreviousContext = context;
+                            continue;
+                        }
+
+                        // Update the property contexts, skip if resolved
                         foreach (var (propName, handler) in PropertyHandlers)
                         {
                             var propContext = PropertyContexts[propName];
+                            if (propContext.IsResolved) continue;
 
-                            // Mark as resolved if it is processed in pass 1
-                            propContext.IsResolved = true;
+                            var mod = state.LoadOrder[context.ModKey].Mod;
                             if (detailedRecord)
                             {
-                                LogCollector.Add(propName, $"[{propName}] {winningContext.ModKey}: Marked as resolved after pass 1");
+                                LogCollector.Add(propName, $"[{propName}] Processing mod: {context.ModKey} with value: {FormatForLogWithWarning(propName, handler, handler.GetValue(context.Record), "forward-pass context value", deepDiveRecord)} with masters: {(mod != null ? string.Join(", ", mod.MasterReferences.Select(m => m.Master.FileName)) : "")}");
                             }
+
+                            handler.UpdatePropertyContext(context, state, propContext);
                         }
-                        if (LogCollector.HasLogs())
-                        {
-                            LogCollector.PrintAllAndClear();
-                        }
-                        if (detailedRecord) Console.WriteLine("First pass complete");
+
+                        chronologicalPreviousContext = context;
                     }
 
-                    // Pass 2: Process from winning to original (for any remaining unresolved properties)
-                    // This will only run if there are no list or flag properties. It is more efficent than pass 1.
-                    if (!allResolved)
+                    if (LogCollector.HasLogs())
                     {
-                        if (detailedRecord) Console.WriteLine("Processing second pass");
-                        // reset prop handlers
-                        foreach (var (propName, handler) in PropertyHandlers)
-                        {
-                            if (!PropertyContexts[propName].IsResolved)
-                            {
-                                handler.InitializeContext(originalContext, winningContext, PropertyContexts[propName]);
-                            }
-                        }
-
-                        // iterate from winning towards original
-                        foreach (var context in recordContexts)
-                        {
-                            if (allResolved)
-                            {
-                                break;
-                            }
-
-                            // Skip if we've reached the original mod
-                            if (context == originalContext)
-                            {
-                                break;
-                            }
-
-                            // bugfix, skip if context is output mod
-                            if (context.ModKey.ToString() == state.PatchMod.ModKey.ToString())
-                            {
-                                continue;
-                            }
-
-                            foreach (var (propName, handler) in PropertyHandlers)
-                            {
-                                // if the property is resolved, skip it
-                                allResolved = true;
-                                var propertyContext = PropertyContexts[propName];
-                                if (propertyContext.IsResolved)
-                                {
-                                    continue;
-                                }
-
-                                // if the property is not resolved, update the property context
-                                allResolved = false;
-                                var mod = state.LoadOrder[context.ModKey].Mod;
-                                if (detailedRecord)
-                                {
-                                    LogCollector.Add(propName, $"[{propName}] Processing mod: {context.ModKey} with value: {FormatForLogWithWarning(propName, handler, handler.GetValue(context.Record), "pass2 context value", deepDiveRecord)} with masters: {(mod != null ? string.Join(", ", mod.MasterReferences.Select(m => m.Master.FileName)) : "")}");
-                                }
-                                handler.UpdatePropertyContext(context, state, propertyContext);
-
-                                // If property has changed, iterate back to check for valid reverts
-                                var forwardValue = handler.GetValue(context.Record);
-                                var originalValue = handler.GetValue(originalContext.Record);
-                                if (!handler.AreValuesEqual(forwardValue, originalValue))
-                                {
-                                    // Find the index of current context
-                                    var currentIndex = Array.IndexOf(recordContexts, context);
-
-                                    // Iterate back towards winning
-                                    for (int i = currentIndex - 1; i >= 0; i--)
-                                    {
-                                        // bugfix, skip if context is output mod
-                                        if (recordContexts[i].ModKey.ToString() == state.PatchMod.ModKey.ToString())
-                                        {
-                                            continue;
-                                        }
-
-                                        handler.UpdatePropertyContext(recordContexts[i], state, propertyContext);
-                                    }
-
-                                    // Now we have the real final value, mark as resolved
-                                    propertyContext.IsResolved = true;
-                                }
-                            }
-                        }
-                        if (LogCollector.HasLogs())
-                        {
-                            LogCollector.PrintAllAndClear();
-                        }
-                        if (detailedRecord) Console.WriteLine("Second pass complete");
+                        LogCollector.PrintAllAndClear();
                     }
-                    else
-                    {
-                        if (detailedRecord) Console.WriteLine("Skipping second pass: All properties resolved");
-                    }
+                    if (detailedRecord) Console.WriteLine("Forward pass complete");
 
                     // Forward changes to the patcher
                     var propertiesToForward = new Dictionary<string, object?>();

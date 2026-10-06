@@ -28,7 +28,7 @@ xEdit row key. See [historical ordering audit](history/LIST_ORDERING_AUDIT.md) f
 
 1. Initialize one alignment row for every item in the original record.
 2. Process record overrides from original to winning, using the contexts already
-   resolved for pass 1.
+   resolved for the forward pass.
 3. Diff the accumulated row keys against the current override's keys with a port
    of xEdit's `TDiff` Myers O(ND) longest-common-subsequence implementation.
 4. Reuse rows for matches, retain unmatched old rows as gaps, and insert a new
@@ -45,9 +45,9 @@ xEdit row key. See [historical ordering audit](history/LIST_ORDERING_AUDIT.md) f
 
 The algorithm stores only the accumulated rows, row IDs, and ownership metadata.
 It does not call `ResolveAllContexts` again and does not expand the context after
-pass 1. The record handler already resolves the override chain once and visits it
-from original to winning, so every prior override has contributed its alignment
-information by the time the winning override is processed.
+the forward pass. The record handler already resolves the override chain once
+and visits it from original to winning, so every prior override has contributed
+its alignment information by the time the winning override is processed.
 
 The diff is O(ND), where N is the combined sequence length and D is the edit
 distance. Memory is proportional to the explored diagonals plus the accumulated

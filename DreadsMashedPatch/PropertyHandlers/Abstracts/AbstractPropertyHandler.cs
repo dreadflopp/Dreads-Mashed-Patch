@@ -15,7 +15,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
     public abstract class AbstractPropertyHandler<T> : IPropertyHandler<T>
     {
         public abstract string PropertyName { get; }
-        public bool RequiresFullLoadOrderProcessing => true;
 
         public abstract void SetValue(IMajorRecord record, T? value);
         public abstract T? GetValue(IMajorRecordGetter record);

@@ -17,6 +17,15 @@ Use the [standalone development guide](STANDALONE_DEVELOPMENT.md#build-and-publi
 
 ## Handler selection
 
+All record types share one original-to-winning forwarding pass. The former
+winning-to-original second pass and its quick-check branch were removed because
+every property handler required the complete override history. The constant
+`RequiresFullLoadOrderProcessing` interface member and implementations were also
+removed. Scalar, collection, and flag properties keep their existing handlers,
+equality, ownership, and copying policies. Atomic ownership resets, record-specific
+coordination, and `IsResolved` early exits (such as NPC protection and Impact Data
+Set fallback) remain specialized because they affect forwarding decisions.
+
 Find an existing equivalent handler in the same layer before adding one. Verify the exact getter/setter surface in repository usage and, when necessary, the [local decompiled references](REFERENCE_SOURCES.md). Decompiled sources are reference-only and must never be edited or compiled into the project. Ask for additional interface documentation only if behavior remains unclear after those checks.
 
 | Value | Existing pattern |
