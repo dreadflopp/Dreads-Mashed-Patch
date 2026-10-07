@@ -94,17 +94,11 @@
                                 BorderBrush="{StaticResource InfoBorderBrush}"
                                 BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,8,0,8">
                             <StackPanel>
-                                <TextBlock Text="Mod manager setup"
+                                <TextBlock Text="Mod Organizer 2"
                                            FontWeight="Bold" TextWrapping="Wrap"/>
                                 <TextBlock TextWrapping="Wrap" Margin="0,5,0,0">
                                     <Run FontWeight="SemiBold" Text="MO2:"/>
-                                    <Run Text=" Add the patcher as an executable in MO2 and launch it through MO2 so it can access your active profile's virtual files."/>
-                                    <LineBreak/>
-                                    <Run FontWeight="SemiBold" Text="Amethyst:"/>
-                                    <Run Text=" Deploy your active profile before running the patcher."/>
-                                </TextBlock>
-                                <TextBlock Text="Use the normal installation examples unless your list uses Stock Game or Game Root. Steam libraries, GOG installations, and manager folders may be elsewhere; browse to your actual installation and active profile."
-                                           TextWrapping="Wrap" Margin="0,5,0,0"/>
+                                    <Run Text=" Add the patcher as an executable in MO2."/>
                             </StackPanel>
                         </Border>
 
@@ -114,15 +108,18 @@
                             <StackPanel>
                                 <TextBlock Text="Wabbajack / Stock Game: select the game installation your list uses"
                                            FontWeight="Bold" TextWrapping="Wrap"/>
-                                <TextBlock Text="If your list uses a copied installation, select that game folder and its Data folder. Otherwise, select your normal Steam or GOG installation. Detect paths may find the Steam installation instead. Select the active profile's plugins.txt, then verify the paths before patching."
+                                <TextBlock Text="If your list uses a copy of Skyrim in a stock folder, select that folder,"
                                            TextWrapping="Wrap" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
 
-                        <Button Content="Detect paths"
-                                Click="OnAutoDetectPaths"
-                                HorizontalAlignment="Left"
-                                Margin="0,5,0,7"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Detect paths"
+                                    Click="OnAutoDetectPaths"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,5,0,7"/>
+                            <Button Content="Verify paths" Click="OnVerifyPaths" Margin="8,5,0,7"/>
+                        </StackPanel>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Game release"/>
@@ -152,8 +149,8 @@
                             <Run FontWeight="SemiBold" Text="MO2 Stock Game example:"/>
                             <Run Text=" C:\Modlists\&lt;list name&gt;\Stock Game"/>
                             <LineBreak/>
-                            <Run FontWeight="SemiBold" Text="Amethyst Game Root example (Proton):"/>
-                            <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\.wj\&lt;list name&gt;\root\Game Root"/>
+                            <Run FontWeight="SemiBold" Text="Amethyst Stock Game example (Proton):"/>
+                            <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\.wj\&lt;list name&gt;\root\Stock Game"/>
                         </TextBlock>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
@@ -200,7 +197,7 @@
                             <Run Text=" Z:\home\&lt;username&gt;\Games\Amethyst\Skyrim Special Edition\profiles\&lt;profile name&gt;\plugins.txt"/>
                             <LineBreak/>
                             <Run FontWeight="SemiBold" Text="Without a mod manager:"/>
-                            <Run Text=" Look for plugins.txt in %LOCALAPPDATA%\Skyrim Special Edition or the corresponding GOG or VR folder."/>
+                            <Run Text=" Look in %LOCALAPPDATA%\Skyrim Special Edition\plugins.txt, or the corresponding GOG or VR folder."/>
                         </TextBlock>
 
                         <TextBlock Style="{StaticResource FieldLabel}" Text="Patch output folder"/>
@@ -221,10 +218,6 @@
                             <Run Text=" Select your Skyrim installation's Data folder."/>
                         </TextBlock>
 
-                        <Button Content="Verify paths"
-                                Click="OnVerifyPaths"
-                                HorizontalAlignment="Left"
-                                Margin="0,5,0,0"/>
                         <TextBlock x:Name="PathVerificationSummary" Text="Paths have not been verified."
                                    FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,12,0,4"/>
                         <Expander x:Name="PathVerificationDetails" Header="Path verification details" Visibility="Collapsed">
@@ -269,18 +262,16 @@
                                            Margin="0,0,0,5"/>
                                 <TextBlock TextWrapping="Wrap"
                                            Margin="0,1">
-                                    <Run FontWeight="SemiBold" Text="Dialogue records (DIAL, DLBR, INFO, DLVW):"/>
-                                    <Run Text=" These records depend on one another, and mixing parts from different mods can break conversations."/>
+                                    <Run FontWeight="SemiBold" Text="Dialogue records (DIAL, DLBR, INFO, DLVW)"/>
                                 </TextBlock>
                                 <TextBlock TextWrapping="Wrap"
                                            Margin="0,1">
-                                    <Run FontWeight="SemiBold" Text="Navigation meshes (NAVM):"/>
-                                    <Run Text=" These records control where characters can walk. Mixing data from different mods can create broken paths."/>
+                                    <Run FontWeight="SemiBold" Text="Navigation meshes (NAVM)"/>
                                 </TextBlock>
                                 <TextBlock TextWrapping="Wrap"
                                            Margin="0,1">
                                     <Run FontWeight="SemiBold" Text="Packages (PACK):"/>
-                                    <Run Text=" A Mutagen bug can rearrange package data when the patch is written. Leave this record type disabled until the bug is fixed."/>
+                                    <Run Text=" A Mutagen bug can rearrange package data when the patch is written. Leave this disabled until the bug is fixed."/>
                                 </TextBlock>
                                 <TextBlock Text="You can still enable these record types, but check the resulting overrides in xEdit."
                                            TextWrapping="Wrap"
@@ -373,7 +364,7 @@
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Plugin filenames"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Enter one full plugin filename per line, including .esp, .esm, or .esl. Order matters: entries lower in the list have higher priority."/>
+                                   Text="Enter one full plugin filename per line, including .esp, .esm, or .esl."/>
                         <TextBox Text="{Binding AlwaysWinningModsText, UpdateSourceTrigger=PropertyChanged}"
                                  AcceptsReturn="True"
                                  MinWidth="520"
@@ -416,9 +407,9 @@
                         <TextBlock Style="{StaticResource SectionTitle}"
                                    Text="Smarter choices for complex records"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="These options apply specialized forwarding rules to fields that cannot always be merged safely by the general rules."/>
+                                   Text="These options apply specialized forwarding rules,"/>
 
-                        <CheckBox Content="Treat Creation Club content as the official baseline"
+                        <CheckBox Content="Treat Creation Club content as official baseline"
                                   FontWeight="SemiBold"
                                   IsChecked="{Binding Settings.Patcher.Forwarding.TreatCreationClubAsVanilla}"/>
                         <TextBlock Style="{StaticResource HelpText}"
@@ -451,7 +442,7 @@
                                   SelectedValuePath="Value"
                                   SelectedValue="{Binding Settings.Patcher.Forwarding.EditorIdPolicy}"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Recommended: forward a computed Editor ID only when another property already requires a patch record. This preserves relevant renames without creating EDID-only overrides."/>
+                                   Text="Recommended: forward a changed Editor ID only when another property already requires a patch record."/>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="NPC protection status"/>
@@ -469,7 +460,7 @@
                                   SelectedValuePath="Value"
                                   SelectedValue="{Binding Settings.Patcher.Forwarding.TamrielPersistentCellPolicy}"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Recommended hybrid: patch normally unless the winning CELL header matches Skyrim.esm. In that case, use Dawnguard.esm instead."/>
+                                   Text="Recommended hybrid: patch normally unless the winning CELL header matches Skyrim.esm, then use Dawnguard.esm instead."/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -611,7 +602,7 @@
                             <TextBlock Style="{StaticResource FieldLabel}"
                                        Text="Deep-dive record signatures"/>
                             <TextBlock Style="{StaticResource HelpText}"
-                                       Text="One xEdit record signature per line, for example, QUST."/>
+                                       Text="One xEdit record signature per line, for example QUST."/>
                             <TextBox Height="72"
                                      AcceptsReturn="True"
                                      VerticalContentAlignment="Top"
@@ -621,7 +612,7 @@
                             <TextBlock Style="{StaticResource FieldLabel}"
                                        Text="Deep-dive FormKeys"/>
                             <TextBlock Style="{StaticResource HelpText}"
-                                       Text="One FormKey per line, for example, 00285D:Update.esm. Bare hexadecimal FormIDs are also accepted."/>
+                                       Text="One FormKey per line, for example 00285D:Update.esm. Bare hexadecimal FormIDs are also accepted."/>
                             <TextBox Height="72"
                                      AcceptsReturn="True"
                                      VerticalContentAlignment="Top"
