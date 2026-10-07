@@ -99,6 +99,7 @@
                                 <TextBlock TextWrapping="Wrap" Margin="0,5,0,0">
                                     <Run FontWeight="SemiBold" Text="MO2:"/>
                                     <Run Text=" Add the patcher as an executable in MO2."/>
+                                </TextBlock>
                             </StackPanel>
                         </Border>
 
@@ -108,18 +109,15 @@
                             <StackPanel>
                                 <TextBlock Text="Wabbajack / Stock Game: select the game installation your list uses"
                                            FontWeight="Bold" TextWrapping="Wrap"/>
-                                <TextBlock Text="If your list uses a copy of Skyrim in a stock folder, select that folder,"
+                                <TextBlock Text="If your list uses a copy of Skyrim in a stock folder, select that folder."
                                            TextWrapping="Wrap" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
 
-                        <StackPanel Orientation="Horizontal">
-                            <Button Content="Detect paths"
-                                    Click="OnAutoDetectPaths"
-                                    HorizontalAlignment="Left"
-                                    Margin="0,5,0,7"/>
-                            <Button Content="Verify paths" Click="OnVerifyPaths" Margin="8,5,0,7"/>
-                        </StackPanel>
+                        <Button Content="Detect paths"
+                                Click="OnAutoDetectPaths"
+                                HorizontalAlignment="Left"
+                                Margin="0,5,0,7"/>
 
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Game release"/>
@@ -218,6 +216,10 @@
                             <Run Text=" Select your Skyrim installation's Data folder."/>
                         </TextBlock>
 
+                        <Button Content="Verify paths"
+                                Click="OnVerifyPaths"
+                                HorizontalAlignment="Left"
+                                Margin="0,5,0,0"/>
                         <TextBlock x:Name="PathVerificationSummary" Text="Paths have not been verified."
                                    FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,12,0,4"/>
                         <Expander x:Name="PathVerificationDetails" Header="Path verification details" Visibility="Collapsed">
