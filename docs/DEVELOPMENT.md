@@ -13,6 +13,8 @@ The core targets .NET 10 and uses Mutagen.Bethesda.Skyrim 0.54.4 and Mutagen.Bet
 - [RecordPolicySources](../DreadsMashedPatch/RecordPolicySources.cs) performs targeted priority/baseline identifier lookups. Policy-only records need not expand complete histories; ordinary merging still does.
 - [RecordOverrideTransaction](../DreadsMashedPatch/RecordOverrideTransaction.cs) stages detached records and ancestry. [PatcherRunner](../DreadsMashedPatch.App/Services/PatcherRunner.cs) uses [PatchOutputTransaction](../DreadsMashedPatch/PatchOutputTransaction.cs) to publish files after a successful run.
 
+Initial history lookups use the record's registered getter type, matching the typed history lookups during merging. Mutagen indexes contexts by getter type; querying `IMajorRecordGetter` first would build a separate broad index in addition to the indexes used by record handlers. Using the concrete registered getter lets filtering and merging share those indexes. Filtering still retains at most three eligible contexts, and ordinary merging still resolves the complete history.
+
 Use the [standalone development guide](STANDALONE_DEVELOPMENT.md#build-and-publish) for complete build/publish instructions. Linux can build the Windows app and run platform-neutral tests; its WPF interface runs through Proton. The self-contained published executable includes the runtime, while building requires the .NET 10 SDK.
 
 ## Handler selection

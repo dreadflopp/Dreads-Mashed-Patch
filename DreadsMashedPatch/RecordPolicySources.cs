@@ -41,11 +41,12 @@ public sealed class RecordPolicySources : IDisposable
             .ToArray();
     }
 
+    // Match the record getter used during merging so both stages share Mutagen's context index.
     internal static IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetInitialContexts(
         IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> discoveredWinner,
         IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
-        discoveredWinner.Record.ToLink()
-            .ResolveAllContexts<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>(state.LinkCache)
+        state.LinkCache.ResolveAllContexts(discoveredWinner.Record.FormKey,
+            ((ILoquiObject)discoveredWinner.Record).Registration.GetterType)
             .Where(context => !PatcherSettings.IsIgnoredMod(context.ModKey))
             .Take(3)
             .ToArray();
