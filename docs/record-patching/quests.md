@@ -1,6 +1,6 @@
 # Quests, dialogue and AI
 
-[Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
+[Record index](INDEX.md) · [Shared patching rules](README.md)
 
 The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
@@ -101,7 +101,7 @@ Responses, Conditions and LinkTo align across versions. Responses also harmonize
 
 **Disabled by default; these rules apply when enabled.**
 
-The package template graph is inactive even when packages are enabled: PackageTemplate, DataInputVersion, Data, XnamMarker and ProcedureTree are not forwarded independently. The local writer and binary regression confirm key-sorted data rows instead of the source declaration order, while preserving index/value associations. This does not establish an in-game failure. Winner/priority snapshots still use that writer; disabling graph selection does not guarantee physical row-order preservation. See the [PACK audit](COVERAGE-COMPARISON-AUDIT.md#pack-arma-and-navi-boundaries). VMAD, IdleAnimations and the three event structures are separate whole values.
+The package template graph is inactive even when packages are enabled: PackageTemplate, DataInputVersion, Data, XnamMarker and ProcedureTree are not forwarded independently. The local writer and binary regression confirm key-sorted data rows instead of the source declaration order, while preserving index/value associations. This does not establish an in-game failure. Winner/priority snapshots still use that writer; disabling graph selection does not guarantee physical row-order preservation. VMAD, IdleAnimations and the three event structures are separate whole values.
 
 | Properties | How they are patched |
 |---|---|

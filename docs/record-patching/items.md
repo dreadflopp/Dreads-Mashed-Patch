@@ -1,6 +1,6 @@
 # Items and equipment
 
-[Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
+[Record index](INDEX.md) · [Shared patching rules](README.md)
 
 The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
@@ -53,7 +53,7 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 
 ## ARMA — Armor Addon
 
-Male and female fields are separate. Each model filename is separate from its alternate textures, which match by (Name, Index). Selected filenames also carry model data bytes, but byte-only differences do not trigger forwarding. This is explicit migration policy, confirmed for all four filename handlers in the [comparison audit](COVERAGE-COMPARISON-AUDIT.md#pack-arma-and-navi-boundaries). BodyTemplate.ActsLike44 is not independently patched.
+Male and female fields are separate. Each model filename is separate from its alternate textures, which match by (Name, Index). Selected filenames also carry model data bytes, but byte-only differences do not trigger forwarding. BodyTemplate.ActsLike44 is not independently patched.
 
 | Properties | How they are patched |
 |---|---|
@@ -117,7 +117,7 @@ Teaches keeps the teaching variant and its value together. It does not combine s
 
 ## CONT — Container
 
-Items match by item reference, retaining duplicate rows and their complete ownership/condition extra data (COED). Unchanged duplicate rows match first; remaining occurrences match by metadata-change cost. Newly different counts can forward independently; returning to the baseline count requires ownership permission. COED presence, condition and coherent owner changes require the row owner to be a declared or configured virtual master. Count edits do not grant COED permission in the same row. Absent COED stays distinct from a present default group. See the [completed fix and verification](KNOWN-ISSUES.md#container-item-extra-data).
+Items match by item reference, retaining duplicate rows and their complete ownership/condition extra data (COED). Unchanged duplicate rows match first; remaining occurrences match by metadata-change cost. Newly different counts can forward independently; returning to the baseline count requires ownership permission. COED presence, condition and coherent owner changes require the row owner to be a declared or configured virtual master. Count edits do not grant COED permission in the same row. Absent COED stays distinct from a present default group.
 
 | Properties | How they are patched |
 |---|---|

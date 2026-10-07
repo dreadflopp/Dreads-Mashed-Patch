@@ -1,18 +1,17 @@
-# Documentation
+# Internal documentation
 
-The [project README](../README.md) is the user guide for settings and getting started. Internal architecture, audits, and migration evidence are listed separately below.
+For the maintainer and AI agents working on the app. The [project README](../README.md) is the user guide for setup, settings, and diagnostics. Keep this index and internal documents out of public documentation navigation.
 
 [Project front page](../README.md)
 
-## Using the patcher
+## Public documentation to maintain
 
 | Document | Purpose |
 |---|---|
-| [Application guide](STANDALONE_APP.md) | Windows/Proton setup, normal and copied installation paths, mod managers, and logs. |
-| [Patching guide](record-patching/README.md) | Input filtering, ownership, selection, shared property rules, and output failures. |
+| [Project README](../README.md) | Setup, settings, mod managers, Proton, and logs. |
+| [Shared patching rules](record-patching/README.md) | Value selection and terminology used by the record property tables. |
 | [Record index and property tables](record-patching/INDEX.md) | Every supported record variant and how its properties are patched. |
 | [Unsupported records](record-patching/unsupported.md) | Excluded and missing routes, plus indirect handling. |
-| [Known issues and limits](record-patching/KNOWN-ISSUES.md) | Current boundaries and links to resolved defect evidence. |
 
 VOLI, LENS, LTEX and all seven placed-projectile variants are supported and enabled by default. Their atomic groups, nullable fields and collection rules are documented in the [record tables](record-patching/INDEX.md); source review and binary test evidence are in [the completion appendix](record-patching/REVIEW.md#additional-record-support-verification).
 
@@ -36,7 +35,7 @@ Registration coverage is evidence of implementation scope, not proof of gameplay
 
 ## Internal evidence and history
 
-[Review evidence](record-patching/REVIEW.md) and the [coverage/comparison audit](record-patching/COVERAGE-COMPARISON-AUDIT.md) retain dated findings, fix decisions, and validation results. Earlier counts and pre-fix observations apply to their stated historical baseline. Current behavior is described by the patching guide, inventory, and known-limits page.
+[Known issues and limits](record-patching/KNOWN-ISSUES.md), [review evidence](record-patching/REVIEW.md), and the [coverage/comparison audit](record-patching/COVERAGE-COMPARISON-AUDIT.md) retain internal boundaries, dated findings, fix decisions, and validation results. Earlier counts and pre-fix observations apply to their stated historical baseline. Current user-facing limitations belong in the affected record descriptions.
 
 [Migration history](history/README.md) preserves record-specific rationale for asset paths, model/bounds coupling, and list ordering. The [font documentation](../DreadsMashedPatch.App/Assets/Fonts/README.md) and [SIL license](../DreadsMashedPatch.App/Assets/Fonts/OFL.txt) remain alongside the bundled assets. [AGENTS.md](../AGENTS.md) contains repository contribution instructions.
 
@@ -44,4 +43,4 @@ Registration coverage is evidence of implementation scope, not proof of gameplay
 
 Reviewed on 2026-10-05 against the checked-in implementation and Mutagen Skyrim 0.54.4 / Synthesis 0.36.6. Keep current guides and generated audits, preserve dated decision evidence, and remove superseded guidance. The former `DreadsMashedPatch/docs/best practices.md` was replaced by the development guide: its asset-path, translation, interface, and omission examples no longer matched current policy. The generated `ilspy-help.txt` snapshot was removed; use the exporter and installed tool's `--help` instead.
 
-When behavior changes, update the application guide, shared rules, affected record tables, inventory, and known limits together. Regenerate relevant audits and record validation evidence. Preserve historical test counts as historical results; do not present them as current release certification.
+When behavior changes, update the project README, shared rules, affected record tables, inventory, and internal known limits together. Regenerate relevant audits and record validation evidence. Preserve historical test counts as historical results; do not present them as current release certification.

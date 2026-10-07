@@ -18,20 +18,20 @@ The link above will be replaced with the published mod page.
 
 **Inspect the generated patch in xEdit before using it.** Check that changes were patched as intended. An automatic patcher cannot resolve everything correctly: the end user must manually correct some of the patching and create additional compatibility patches where needed. Review every output plugin if the patch is split into multiple files.
 
-Please report bugs through this repository's **Issues** tab. Include the patcher version, load order, relevant plugins, record FormID/FormKey and property, expected and actual results, xEdit screenshots, and the run log. See [logs and diagnostics](docs/STANDALONE_APP.md#diagnostics).
+Please report bugs through this repository's **Issues** tab. Include the patcher version, load order, relevant plugins, record FormID/FormKey and property, expected and actual results, xEdit screenshots, and the run log from the location listed under **Diagnostics and Run Log** below.
 
 ## Getting started
 
-1. Launch `DreadsMashedPatch.exe`. With MO2, add it as an executable and launch through MO2. With Amethyst, deploy your active profile first.
+1. Launch `DreadsMashedPatch.exe` directly or through your mod manager. With MO2, add it as an executable and launch through MO2. With Amethyst, deploy your active profile first. This is a standalone app; do not launch it through Synthesis.
 2. On **General**, select your game release, game folder, Data folder, active `plugins.txt`, and patch output folder. Select **Verify paths**.
 3. Review **Record Types** and the settings below. The recommended defaults are a starting point.
 4. Select **Run patcher**, enable the generated plugins, and inspect them in xEdit.
 
 For a normal install, your game folder might be `C:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition`, with `Data` beneath it. Under Proton, an example is `Z:\home\<username>\.local\share\Steam\steamapps\common\Skyrim Special Edition`. If your list uses a separate **Stock Game** or **Game Root** copy, select that copy instead. Browse to your actual installation if it lives elsewhere.
 
-With MO2 or Amethyst, create an empty mod for the patch in your manager and select its folder as the output. Without a mod manager, use the game's Data folder. The [setup guide](docs/STANDALONE_APP.md#selecting-folders) has complete examples for both normal and copied installations, including profile and output paths.
+With MO2 or Amethyst, select your active profile's `plugins.txt`, create an empty mod for the patch in your manager, and select its folder as the output. Without a mod manager, use the game's Data folder for output and the game's active `plugins.txt`, usually in `%LOCALAPPDATA%\Skyrim Special Edition` or the corresponding GOG or VR folder. Under Proton, this belongs to the game prefix.
 
-The output is `MashedPatch.esp`, with numbered plugins if it needs to be split. If `MashedPatch.esp` is already in your load order, only enabled plugins before it are used as inputs. Otherwise, the full enabled load order is used. Enable every generated output plugin.
+The output is `MashedPatch.esp`, with numbered plugins if it needs to be split. If `MashedPatch.esp` is already in your load order, only enabled plugins before it are used as inputs. Otherwise, the full enabled load order is used. Use **Create empty patch output** to enable and position the patch before your first full run. Enable every generated output plugin. A failed patch build leaves previous output files in place.
 
 ## Settings
 
@@ -61,7 +61,7 @@ Enter one full plugin filename per line, including `.esp`, `.esm`, or `.esl`. Fo
 
 ### Ignored Mods
 
-Enter one full plugin filename per line to leave its overrides out of conflict discovery. This does not disable the plugin in your game. The [patching guide](docs/record-patching/README.md) explains how ignored plugins affect forwarding and winning records.
+Enter one full plugin filename per line to leave its overrides out of conflict discovery. The patcher uses the last remaining override as its winning record. This does not disable the plugin in your game.
 
 ### Smart Forwarding
 
@@ -73,7 +73,7 @@ Enter one full plugin filename per line to leave its overrides out of conflict d
 | Keep one vanilla weapon type keyword | Enabled by default. When an accepted change gives a weapon exactly one configured vanilla type, removes the other configured types. Other keywords and deliberately authored combinations of several types are preserved. |
 | Configured vanilla weapon type keywords | The types used by the option above. Enter one FormKey per line, such as `01E711:Skyrim.esm` for swords. The defaults cover the vanilla weapon types. |
 | Editor IDs (EDID) | Controls internal record names. **Forward only on an existing patch record** (default) carries renames only when another change needs a patch. **Preserve the official Editor ID** keeps the latest official name. **Forward Editor ID changes** allows renames to create overrides on their own. |
-| NPC protection status | **Protect NPCs unless deliberately changed** (default) prefers Essential/Protected status but allows a downgrade by a mod authorized through ownership, declared masters, or Master Rules. **Always keep the strongest protection** keeps Essential over Protected over neither. **Forward each status change normally** uses ordinary forwarding rules. |
+| NPC protection status | **Protect NPCs unless deliberately changed** (default) prefers Essential/Protected status. A later plugin can lower protection if it lists the plugin that supplied the selected status as a master, or has that relationship granted through **Master Rules**. **Always keep the strongest protection** keeps Essential over Protected over neither. **Forward each status change normally** uses ordinary forwarding rules. |
 | Tamriel persistent cell (000D74:Skyrim.esm) | Applies to the Tamriel persistent cell's header. The default patches normally, but uses Dawnguard's header when the winner matches Skyrim's original. You can instead always use Dawnguard, use Skyrim, keep the winning override, or patch normally. This option does not select the cell's placed objects or other child records. Priority Mods takes precedence. |
 
 ### Master Rules
@@ -101,9 +101,3 @@ Deep-dive fields accept one value per line, commas, or semicolons. The **Run Log
 
 - [Supported record types and patching descriptions](docs/record-patching/INDEX.md): the complete list, with links to each record's property rules and limits, including types disabled by default.
 - [Unsupported record types and reasons](docs/record-patching/unsupported.md): records left out of conflict resolution and those handled indirectly.
-- [How patching works](docs/record-patching/README.md): shared rules for selecting changes, merging lists, and handling flags and other properties.
-- [Known issues and limits](docs/record-patching/KNOWN-ISSUES.md): current limitations to consider when reviewing your patch.
-
-## Further documentation
-
-The [application setup guide](docs/STANDALONE_APP.md) covers mod managers, Proton, path examples, and output troubleshooting. Architecture, build instructions, audits, and migration notes are in the separate [developer documentation](docs/README.md#developer-documentation).

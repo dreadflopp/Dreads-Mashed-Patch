@@ -1,6 +1,6 @@
 # Visual effects and assets
 
-[Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
+[Record index](INDEX.md) · [Shared patching rules](README.md)
 
 The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
@@ -126,7 +126,7 @@ The complete flare definition is one authored value. Global parameters and the o
 
 Sprite equality uses serialized RGB (alpha is not stored in LFSD), all other Data fields, IDs, order and duplicates. Textures use the project's case/slash-aware GivenPath comparison; selected copies retain the authored path. Mutagen writes the derived LFSP sprite count. There is no per-row alignment or per-bit sprite flag merge.
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LensFlareRecordHandler.cs); [atomic snapshot and comparison](../../DreadsMashedPatch/PropertyHandlers/LensFlare/FlareDefinitionHandler.cs); [verification](REVIEW.md#additional-record-support-verification).
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LensFlareRecordHandler.cs); [atomic snapshot and comparison](../../DreadsMashedPatch/PropertyHandlers/LensFlare/FlareDefinitionHandler.cs).
 
 <a id="mato-materialobject"></a>
 
@@ -197,4 +197,4 @@ The twelve nullable lighting parameters form one complete preset. Color, density
 |---|---|
 | `LightingPreset` | Select all twelve parameters together: `Intensity`, `CustomColorContribution`, `ColorR`, `ColorG`, `ColorB`, `DensityContribution`, `DensitySize`, `DensityWindSpeed`, `DensityFallingSpeed`, `PhaseFunctionContribution`, `PhaseFunctionScattering`, `SamplingRepartitionRangeFactor`. Presence and exact float values participate in comparison. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/VolumetricLightingRecordHandler.cs); [atomic snapshot](../../DreadsMashedPatch/PropertyHandlers/VolumetricLighting/LightingPresetHandler.cs); [verification](REVIEW.md#additional-record-support-verification).
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/VolumetricLightingRecordHandler.cs); [atomic snapshot](../../DreadsMashedPatch/PropertyHandlers/VolumetricLighting/LightingPresetHandler.cs).

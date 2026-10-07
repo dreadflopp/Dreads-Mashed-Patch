@@ -1,6 +1,6 @@
 # Magic and projectiles
 
-[Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
+[Record index](INDEX.md) · [Shared patching rules](README.md)
 
 The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
@@ -65,7 +65,7 @@ Entries match by (Level, Reference), with complete row payloads/counts.
 
 ## MGEF — Magic Effect
 
-Archetype copies the selected subtype whole. Type, ActorValue and AssociationKey determine whether it changed; these cover the current Mutagen 0.54.4 subtype surfaces, whose typed Association is represented by AssociationKey. No additional semantic subtype fields were found in the [known-issue re-evaluation](KNOWN-ISSUES.md#re-evaluation-and-verification).
+Archetype copies the selected subtype whole. Type, ActorValue and AssociationKey determine whether it changed; these cover the current Mutagen 0.54.4 subtype surfaces, whose typed Association is represented by AssociationKey.
 
 | Properties | How they are patched |
 |---|---|

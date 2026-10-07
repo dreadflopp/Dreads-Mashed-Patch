@@ -1,6 +1,6 @@
 # Placed records
 
-[Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
+[Record index](INDEX.md) · [Shared patching rules](README.md)
 
 The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
@@ -23,7 +23,7 @@ Placement keeps position and rotation together at the project’s comparison pre
 
 ## PARW — Placed Arrow
 
-Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator.
 
 | Properties | How they are patched |
 |---|---|
@@ -41,7 +41,7 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 
 ## PBAR — Placed Barrier
 
-Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator.
 
 | Properties | How they are patched |
 |---|---|
@@ -59,7 +59,7 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 
 ## PBEA — Placed Beam
 
-Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator.
 
 | Properties | How they are patched |
 |---|---|
@@ -77,7 +77,7 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 
 ## PCON — Placed Cone
 
-Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator.
 
 | Properties | How they are patched |
 |---|---|
@@ -95,7 +95,7 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 
 ## PFLA — Placed Flame
 
-Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator.
 
 | Properties | How they are patched |
 |---|---|
@@ -113,7 +113,7 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 
 ## PGRE — Placed Trap
 
-Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator.
 
 | Properties | How they are patched |
 |---|---|
@@ -131,7 +131,7 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 
 ## PMIS — Placed Missile
 
-Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator. See the [migration evidence](REVIEW.md#additional-record-support-verification).
+Discovered through the shared placed-trap query, then narrowed to this concrete variant. All eighteen inherited placed fields are registered in addition to Projectile and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; This variant does not use their UDR coordinator.
 
 | Properties | How they are patched |
 |---|---|
@@ -149,7 +149,7 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 
 ## PHZD — Placed Hazard
 
-Discovered through the placed-trap query, then narrowed to hazards. All eighteen inherited placed fields are registered in addition to Hazard and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; PHZD does not use their UDR coordinator. See the [migration evidence](REVIEW.md#coverage-fix-verification).
+Discovered through the placed-trap query, then narrowed to hazards. All eighteen inherited placed fields are registered in addition to Hazard and shared EditorID/header handling. `APlacedTrap.MajorFlag` bits retain the approved composite header handler. Placement uses the same atomic position/rotation comparison as ACHR/REFR; PHZD does not use their UDR coordinator.
 
 | Properties | How they are patched |
 |---|---|

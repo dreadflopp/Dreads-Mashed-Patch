@@ -1,6 +1,6 @@
 # Record index
 
-[Patching guide](README.md) · [Unsupported records](unsupported.md)
+[Project front page](../../README.md) · [Shared patching rules](README.md) · [Unsupported records](unsupported.md)
 
 All 128 supported variants (122 signatures) are listed here, including families disabled by default.
 

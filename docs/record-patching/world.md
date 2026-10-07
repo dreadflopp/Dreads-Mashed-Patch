@@ -1,6 +1,6 @@
 # World and environment
 
-[Patching guide](README.md) · [Known issues](KNOWN-ISSUES.md)
+[Record index](INDEX.md) · [Shared patching rules](README.md)
 
 The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
 
@@ -107,7 +107,7 @@ LTEX is supported independently of excluded LAND terrain geometry. The xEdit def
 
 Mutagen exposes HNAM/SNAM scalars without nullable subrecord presence; copying/writing can normalize absent scalar subrecords. INAM serialization requires a compatible SSE FormVersion (43 or later). Support does not promise preservation of unsupported on-disk representations.
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LandscapeTextureRecordHandler.cs); [xEdit review and binary verification](REVIEW.md#additional-record-support-verification).
+[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LandscapeTextureRecordHandler.cs).
 
 <a id="navm-navigationmesh"></a>
 

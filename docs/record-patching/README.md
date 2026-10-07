@@ -1,37 +1,18 @@
 # How records are patched
 
-[Project front page](../../README.md) · [Documentation index](../README.md)
+[Project front page](../../README.md) · [Record index](INDEX.md)
 
 Dread’s Mashed Patch combines changes to selected properties from your load order. Most properties are handled separately. Some values, groups and collections are selected together to keep their contents consistent. **Atomic means “choose the complete value from one source,” not “always use the last plugin.”**
 
-Use the [record index](INDEX.md) to find a record by its four-letter signature. The guides list every supported record variant, its property rules and its omissions. [Known issues and limits](KNOWN-ISSUES.md) distinguish current boundaries from resolved defects. [Unsupported records](unsupported.md) covers the remaining record families and indirect handling.
-
-| Subject | Guide |
-|---|---|
-| Actors, races, factions and character data | [Actors](actors.md) |
-| Weapons, armor, inventory and crafting | [Items](items.md) |
-| Spells, effects and projectiles | [Magic](magic.md) |
-| Cells, worldspaces, weather and navigation | [World](world.md) |
-| Placed actors, objects, hazards and projectiles | [Placed records](placed.md) |
-| Quests, scenes, dialogue, perks and packages | [Quests and AI](quests.md) |
-| Sound and music | [Audio](audio.md) |
-| Textures, impacts and other visual effects | [Visuals](visuals.md) |
-| Activators, furniture and other objects | [Objects](objects.md) |
-| Settings, globals, lists and messages | [Settings](settings.md) |
-| Coverage gaps, comparison limits and audit evidence | [Coverage/comparison audit](COVERAGE-COMPARISON-AUDIT.md) |
+Use the [record index](INDEX.md) to find a record by its four-letter signature and read its property rules and limitations. [Unsupported records](unsupported.md) covers the remaining record families and indirect handling.
 
 ## Which records reach the patch
 
-1. The desktop app prepares the input list, including installed plugins from Skyrim.ccc. Synthesis loads the input plugins before the output plugin, `MashedPatch.esp`; the output plugin and later plugins are outside that input cutoff. Enabled record families are queried, including supported records nested under cells, worldspaces and dialogue topics.
-2. Ignored plugins are removed from each record’s override history. The **effective winner** is the last remaining version. Ordinary merging is skipped if this winner is an official/vanilla source, there are at most two eligible versions, or the version immediately before the winner is vanilla. Eligible always-win sources, differing preserved baseline EditorIDs and Tamriel’s special persistent-cell policy bypass this initial filter. Policy eligibility uses typed identifier caches while the filter retains at most three eligible contexts.
-3. A matching always-win plugin selects a source record before the ordinary early exits, instead of merging properties. The last matching entry in the configured priority list wins. If that source is already the effective winner, no override is needed. When PreserveBaseline requires an EditorID-only correction on an otherwise skipped record, the winner is copied and only EditorID is changed, without loading its full history. See [policy filtering](KNOWN-ISSUES.md#policies-skipped-by-the-initial-filter).
-4. Otherwise the properties below are processed from oldest to newest. Special record rules may reset all registered properties to a newer version or coordinate related fields. The result is compared with the effective winner.
-5. If a change remains, the patcher stages a detached override from the effective winner and applies the selected flags and other changed properties. Every record, including NPC, uses its resolved context through the shared commit path. Required parent containers are staged too; the completed record and ancestry are published only after successful application and validation. Unregistered properties are not independently merged from earlier mods.
-6. Failed record candidates are discarded while other records continue processing for diagnostics. Any recorded patching error rejects the run before publication. After successful processing, Synthesis writes the patch, splitting output if necessary for master limits. The desktop app commits its staged files only with a successful run report and no pipeline errors; failures preserve the previous primary and split outputs. See [failure handling](KNOWN-ISSUES.md#errors-can-leave-partial-overrides).
-
-DIAL, DLBR, INFO, DLVW, NAVM and PACK are **supported but disabled by default**. Their guide sections describe behavior when enabled. DOBJ, LAND and IMAD are explicitly excluded and cannot be enabled through this supported-record path.
-
-VOLI, LENS, LTEX and all seven placed-projectile variants are supported and enabled by default. VOLI selects a complete lighting preset; LENS selects both globals and all sprites together. The placed variants narrow separately from the shared placed-trap query and reuse PHZD’s reviewed fields. LTEX handles authored texture/material data independently of LAND.
+1. The patcher reads enabled input plugins and processes enabled record families, including supported child records. The [front page](../../README.md#getting-started) explains the output plugin's load-order cutoff.
+2. Ignored plugins are removed from each record’s override history. The **effective winner** is the last remaining version. Ordinary merging is skipped if this winner is an official source, there are at most two eligible versions, or the version immediately before the winner is official. Priority Mods, preserved official Editor IDs and Tamriel’s special persistent-cell policy can still apply.
+3. A matching Priority Mods entry selects a complete source record. The last matching entry in the configured priority list wins. Otherwise, properties are processed from oldest to newest using the rules below and the record's specific rules.
+4. When the selected result differs from the effective winner, the patcher copies that winner and applies the selected changes. Properties without their own patching rule remain from the copied winner or travel with another selected value.
+5. Patching errors reject the run and preserve previous output files. A successful run writes the patch, splitting it into numbered plugins if needed.
 
 ## How a value is selected
 
@@ -65,8 +46,8 @@ Null and empty are not interchangeable everywhere. Some handlers track presence;
 | Property or value kind | Handling |
 |---|---|
 | EditorID | Independently selected, subject to settings. The default suppresses an override whose only change is EditorID. Normal forwarding and preserving the latest official baseline’s EditorID are alternatives. Official-baseline membership is configurable. |
-| Record-header flags | Every handler uses one composite `MajorRecordFlagsRaw` registration. Base, common Skyrim and applicable `MajorFlags` enum bits resolve with per-bit ownership; unowned bits stay as in the effective winner. Clears and unsigned bit 31 are supported. See the [completed header fix](KNOWN-ISSUES.md#record-header-flags). |
-| Text | Many plain-string comparisons ignore trailing whitespace. Translated names select and copy one complete source value, retaining its target language and all available translations. Comparison follows Mutagen’s default-language/all-language setting and does not trim text. Optional null names remove the value; required null names become empty. MATT Name remains a plain string. See the [completed translation fix](KNOWN-ISSUES.md#optional-name-translations). |
+| Record-header flags | Supported bits are merged separately, including clearing a bit. Bits without their own rule stay as in the effective winner. |
+| Text | Many plain-string comparisons ignore trailing whitespace. Translated names select and copy one complete source value, retaining its target language and all available translations. Comparison follows Mutagen’s default-language/all-language setting and does not trim text. Optional null names remove the value; required null names become empty. MATT Name remains a plain string. |
 | Numbers | Ordinary reflection floats use a 0.0001 comparison tolerance; the specialized Weight handler uses 0.001. Not every numeric or grouped value shares that tolerance. |
 | Models and icons | Whole values, including ordered alternate textures/model data or icon paths. ARMA explicitly splits its models. Asset paths use path-aware comparison. |
 | ModelAndBounds | An accepted model filename/geometry change brings bounds from that source. A bounds-only change can still forward separately. It is not an unconditional atomic model-plus-bounds decision. |
@@ -74,16 +55,12 @@ Null and empty are not interchangeable everywhere. Some handlers track presence;
 | ObjectBounds | Complete bounds, not individual coordinates. |
 | Destructible | Complete structure, including stages and their models/references. |
 | Binary payloads | Complete byte values; never merged byte by byte. |
-| VirtualMachineAdapter treated as keyed rows | Scripts match by name. Each script’s flags and complete properties are one authored value; individual script properties/arrays are not merged. Replacing scripts in ordinary list-style adapters preserves the destination Version/ObjectFormat; only creation without a destination uses Mutagen defaults (5/2). Metadata is not independently selected on this path. See the [completed metadata fix](KNOWN-ISSUES.md#script-adapter-metadata). |
+| VirtualMachineAdapter treated as keyed rows | Scripts match by name. Each script’s flags and complete properties are one authored value; individual script properties/arrays are not merged. Replacing scripts in ordinary list-style adapters preserves the destination Version/ObjectFormat; only creation without a destination uses Mutagen defaults (5/2). Metadata is not independently selected on this path. |
 | Other script adapters | INFO, PACK and PERK select whole adapters. QUST and SCEN split presence and child fields explicitly; their record notes describe the gates and ownership rules. Papyrus unused bytes do not determine script equality; copying preserves destination unused values where its policy supports that. |
 | Form identity and general record metadata | Not independent merge decisions. This includes version-control and runtime/registration members. Record-specific omissions appear in the tables. |
-
-The [keyword-removal fix](REVIEW.md#coverage-fix-verification) applies to all eighteen shared-setter registrations: selected null removes the keyword field, while selected empty removes rows and retains list presence. Declared/virtual-master permissions and WEAP exclusivity retain their existing policies. Output lists and links are detached. Shared post-write validation still checks only non-null values; other setters retain their documented normalization rules.
 
 ## Placed-reference coordination
 
 ACHR and REFR coordinate safe deletion handling. A safe UDR state combines InitiallyDisabled, Z = -30000 at comparison precision, and an enable parent opposite to the player. When such a state occurs in the history, the owner of the selected InitiallyDisabled bit can also supply Placement and EnableParent. Coherent restoration is handled too. An ordinary disabled reference does not automatically trigger this rule. PHZD and the seven placed-projectile variants do not use it.
 
-## Scope and evidence
-
-These guides were initially reviewed against source baseline `823a8f3`, updated for the five completed fixes on 2026-10-04, and updated on 2026-10-05 after the [keyword, PHZD and inherited-audit fixes](REVIEW.md#coverage-fix-verification), and the [VOLI, LENS, LTEX and placed-projectile additions](REVIEW.md#additional-record-support-verification), with Mutagen Skyrim 0.54.4. The [inventory](INVENTORY.md) remains the authoritative coverage checklist. Implementation was rechecked through input preparation, queries, source resolution, selection, setters and output writing; see the [review evidence](REVIEW.md). Property support does not establish gameplay safety for every combination or byte-for-byte preservation of omitted fields.
+Inspect the generated patch in xEdit. These property rules do not guarantee correct gameplay behavior for every mod combination or byte-for-byte preservation of omitted fields.

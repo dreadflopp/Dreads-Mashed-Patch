@@ -1,5 +1,7 @@
 # Known issues and limits
 
+Internal reference for the maintainer and AI agents. Public limitations are documented in the affected record descriptions.
+
 [Patching guide](README.md) · [Record index](INDEX.md) · [Project front page](../../README.md)
 
 Reviewed on 2026-10-05 against the current implementation with Mutagen Skyrim 0.54.4. The current version is still being tested. Some record types rarely conflict and have not had their conflict behavior tested in real modlists. Inspect all generated plugins in xEdit, make manual corrections, and report unexpected results through the repository's Issues tab.

@@ -1,6 +1,6 @@
 # Standalone application development
 
-[Developer documentation](README.md#developer-documentation) · [Development guide](DEVELOPMENT.md) · [User setup guide](STANDALONE_APP.md)
+[Developer documentation](README.md#developer-documentation) · [Development guide](DEVELOPMENT.md) · [User setup guide](../README.md#getting-started)
 
 Build, implementation, and migration details for contributors. User-facing settings are explained in the [project README](../README.md#settings).
 
