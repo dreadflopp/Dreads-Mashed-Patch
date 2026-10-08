@@ -4,8 +4,8 @@
              StartupUri="MainWindow.xaml"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
-        <FontFamily x:Key="UiFontFamily">/DreadsMashedPatch;component/Assets/Fonts/#Noto Sans</FontFamily>
-        <FontFamily x:Key="MonospaceFontFamily">/DreadsMashedPatch;component/Assets/Fonts/#Noto Sans Mono</FontFamily>
+        <FontFamily x:Key="UiFontFamily">Segoe UI, Tahoma, Arial</FontFamily>
+        <FontFamily x:Key="MonospaceFontFamily">Consolas, Courier New, Liberation Mono, DejaVu Sans Mono</FontFamily>
 
         <SolidColorBrush x:Key="AccentBrush" Color="#2E8052" />
         <SolidColorBrush x:Key="AccentHoverBrush" Color="#246640" />
