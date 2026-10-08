@@ -21,7 +21,6 @@ public partial class MainWindow : Window
     private readonly MasterRuleStore _masterRuleStore = new();
     private readonly PatcherRunner _patcherRunner = new();
     private readonly DispatcherTimer _elapsedTimer;
-    private readonly string _fontDiagnostics;
     private Stopwatch? _runStopwatch;
     private bool _loaded;
 
@@ -31,8 +30,6 @@ public partial class MainWindow : Window
         DataContext = _viewModel;
         _elapsedTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(250), DispatcherPriority.Background, OnElapsedTimerTick, Dispatcher);
         _elapsedTimer.Stop();
-        _fontDiagnostics = FontDiagnostics.Describe(FontFamily, RunLogTextBox.FontFamily);
-        AppendLog(_fontDiagnostics + Environment.NewLine);
     }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -165,11 +162,9 @@ public partial class MainWindow : Window
             _elapsedTimer.Start();
             UpdateElapsedTime();
             WriteFullLog($"Mashed Patch started at {DateTime.Now:G}{Environment.NewLine}{Environment.NewLine}");
-            WriteFullLog(_fontDiagnostics + Environment.NewLine);
             AppendLog(
                 $"Running. Full diagnostic output is being written to:{Environment.NewLine}" +
                 $"{logSession.Path}{Environment.NewLine}{Environment.NewLine}");
-            AppendLog(_fontDiagnostics + Environment.NewLine);
 
             try
             {
