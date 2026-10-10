@@ -168,6 +168,8 @@ Configuration.Flags selects only Essential/Protected together; other configurati
 | `Packages` | Merge aligned rows in order. |
 | `AIData.Unused`, `PlayerSkills.Unused`, `PlayerSkills.Unused2` | Serialization/unused state; no independent decision. |
 
+Selected Perks are written even when the winning NPC has no perk list. Absence and a present-empty list remain distinct in memory, and copied rows and perk links are independent of their sources.
+
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/NpcRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="otft-outfit"></a>

@@ -46,7 +46,11 @@ namespace DreadsMashedPatch
                     return;
                 }
 
-                if (IsDiagnostic(line, "Error")) PatchDiagnostics.Error(identifier, line);
+                if (IsDiagnostic(line, "Error"))
+                {
+                    PatchDiagnostics.Error(identifier, line);
+                    if (PatchDiagnostics.IsRecordScope) line = $"[Error] [Record] {line}";
+                }
                 AddCore(identifier, line);
             }
         }
@@ -66,7 +70,8 @@ namespace DreadsMashedPatch
             lock (_sync)
             {
                 PatchDiagnostics.Error(identifier, message, exception);
-                AddCore(identifier, FormatDiagnostic("Error", message, exception));
+                AddCore(identifier, FormatDiagnostic("Error",
+                    PatchDiagnostics.IsRecordScope ? $"[Record] {message}" : message, exception));
             }
         }
 

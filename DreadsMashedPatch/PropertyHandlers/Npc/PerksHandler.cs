@@ -4,7 +4,6 @@ using System.Linq;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Synthesis;
 using Noggog;
 using DreadsMashedPatch.Contexts;
@@ -22,10 +21,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
 
         protected override bool IsItemIdentityEqual(IPerkPlacementGetter? left, IPerkPlacementGetter? right) =>
             IsPerkReferenceEqual(left, right);
-
-        public PerksHandler()
-        {
-        }
 
         public override bool AreValuesEqual(List<IPerkPlacementGetter>? value1, List<IPerkPlacementGetter>? value2)
         {
@@ -116,20 +111,10 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
         {
             if (record is INpc npc)
             {
-                npc.Perks?.Clear();
-                if (value != null && npc.Perks != null)
-                {
-                    foreach (var item in value)
-                    {
-                        if (item == null) continue;
-                        var perkPlacement = new PerkPlacement
-                        {
-                            Perk = new FormLink<IPerkGetter>(item.Perk.FormKey),
-                            Rank = item.Rank
-                        };
-                        npc.Perks.Add(perkPlacement);
-                    }
-                }
+                // Match the nullable keyword-list setter: preserve presence and copy
+                // complete rows before replacing the destination, including absent lists.
+                npc.Perks = value == null ? null
+                    : new ExtendedList<PerkPlacement>(value.Select(item => item.DeepCopy()));
             }
             else
             {

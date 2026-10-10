@@ -28,6 +28,8 @@ internal sealed class UiTextWriter : TextWriter
 
     public int ErrorCount { get; private set; }
 
+    public int PipelineErrorCount { get; private set; }
+
     public override void Write(char value)
     {
         lock (_buffer)
@@ -129,6 +131,8 @@ internal sealed class UiTextWriter : TextWriter
                 break;
             case UiLogLineKind.Error:
                 ErrorCount++;
+                if (!line.TrimStart().StartsWith("[Error] [Record] ", StringComparison.OrdinalIgnoreCase))
+                    PipelineErrorCount++;
                 output.AppendLine(line);
                 break;
             case UiLogLineKind.Progress:

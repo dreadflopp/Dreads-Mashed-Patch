@@ -59,9 +59,12 @@ public sealed class RecordOverrideTransactionTests : IDisposable
 
         var report = handler.Process(state, contexts.OrderBy(c => c.Record.FormKey.ID).ToArray());
 
-        Assert.False(report.Succeeded);
+        Assert.True(report.Succeeded);
+        Assert.True(report.IsPartial);
+        Assert.Equal(FailedKey, Assert.Single(report.SkippedRecords).Record);
+        Assert.All(report.Errors, error => Assert.True(error.IsSkippedRecordError));
         Assert.Contains(report.Errors, error => error.Record == FailedKey);
-        Assert.Throws<PatchRunFailedException>(report.ThrowIfFailed);
+        report.ThrowIfFailed();
         var healthy = Assert.Single(state.PatchMod.Weapons);
         Assert.Equal(HealthyKey, healthy.FormKey);
         Assert.Equal("Selected", healthy.EditorID);
@@ -78,7 +81,8 @@ public sealed class RecordOverrideTransactionTests : IDisposable
         // Getter remains valid; setter's incompatible record surface reports an error and returns.
         handler.PropertyHandlers["EditorID"] = new SimpleReflectionPropertyHandler<string, IArmor, IWeaponGetter>("EditorID");
         var report = handler.Process(state, Winners(state, typeof(IWeaponGetter)));
-        Assert.False(report.Succeeded);
+        Assert.True(report.Succeeded);
+        Assert.Equal(2, report.SkippedRecords.Count);
         Assert.Contains(report.Errors, error => error.Stage == "EditorID" && error.Message.Contains("IArmor"));
         Assert.Empty(state.PatchMod.Weapons);
     }
@@ -93,6 +97,36 @@ public sealed class RecordOverrideTransactionTests : IDisposable
         Assert.True(handler.Process(state, Winners(state, typeof(IWeaponGetter))).Succeeded);
         Assert.Equal(2, state.PatchMod.Weapons.Count);
         Assert.All(state.PatchMod.Weapons, record => Assert.Equal("Selected", record.EditorID));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void LoggedReadErrorWithNoForwardedChangesStillSkipsTheRecord(bool shortHistory)
+    {
+        var mods = History((mod, key, _) => mod.Weapons.Add(new Weapon(key, SkyrimRelease.SkyrimSE) { EditorID = "Same" }));
+        if (shortHistory)
+            PatcherSettings.Apply(new PatcherConfiguration
+            {
+                Forwarding = new ForwardingSettings { EditorIdPolicy = EditorIdForwardingPolicy.PreserveBaseline }
+            });
+        using var state = State(shortHistory ? [mods[0], mods[2]] : mods);
+        var handler = new WeaponRecordHandler();
+        handler.PropertyHandlers["EditorID"] = new FaultyReadHandler();
+        var report = handler.Process(state, Winners(state, typeof(IWeaponGetter)));
+        Assert.True(report.Succeeded);
+        Assert.Equal(FailedKey, Assert.Single(report.SkippedRecords).Record);
+        Assert.Contains("EditorID: Cannot read selected value", report.SkippedRecords[0].Reason);
+        Assert.Empty(state.PatchMod.Weapons);
+    }
+
+    private sealed class FaultyReadHandler : EditorIDHandler
+    {
+        public override string? GetValue(IMajorRecordGetter record)
+        {
+            if (record.FormKey == FailedKey) LogCollector.AddError(PropertyName, "Cannot read selected value");
+            return base.GetValue(record);
+        }
     }
 
     [Theory]
@@ -243,7 +277,7 @@ public sealed class RecordOverrideTransactionTests : IDisposable
     }
 
     [Fact]
-    public void FailedRunReportWithholdsPrimaryAndSplitFileCommit()
+    public void PartialRunReportPublishesPrimaryAndSplitFilesByDefault()
     {
         var mods = History((mod, key, edid) => mod.Weapons.Add(new Weapon(key, SkyrimRelease.SkyrimSE) { EditorID = edid }));
         using var state = State(mods);
@@ -262,10 +296,10 @@ public sealed class RecordOverrideTransactionTests : IDisposable
             {
                 File.WriteAllText(transaction.StagedOutputPath, "new primary");
                 File.WriteAllText(Path.Combine(Path.GetDirectoryName(transaction.StagedOutputPath)!, "MashedPatch_2.esp"), "new split");
-                Assert.Throws<PatchRunFailedException>(() => transaction.Commit(report));
+                Assert.Equal(2, transaction.Commit(report));
             }
-            Assert.Equal("old primary", File.ReadAllText(output));
-            Assert.Equal("old split", File.ReadAllText(split));
+            Assert.Equal("new primary", File.ReadAllText(output));
+            Assert.Equal("new split", File.ReadAllText(split));
             Assert.Equal(2, Directory.GetFileSystemEntries(directory).Length);
         }
         finally { Directory.Delete(directory, true); }
@@ -278,9 +312,12 @@ public sealed class RecordOverrideTransactionTests : IDisposable
         using var failedState = State(mods);
         var handler = new WeaponRecordHandler();
         handler.PropertyHandlers["EditorID"] = new FaultyEditorIdHandler("after");
-        Assert.False(handler.Process(failedState, Winners(failedState, typeof(IWeaponGetter))).Succeeded);
+        Assert.True(handler.Process(failedState, Winners(failedState, typeof(IWeaponGetter))).IsPartial);
         using var cleanState = State(mods);
-        Assert.True(Program.RunPatchWithReport(cleanState).Succeeded);
+        var report = Program.RunPatchWithReport(cleanState);
+        Assert.True(report.Succeeded);
+        Assert.False(report.IsPartial);
+        Assert.Empty(report.Errors);
     }
 
     [Fact]
@@ -289,7 +326,8 @@ public sealed class RecordOverrideTransactionTests : IDisposable
         var mods = History((mod, key, edid) => mod.Weapons.Add(new Weapon(key, SkyrimRelease.SkyrimSE) { EditorID = edid }));
         using var state = State(mods);
         var report = new FailingWeaponHandler().Process(state, Winners(state, typeof(IWeaponGetter)));
-        Assert.False(report.Succeeded);
+        Assert.True(report.Succeeded);
+        Assert.Equal(FailedKey, Assert.Single(report.SkippedRecords).Record);
         Assert.Equal(HealthyKey, Assert.Single(state.PatchMod.Weapons).FormKey);
         Assert.Contains(report.Errors, error => error.Record == FailedKey && error.Exception?.Message == "Record validation failed");
     }
@@ -304,22 +342,67 @@ public sealed class RecordOverrideTransactionTests : IDisposable
     }
 
     [Fact]
-    public void FullRunReportsCaughtRecordErrorsAndSynthesisEntryPointRejectsOutput()
+    public void FullRunReportsSkippedRecordsAndBothHostsPublishHealthyRecords()
     {
         var mods = History((mod, key, edid) => mod.Weapons.Add(new Weapon(key, SkyrimRelease.SkyrimSE) { EditorID = edid }));
         mods[1].Weapons[FailedKey].VirtualMachineAdapter = new VirtualMachineAdapter();
         mods[1].Weapons[FailedKey].VirtualMachineAdapter!.Scripts.Add(null!);
         using var state = State(mods);
 
-        var report = Program.RunPatchWithReport(state);
+        var originalOut = Console.Out;
+        var fullLog = new System.Text.StringBuilder();
+        var uiLog = new System.Text.StringBuilder();
+        var writer = new DreadsMashedPatch.App.Services.UiTextWriter(
+            text => fullLog.Append(text), text => uiLog.Append(text));
+        PatchRunReport report;
+        try
+        {
+            Console.SetOut(writer);
+            report = Program.RunPatchWithReport(state);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+            writer.Dispose();
+        }
 
-        Assert.False(report.Succeeded);
+        Assert.True(report.Succeeded);
+        var skipped = Assert.Single(report.SkippedRecords);
+        Assert.Equal(FailedKey, skipped.Record);
+        Assert.Equal("WEAP - Weapon", skipped.RecordType);
+        Assert.Contains("NullReferenceException", skipped.Reason);
+        Assert.Contains("Partial patch", uiLog.ToString());
+        Assert.Contains($"Skipped {FailedKey}", fullLog.ToString());
+        Assert.True(writer.ErrorCount > 0);
+        Assert.Equal(0, writer.PipelineErrorCount);
         Assert.Contains(report.Errors, error => error.Record == FailedKey && error.Exception != null);
         Assert.DoesNotContain(state.PatchMod.Weapons, record => record.FormKey == FailedKey);
         Assert.Contains(state.PatchMod.Weapons, record => record.FormKey == HealthyKey);
         using var secondState = State(mods);
-        var failure = Assert.Throws<PatchRunFailedException>(() => Program.RunPatch(secondState));
-        Assert.False(failure.Report.Succeeded);
+        Program.RunPatch(secondState);
+        using var stream = new MemoryStream();
+        secondState.PatchMod.WriteToBinary(stream);
+        stream.Position = 0;
+        using var reloaded = SkyrimMod.CreateFromBinaryOverlay(stream, SkyrimRelease.SkyrimSE, Patch);
+        Assert.Equal(HealthyKey, Assert.Single(reloaded.Weapons).FormKey);
+
+        var directory = Path.Combine(Path.GetTempPath(), $"PartialPatch-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            var output = Path.Combine(directory, Patch.FileName.String);
+            using (var transaction = new PatchOutputTransaction(output))
+            {
+                using (var file = File.Create(transaction.StagedOutputPath)) state.PatchMod.WriteToBinary(file);
+                var result = new DreadsMashedPatch.App.Services.PatcherRunResult(
+                    writer.WarningCount, writer.ErrorCount, report.SkippedRecords.Count, writer.PipelineErrorCount);
+                Assert.True(result.IsPartial);
+                DreadsMashedPatch.App.Services.PatcherRunner.PublishOutput(transaction, report, result);
+            }
+            using var fileOverlay = SkyrimMod.CreateFromBinaryOverlay(output, SkyrimRelease.SkyrimSE);
+            Assert.Equal(HealthyKey, Assert.Single(fileOverlay.Weapons).FormKey);
+        }
+        finally { Directory.Delete(directory, true); }
     }
 
     // Name is applied successfully before the failing EditorID setter.

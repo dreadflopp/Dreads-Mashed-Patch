@@ -170,17 +170,19 @@ public partial class MainWindow : Window
             {
                 var result = await _patcherRunner.RunAsync(_viewModel.Settings, WriteFullLog, AppendLog);
                 _runStopwatch.Stop();
-                WriteFullLog($"{Environment.NewLine}Completed successfully in {_runStopwatch.Elapsed:g}.{Environment.NewLine}");
+                var completion = result.IsPartial ? "Completed with skipped records" : "Completed successfully";
+                WriteFullLog($"{Environment.NewLine}{completion} in {_runStopwatch.Elapsed:g}.{Environment.NewLine}");
                 AppendLog(
-                    $"{Environment.NewLine}Completed successfully in {_runStopwatch.Elapsed:g}. " +
-                    $"Warnings: {result.WarningCount}; errors: {result.ErrorCount}.{Environment.NewLine}");
-                _viewModel.StatusText = "Completed";
+                    $"{Environment.NewLine}{completion} in {_runStopwatch.Elapsed:g}. " +
+                    $"Warnings: {result.WarningCount}; record errors: {result.ErrorCount}; skipped records: {result.SkippedRecordCount}.{Environment.NewLine}");
+                _viewModel.StatusText = result.IsPartial ? "Completed with skipped records" : "Completed";
                 MessageBox.Show(
-                    $"Patch created successfully in:{Environment.NewLine}{_viewModel.Settings.OutputFolderPath}{Environment.NewLine}{Environment.NewLine}"
-                    + "Install or enable the output plugins in your mod manager.",
-                    "Mashed Patch completed",
+                    (result.IsPartial ? $"Partial patch created; {result.SkippedRecordCount} record(s) were skipped." : "Patch created successfully.")
+                    + $"{Environment.NewLine}{_viewModel.Settings.OutputFolderPath}{Environment.NewLine}{Environment.NewLine}"
+                    + (result.IsPartial ? "Review the skipped records in the Run Log and inspect the patch in xEdit." : "Install or enable the output plugins in your mod manager."),
+                    result.IsPartial ? "Mashed Patch completed with skipped records" : "Mashed Patch completed",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                    result.IsPartial ? MessageBoxImage.Warning : MessageBoxImage.Information);
             }
             catch (Exception ex)
             {

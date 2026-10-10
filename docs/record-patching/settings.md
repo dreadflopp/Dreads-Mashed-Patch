@@ -53,7 +53,7 @@ This route uses FormIdRecordHandler despite the record’s FormList name. Items 
 
 ## GLOB — Global Float
 
-Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. There is no cross-type conversion.
+Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
 
 | Properties | How they are patched |
 |---|---|
@@ -65,7 +65,7 @@ Discovered through the global-record query and narrowed to the concrete value ty
 
 ## GLOB — Global Int
 
-Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. There is no cross-type conversion.
+Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
 
 | Properties | How they are patched |
 |---|---|
@@ -77,7 +77,7 @@ Discovered through the global-record query and narrowed to the concrete value ty
 
 ## GLOB — Global Short
 
-Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. There is no cross-type conversion.
+Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
 
 | Properties | How they are patched |
 |---|---|
@@ -89,7 +89,7 @@ Discovered through the global-record query and narrowed to the concrete value ty
 
 ## GLOB — Global Unknown
 
-Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. There is no cross-type conversion.
+Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
 
 | Properties | How they are patched |
 |---|---|
@@ -101,7 +101,7 @@ Discovered through the global-record query and narrowed to the concrete value ty
 
 ## GMST — Game Setting Bool
 
-Discovered through the game-setting query and narrowed to the concrete value type. There is no cross-type conversion.
+Discovered through the game-setting query and narrowed to the concrete value type. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
 
 | Properties | How they are patched |
 |---|---|
@@ -113,7 +113,7 @@ Discovered through the game-setting query and narrowed to the concrete value typ
 
 ## GMST — Game Setting Float
 
-Discovered through the game-setting query and narrowed to the concrete value type. There is no cross-type conversion.
+Discovered through the game-setting query and narrowed to the concrete value type. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
 
 | Properties | How they are patched |
 |---|---|
@@ -125,7 +125,7 @@ Discovered through the game-setting query and narrowed to the concrete value typ
 
 ## GMST — Game Setting Int
 
-Discovered through the game-setting query and narrowed to the concrete value type. There is no cross-type conversion.
+Discovered through the game-setting query and narrowed to the concrete value type. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
 
 | Properties | How they are patched |
 |---|---|
@@ -137,7 +137,7 @@ Discovered through the game-setting query and narrowed to the concrete value typ
 
 ## GMST — Game Setting String
 
-Discovered through the game-setting query and narrowed to the concrete value type. There is no cross-type conversion.
+Discovered through the game-setting query and narrowed to the concrete value type. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
 
 | Properties | How they are patched |
 |---|---|

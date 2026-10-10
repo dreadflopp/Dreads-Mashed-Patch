@@ -127,19 +127,13 @@ public sealed class PatcherRunner
                     writer.Dispose();
                 }
 
-                return new PatcherRunResult(writer.WarningCount, writer.ErrorCount);
+                return new PatcherRunResult(writer.WarningCount, writer.ErrorCount,
+                    patchReport?.SkippedRecords.Count ?? 0, writer.PipelineErrorCount);
             });
-            if (patchReport == null)
-            {
-                throw new InvalidOperationException("The patch pipeline did not run the patcher; output was not published.");
-            }
-            patchReport.ThrowIfFailed();
-            if (result.ErrorCount > 0)
-            {
-                throw new InvalidOperationException("The patch pipeline reported errors. Previous output files were preserved.");
-            }
-            var replacedOutputs = stagedOutput.Commit(patchReport);
+            var replacedOutputs = PublishOutput(stagedOutput, patchReport, result);
             writeLog($"Replaced {replacedOutputs} previous patch output file(s).{Environment.NewLine}");
+            if (result.IsPartial)
+                writeLog($"Partial patch published with {result.SkippedRecordCount} skipped record(s).{Environment.NewLine}");
             return result;
         }
         finally
@@ -147,8 +141,21 @@ public sealed class PatcherRunner
             File.Delete(preparedLoadOrder.Path);
         }
     }
+
+    internal static int PublishOutput(PatchOutputTransaction output, PatchRunReport? report, PatcherRunResult result)
+    {
+        if (report == null)
+            throw new InvalidOperationException("The patch pipeline did not run the patcher; output was not published.");
+        report.ThrowIfFailed();
+        if (result.PipelineErrorCount > 0)
+            throw new InvalidOperationException("The patch pipeline reported errors. Previous output files were preserved.");
+        return output.Commit(report);
+    }
 }
 
-public sealed record PatcherRunResult(int WarningCount, int ErrorCount);
+public sealed record PatcherRunResult(int WarningCount, int ErrorCount, int SkippedRecordCount, int PipelineErrorCount)
+{
+    public bool IsPartial => SkippedRecordCount > 0;
+}
 
 public sealed record EmptyOutputResult(string OutputPath, int RemovedOutputCount);

@@ -41,15 +41,25 @@ public sealed class RecordPolicySources : IDisposable
             .ToArray();
     }
 
-    // Match the record getter used during merging so both stages share Mutagen's context index.
+    // Shared GLOB/GMST groups can contain different subtypes for the same FormKey.
+    // Keep their contexts unnarrowed until the effective winner and subtype era are known.
+    internal static Type GetQueryGetterType(IMajorRecordGetter record) => record switch
+    {
+        IGlobalGetter => typeof(IGlobalGetter),
+        IGameSettingGetter => typeof(IGameSettingGetter),
+        _ => ((ILoquiObject)record).Registration.GetterType
+    };
+
+    internal static IEnumerable<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> GetEligibleContexts(
+        IMajorRecordGetter record, IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        state.LinkCache.ResolveAllContexts(record.FormKey, GetQueryGetterType(record))
+            .Where(context => !PatcherSettings.IsIgnoredMod(context.ModKey));
+
+    // Filtering and ordinary merging share the same context index.
     internal static IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetInitialContexts(
         IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> discoveredWinner,
         IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
-        state.LinkCache.ResolveAllContexts(discoveredWinner.Record.FormKey,
-            ((ILoquiObject)discoveredWinner.Record).Registration.GetterType)
-            .Where(context => !PatcherSettings.IsIgnoredMod(context.ModKey))
-            .Take(3)
-            .ToArray();
+        GetEligibleContexts(discoveredWinner.Record, state).Take(3).ToArray();
 
     internal static bool ShouldSkipOrdinaryProcessing(
         IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> contexts) =>
@@ -58,7 +68,7 @@ public sealed class RecordPolicySources : IDisposable
 
     internal bool TryGetAlwaysWinningMod(IMajorRecordGetter record, out ModKey modKey)
     {
-        var type = ((ILoquiObject)record).Registration.GetterType;
+        var type = GetQueryGetterType(record);
         foreach (var source in _prioritySources)
         {
             if (source.Identifiers.TryResolveIdentifier(record.FormKey, type, out _))
@@ -76,7 +86,7 @@ public sealed class RecordPolicySources : IDisposable
         IMajorRecordGetter record, ModKey modKey)
     {
         var source = _prioritySources.Single(source => source.Mod.ModKey == modKey);
-        var type = ((ILoquiObject)record).Registration.GetterType;
+        var type = GetQueryGetterType(record);
         if (!source.Contexts.TryResolveContext(record.FormKey, type, out var context))
         {
             throw new InvalidOperationException($"Could not resolve priority source {modKey} for {record.FormKey}.");
@@ -87,8 +97,27 @@ public sealed class RecordPolicySources : IDisposable
     internal bool TryGetBaselineEditorId(IMajorRecordGetter record, out string? editorId)
     {
         editorId = null;
-        return _baseline != null && _baseline.TryResolveIdentifier(
-            record.FormKey, ((ILoquiObject)record).Registration.GetterType, out editorId);
+        if (_baseline == null || !_baseline.TryResolveIdentifier(
+                record.FormKey, GetQueryGetterType(record), out editorId)) return false;
+
+        // GMST's EDID prefix determines its binary subtype. An official name from
+        // another subtype must not be applied to the selected record's Data layout.
+        if (record is IGameSettingGetter setting
+            && (string.IsNullOrEmpty(editorId)
+                || !GameSettingUtility.TryGetGameSettingType(editorId[0], out var type)
+                || !(type switch
+                {
+                    GameSettingType.Int => setting is IGameSettingIntGetter,
+                    GameSettingType.Float => setting is IGameSettingFloatGetter,
+                    GameSettingType.String => setting is IGameSettingStringGetter,
+                    GameSettingType.Bool => setting is IGameSettingBoolGetter,
+                    _ => false
+                })))
+        {
+            editorId = null;
+            return false;
+        }
+        return true;
     }
 
     internal bool RequiresBaselineEditorIdOverride(IMajorRecordGetter record) =>

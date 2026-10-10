@@ -177,6 +177,12 @@ static Dictionary<string, CoverageOverride> LoadOverrides(string? overridesPath,
 
 static string? FindGetterName(string source)
 {
+    var subtypeBase = Regex.Match(source, @":\s*AbstractSubtypeRecordHandler<(?<type>I[A-Za-z0-9_]+Getter)>");
+    if (subtypeBase.Success)
+    {
+        return subtypeBase.Groups["type"].Value;
+    }
+
     var guard = Regex.Match(source, @"winningContext\.Record\s+is\s+not\s+(?<type>I[A-Za-z0-9_]+Getter)");
     if (guard.Success)
     {

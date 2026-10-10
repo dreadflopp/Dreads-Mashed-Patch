@@ -12,11 +12,13 @@ Use the [record index](INDEX.md) to find a record by its four-letter signature a
 2. Ignored plugins are removed from each record’s override history. The **effective winner** is the last remaining version. Ordinary merging is skipped if this winner is an official source, there are at most two eligible versions, or the version immediately before the winner is official. Priority Mods, preserved official Editor IDs and Tamriel’s special persistent-cell policy can still apply.
 3. A matching Priority Mods entry selects a complete source record. The last matching entry in the configured priority list wins. Otherwise, properties are processed from oldest to newest using the rules below and the record's specific rules.
 4. When the selected result differs from the effective winner, the patcher copies that winner and applies the selected changes. Properties without their own patching rule remain from the copied winner or travel with another selected value.
-5. Patching errors reject the run and preserve previous output files. A successful run writes the patch, splitting it into numbered plugins if needed.
+5. The patcher writes the resulting patch, splitting it into numbered plugins if needed.
 
 ## How a value is selected
 
 The original is the oldest eligible version. Each selected value has an owner: the plugin supplying it. A later value different from both the original and the current selection normally becomes the new selection. Returning to the original value requires the current owner to be a declared master or configured virtual master of the later plugin. A virtual-master rule supplies the same permission relationship without changing plugin files.
+
+For GLOB and GMST records, the effective winner determines the value type. The latest eligible change to that type starts a new baseline for all registered properties; earlier types are not converted or merged back in. Ordinary short-history rules apply to the versions remaining after this boundary. Priority Mods can still select a complete record of another type. A preserved official GMST EditorID must have a prefix matching the selected value type, because that prefix determines how the game setting is read from the plugin.
 
 For example, if a value is originally 10, one mod changes it to 20, and an unrelated later mod carries 10, the change to 20 can survive. If the later mod depends on the owner of 20, it can restore 10. A newly different value such as 30 can replace the earlier selection. Special protection, collection and ownership-reset rules can modify this behavior.
 
@@ -39,7 +41,7 @@ Property names match the record model so that you can identify exact fields. A d
 | Serialization/unused state | No separate merge decision for layout or unused fields. Copy and writer behavior can affect them. |
 | Child/group surfaces | These are not merged as property lists. Supported child records have their own processing paths. |
 
-Null and empty are not interchangeable everywhere. Some handlers track presence; others normalize to empty or a record-specific default. The shared keyword setter writes null as absence and preserves a present-empty list. The tables do not promise that null universally removes every field.
+Null and empty are not interchangeable everywhere. Some handlers track presence; others normalize to empty or a record-specific default. The shared keyword setter and NPC Perks setter write null as absence and preserve a present-empty list. The tables do not promise that null universally removes every field.
 
 ## Properties shared across records
 

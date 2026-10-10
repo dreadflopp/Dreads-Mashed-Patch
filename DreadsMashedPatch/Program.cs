@@ -176,10 +176,10 @@ namespace DreadsMashedPatch
         {
             try
             {
-                if (!PatcherSettings.IsRecordTypeEnabled(((ILoquiObject)winningContext.Record).Registration.GetterType))
-                    return true;
                 var contexts = RecordPolicySources.GetInitialContexts(winningContext, state);
                 if (contexts.Length == 0) return true;
+                if (!PatcherSettings.IsRecordTypeEnabled(((ILoquiObject)contexts[0].Record).Registration.GetterType))
+                    return true;
 
                 // Policy eligibility uses targeted identifier lookups, never a full history.
                 if (policySources.TryGetAlwaysWinningMod(contexts[0].Record, out _)) return false;
@@ -272,6 +272,19 @@ namespace DreadsMashedPatch
                 .ToArray();
         }
 
+        // Resolve ignored winners before narrowing a shared GLOB/GMST group, so
+        // dispatch and enabled-type checks follow the effective winner's subtype.
+        private static IModContext<ISkyrimMod, ISkyrimModGetter, TSetter, TGetter>[] GetEffectiveContexts<TSetter, TGetter>(
+            IEnumerable<IModContext<ISkyrimMod, ISkyrimModGetter, TSetter, TGetter>> contexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
+            where TSetter : class, IMajorRecord, TGetter
+            where TGetter : class, IMajorRecordGetter =>
+            contexts.Select(context => PatcherSettings.IsIgnoredMod(context.ModKey)
+                    ? RecordPolicySources.GetInitialContexts(context, state).FirstOrDefault() : context)
+                .OfType<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>>()
+                .Select(context => context.AsType<ISkyrimMod, ISkyrimModGetter,
+                    IMajorRecord, IMajorRecordGetter, TSetter, TGetter>()).ToArray();
+
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
@@ -282,6 +295,14 @@ namespace DreadsMashedPatch
         {
             using var diagnostics = new PatchDiagnostics();
             RunPatchCore(state);
+            if (diagnostics.Report.IsPartial)
+            {
+                Console.WriteLine(diagnostics.Report.Succeeded
+                    ? $"[Warning] Partial patch: skipped {diagnostics.Report.SkippedRecords.Count} record(s). Successful records will be published if output writing succeeds."
+                    : $"[Warning] Skipped {diagnostics.Report.SkippedRecords.Count} record(s). Fatal errors prevent publication.");
+                foreach (var record in diagnostics.Report.SkippedRecords)
+                    Console.WriteLine($"[Warning] Skipped {record.Record} ({record.RecordType}): {record.Reason}");
+            }
             return diagnostics.Report;
         }
 
@@ -524,13 +545,12 @@ namespace DreadsMashedPatch
             var furnitureContexts = LoadContextsSafely(
                 state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, IFurniture, IFurnitureGetter>(state.LinkCache),
                 "furnitureContexts");
-            // Global and GameSetting subtypes share a single Mutagen registration.
-            // Querying a concrete subtype directly can make the generated enumerator cast a
-            // sibling overlay before it has a chance to filter it. Query the common base once,
-            // then narrow only contexts whose runtime record implements the requested subtype.
+            // GLOB/GMST subtype queries enumerate shared groups. Resolve eligible
+            // winners through base interfaces, then narrow by their actual getter types.
             var globalContexts = LoadContextsSafely(
                 state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, IGlobal, IGlobalGetter>(state.LinkCache),
                 "globalContexts");
+            globalContexts = GetEffectiveContexts(globalContexts, state);
             var globalIntContexts = NarrowContexts<IGlobal, IGlobalGetter, IGlobalInt, IGlobalIntGetter>(globalContexts);
             var globalShortContexts = NarrowContexts<IGlobal, IGlobalGetter, IGlobalShort, IGlobalShortGetter>(globalContexts);
             var globalFloatContexts = NarrowContexts<IGlobal, IGlobalGetter, IGlobalFloat, IGlobalFloatGetter>(globalContexts);
@@ -539,6 +559,7 @@ namespace DreadsMashedPatch
             var gameSettingContexts = LoadContextsSafely(
                 state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, IGameSetting, IGameSettingGetter>(state.LinkCache),
                 "gameSettingContexts");
+            gameSettingContexts = GetEffectiveContexts(gameSettingContexts, state);
             var gameSettingIntContexts = NarrowContexts<IGameSetting, IGameSettingGetter, IGameSettingInt, IGameSettingIntGetter>(gameSettingContexts);
             var gameSettingFloatContexts = NarrowContexts<IGameSetting, IGameSettingGetter, IGameSettingFloat, IGameSettingFloatGetter>(gameSettingContexts);
             var gameSettingStringContexts = NarrowContexts<IGameSetting, IGameSettingGetter, IGameSettingString, IGameSettingStringGetter>(gameSettingContexts);
@@ -1628,5 +1649,3 @@ namespace DreadsMashedPatch
         }
     }
 }
-
-

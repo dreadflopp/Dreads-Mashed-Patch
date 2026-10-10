@@ -1,11 +1,5 @@
-using System;
 using System.Collections.Generic;
-using Mutagen.Bethesda;
-using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Synthesis;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
@@ -17,10 +11,14 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Kept specialized: typed Data handling remains per concrete GMST variant.
 // - Rationale: concrete Data type differs across GameSetting variants.
 
+// History migration: shared unnarrowed group lookup; the latest eligible subtype
+// change starts a new baseline. Typed Data and approved flag handlers stay specialized
+// because their value surfaces differ; no cross-type conversion is performed.
+
 // Header migration: raw/common flags share one masked integer handler.
 // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
 // Removed overlapping header registrations so selected clears cannot be reintroduced.
-public class GameSettingIntRecordHandler : AbstractRecordHandler
+public class GameSettingIntRecordHandler : AbstractSubtypeRecordHandler<IGameSettingIntGetter>
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
@@ -28,19 +26,4 @@ public class GameSettingIntRecordHandler : AbstractRecordHandler
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Data", new SimpleReflectionPropertyHandler<int?, IGameSettingInt, IGameSettingIntGetter>("Data") }
     };
-
-    public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(
-        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,
-        IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
-    {
-        if (winningContext.Record is not IGameSettingIntGetter record)
-        {
-            throw new InvalidOperationException($"Expected IGameSettingIntGetter but got {winningContext.Record.GetType()}");
-        }
-
-        return record
-            .ToLink<IGameSettingIntGetter>()
-            .ResolveAllContexts<ISkyrimMod, ISkyrimModGetter, IGameSettingInt, IGameSettingIntGetter>(state.LinkCache)
-            .ToArray();
-    }
 }

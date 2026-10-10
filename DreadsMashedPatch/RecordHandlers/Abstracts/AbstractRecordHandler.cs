@@ -298,9 +298,9 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                         continue;
                     }
 
-                    // Typed full-history resolution remains reserved for ordinary merging
+                    // Full-history resolution remains reserved for ordinary merging
                     // and Tamriel's specialized CELL policy.
-                    var recordContexts = GetRecordContexts(discoveredWinningContext, state)
+                    var recordContexts = GetRecordContexts(winningContext, state)
                         .Where(context => !PatcherSettings.IsIgnoredMod(context.ModKey))
                         .ToArray();
                     if (recordContexts.Length == 0) continue;
@@ -527,16 +527,16 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     Console.WriteLine($"Decision summary: forward {propertiesToForward.Count}, unchanged {unchangedDecisionCount}");
 
                     if (detailedRecord) Console.WriteLine($"Properties to forward: {propertiesToForward.Count}");
+                    diagnostics.Report.ThrowIfFailed();
                     if (propertiesToForward.Count > 0)
                     {
-                        diagnostics.Report.ThrowIfFailed();
                         CommitOverride(winningContext, state, propertiesToForward);
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    PatchDiagnostics.Error("Record", "Record was skipped", ex);
+                    diagnostics.SkipRecord(RecordTypeCatalog.GetRecordDescription(discoveredWinningContext.Record), ex);
                     // Preserve any diagnostics collected before the record-level failure.
                     if (LogCollector.HasLogs())
                     {
@@ -544,7 +544,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     }
 
                     Console.WriteLine(
-                        $"[Error] Skipping record {discoveredWinningContext.Record.FormKey}: " +
+                        $"[Error] [Record] Skipping record {discoveredWinningContext.Record.FormKey}: " +
                         $"{ex.GetType().Name}: {ex.Message}");
                     LogCollector.Clear();
                 }
@@ -576,12 +576,14 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                 Console.WriteLine("EDID policy: preserving the latest official baseline without loading the merge history");
                 CommitOverride(winningContext, state, new Dictionary<string, object?> { ["EditorID"] = editorId });
             }
+            PatchDiagnostics.ThrowIfFailed();
         }
 
         /// <summary>
         /// Gets all record contexts for a given record across the load order.
         /// Each handler must implement this to specify its record types.
         /// The pattern is: cast to TGetter, call ToLink&lt;TGetter&gt;(), then ResolveAllContexts.
+        /// GLOB/GMST inherit shared group resolution bounded by the latest subtype transition.
         /// </summary>
         public abstract IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,

@@ -35,6 +35,11 @@ Registration coverage is evidence of implementation scope, not proof of gameplay
 
 ## Internal evidence and history
 
+[User-reported failure investigation (2026-10-10)](USER-REPORTED-FAILURES-2026-10-10.md)
+records NPC Perks and GLOB/GMST cast reproductions, implemented repairs,
+default partial publication, regression results, and the limits of validation
+against the users' plugins.
+
 [Known issues and limits](record-patching/KNOWN-ISSUES.md), [review evidence](record-patching/REVIEW.md), and the [coverage/comparison audit](record-patching/COVERAGE-COMPARISON-AUDIT.md) retain internal boundaries, dated findings, fix decisions, and validation results. Earlier counts and pre-fix observations apply to their stated historical baseline. Current user-facing limitations belong in the affected record descriptions.
 
 [Migration history](history/README.md) preserves record-specific rationale for asset paths, model/bounds coupling, and list ordering. System font fallback and rendering decisions are documented in [Standalone development](STANDALONE_DEVELOPMENT.md#typography-on-windows-and-proton). [AGENTS.md](../AGENTS.md) contains repository contribution instructions.

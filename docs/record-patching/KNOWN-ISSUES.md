@@ -8,6 +8,10 @@ Reviewed on 2026-10-05 against the current implementation with Mutagen Skyrim 0.
 
 ## Coverage and comparison limits
 
+The NPC Perks absent-destination write failure and GLOB/GMST mixed-subtype history casts were repaired on 2026-10-10. Perks retains selected presence and detached rows. GLOB/GMST use the latest eligible subtype transition as their baseline, resolve ignored winners before dispatch, and preserve only type-compatible official GMST names. The exact users' source plugins and in-game results remain unverified; [the investigation and regression evidence](../USER-REPORTED-FAILURES-2026-10-10.md) distinguish reproduced mechanisms from confirmed real-load-order causes.
+
+As of 2026-10-10, record-local failures publish a partial patch by default, with skipped FormKeys, types, and reasons in the run log. A skipped record receives no newly merged override; the game retains its existing load-order behavior for that record. Such output is incomplete and may omit related changes. Fatal import, record-type processing, serialization, and publication failures still withhold output. There is no optional mode. Automated tests validate discard/publication boundaries; they do not establish gameplay correctness for incomplete patches.
+
 | Area | Current boundary |
 |---|---|
 | PACK | Disabled by default. Even when enabled, PackageTemplate, DataInputVersion, Data, XnamMarker and ProcedureTree have no active property registration. Mutagen writes indexed data in key order; the binary regression preserves index/value associations, but gameplay impact remains unproven. Winner/priority copies still use that writer. |
@@ -56,7 +60,7 @@ Fixed on 2026-10-04. Translated names retain the selected target language and al
 
 ### Errors can leave partial overrides
 
-Fixed on 2026-10-04. Every output path stages record writes and required ancestry before publication. Failed candidates are discarded, structured errors survive log flushing, and failed runs withhold primary/split file replacement. Non-null semantic write validation and record-specific validation retain their documented boundaries. [Completion evidence](REVIEW.md#partial-override-fix-verification).
+Fixed on 2026-10-04. Every output path stages record writes and required ancestry before publication. Failed candidates are discarded and structured errors survive log flushing. The original implementation withheld primary/split file replacement for any error; the 2026-10-10 default now publishes successful records after record skips and withholds files only on fatal failures. Non-null semantic write validation and record-specific validation retain their documented boundaries. [Original completion evidence](REVIEW.md#partial-override-fix-verification).
 
 ### Disk-backed override transactions and diagnostic text
 

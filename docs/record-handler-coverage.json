@@ -9207,17 +9207,17 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 27
+        "SourceLine": 25
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 28
+        "SourceLine": 26
       },
       {
         "Key": "Data",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 29
+        "SourceLine": 27
       }
     ],
     "Properties": [
@@ -9271,17 +9271,17 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 27
+        "SourceLine": 25
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 28
+        "SourceLine": 26
       },
       {
         "Key": "Data",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 29
+        "SourceLine": 27
       }
     ],
     "Properties": [
@@ -9335,17 +9335,17 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 27
+        "SourceLine": 25
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 28
+        "SourceLine": 26
       },
       {
         "Key": "Data",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 29
+        "SourceLine": 27
       }
     ],
     "Properties": [
@@ -9399,17 +9399,17 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 27
+        "SourceLine": 25
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 28
+        "SourceLine": 26
       },
       {
         "Key": "Data",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 29
+        "SourceLine": 27
       }
     ],
     "Properties": [
@@ -9463,17 +9463,17 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 27
+        "SourceLine": 25
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 28
+        "SourceLine": 26
       },
       {
         "Key": "Data",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 29
+        "SourceLine": 27
       }
     ],
     "Properties": [
@@ -9547,17 +9547,17 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 27
+        "SourceLine": 25
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 28
+        "SourceLine": 26
       },
       {
         "Key": "Data",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 29
+        "SourceLine": 27
       }
     ],
     "Properties": [
@@ -9631,17 +9631,17 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 27
+        "SourceLine": 25
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 28
+        "SourceLine": 26
       },
       {
         "Key": "Data",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 29
+        "SourceLine": 27
       }
     ],
     "Properties": [
@@ -9715,22 +9715,22 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 27
+        "SourceLine": 25
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 28
+        "SourceLine": 26
       },
       {
         "Key": "TypeChar",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 29
+        "SourceLine": 27
       },
       {
         "Key": "Data",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 31
+        "SourceLine": 29
       }
     ],
     "Properties": [
