@@ -10338,22 +10338,22 @@
       {
         "Key": "Appearance",
         "HandlerType": "HeadPartAppearanceHandler",
-        "SourceLine": 32
+        "SourceLine": 33
       },
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 33
+        "SourceLine": 34
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 34
+        "SourceLine": 35
       },
       {
         "Key": "Name",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 35
+        "SourceLine": 36
       }
     ],
     "Properties": [
@@ -17328,312 +17328,312 @@
       {
         "Key": "Appearance",
         "HandlerType": "NpcAppearanceHandler",
-        "SourceLine": 42
+        "SourceLine": 43
       },
       {
         "Key": "TemplateAndTraits",
         "HandlerType": "TemplateAndTraitsHandler",
-        "SourceLine": 43
+        "SourceLine": 44
       },
       {
         "Key": "Name",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 45
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 45
+        "SourceLine": 46
       },
       {
         "Key": "DeathItem",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 47
       },
       {
         "Key": "CombatOverridePackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 47
+        "SourceLine": 48
       },
       {
         "Key": "SpectatorOverridePackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 48
+        "SourceLine": 49
       },
       {
         "Key": "Configuration.Flags",
         "HandlerType": "ProtectionFlagsHandler",
-        "SourceLine": 49
+        "SourceLine": 50
       },
       {
         "Key": "Configuration.MagickaOffset",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 50
+        "SourceLine": 51
       },
       {
         "Key": "Configuration.StaminaOffset",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 51
+        "SourceLine": 52
       },
       {
         "Key": "Configuration.Level",
         "HandlerType": "NpcLevelHandler",
-        "SourceLine": 52
+        "SourceLine": 53
       },
       {
         "Key": "Configuration.CalcMinLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 53
+        "SourceLine": 54
       },
       {
         "Key": "Configuration.CalcMaxLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 55
       },
       {
         "Key": "Configuration.SpeedMultiplier",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 55
+        "SourceLine": 56
       },
       {
         "Key": "Configuration.DispositionBase",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 57
       },
       {
         "Key": "Configuration.TemplateFlags",
         "HandlerType": "SimpleReflectionFlagPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 58
       },
       {
         "Key": "Configuration.HealthOffset",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 60
       },
       {
         "Key": "Configuration.BleedoutOverride",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 60
+        "SourceLine": 61
       },
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 61
+        "SourceLine": 62
       },
       {
         "Key": "Class",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 62
+        "SourceLine": 63
       },
       {
         "Key": "AIData.Aggression",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 63
+        "SourceLine": 64
       },
       {
         "Key": "AIData.Confidence",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
+        "SourceLine": 65
       },
       {
         "Key": "AIData.EnergyLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 65
+        "SourceLine": 66
       },
       {
         "Key": "AIData.Responsibility",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 66
+        "SourceLine": 67
       },
       {
         "Key": "AIData.Mood",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 67
+        "SourceLine": 68
       },
       {
         "Key": "AIData.Assistance",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 68
+        "SourceLine": 69
       },
       {
         "Key": "AIData.AggroRadiusBehavior",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 69
+        "SourceLine": 70
       },
       {
         "Key": "AIData.Warn",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 70
+        "SourceLine": 71
       },
       {
         "Key": "AIData.WarnOrAttack",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 71
+        "SourceLine": 72
       },
       {
         "Key": "AIData.Attack",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 72
+        "SourceLine": 73
       },
       {
         "Key": "ObserveDeadBodyOverridePackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 73
+        "SourceLine": 74
       },
       {
         "Key": "Factions",
         "HandlerType": "FactionHandler",
-        "SourceLine": 74
+        "SourceLine": 75
       },
       {
         "Key": "Packages",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 75
+        "SourceLine": 76
       },
       {
         "Key": "ActorEffect",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 76
+        "SourceLine": 77
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "VirtualMachineAdapterHandler",
-        "SourceLine": 78
+        "SourceLine": 79
       },
       {
         "Key": "Items",
         "HandlerType": "ItemHandler",
-        "SourceLine": 79
+        "SourceLine": 80
       },
       {
         "Key": "Keywords",
         "HandlerType": "KeywordListHandler",
-        "SourceLine": 80
+        "SourceLine": 81
       },
       {
         "Key": "PlayerSkills.Health",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 81
+        "SourceLine": 82
       },
       {
         "Key": "PlayerSkills.Magicka",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 82
+        "SourceLine": 83
       },
       {
         "Key": "PlayerSkills.Stamina",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 83
+        "SourceLine": 84
       },
       {
         "Key": "PlayerSkills.FarAwayModelDistance",
         "HandlerType": "PlayerSkillsFarAwayModelDistanceHandler",
-        "SourceLine": 84
+        "SourceLine": 85
       },
       {
         "Key": "PlayerSkills.GearedUpWeapons",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 85
+        "SourceLine": 86
       },
       {
         "Key": "PlayerSkills.SkillValues",
         "HandlerType": "PlayerSkillsSkillValuesHandler",
-        "SourceLine": 86
+        "SourceLine": 87
       },
       {
         "Key": "PlayerSkills.SkillOffsets",
         "HandlerType": "PlayerSkillsSkillOffsetsHandler",
-        "SourceLine": 87
+        "SourceLine": 88
       },
       {
         "Key": "Destructible",
         "HandlerType": "DestructibleHandler",
-        "SourceLine": 88
+        "SourceLine": 89
       },
       {
         "Key": "ObjectBounds",
         "HandlerType": "ObjectBoundsHandler",
-        "SourceLine": 89
+        "SourceLine": 90
       },
       {
         "Key": "Voice",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 90
+        "SourceLine": 91
       },
       {
         "Key": "ShortName",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 91
+        "SourceLine": 92
       },
       {
         "Key": "NAM5",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 92
+        "SourceLine": 93
       },
       {
         "Key": "SoundLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 93
+        "SourceLine": 94
       },
       {
         "Key": "AttackRace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 94
+        "SourceLine": 95
       },
       {
         "Key": "DefaultOutfit",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 95
+        "SourceLine": 96
       },
       {
         "Key": "FarAwayModel",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 96
+        "SourceLine": 97
       },
       {
         "Key": "Attacks",
         "HandlerType": "AttacksHandler",
-        "SourceLine": 97
+        "SourceLine": 98
       },
       {
         "Key": "GuardWarnOverridePackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 98
+        "SourceLine": 99
       },
       {
         "Key": "Perks",
         "HandlerType": "PerksHandler",
-        "SourceLine": 99
+        "SourceLine": 100
       },
       {
         "Key": "CombatStyle",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 100
+        "SourceLine": 101
       },
       {
         "Key": "GiftFilter",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 101
+        "SourceLine": 102
       },
       {
         "Key": "SleepingOutfit",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 102
+        "SourceLine": 103
       },
       {
         "Key": "DefaultPackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 103
+        "SourceLine": 104
       },
       {
         "Key": "CrimeFaction",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 104
+        "SourceLine": 105
       },
       {
         "Key": "Sound",
         "HandlerType": "SoundHandler",
-        "SourceLine": 105
+        "SourceLine": 106
       }
     ],
     "Properties": [
@@ -24328,312 +24328,312 @@
       {
         "Key": "Appearance",
         "HandlerType": "RaceAppearanceHandler",
-        "SourceLine": 38
+        "SourceLine": 39
       },
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 39
+        "SourceLine": 40
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 40
+        "SourceLine": 41
       },
       {
         "Key": "Name",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 41
+        "SourceLine": 42
       },
       {
         "Key": "Description",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 42
+        "SourceLine": 43
       },
       {
         "Key": "ActorEffect",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 43
+        "SourceLine": 44
       },
       {
         "Key": "Skin",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 45
       },
       {
         "Key": "BodyTemplate",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 46
       },
       {
         "Key": "Keywords",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 47
+        "SourceLine": 48
       },
       {
         "Key": "SkillBoosts",
         "HandlerType": "RaceSkillBoostsHandler",
-        "SourceLine": 48
+        "SourceLine": 49
       },
       {
         "Key": "Height",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 49
+        "SourceLine": 50
       },
       {
         "Key": "Weight",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 50
+        "SourceLine": 51
       },
       {
         "Key": "Flags",
         "HandlerType": "SimpleReflectionFlagPropertyHandler",
-        "SourceLine": 51
+        "SourceLine": 52
       },
       {
         "Key": "Starting",
         "HandlerType": "RaceStartingHandler",
-        "SourceLine": 52
+        "SourceLine": 53
       },
       {
         "Key": "BaseCarryWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 53
+        "SourceLine": 54
       },
       {
         "Key": "BaseMass",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 55
       },
       {
         "Key": "AccelerationRate",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 55
+        "SourceLine": 56
       },
       {
         "Key": "DecelerationRate",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 57
       },
       {
         "Key": "Size",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 58
       },
       {
         "Key": "HeadBipedObject",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 59
       },
       {
         "Key": "HairBipedObject",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 60
       },
       {
         "Key": "InjuredHealthPercent",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 60
+        "SourceLine": 61
       },
       {
         "Key": "ShieldBipedObject",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 62
       },
       {
         "Key": "Regen",
         "HandlerType": "RaceRegenHandler",
-        "SourceLine": 62
+        "SourceLine": 63
       },
       {
         "Key": "UnarmedDamage",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 63
+        "SourceLine": 64
       },
       {
         "Key": "UnarmedReach",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
+        "SourceLine": 65
       },
       {
         "Key": "BodyBipedObject",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 65
+        "SourceLine": 66
       },
       {
         "Key": "AimAngleTolerance",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 66
+        "SourceLine": 67
       },
       {
         "Key": "FlightRadius",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 67
+        "SourceLine": 68
       },
       {
         "Key": "AngularAccelerationRate",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 68
+        "SourceLine": 69
       },
       {
         "Key": "AngularTolerance",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 69
+        "SourceLine": 70
       },
       {
         "Key": "MountData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 70
+        "SourceLine": 71
       },
       {
         "Key": "SkeletalModel",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 72
+        "SourceLine": 73
       },
       {
         "Key": "MovementTypeNames",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 73
+        "SourceLine": 74
       },
       {
         "Key": "Voices",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 74
+        "SourceLine": 75
       },
       {
         "Key": "DecapitateArmors",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 75
+        "SourceLine": 76
       },
       {
         "Key": "DefaultHairColors",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 76
+        "SourceLine": 77
       },
       {
         "Key": "AttackRace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 77
+        "SourceLine": 78
       },
       {
         "Key": "Attacks",
         "HandlerType": "AttacksHandler",
-        "SourceLine": 78
+        "SourceLine": 79
       },
       {
         "Key": "BodyData",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 79
+        "SourceLine": 80
       },
       {
         "Key": "Hairs",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 80
+        "SourceLine": 81
       },
       {
         "Key": "Eyes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 81
+        "SourceLine": 82
       },
       {
         "Key": "BodyPartData",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 82
+        "SourceLine": 83
       },
       {
         "Key": "BehaviorGraph",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 83
+        "SourceLine": 84
       },
       {
         "Key": "MaterialType",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 84
+        "SourceLine": 85
       },
       {
         "Key": "ImpactDataSet",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 85
+        "SourceLine": 86
       },
       {
         "Key": "DecapitationFX",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 86
+        "SourceLine": 87
       },
       {
         "Key": "OpenLootSound",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 87
+        "SourceLine": 88
       },
       {
         "Key": "CloseLootSound",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 88
+        "SourceLine": 89
       },
       {
         "Key": "BipedObjectNames",
         "HandlerType": "RaceBipedObjectNamesHandler",
-        "SourceLine": 89
+        "SourceLine": 90
       },
       {
         "Key": "MovementTypes",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 90
+        "SourceLine": 91
       },
       {
         "Key": "EquipmentFlags",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 93
+        "SourceLine": 94
       },
       {
         "Key": "EquipmentSlots",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 94
+        "SourceLine": 95
       },
       {
         "Key": "UnarmedEquipSlot",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 95
+        "SourceLine": 96
       },
       {
         "Key": "FaceFxPhonemes",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 96
+        "SourceLine": 97
       },
       {
         "Key": "BaseMovementDefaultWalk",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 98
+        "SourceLine": 99
       },
       {
         "Key": "BaseMovementDefaultRun",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 99
+        "SourceLine": 100
       },
       {
         "Key": "BaseMovementDefaultSwim",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 100
+        "SourceLine": 101
       },
       {
         "Key": "BaseMovementDefaultFly",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 101
+        "SourceLine": 102
       },
       {
         "Key": "BaseMovementDefaultSneak",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 102
+        "SourceLine": 103
       },
       {
         "Key": "BaseMovementDefaultSprint",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 103
+        "SourceLine": 104
       },
       {
         "Key": "ArmorRace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 104
+        "SourceLine": 105
       }
     ],
     "Properties": [

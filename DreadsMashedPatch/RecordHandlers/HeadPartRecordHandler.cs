@@ -14,7 +14,8 @@ namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
     // - Appearance migration: model, type, extra parts, complete morph-file pairs, texture, color and valid races
-    //   now select the effective winner as one generated-copy asset snapshot. Appearance flags use the approved flag setter.
+    //   select one generated-copy asset snapshot through ordinary ownership/reversion forwarding.
+    //   Appearance flags use the approved flag setter; sorted extra parts ignore reordering in equality.
     // - Kept specialized: record header flags, translated name and EDID retain their existing policies.
     // - Removed: the independent ordered Parts handler and list/link/model registrations.
     // - Rationale: mixing mesh and morph sources can invalidate exported NPC faces.

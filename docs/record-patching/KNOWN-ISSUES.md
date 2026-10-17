@@ -8,7 +8,7 @@ Reviewed on 2026-10-05 against the current implementation with Mutagen Skyrim 0.
 
 ## Appearance and tree forwarding
 
-NPC_, RACE and HDPT preserve complete winning appearance groups. TREE stays enabled. Its **Restrict tree forwarding** checkbox defaults to keeping model/bounds, full CNAM (including all 32 formerly excluded animation bytes), VMAD and header flags from the effective winner. Disabling the restriction uses ordinary forwarding, which can mix asset-dependent fields from different mods without verifying compatibility. Same-path mesh replacers and external FaceGen files remain outside record-only conflict decisions. Explicit priority mods continue to select whole records. The [checkbox implementation](REVIEW.md#tree-restriction-checkbox--2026-10-17) retains the earlier removal of model/wind coordination.
+NPC_, RACE and HDPT select complete atomic appearance groups with ordinary ownership and reversion permissions; see the [selection correction](REVIEW.md#atomic-appearance-forwarding--2026-10-17). TREE stays enabled. Its **Restrict tree forwarding** checkbox defaults to keeping model/bounds, full CNAM (including all 32 formerly excluded animation bytes), VMAD and header flags from the effective winner. Disabling the restriction uses ordinary forwarding, which can mix asset-dependent fields from different mods without verifying compatibility. Same-path mesh replacers and external FaceGen files remain outside record-only conflict decisions. Explicit priority mods continue to select whole records. The [checkbox implementation](REVIEW.md#tree-restriction-checkbox--2026-10-17) retains the earlier removal of model/wind coordination.
 
 ## Coverage and comparison limits
 

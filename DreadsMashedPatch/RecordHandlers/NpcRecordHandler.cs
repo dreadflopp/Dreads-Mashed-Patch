@@ -15,11 +15,12 @@ namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
     // - Generalized: semantic AIData, Configuration, and scalar PlayerSkills leaves use exact dotted shared handlers.
-    // - Appearance migration: complete winner-owned facial/body/trait snapshots replace independent appearance decisions.
+    // - Appearance migration: complete atomic facial/body snapshots use ordinary ownership/reversion forwarding.
     //   Generated masked copying retains nullable subrecords, order, duplicates and overlay assets.
     //   Female/OppositeGenderAnims and Traits use approved masked flag setters; protection and other template bits remain specialized.
     //   Race, height, weight and skin stay with the face because they control its interpretation.
-    //   TemplateAndTraits keeps winning appearance inheritance while retaining gameplay-only template forwarding.
+    //   TemplateAndTraits selects the pointer and Traits bit atomically through the same shared algorithm.
+    //   Sorted head/tint collections compare without order changes claiming ownership; copies retain source order.
     //   Other NPC gameplay properties retain their existing handlers.
     // - Generalized: Items' complete generated snapshots, duplicate matching, and COED reconciliation share AbstractInventoryItemsHandler with CONT.
     // - Kept specialized: inventory count/COED edits retain NPC's ownership permission checks; only the Items surface adapter is record-specific.

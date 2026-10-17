@@ -40,15 +40,7 @@ public abstract class AbstractListPropertyHandler<T> : IPropertyHandler<List<T>>
             return value1.Zip(value2, IsItemContentEqual).All(equal => equal);
         }
 
-        var unmatched = value2.ToList();
-        foreach (var item1 in value1)
-        {
-            var matchIndex = unmatched.FindIndex(item2 => IsItemContentEqual(item1, item2));
-            if (matchIndex < 0) return false;
-            unmatched.RemoveAt(matchIndex);
-        }
-
-        return true;
+        return CollectionComparisonHelper.UnorderedEquals(value1, value2, IsItemContentEqual);
     }
 
     public virtual void UpdatePropertyContext(

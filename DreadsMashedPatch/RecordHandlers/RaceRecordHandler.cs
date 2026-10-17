@@ -24,7 +24,8 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout and empty NAM2 marker state.
 
 // Appearance migration: HeadData (both genders), MorphRace, tint count and FaceGen clamps
-// select the complete effective winning snapshot. Generated copies preserve all nested head/tint assets.
+// select one complete snapshot through ordinary ownership/reversion forwarding.
+// Generated copies preserve all nested head/tint assets.
 // Other gendered body data, legacy Hairs/Eyes availability and flags retain their existing policies.
 // Rationale: morph definitions, indexes and clamps must match the selected head data.
 

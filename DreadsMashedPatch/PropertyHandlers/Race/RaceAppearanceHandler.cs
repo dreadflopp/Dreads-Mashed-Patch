@@ -11,7 +11,7 @@ public sealed record RaceAppearanceValue(IGenderedItemGetter<IHeadDataGetter?>? 
 
 // Follow GenderedItemHandler's typed copying. Race's generated gendered copy bypasses
 // translation masks and its wrapper equality is not a deep head-data comparison.
-public sealed class RaceAppearanceHandler : AbstractWinningPropertyHandler<RaceAppearanceValue>, IPropertyGroupHandler
+public sealed class RaceAppearanceHandler : AbstractPropertyHandler<RaceAppearanceValue>, IPropertyGroupHandler
 {
     public IReadOnlySet<string> GroupedProperties { get; } = new HashSet<string>(StringComparer.Ordinal)
         { "HeadData", "MorphRace", "NumberOfTintsInList", "FacegenMainClamp", "FacegenFaceClamp" };

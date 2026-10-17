@@ -117,9 +117,9 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Name` | Select the complete translated value independently. |
-| `Appearance`: `Model`, `Type`, `ExtraParts`, `Parts`, `TextureSet`, `Color`, `ValidRaces`, `Flags` | Keep the complete effective winning asset snapshot. Morph-file order and duplicates remain intact; registered appearance flags use the approved flag setter. |
+| `Appearance`: `Model`, `Type`, `ExtraParts`, `Parts`, `TextureSet`, `Color`, `ValidRaces`, `Flags` | Select one complete asset snapshot through ordinary change/reversion rules. Morph-file order and duplicates remain intact; registered appearance flags use the approved flag setter. |
 
-The model and all morph/extra-part assets come from one override, including when it restores original values. Header flags and EditorID retain their shared policies. Referenced NPC faces still depend on compatible winning mesh and FaceGen resources.
+The model and all morph/extra-part assets come from one selected override. Returning to the original snapshot requires permission from its current owner under the [shared rules](README.md#how-a-value-is-selected). Extra-part sorting alone is not an edit; duplicate counts and morph-file order remain significant. Header flags and EditorID retain their shared policies. Referenced NPC faces still depend on compatible winning mesh and FaceGen resources.
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/HeadPartRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -158,8 +158,8 @@ Configuration.Flags selects only Essential/Protected together; other configurati
 
 | Properties | How they are patched |
 |---|---|
-| `Appearance`: `HeadParts`, `FaceMorph`, `FaceParts`, `TintLayers`, `HairColor`, `HeadTexture`, `TextureLighting`, `Race`, `Height`, `Weight`, `WornArmor` and Female/OppositeGenderAnims | Keep one complete effective winning snapshot, including returns to original values. Preserve list order, duplicates and nullable subrecords; copy the selected assets into independent values. |
-| `TemplateAndTraits`: `Template`, template `Traits` | Traits keeps the winning bit. When set, the template pointer keeps that same winning override; otherwise the pointer forwards normally for gameplay inheritance. Other template bits remain independent. |
+| `Appearance`: `HeadParts`, `FaceMorph`, `FaceParts`, `TintLayers`, `HairColor`, `HeadTexture`, `TextureLighting`, `Race`, `Height`, `Weight`, `WornArmor` and Female/OppositeGenderAnims | Select one complete snapshot through ordinary change/reversion rules. Preserve source list order, duplicates and nullable subrecords; copy the selected assets into independent values. |
+| `TemplateAndTraits`: `Template`, template `Traits` | Select the template pointer and Traits bit as one value through ordinary change/reversion rules. Other template bits remain independent. |
 | `Name`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `Voice`, `ShortName`, `NAM5`, `SoundLevel`, `AttackRace`, `DefaultOutfit`, `FarAwayModel`, `GuardWarnOverridePackageList`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction` | Select each value separately. |
 | `Configuration.TemplateFlags` | Merge registered bits except `Traits`, handled by TemplateAndTraits. |
 | `Configuration.Level`, `Destructible`, `ObjectBounds`, `Sound` | Select each whole value separately. |
@@ -169,7 +169,7 @@ Configuration.Flags selects only Essential/Protected together; other configurati
 | `Packages` | Merge aligned rows in order. |
 | `AIData.Unused`, `PlayerSkills.Unused`, `PlayerSkills.Unused2` | Serialization/unused state; no independent decision. |
 
-Appearance does not merge face parts or tint layers. Race, sex, weight and skin remain with that appearance. Traits inheritance uses the winning template; gameplay-only template references retain ordinary forwarding; protection and other gameplay fields continue through their own rules. This preserves the selected record data but does not generate or validate FaceGen assets.
+Appearance does not merge face parts or tint layers. Race, sex, weight and skin remain with that appearance. Head-part/tint-layer sorting alone is not an edit; complete entry contents and duplicate counts remain significant. An unrelated later override carrying the original appearance cannot erase an earlier change. Traits and its template pointer use the same atomic selection rules; protection and other gameplay fields continue through their own rules. This preserves the selected record data but does not generate or validate FaceGen assets.
 
 Selected Perks are written even when the winning NPC has no perk list. Absence and a present-empty list remain distinct in memory, and copied rows and perk links are independent of their sources.
 
@@ -193,7 +193,7 @@ SkillBoosts owns all seven physical skill slots. Padding is ignored; output is s
 
 | Properties | How they are patched |
 |---|---|
-| `Appearance`: `HeadData`, `MorphRace`, `NumberOfTintsInList`, `FacegenMainClamp`, `FacegenFaceClamp` | Keep the complete effective winning snapshot. Both genders, nested head parts, morph definitions, tint masks/presets, models and textures remain together. |
+| `Appearance`: `HeadData`, `MorphRace`, `NumberOfTintsInList`, `FacegenMainClamp`, `FacegenFaceClamp` | Select one complete snapshot through ordinary change/reversion rules. Both genders, nested head parts, morph definitions, tint masks/presets, models and textures remain together. |
 | `Name`, `Description`, `Skin`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `AttackRace`, `BodyPartData`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `EquipmentFlags`, `UnarmedEquipSlot`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `ArmorRace` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
 | `BodyTemplate`, `Height`, `Weight`, `MountData`, `SkeletalModel`, `Voices`, `DecapitateArmors`, `DefaultHairColors`, `BodyData`, `BehaviorGraph`, `FaceFxPhonemes` | Select each whole value separately. |

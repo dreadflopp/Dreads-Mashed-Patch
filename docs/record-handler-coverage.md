@@ -1,6 +1,6 @@
 # Record handler property coverage audit
 
-Generated: 2026-10-17 18:30:54 +02:00
+Generated: 2026-10-17 22:35:59 +02:00
 
 This is a static registration audit. `Covered` is an exact registration, `AggregateCovered` is inferred from a specialized handler implementation, `Partial` indicates nested/split handling, and `MissingCandidate` has no detected handler. Reviewed aliases and non-property surfaces are classified through the tracked overrides file.
 

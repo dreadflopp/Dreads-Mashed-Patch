@@ -17,7 +17,7 @@ VOLI, LENS, LTEX and all seven placed-projectile variants are supported and enab
 
 The current release is still being tested. Review the output in xEdit and correct it manually before use; report unexpected patching through the repository's Issues tab.
 
-NPC_, RACE and HDPT keep complete winning appearance groups. TREE remains enabled; its **Restrict tree forwarding** checkbox defaults to preserving winning appearance, scripts and flags. [Migration and validation evidence](record-patching/REVIEW.md#tree-restriction-checkbox--2026-10-17) records the boundaries.
+NPC_, RACE and HDPT select complete atomic appearance groups through ordinary change/reversion rules. [Appearance selection evidence](record-patching/REVIEW.md#atomic-appearance-forwarding--2026-10-17) records the correction. TREE remains enabled; its **Restrict tree forwarding** checkbox defaults to preserving winning appearance, scripts and flags. [TREE migration and validation evidence](record-patching/REVIEW.md#tree-restriction-checkbox--2026-10-17) records that boundary.
 The [public TREE rules](record-patching/world.md#tree-tree) explain the behavior and practical limits; [TREE policy design](DEVELOPMENT.md#tree-smart-forwarding-design) documents its implementation rationale.
 
 ## Developer documentation

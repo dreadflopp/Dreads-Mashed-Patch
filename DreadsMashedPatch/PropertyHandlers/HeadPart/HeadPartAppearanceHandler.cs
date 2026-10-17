@@ -8,13 +8,16 @@ namespace DreadsMashedPatch.PropertyHandlers.HeadPart;
 
 public sealed record HeadPartAppearanceValue(IHeadPartGetter Snapshot, Mutagen.Bethesda.Skyrim.HeadPart.Flag Flags);
 
-public sealed class HeadPartAppearanceHandler : AbstractWinningPropertyHandler<HeadPartAppearanceValue>, IPropertyGroupHandler
+public sealed class HeadPartAppearanceHandler : AbstractPropertyHandler<HeadPartAppearanceValue>, IPropertyGroupHandler
 {
     public IReadOnlySet<string> GroupedProperties { get; } = new HashSet<string>(StringComparer.Ordinal)
         { "Model", "Type", "ExtraParts", "Parts", "TextureSet", "Color", "ValidRaces", "Flags" };
-    private static readonly Mutagen.Bethesda.Skyrim.HeadPart.TranslationMask CopyMask = new(false)
+    private static readonly Mutagen.Bethesda.Skyrim.HeadPart.TranslationMask CopyMask = CreateMask(includeExtraParts: true);
+    private static readonly Mutagen.Bethesda.Skyrim.HeadPart.TranslationMask EqualityMask = CreateMask(includeExtraParts: false);
+
+    private static Mutagen.Bethesda.Skyrim.HeadPart.TranslationMask CreateMask(bool includeExtraParts) => new(false)
     {
-        Model = true, Type = true, ExtraParts = true, Parts = true,
+        Model = true, Type = true, ExtraParts = includeExtraParts, Parts = true,
         TextureSet = true, Color = true, ValidRaces = true
     };
     private static readonly SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.HeadPart.Flag, IHeadPart, IHeadPartGetter> Flags =
@@ -37,7 +40,10 @@ public sealed class HeadPartAppearanceHandler : AbstractWinningPropertyHandler<H
 
     public override bool AreValuesEqual(HeadPartAppearanceValue? left, HeadPartAppearanceValue? right) =>
         left is null || right is null ? left is null && right is null
-            : HeadPartMixIn.Equals(left.Snapshot, right.Snapshot, CopyMask) && Flags.AreValuesEqual(left.Flags, right.Flags);
+            : HeadPartMixIn.Equals(left.Snapshot, right.Snapshot, EqualityMask)
+                && CollectionComparisonHelper.UnorderedEquals(left.Snapshot.ExtraParts, right.Snapshot.ExtraParts,
+                    (a, b) => a.FormKey == b.FormKey)
+                && Flags.AreValuesEqual(left.Flags, right.Flags);
 
     public override string FormatValue(object? value) => value is HeadPartAppearanceValue head
         ? $"Type={head.Snapshot.Type}, Model={AssetPathHelper.Format(head.Snapshot.Model?.File)}, " +

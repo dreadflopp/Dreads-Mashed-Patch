@@ -12,16 +12,19 @@ public sealed record NpcAppearanceValue(
 
 // Generated masked snapshots follow the project's complete-value copy pattern.
 // Approved masked flag handlers preserve protection, other configuration bits and unknown bits.
-public sealed class NpcAppearanceHandler : AbstractWinningPropertyHandler<NpcAppearanceValue>, IPropertyGroupHandler
+public sealed class NpcAppearanceHandler : AbstractPropertyHandler<NpcAppearanceValue>, IPropertyGroupHandler
 {
     public IReadOnlySet<string> GroupedProperties { get; } = new HashSet<string>(StringComparer.Ordinal)
     {
         "HeadParts", "FaceMorph", "FaceParts", "TintLayers", "HairColor", "HeadTexture", "TextureLighting",
         "Race", "Height", "Weight", "WornArmor", "Configuration.Flags.Female", "Configuration.Flags.OppositeGenderAnims"
     };
-    private static readonly Mutagen.Bethesda.Skyrim.Npc.TranslationMask CopyMask = new(false)
+    private static readonly Mutagen.Bethesda.Skyrim.Npc.TranslationMask CopyMask = CreateMask(includeLists: true);
+    private static readonly Mutagen.Bethesda.Skyrim.Npc.TranslationMask EqualityMask = CreateMask(includeLists: false);
+
+    private static Mutagen.Bethesda.Skyrim.Npc.TranslationMask CreateMask(bool includeLists) => new(false)
     {
-        HeadParts = true, FaceMorph = true, FaceParts = true, TintLayers = true,
+        HeadParts = includeLists, FaceMorph = true, FaceParts = true, TintLayers = includeLists,
         HairColor = true, HeadTexture = true, TextureLighting = true,
         Race = true, Height = true, Weight = true, WornArmor = true
     };
@@ -48,7 +51,13 @@ public sealed class NpcAppearanceHandler : AbstractWinningPropertyHandler<NpcApp
 
     public override bool AreValuesEqual(NpcAppearanceValue? left, NpcAppearanceValue? right) =>
         left is null || right is null ? left is null && right is null
-            : NpcMixIn.Equals(left.Snapshot, right.Snapshot, CopyMask)
+            : NpcMixIn.Equals(left.Snapshot, right.Snapshot, EqualityMask)
+                // xEdit defines both collections as sorted. Compare complete contents without
+                // treating a reorder as an appearance edit; copying still retains authored order.
+                && CollectionComparisonHelper.UnorderedEquals(left.Snapshot.HeadParts, right.Snapshot.HeadParts,
+                    (a, b) => a.FormKey == b.FormKey)
+                && CollectionComparisonHelper.UnorderedEquals(left.Snapshot.TintLayers, right.Snapshot.TintLayers,
+                    (a, b) => TintLayerMixIn.Equals(a, b))
                 && AppearanceFlags.AreValuesEqual(left.AppearanceFlags, right.AppearanceFlags);
 
     public override string FormatValue(object? value) => value is NpcAppearanceValue appearance
