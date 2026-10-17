@@ -12,7 +12,6 @@ public sealed class ModelBoundsPropertyContext : IPropertyContext
     public IObjectBoundsGetter? OriginalBounds { get; set; }
     public IObjectBoundsGetter? ForwardBounds { get; set; }
     public string BoundsOwner { get; set; } = string.Empty;
-    public object? PreviousModel { get; set; }
     public IObjectBoundsGetter? PreviousBounds { get; set; }
 
     public object GetForwardValue() => new ModelBoundsValue(ForwardModel, ForwardBounds);

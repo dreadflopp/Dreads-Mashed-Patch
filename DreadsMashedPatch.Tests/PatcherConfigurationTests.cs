@@ -26,6 +26,7 @@ public sealed class PatcherConfigurationTests
         Assert.Empty(settings.AlwaysWinningMods);
         Assert.True(settings.Forwarding.TreatCreationClubAsVanilla);
         Assert.True(settings.Forwarding.EnforceSingleVanillaWeaponTypeKeyword);
+        Assert.True(settings.Forwarding.RestrictTreeForwarding);
         Assert.Equal(9, settings.Forwarding.VanillaWeaponTypeKeywords.Count);
         Assert.Contains("01E711:Skyrim.esm", settings.Forwarding.VanillaWeaponTypeKeywords);
         Assert.Equal(
@@ -130,6 +131,7 @@ public sealed class PatcherConfigurationTests
             Forwarding = new ForwardingSettings
             {
                 TreatCreationClubAsVanilla = false,
+                RestrictTreeForwarding = false,
                 EditorIdPolicy = EditorIdForwardingPolicy.ForwardOnlyWithOtherChanges,
                 TamrielPersistentCellPolicy = TamrielPersistentCellPolicy.PreferSkyrim
             },
@@ -147,11 +149,13 @@ public sealed class PatcherConfigurationTests
         settings.AlwaysWinningMods.Clear();
         settings.Diagnostics.DeepDiveFormKeys.Clear();
         settings.Forwarding.VanillaWeaponTypeKeywords.Clear();
+        settings.Forwarding.RestrictTreeForwarding = true;
 
         Assert.Contains("Mutagen.Bethesda.Skyrim.IQuestGetter", copy.DisabledRecordTypes);
         Assert.Contains("Ignored.esp", copy.IgnoredMods);
         Assert.Contains("Priority.esp", copy.AlwaysWinningMods);
         Assert.False(copy.Forwarding.TreatCreationClubAsVanilla);
+        Assert.False(copy.Forwarding.RestrictTreeForwarding);
         Assert.Equal(EditorIdForwardingPolicy.ForwardOnlyWithOtherChanges, copy.Forwarding.EditorIdPolicy);
         Assert.Equal(TamrielPersistentCellPolicy.PreferSkyrim, copy.Forwarding.TamrielPersistentCellPolicy);
         Assert.Contains("000800:Test.esp", copy.Diagnostics.DeepDiveFormKeys);

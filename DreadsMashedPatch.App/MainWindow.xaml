@@ -463,6 +463,12 @@
                                   SelectedValue="{Binding Settings.Patcher.Forwarding.TamrielPersistentCellPolicy}"/>
                         <TextBlock Style="{StaticResource HelpText}"
                                    Text="Recommended hybrid: patch normally unless the winning CELL header matches Skyrim.esm, then use Dawnguard.esm instead."/>
+
+                        <CheckBox Content="Restrict tree forwarding (Recommended)"
+                                  FontWeight="SemiBold"
+                                  IsChecked="{Binding Settings.Patcher.Forwarding.RestrictTreeForwarding}"/>
+                        <TextBlock Style="{StaticResource HelpText}"
+                                   Text="Does not forward tree models, bounds, wind settings, scripts or record flags from other overrides. Keeps these fields from the winning plugin to avoid mixing incompatible tree appearance and behavior. Uncheck to use normal forwarding."/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

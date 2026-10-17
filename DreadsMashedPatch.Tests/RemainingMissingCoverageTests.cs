@@ -96,16 +96,19 @@ public sealed class RemainingMissingCoverageTests
     }
 
     [Fact]
-    public void NpcTemplateFlagHandlerPreservesUnknownBits()
+    public void NpcResidualTemplateFlagHandlerPreservesAppearanceTraitsAndUnknownBits()
     {
         const int unknownBit = 0x4000;
         var npc = new Npc(new FormKey(TestModKey, 0x505), SkyrimRelease.SkyrimSE);
-        npc.Configuration.TemplateFlags = (NpcConfiguration.TemplateFlag)unknownBit;
+        npc.Configuration.TemplateFlags = (NpcConfiguration.TemplateFlag)unknownBit | NpcConfiguration.TemplateFlag.Traits;
         var handler = Assert.IsType<SimpleReflectionFlagPropertyHandler<NpcConfiguration.TemplateFlag, INpc, INpcGetter>>(
             new NpcRecordHandler().PropertyHandlers["Configuration.TemplateFlags"]);
 
-        handler.SetValue(npc, NpcConfiguration.TemplateFlag.Traits);
+        handler.SetValue(npc, NpcConfiguration.TemplateFlag.Stats);
 
+        Assert.Equal(unknownBit | (int)NpcConfiguration.TemplateFlag.Traits | (int)NpcConfiguration.TemplateFlag.Stats,
+            (int)npc.Configuration.TemplateFlags);
+        handler.SetValue(npc, 0);
         Assert.Equal(unknownBit | (int)NpcConfiguration.TemplateFlag.Traits, (int)npc.Configuration.TemplateFlags);
     }
 

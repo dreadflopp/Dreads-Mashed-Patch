@@ -10336,70 +10336,37 @@
     "Getter": "IHeadPartGetter",
     "Registrations": [
       {
+        "Key": "Appearance",
+        "HandlerType": "HeadPartAppearanceHandler",
+        "SourceLine": 32
+      },
+      {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 31
+        "SourceLine": 33
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 32
+        "SourceLine": 34
       },
       {
         "Key": "Name",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 33
-      },
-      {
-        "Key": "Model",
-        "HandlerType": "ModelHandler",
-        "SourceLine": 34
-      },
-      {
-        "Key": "Flags",
-        "HandlerType": "SimpleReflectionFlagPropertyHandler",
         "SourceLine": 35
-      },
-      {
-        "Key": "Type",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 36
-      },
-      {
-        "Key": "ExtraParts",
-        "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 37
-      },
-      {
-        "Key": "Parts",
-        "HandlerType": "PartsHandler",
-        "SourceLine": 38
-      },
-      {
-        "Key": "TextureSet",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
-      },
-      {
-        "Key": "Color",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 40
-      },
-      {
-        "Key": "ValidRaces",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 41
       }
     ],
     "Properties": [
       {
         "Name": "Color",
         "Type": "IFormLinkNullableGetter\u003CIColorRecordGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "Color"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -10415,21 +10382,25 @@
       {
         "Name": "ExtraParts",
         "Type": "IReadOnlyList\u003CIFormLinkGetter\u003CIHeadPartGetter\u003E\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "ExtraParts"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Flags",
         "Type": "Flag",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "Flags"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -10455,11 +10426,15 @@
       {
         "Name": "Model",
         "Type": "IModelGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Model"
+          "Appearance"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Model.AlternateTextures",
+          "Model.Data",
+          "Model.File"
+        ],
         "Reason": null
       },
       {
@@ -10475,11 +10450,13 @@
       {
         "Name": "Parts",
         "Type": "IReadOnlyList\u003CIPartGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "Parts"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -10495,31 +10472,37 @@
       {
         "Name": "TextureSet",
         "Type": "IFormLinkNullableGetter\u003CITextureSetGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "TextureSet"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Type",
         "Type": "Nullable\u003CTypeEnum\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "Type"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "ValidRaces",
         "Type": "IFormLinkNullableGetter\u003CIFormListGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "ValidRaces"
         ],
-        "NestedLeaves": [],
         "Reason": null
       }
     ],
@@ -17343,364 +17326,314 @@
     "Getter": "INpcGetter",
     "Registrations": [
       {
+        "Key": "Appearance",
+        "HandlerType": "NpcAppearanceHandler",
+        "SourceLine": 42
+      },
+      {
+        "Key": "TemplateAndTraits",
+        "HandlerType": "TemplateAndTraitsHandler",
+        "SourceLine": 43
+      },
+      {
         "Key": "Name",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 37
+        "SourceLine": 44
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 45
       },
       {
         "Key": "DeathItem",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 46
       },
       {
         "Key": "CombatOverridePackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 40
+        "SourceLine": 47
       },
       {
         "Key": "SpectatorOverridePackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 41
+        "SourceLine": 48
       },
       {
         "Key": "Configuration.Flags",
         "HandlerType": "ProtectionFlagsHandler",
-        "SourceLine": 42
+        "SourceLine": 49
       },
       {
         "Key": "Configuration.MagickaOffset",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
+        "SourceLine": 50
       },
       {
         "Key": "Configuration.StaminaOffset",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 51
       },
       {
         "Key": "Configuration.Level",
         "HandlerType": "NpcLevelHandler",
-        "SourceLine": 45
+        "SourceLine": 52
       },
       {
         "Key": "Configuration.CalcMinLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 53
       },
       {
         "Key": "Configuration.CalcMaxLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 47
+        "SourceLine": 54
       },
       {
         "Key": "Configuration.SpeedMultiplier",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 48
+        "SourceLine": 55
       },
       {
         "Key": "Configuration.DispositionBase",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 56
       },
       {
         "Key": "Configuration.TemplateFlags",
         "HandlerType": "SimpleReflectionFlagPropertyHandler",
-        "SourceLine": 50
+        "SourceLine": 57
       },
       {
         "Key": "Configuration.HealthOffset",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 51
+        "SourceLine": 59
       },
       {
         "Key": "Configuration.BleedoutOverride",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 60
       },
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 53
+        "SourceLine": 61
       },
       {
         "Key": "Class",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 62
       },
       {
         "Key": "AIData.Aggression",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 55
+        "SourceLine": 63
       },
       {
         "Key": "AIData.Confidence",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 64
       },
       {
         "Key": "AIData.EnergyLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 65
       },
       {
         "Key": "AIData.Responsibility",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 66
       },
       {
         "Key": "AIData.Mood",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 67
       },
       {
         "Key": "AIData.Assistance",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 60
+        "SourceLine": 68
       },
       {
         "Key": "AIData.AggroRadiusBehavior",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 69
       },
       {
         "Key": "AIData.Warn",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 62
+        "SourceLine": 70
       },
       {
         "Key": "AIData.WarnOrAttack",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 63
+        "SourceLine": 71
       },
       {
         "Key": "AIData.Attack",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
+        "SourceLine": 72
       },
       {
         "Key": "ObserveDeadBodyOverridePackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 65
+        "SourceLine": 73
       },
       {
         "Key": "Factions",
         "HandlerType": "FactionHandler",
-        "SourceLine": 66
+        "SourceLine": 74
       },
       {
         "Key": "Packages",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 67
+        "SourceLine": 75
       },
       {
         "Key": "ActorEffect",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 68
+        "SourceLine": 76
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "VirtualMachineAdapterHandler",
-        "SourceLine": 70
+        "SourceLine": 78
       },
       {
         "Key": "Items",
         "HandlerType": "ItemHandler",
-        "SourceLine": 71
+        "SourceLine": 79
       },
       {
         "Key": "Keywords",
         "HandlerType": "KeywordListHandler",
-        "SourceLine": 72
+        "SourceLine": 80
       },
       {
         "Key": "PlayerSkills.Health",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 73
+        "SourceLine": 81
       },
       {
         "Key": "PlayerSkills.Magicka",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 74
+        "SourceLine": 82
       },
       {
         "Key": "PlayerSkills.Stamina",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 75
+        "SourceLine": 83
       },
       {
         "Key": "PlayerSkills.FarAwayModelDistance",
         "HandlerType": "PlayerSkillsFarAwayModelDistanceHandler",
-        "SourceLine": 76
+        "SourceLine": 84
       },
       {
         "Key": "PlayerSkills.GearedUpWeapons",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 77
+        "SourceLine": 85
       },
       {
         "Key": "PlayerSkills.SkillValues",
         "HandlerType": "PlayerSkillsSkillValuesHandler",
-        "SourceLine": 78
+        "SourceLine": 86
       },
       {
         "Key": "PlayerSkills.SkillOffsets",
         "HandlerType": "PlayerSkillsSkillOffsetsHandler",
-        "SourceLine": 79
-      },
-      {
-        "Key": "FaceMorph",
-        "HandlerType": "FaceMorphHandler",
-        "SourceLine": 80
-      },
-      {
-        "Key": "FaceParts",
-        "HandlerType": "FacePartsHandler",
-        "SourceLine": 81
-      },
-      {
-        "Key": "TextureLighting",
-        "HandlerType": "TextureLightingHandler",
-        "SourceLine": 82
-      },
-      {
-        "Key": "TintLayers",
-        "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 83
-      },
-      {
-        "Key": "Race",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 86
+        "SourceLine": 87
       },
       {
         "Key": "Destructible",
         "HandlerType": "DestructibleHandler",
-        "SourceLine": 87
-      },
-      {
-        "Key": "Height",
-        "HandlerType": "SimpleReflectionPropertyHandler",
         "SourceLine": 88
-      },
-      {
-        "Key": "Weight",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 89
       },
       {
         "Key": "ObjectBounds",
         "HandlerType": "ObjectBoundsHandler",
-        "SourceLine": 90
+        "SourceLine": 89
       },
       {
         "Key": "Voice",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 91
-      },
-      {
-        "Key": "Template",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 92
+        "SourceLine": 90
       },
       {
         "Key": "ShortName",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 93
+        "SourceLine": 91
       },
       {
         "Key": "NAM5",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 94
+        "SourceLine": 92
       },
       {
         "Key": "SoundLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 95
-      },
-      {
-        "Key": "HeadParts",
-        "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 96
-      },
-      {
-        "Key": "WornArmor",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 98
+        "SourceLine": 93
       },
       {
         "Key": "AttackRace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 99
-      },
-      {
-        "Key": "HairColor",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 100
+        "SourceLine": 94
       },
       {
         "Key": "DefaultOutfit",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 101
+        "SourceLine": 95
       },
       {
         "Key": "FarAwayModel",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 102
+        "SourceLine": 96
       },
       {
         "Key": "Attacks",
         "HandlerType": "AttacksHandler",
-        "SourceLine": 103
+        "SourceLine": 97
       },
       {
         "Key": "GuardWarnOverridePackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 104
+        "SourceLine": 98
       },
       {
         "Key": "Perks",
         "HandlerType": "PerksHandler",
-        "SourceLine": 105
+        "SourceLine": 99
       },
       {
         "Key": "CombatStyle",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 106
+        "SourceLine": 100
       },
       {
         "Key": "GiftFilter",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 107
+        "SourceLine": 101
       },
       {
         "Key": "SleepingOutfit",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 108
+        "SourceLine": 102
       },
       {
         "Key": "DefaultPackageList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 109
+        "SourceLine": 103
       },
       {
         "Key": "CrimeFaction",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 110
-      },
-      {
-        "Key": "HeadTexture",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 111
+        "SourceLine": 104
       },
       {
         "Key": "Sound",
         "HandlerType": "SoundHandler",
-        "SourceLine": 112
+        "SourceLine": 105
       }
     ],
     "Properties": [
@@ -17890,21 +17823,46 @@
       {
         "Name": "FaceMorph",
         "Type": "INpcFaceMorphGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "FaceMorph"
+          "Appearance"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "FaceMorph.BrowsForwardVsBack",
+          "FaceMorph.BrowsInVsOut",
+          "FaceMorph.BrowsUpVsDown",
+          "FaceMorph.CheeksForwardVsBack",
+          "FaceMorph.CheeksUpVsDown",
+          "FaceMorph.ChinNarrowVsWide",
+          "FaceMorph.ChinUnderbiteVsOverbite",
+          "FaceMorph.ChinUpVsDown",
+          "FaceMorph.EyesForwardVsBack",
+          "FaceMorph.EyesInVsOut",
+          "FaceMorph.EyesUpVsDown",
+          "FaceMorph.JawForwardVsBack",
+          "FaceMorph.JawNarrowVsWide",
+          "FaceMorph.JawUpVsDown",
+          "FaceMorph.LipsInVsOut",
+          "FaceMorph.LipsUpVsDown",
+          "FaceMorph.NoseLongVsShort",
+          "FaceMorph.NoseUpVsDown",
+          "FaceMorph.Unknown"
+        ],
         "Reason": null
       },
       {
         "Name": "FaceParts",
         "Type": "INpcFacePartsGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "FaceParts"
+          "Appearance"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "FaceParts.Eyes",
+          "FaceParts.Mouth",
+          "FaceParts.Nose",
+          "FaceParts.Unknown"
+        ],
         "Reason": null
       },
       {
@@ -17950,41 +17908,49 @@
       {
         "Name": "HairColor",
         "Type": "IFormLinkNullableGetter\u003CIColorRecordGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "HairColor"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "HeadParts",
         "Type": "IReadOnlyList\u003CIFormLinkGetter\u003CIHeadPartGetter\u003E\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "HeadParts"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "HeadTexture",
         "Type": "IFormLinkNullableGetter\u003CITextureSetGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "HeadTexture"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Height",
         "Type": "Single",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "Height"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -18116,11 +18082,13 @@
       {
         "Name": "Race",
         "Type": "IFormLinkGetter\u003CIRaceGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "Race"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -18186,31 +18154,37 @@
       {
         "Name": "Template",
         "Type": "IFormLinkNullableGetter\u003CINpcSpawnGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "TemplateAndTraits"
+        ],
+        "NestedLeaves": [
           "Template"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "TextureLighting",
         "Type": "Nullable\u003CColor\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "TextureLighting"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "TintLayers",
         "Type": "IReadOnlyList\u003CITintLayerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "TintLayers"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -18236,21 +18210,25 @@
       {
         "Name": "Weight",
         "Type": "Single",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "Weight"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "WornArmor",
         "Type": "IFormLinkNullableGetter\u003CIArmorGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "WornArmor"
         ],
-        "NestedLeaves": [],
         "Reason": null
       }
     ],
@@ -21637,157 +21615,157 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 42
+        "SourceLine": 43
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 43
+        "SourceLine": 44
       },
       {
         "Key": "Base",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 45
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 46
       },
       {
         "Key": "RagdollData",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 47
       },
       {
         "Key": "RagdollBipedData",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 47
+        "SourceLine": 48
       },
       {
         "Key": "Patrol",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 48
+        "SourceLine": 49
       },
       {
         "Key": "LevelModifier",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 50
+        "SourceLine": 51
       },
       {
         "Key": "MerchantContainer",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 51
+        "SourceLine": 52
       },
       {
         "Key": "Count",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 53
       },
       {
         "Key": "Radius",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 53
+        "SourceLine": 54
       },
       {
         "Key": "Health",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 55
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 55
+        "SourceLine": 56
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 59
       },
       {
         "Key": "LinkedReferenceColor",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 60
       },
       {
         "Key": "PersistentLocation",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 62
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 62
+        "SourceLine": 63
       },
       {
         "Key": "IsIgnoredBySandbox",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 63
+        "SourceLine": 64
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 64
+        "SourceLine": 65
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 65
+        "SourceLine": 66
       },
       {
         "Key": "Horse",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 66
+        "SourceLine": 67
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 67
+        "SourceLine": 68
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 68
+        "SourceLine": 69
       },
       {
         "Key": "Owner",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 70
+        "SourceLine": 71
       },
       {
         "Key": "FactionRank",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 71
+        "SourceLine": 72
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 72
+        "SourceLine": 73
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 73
+        "SourceLine": 74
       },
       {
         "Key": "IsIgnoredBySandbox2",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 74
+        "SourceLine": 75
       },
       {
         "Key": "Scale",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 75
+        "SourceLine": 76
       },
       {
         "Key": "Placement",
         "HandlerType": "PlacementHandler",
-        "SourceLine": 76
+        "SourceLine": 77
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "VirtualMachineAdapterHandler",
-        "SourceLine": 78
+        "SourceLine": 79
       }
     ],
     "Properties": [
@@ -22131,302 +22109,302 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 48
+        "SourceLine": 49
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 49
+        "SourceLine": 50
       },
       {
         "Key": "Base",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 50
+        "SourceLine": 51
       },
       {
         "Key": "Owner",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 51
+        "SourceLine": 52
       },
       {
         "Key": "Scale",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 53
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 53
+        "SourceLine": 54
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 55
       },
       {
         "Key": "LinkedRooms",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 57
       },
       {
         "Key": "ImageSpace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 58
       },
       {
         "Key": "LightingTemplate",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 59
       },
       {
         "Key": "BoundHalfExtents",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 60
       },
       {
         "Key": "Primitive",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 60
+        "SourceLine": 61
       },
       {
         "Key": "OcclusionPlane",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 62
+        "SourceLine": 63
       },
       {
         "Key": "Portals",
         "HandlerType": "AtomicGeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 64
+        "SourceLine": 65
       },
       {
         "Key": "RoomPortal",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 66
+        "SourceLine": 67
       },
       {
         "Key": "Radius",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 68
+        "SourceLine": 69
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 69
+        "SourceLine": 70
       },
       {
         "Key": "LitWater",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 72
+        "SourceLine": 73
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 73
+        "SourceLine": 74
       },
       {
         "Key": "TeleportMessageBox",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 74
+        "SourceLine": 75
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 75
+        "SourceLine": 76
       },
       {
         "Key": "SpawnContainer",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 76
+        "SourceLine": 77
       },
       {
         "Key": "LeveledItemBaseObject",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 77
+        "SourceLine": 78
       },
       {
         "Key": "PersistentLocation",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 78
+        "SourceLine": 79
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 79
+        "SourceLine": 80
       },
       {
         "Key": "NavigationDoorLink",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 80
+        "SourceLine": 81
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 82
+        "SourceLine": 83
       },
       {
         "Key": "IsMultiBoundPrimitive",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 83
+        "SourceLine": 84
       },
       {
         "Key": "IsIgnoredBySandbox",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 84
+        "SourceLine": 85
       },
       {
         "Key": "IsOpenByDefault",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 85
+        "SourceLine": 86
       },
       {
         "Key": "FactionRank",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 86
+        "SourceLine": 87
       },
       {
         "Key": "ItemCount",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 87
+        "SourceLine": 88
       },
       {
         "Key": "Charge",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 88
+        "SourceLine": 89
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 89
+        "SourceLine": 90
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 90
+        "SourceLine": 91
       },
       {
         "Key": "CollisionLayer",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 91
+        "SourceLine": 92
       },
       {
         "Key": "LevelModifier",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 92
+        "SourceLine": 93
       },
       {
         "Key": "TeleportDestination",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 93
+        "SourceLine": 94
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 95
+        "SourceLine": 96
       },
       {
         "Key": "Lock",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 96
+        "SourceLine": 97
       },
       {
         "Key": "AttachRef",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 98
+        "SourceLine": 99
       },
       {
         "Key": "Action",
         "HandlerType": "SimpleReflectionFlagPropertyHandler",
-        "SourceLine": 99
+        "SourceLine": 100
       },
       {
         "Key": "LightData",
         "HandlerType": "LightDataHandler",
-        "SourceLine": 100
+        "SourceLine": 101
       },
       {
         "Key": "Alpha",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 101
+        "SourceLine": 102
       },
       {
         "Key": "Patrol",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 103
+        "SourceLine": 104
       },
       {
         "Key": "MapMarker",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 105
+        "SourceLine": 106
       },
       {
         "Key": "Placement",
         "HandlerType": "PlacementHandler",
-        "SourceLine": 107
+        "SourceLine": 108
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 109
+        "SourceLine": 110
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 110
+        "SourceLine": 111
       },
       {
         "Key": "WaterVelocity",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 112
+        "SourceLine": 113
       },
       {
         "Key": "XCZR",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 114
+        "SourceLine": 115
       },
       {
         "Key": "XCZC",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 115
+        "SourceLine": 116
       },
       {
         "Key": "XORD",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 116
+        "SourceLine": 117
       },
       {
         "Key": "RagdollData",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 117
+        "SourceLine": 118
       },
       {
         "Key": "RagdollBipedData",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 118
+        "SourceLine": 119
       },
       {
         "Key": "XWCN",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 119
+        "SourceLine": 120
       },
       {
         "Key": "XWCS",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 120
+        "SourceLine": 121
       },
       {
         "Key": "XCVL",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 121
+        "SourceLine": 122
       },
       {
         "Key": "XCZA",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 122
+        "SourceLine": 123
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 123
+        "SourceLine": 124
       }
     ],
     "Properties": [
@@ -24348,334 +24326,314 @@
     "Getter": "IRaceGetter",
     "Registrations": [
       {
+        "Key": "Appearance",
+        "HandlerType": "RaceAppearanceHandler",
+        "SourceLine": 38
+      },
+      {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 33
+        "SourceLine": 39
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 34
+        "SourceLine": 40
       },
       {
         "Key": "Name",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 35
+        "SourceLine": 41
       },
       {
         "Key": "Description",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 36
+        "SourceLine": 42
       },
       {
         "Key": "ActorEffect",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 37
+        "SourceLine": 43
       },
       {
         "Key": "Skin",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 38
+        "SourceLine": 44
       },
       {
         "Key": "BodyTemplate",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 45
       },
       {
         "Key": "Keywords",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 41
+        "SourceLine": 47
       },
       {
         "Key": "SkillBoosts",
         "HandlerType": "RaceSkillBoostsHandler",
-        "SourceLine": 42
+        "SourceLine": 48
       },
       {
         "Key": "Height",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 43
+        "SourceLine": 49
       },
       {
         "Key": "Weight",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 44
+        "SourceLine": 50
       },
       {
         "Key": "Flags",
         "HandlerType": "SimpleReflectionFlagPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 51
       },
       {
         "Key": "Starting",
         "HandlerType": "RaceStartingHandler",
-        "SourceLine": 46
+        "SourceLine": 52
       },
       {
         "Key": "BaseCarryWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 47
+        "SourceLine": 53
       },
       {
         "Key": "BaseMass",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 48
+        "SourceLine": 54
       },
       {
         "Key": "AccelerationRate",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 55
       },
       {
         "Key": "DecelerationRate",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 50
+        "SourceLine": 56
       },
       {
         "Key": "Size",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 51
+        "SourceLine": 57
       },
       {
         "Key": "HeadBipedObject",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 58
       },
       {
         "Key": "HairBipedObject",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 53
+        "SourceLine": 59
       },
       {
         "Key": "InjuredHealthPercent",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 60
       },
       {
         "Key": "ShieldBipedObject",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 55
+        "SourceLine": 61
       },
       {
         "Key": "Regen",
         "HandlerType": "RaceRegenHandler",
-        "SourceLine": 56
+        "SourceLine": 62
       },
       {
         "Key": "UnarmedDamage",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 63
       },
       {
         "Key": "UnarmedReach",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 64
       },
       {
         "Key": "BodyBipedObject",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 65
       },
       {
         "Key": "AimAngleTolerance",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 60
+        "SourceLine": 66
       },
       {
         "Key": "FlightRadius",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 67
       },
       {
         "Key": "AngularAccelerationRate",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 62
+        "SourceLine": 68
       },
       {
         "Key": "AngularTolerance",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 63
+        "SourceLine": 69
       },
       {
         "Key": "MountData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 64
+        "SourceLine": 70
       },
       {
         "Key": "SkeletalModel",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 66
+        "SourceLine": 72
       },
       {
         "Key": "MovementTypeNames",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 67
+        "SourceLine": 73
       },
       {
         "Key": "Voices",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 68
+        "SourceLine": 74
       },
       {
         "Key": "DecapitateArmors",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 69
+        "SourceLine": 75
       },
       {
         "Key": "DefaultHairColors",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 70
-      },
-      {
-        "Key": "NumberOfTintsInList",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 71
-      },
-      {
-        "Key": "FacegenMainClamp",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 72
-      },
-      {
-        "Key": "FacegenFaceClamp",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 73
+        "SourceLine": 76
       },
       {
         "Key": "AttackRace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 74
+        "SourceLine": 77
       },
       {
         "Key": "Attacks",
         "HandlerType": "AttacksHandler",
-        "SourceLine": 75
+        "SourceLine": 78
       },
       {
         "Key": "BodyData",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 76
+        "SourceLine": 79
       },
       {
         "Key": "Hairs",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 77
+        "SourceLine": 80
       },
       {
         "Key": "Eyes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 78
+        "SourceLine": 81
       },
       {
         "Key": "BodyPartData",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 79
+        "SourceLine": 82
       },
       {
         "Key": "BehaviorGraph",
         "HandlerType": "GenderedItemHandler",
-        "SourceLine": 80
+        "SourceLine": 83
       },
       {
         "Key": "MaterialType",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 81
+        "SourceLine": 84
       },
       {
         "Key": "ImpactDataSet",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 82
+        "SourceLine": 85
       },
       {
         "Key": "DecapitationFX",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 83
+        "SourceLine": 86
       },
       {
         "Key": "OpenLootSound",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 84
+        "SourceLine": 87
       },
       {
         "Key": "CloseLootSound",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 85
+        "SourceLine": 88
       },
       {
         "Key": "BipedObjectNames",
         "HandlerType": "RaceBipedObjectNamesHandler",
-        "SourceLine": 86
+        "SourceLine": 89
       },
       {
         "Key": "MovementTypes",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 87
+        "SourceLine": 90
       },
       {
         "Key": "EquipmentFlags",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 90
+        "SourceLine": 93
       },
       {
         "Key": "EquipmentSlots",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 91
+        "SourceLine": 94
       },
       {
         "Key": "UnarmedEquipSlot",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 92
+        "SourceLine": 95
       },
       {
         "Key": "FaceFxPhonemes",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 93
+        "SourceLine": 96
       },
       {
         "Key": "BaseMovementDefaultWalk",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 95
+        "SourceLine": 98
       },
       {
         "Key": "BaseMovementDefaultRun",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 96
+        "SourceLine": 99
       },
       {
         "Key": "BaseMovementDefaultSwim",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 97
+        "SourceLine": 100
       },
       {
         "Key": "BaseMovementDefaultFly",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 98
+        "SourceLine": 101
       },
       {
         "Key": "BaseMovementDefaultSneak",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 99
+        "SourceLine": 102
       },
       {
         "Key": "BaseMovementDefaultSprint",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 100
-      },
-      {
-        "Key": "HeadData",
-        "HandlerType": "GenderedItemHandler",
-        "SourceLine": 101
-      },
-      {
-        "Key": "MorphRace",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 102
+        "SourceLine": 103
       },
       {
         "Key": "ArmorRace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 103
+        "SourceLine": 104
       }
     ],
     "Properties": [
@@ -25032,21 +24990,25 @@
       {
         "Name": "FacegenFaceClamp",
         "Type": "Single",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "FacegenFaceClamp"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "FacegenMainClamp",
         "Type": "Single",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "FacegenMainClamp"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -25102,11 +25064,38 @@
       {
         "Name": "HeadData",
         "Type": "IGenderedItemGetter\u003CIHeadDataGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "HeadData"
+          "Appearance"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "HeadData.Female.AvailableHairColors",
+          "HeadData.Female.AvailableMorphs.Brow.Data",
+          "HeadData.Female.AvailableMorphs.Eye.Data",
+          "HeadData.Female.AvailableMorphs.Lip.Data",
+          "HeadData.Female.AvailableMorphs.Nose.Data",
+          "HeadData.Female.DefaultFaceTexture",
+          "HeadData.Female.FaceDetails",
+          "HeadData.Female.HeadParts",
+          "HeadData.Female.Model.AlternateTextures",
+          "HeadData.Female.Model.Data",
+          "HeadData.Female.Model.File",
+          "HeadData.Female.RacePresets",
+          "HeadData.Female.TintMasks",
+          "HeadData.Male.AvailableHairColors",
+          "HeadData.Male.AvailableMorphs.Brow.Data",
+          "HeadData.Male.AvailableMorphs.Eye.Data",
+          "HeadData.Male.AvailableMorphs.Lip.Data",
+          "HeadData.Male.AvailableMorphs.Nose.Data",
+          "HeadData.Male.DefaultFaceTexture",
+          "HeadData.Male.FaceDetails",
+          "HeadData.Male.HeadParts",
+          "HeadData.Male.Model.AlternateTextures",
+          "HeadData.Male.Model.Data",
+          "HeadData.Male.Model.File",
+          "HeadData.Male.RacePresets",
+          "HeadData.Male.TintMasks"
+        ],
         "Reason": null
       },
       {
@@ -25182,11 +25171,13 @@
       {
         "Name": "MorphRace",
         "Type": "IFormLinkNullableGetter\u003CIRaceGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "MorphRace"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -25232,11 +25223,13 @@
       {
         "Name": "NumberOfTintsInList",
         "Type": "Nullable\u003CUInt16\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Appearance"
+        ],
+        "NestedLeaves": [
           "NumberOfTintsInList"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -29204,73 +29197,60 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 30
+        "SourceLine": 34
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 31
+        "SourceLine": 35
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 33
+        "SourceLine": 37
       },
       {
         "Key": "ModelAndBounds",
         "HandlerType": "ModelBoundsHandler",
-        "SourceLine": 34
+        "SourceLine": 38
       },
       {
         "Key": "Ingredient",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 35
+        "SourceLine": 39
       },
       {
         "Key": "HarvestSound",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 36
+        "SourceLine": 40
       },
       {
         "Key": "Production",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 37
+        "SourceLine": 41
       },
       {
         "Key": "Name",
         "HandlerType": "TranslatedStringReflectionPropertyHandler",
-        "SourceLine": 39
-      },
-      {
-        "Key": "TrunkFlexibility",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 40
-      },
-      {
-        "Key": "BranchFlexibility",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 41
-      },
-      {
-        "Key": "LeafAmplitude",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "LeafFrequency",
-        "HandlerType": "SimpleReflectionPropertyHandler",
         "SourceLine": 43
+      },
+      {
+        "Key": "TreeData",
+        "HandlerType": "TreeDataHandler",
+        "SourceLine": 44
       }
     ],
     "Properties": [
       {
         "Name": "BranchFlexibility",
         "Type": "Single",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "TreeData"
+        ],
+        "NestedLeaves": [
           "BranchFlexibility"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -29306,21 +29286,25 @@
       {
         "Name": "LeafAmplitude",
         "Type": "Single",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "TreeData"
+        ],
+        "NestedLeaves": [
           "LeafAmplitude"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "LeafFrequency",
         "Type": "Single",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "TreeData"
+        ],
+        "NestedLeaves": [
           "LeafFrequency"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -29409,22 +29393,26 @@
       {
         "Name": "TrunkFlexibility",
         "Type": "Single",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "TreeData"
+        ],
+        "NestedLeaves": [
           "TrunkFlexibility"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Unknown",
         "Type": "ReadOnlyMemorySlice\u003CByte\u003E",
-        "Status": "IntentionalExclusion",
-        "HandlerKeys": [],
+        "Status": "AggregateCovered",
+        "HandlerKeys": [
+          "TreeData"
+        ],
         "NestedLeaves": [
           "Unknown"
         ],
-        "Reason": "Unknown engine field outside the supported semantic conflict surface; the winning override is preserved."
+        "Reason": null
       },
       {
         "Name": "VirtualMachineAdapter",

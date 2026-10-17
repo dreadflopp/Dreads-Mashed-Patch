@@ -8,15 +8,16 @@ using Mutagen.Bethesda.Synthesis;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.HeadPart;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
-using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
-    // - Generalized: scalar, flag, link, model, and ExtraParts fields use shared handlers.
-    // - Kept specialized: Parts preserves ordered atomic NAM0/NAM1 pairs with Mutagen-generated deep copying.
-    // - Rationale: binary-overlay filenames are getter asset links and cannot be assigned to mutable asset links by reflection.
+    // - Appearance migration: model, type, extra parts, complete morph-file pairs, texture, color and valid races
+    //   now select the effective winner as one generated-copy asset snapshot. Appearance flags use the approved flag setter.
+    // - Kept specialized: record header flags, translated name and EDID retain their existing policies.
+    // - Removed: the independent ordered Parts handler and list/link/model registrations.
+    // - Rationale: mixing mesh and morph sources can invalidate exported NPC faces.
 
     // Header migration: raw/common/HeadPart.MajorFlag flags share one masked integer handler.
     // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
@@ -28,17 +29,10 @@ namespace DreadsMashedPatch.RecordHandlers
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
+            { "Appearance", new HeadPartAppearanceHandler() },
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(HeadPart.MajorFlag)) },
             { "Name", new TranslatedStringReflectionPropertyHandler<IHeadPart, IHeadPartGetter>("Name") },
-            { "Model", new ModelHandler() },
-            { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.HeadPart.Flag, IHeadPart, IHeadPartGetter>("Flags") },
-            { "Type", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.HeadPart.TypeEnum?, IHeadPart, IHeadPartGetter>("Type") },
-            { "ExtraParts", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IHeadPartGetter>, IHeadPart, IHeadPartGetter>("ExtraParts", ListSemantics.SortedKeyed) },
-            { "Parts", new PartsHandler() },
-            { "TextureSet", new SimpleReflectionFormLinkPropertyHandler<ITextureSetGetter, IHeadPart, IHeadPartGetter>("TextureSet") },
-            { "Color", new SimpleReflectionFormLinkPropertyHandler<IColorRecordGetter, IHeadPart, IHeadPartGetter>("Color") },
-            { "ValidRaces", new SimpleReflectionFormLinkPropertyHandler<IFormListGetter, IHeadPart, IHeadPartGetter>("ValidRaces") },
 
         };
 

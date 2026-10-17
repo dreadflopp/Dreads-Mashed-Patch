@@ -222,3 +222,74 @@ Completed on 2026-10-05 against the working tree based on `29da880`, with Mutage
 - **Documentation:** updated the front page, application/development guides, shared patching rules, ten record-table sections, index, interface mapping, inventory, unsupported list, current limits and audit reports. Historical counts remain tied to their original baselines. Local links, record-index coverage and `git diff --check` were checked.
 
 These checks establish the implemented ownership/copy/serialization behavior on synthetic fixtures. No fresh real-modlist, xEdit application, Proton patching or in-game validation was performed for the new support. Inspect generated patches in xEdit and report incorrect outcomes as described on the [front page](../../README.md).
+
+## Appearance and TREE forwarding
+
+**Historical implementation snapshot (2026-10-12).** Subsequent TREE changes are recorded in the [mode removal](#coordinated-tree-mode-removal--2026-10-14) and [restriction checkbox](#tree-restriction-checkbox--2026-10-17) below; the original selector and its tests described here have been retired.
+
+Implemented on 2026-10-12 with Mutagen Skyrim 0.54.4. TREE remains enabled. The standalone Smart Forwarding selector defaults to SafePropertiesOnly; existing settings without this property receive that default, and invalid enum values normalize to it. Explicit Priority Mods still takes precedence and copies a complete record.
+
+| Record | Migrated properties and behavior | Intentionally retained behavior and reason |
+|---|---|---|
+| NPC_ | Appearance selects the complete effective winner: head parts, face morph/parts, tint layers, hair color, head texture, texture lighting, race, height, weight, skin and Female/OppositeGenderAnims. TemplateAndTraits retains the winning Traits bit and selects the winning pointer while inheriting appearance; gameplay-only pointers retain ordinary forwarding. Generated masked snapshots preserve order, duplicates and nullable subrecords. Appearance/Traits flags use approved masked setters. | Essential/Protected keeps its protection policy; remaining template bits keep independent ownership; other gameplay properties retain existing handlers. AIData/PlayerSkills unused bytes remain excluded. No external FaceGen generation or asset-source inference. |
+| RACE | Both genders' complete HeadData, MorphRace, tint count and both FaceGen clamps select the winner together. Typed gendered copying and HeadDataMixIn equality avoid generated Race wrapper identity comparison and unmasked gendered copying. | Other gendered body data, flags, legacy Hairs/Eyes availability and gameplay fields retain their handlers. DATADataTypeState, ExportingExtraNam2 and the unrelated Unknown field remain excluded. |
+| HDPT | Model, type, extra parts, complete ordered morph-file pairs, texture, color, valid races and approved appearance flags select the winning asset bundle together. | Translated Name, EditorID and approved record-header flags retain their separate policies. Unknown flag bits remain destination-owned. |
+| TREE | Complete CNAM is one TreeData snapshot: four exposed floats plus the exact 32-byte block of eight additional animation values. Safe mode forwards only EDID, Name, Ingredient, HarvestSound and whole seasonal Production; other contexts initialize from the winner and are resolved without merging. Coordinated mode starts CNAM at the selected model geometry source and considers later wind edits only for that filename. | Metadata/harvesting use existing shared handlers. Coordinated mode retains script and approved header-flag merging and normal ownership permissions for compatible wind restoration. Same-path physical mesh replacers cannot be inferred from plugin records. |
+
+ModelBoundsHandler now tracks geometry ownership separately from model metadata ownership. Accepted filename changes compare against the selected geometry, so a previously rejected baseline reversion cannot prevent bounds from following a later accepted filename change. Metadata-only changes do not reset geometry/wind ownership; bounds-only corrections retain their existing policy. The obsolete PreviousModel cache was removed.
+
+Removed obsolete NPC FaceMorphHandler, FacePartsHandler and TextureLightingHandler, HDPT PartsHandler, their registrations and superseded list expectations. No production/test references remain. IPropertyGroupHandler exposes explicit member ownership to the coverage audit so generated-copy groups do not create inferred coverage gaps. The four appearance collections are nested values rather than independent keyed/aligned registrations; remaining collection modes are unchanged.
+
+Validation: solution/core/WPF build succeeds with zero warnings and errors; all **1,752 tests pass**. Tests cover whole-winner restoration without master permission, gameplay/protection retention, template-bit ownership, Traits inheritance restoration, gameplay-only template retention and virtual-master restoration, duplicate/order preservation, nullable clearing, detached snapshots, TREE safe-mode exclusions, priority precedence, geometry resets, incompatible/compatible wind edits, virtual-master restoration, metadata-only edits, and the rejected-reversion bounds edge case. NPC/HDPT/RACE and complete 48-byte CNAM fixtures exercise binary overlays, generated copying and write/reload. Property coverage reports 131 handlers, 1,748 active registrations, zero missing/partial candidates; collection comparison reports 204 runtime/expected entries with zero unresolved/failures. These are synthetic fixtures, not gameplay certification of a user's modlist or external mesh/FaceGen assets.
+
+### Coordinated TREE policy evaluation — 2026-10-14
+
+This evaluation recommended removing the coordinated option while keeping TREE enabled with metadata/harvesting forwarding. The subsequent removal is recorded below. The evaluated implementation could preserve an earlier model replacement alongside a later harvesting edit, but its coordination did not cover every property it forwarded.
+
+An isolated console probe outside the repository reused the private TREE factory and three-plugin runner from AppearanceAndTreeForwardingTests. Both overriding plugins declared only the original plugin as a master; no virtual-master restoration permission was configured. Symmetric object bounds and TrunkFlexibility values were set as follows:
+
+| Value | Original | Earlier replacer A | Later override B | Coordinated output |
+|---|---|---|---|---|
+| Model | `Meshes/Original.nif` | `Meshes/Replacer.nif` | `Meshes/Original.nif` | A's replacement |
+| Bounds extent | 1 | 7 | 3 | B's extent 3 |
+| TrunkFlexibility | 1 | 9 | 2 | A's value 9 |
+| Has Distant LOD | Clear | Set | Clear | Set |
+| Scripts | None | `ReplacerScript` | `LaterScript` | Both scripts |
+
+The probe successfully reproduced this output. TreeRecordHandler excludes B's CNAM because its model differs from the selected geometry. ModelBoundsHandler nevertheless accepts B's non-original bounds without requiring a matching model. Flags and scripts also merge independently. These decisions follow the current handlers, but they do not preserve one coherent tree configuration; the example establishes a policy gap rather than an observed in-game failure.
+
+Matching filenames remain a separate limitation: the patcher does not inspect deployed meshes or infer asset ownership from mod-manager file conflicts. [Beyond Skyrim's tree animation authoring guide](https://wiki.beyondskyrim.org/wiki/Arcane_University:Tree_Animations) describes how mesh vertex alpha, bones and node setup interact with record motion controls. This supports treating filename equality as a filter rather than proof of animation compatibility.
+
+If advanced appearance forwarding is reconsidered, require an explicit use case and narrower boundaries: copy complete model/bounds/CNAM from one selected source, preserve winning scripts and flags, and require explicit relationships for any subsequent appearance replacement. This still cannot infer same-path asset compatibility. An authored compatibility patch provides an explicit choice without a global heuristic for every TREE conflict.
+
+Validation during this evaluation: all **25 targeted appearance/TREE and model/bounds tests passed**, and the isolated probe reproduced the gap above. No production code changed; no real-modlist or in-game validation was performed. The earlier full-suite result remains tied to its original validation run.
+
+### Coordinated TREE mode removal — 2026-10-14
+
+Historical state: the restriction described here became configurable through the [checkbox added on 2026-10-17](#tree-restriction-checkbox--2026-10-17).
+
+Removed the optional mode at the user's request. TREE remains enabled and unconditionally forwards only EditorID, Name, Ingredient, HarvestSound and complete seasonal Production. Model/bounds, complete CNAM, VMAD and record-header flags preserve the effective winner. Explicit Priority Mods still selects a complete record.
+
+- **Shared implementation retained:** metadata and harvesting use their existing handlers; Production remains one generated-copy value. No new parallel handlers were introduced.
+- **Specialized implementation retained:** TreeData preserves all four named floats and the exact 32-byte animation block together. Winner-owned contexts prevent ordinary forwarding of model/bounds, CNAM, VMAD and flags. Approved flag handlers remain registered; they were not replaced with reflection handlers. TREE's coordination hook remains only to explain winner preservation in the audit.
+- **Intentionally not forwarded:** appearance, bounds, scripts and flags stay together because the evaluated filename checks did not establish compatibility. Their shared handlers still supply copying/comparison and remain available to other record types.
+- **Dead code removed:** model/wind selection branch, TreeForwardingPolicy enum, configuration/runtime property, copy/normalization entries, UI selector and choice list, unused GeometryOwner tracking, five obsolete coordinated-mode tests and their helper. The shared model/bounds fix that compares against selected geometry is retained and tested.
+- **Saved settings:** unknown JSON properties are ignored by the existing serializer. Old numeric or string TreePolicy values cannot enable merging and disappear from newly serialized configurations. Four regression cases cover defaults, the old numeric/string selection and an invalid old value while checking complete winner preservation and continued metadata forwarding.
+- **Reference search:** no remaining TreeForwardingPolicy, TreePolicies, GeometryOwner or CoordinateTrees usages in production, UI, tests or tools. TreePolicy remains only as legacy JSON test input and internal historical/migration documentation.
+- **Documentation:** updated public TREE/shared rules, concise front-page navigation, internal developer guidance, inventory and known limits. Previous evaluation and test counts remain identified as historical evidence.
+- **Validation:** solution/core/WPF build succeeds with **zero warnings/errors**. All **1,750 tests pass**, including **28 targeted appearance/TREE, model/bounds and configuration tests**. Property coverage audits **131 handlers**, with **zero missing/partial candidates**; registrations remain **1,748**. Collection verification matches **204 runtime and expected entries**, with **zero unresolved/failures**. PowerShell was unavailable, so both audits ran their underlying .NET tools directly with the same strict arguments.
+
+Validation uses synthetic fixtures and binary copying checks; external mesh compatibility and real-modlist gameplay remain outside these results.
+
+### TREE restriction checkbox — 2026-10-17
+
+Added **Restrict tree forwarding (Recommended)** under Smart Forwarding at the user's request. The checkbox defaults to checked and explains which fields are excluded and why. TREE remains enabled independently under Record Types.
+
+- **Setting and persistence:** `ForwardingSettings.RestrictTreeForwarding` uses the existing boolean setting pattern, defaults to true, is copied to the runtime snapshot, and binds directly to the checkbox. Both true and false survive JSON serialization and runtime application. Missing settings retain the restriction; the obsolete TreePolicy property remains ignored.
+- **Property behavior:** checked preserves the effective winner's model/bounds, full CNAM, VMAD and header flags. Unchecked allows those same registered handlers to select values normally. Metadata and harvesting keep their existing rules. Explicit Priority Mods selects the complete record with either checkbox value.
+- **Shared and specialized boundaries:** no new property handler or parallel selection path was added. Approved header flag handlers, shared model/bounds coupling and keyed script merging remain in place. TreeData still selects one complete twelve-value CNAM snapshot with its exact 32-byte block. There is no model-filename coordination or geometry-owner state.
+- **Cleanup:** replaced the read-only UI explanation and unconditional context resolution with a persisted checkbox and conditional early resolution. Updated the exclusion audit message and current documentation. No handler classes became obsolete; the former enum and coordination implementation remain removed.
+- **Regression coverage:** extended default/copy tests, preserved legacy-settings cases, exercised both checkbox values through serialized settings and real record processing, verified scripts/flags/model/bounds/wind behavior, whole-CNAM forwarding independent of model selection, and Priority Mods precedence with both values.
+- **Validation:** solution/core/WPF build succeeds with **zero warnings/errors**. All **1,754 tests pass**, with zero failures/skips. Strict property coverage reports **131 handlers**, **1,748 registrations**, and **zero missing/partial candidates**. Strict collection verification matches **204 runtime/expected entries**, with **zero unresolved/failures**. A source scan confirms the retired enum/choice list/geometry-owner symbols are absent, and the XAML has exactly one checkbox bound to the new setting.
+
+These results verify selection, persistence and compilation on synthetic fixtures. No live WPF interaction or new real-modlist/in-game validation was performed.

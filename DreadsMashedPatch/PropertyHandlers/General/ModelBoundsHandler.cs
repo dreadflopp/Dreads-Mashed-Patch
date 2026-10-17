@@ -75,7 +75,6 @@ public sealed class ModelBoundsHandler : IPropertyHandler
         context.OriginalBounds = original.Bounds;
         context.ForwardBounds = original.Bounds;
         context.BoundsOwner = originalContext.ModKey.ToString();
-        context.PreviousModel = original.Model;
         context.PreviousBounds = original.Bounds;
         context.IsResolved = false;
     }
@@ -88,7 +87,7 @@ public sealed class ModelBoundsHandler : IPropertyHandler
         var context = RequireContext(propertyContext);
         var current = (ModelBoundsValue)GetValue(recordContext.Record);
         var geometryChanged = !Equals(
-            _geometryIdentity(context.PreviousModel),
+            _geometryIdentity(context.ForwardModel),
             _geometryIdentity(current.Model));
         var boundsExplicitlyChanged = !_boundsHandler.AreValuesEqual(
             context.PreviousBounds,
@@ -135,7 +134,6 @@ public sealed class ModelBoundsHandler : IPropertyHandler
             context.BoundsOwner = nextBoundsOwner;
         }
 
-        context.PreviousModel = current.Model;
         context.PreviousBounds = current.Bounds;
     }
 

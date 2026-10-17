@@ -15,7 +15,12 @@ namespace DreadsMashedPatch.RecordHandlers
 {
     // Migration note:
     // - Generalized: semantic AIData, Configuration, and scalar PlayerSkills leaves use exact dotted shared handlers.
-    // - Generalized: xEdit-sorted HeadParts and TintLayers use shared keyed list ownership.
+    // - Appearance migration: complete winner-owned facial/body/trait snapshots replace independent appearance decisions.
+    //   Generated masked copying retains nullable subrecords, order, duplicates and overlay assets.
+    //   Female/OppositeGenderAnims and Traits use approved masked flag setters; protection and other template bits remain specialized.
+    //   Race, height, weight and skin stay with the face because they control its interpretation.
+    //   TemplateAndTraits keeps winning appearance inheritance while retaining gameplay-only template forwarding.
+    //   Other NPC gameplay properties retain their existing handlers.
     // - Generalized: Items' complete generated snapshots, duplicate matching, and COED reconciliation share AbstractInventoryItemsHandler with CONT.
     // - Kept specialized: inventory count/COED edits retain NPC's ownership permission checks; only the Items surface adapter is record-specific.
     // - Specialized: polymorphic Level, protection policy, skill dictionaries, float tolerance, remaining NPC collection merging, and typed attacks remain explicit.
@@ -34,6 +39,8 @@ namespace DreadsMashedPatch.RecordHandlers
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
+            { "Appearance", new NpcAppearanceHandler() },
+            { "TemplateAndTraits", new TemplateAndTraitsHandler() },
             { "Name", new TranslatedStringReflectionPropertyHandler<INpc, INpcGetter>("Name") },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Npc.MajorFlag)) },
             { "DeathItem", new SimpleReflectionFormLinkPropertyHandler<ILeveledItemGetter, INpc, INpcGetter>("DeathItem") },
@@ -47,7 +54,8 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Configuration.CalcMaxLevel", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.CalcMaxLevel") },
             { "Configuration.SpeedMultiplier", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.SpeedMultiplier") },
             { "Configuration.DispositionBase", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.DispositionBase") },
-            { "Configuration.TemplateFlags", new SimpleReflectionFlagPropertyHandler<NpcConfiguration.TemplateFlag, INpc, INpcGetter>("Configuration.TemplateFlags", preserveUnknownBits: true) },
+            { "Configuration.TemplateFlags", new SimpleReflectionFlagPropertyHandler<NpcConfiguration.TemplateFlag, INpc, INpcGetter>("Configuration.TemplateFlags", preserveUnknownBits: true,
+                includedFlags: Enum.GetValues<NpcConfiguration.TemplateFlag>().Where(flag => flag != NpcConfiguration.TemplateFlag.Traits)) },
             { "Configuration.HealthOffset", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.HealthOffset") },
             { "Configuration.BleedoutOverride", new SimpleReflectionPropertyHandler<short, INpc, INpcGetter>("Configuration.BleedoutOverride") },
             { "EditorID", new EditorIDHandler() },
@@ -77,27 +85,13 @@ namespace DreadsMashedPatch.RecordHandlers
             { "PlayerSkills.GearedUpWeapons", new SimpleReflectionPropertyHandler<byte, INpc, INpcGetter>("PlayerSkills.GearedUpWeapons") },
             { "PlayerSkills.SkillValues", new PlayerSkillsSkillValuesHandler() },
             { "PlayerSkills.SkillOffsets", new PlayerSkillsSkillOffsetsHandler() },
-            { "FaceMorph", new FaceMorphHandler() },
-            { "FaceParts", new FacePartsHandler() },
-            { "TextureLighting", new TextureLightingHandler() },
-            { "TintLayers", new GeneratedCopyReflectionListPropertyHandler<ITintLayerGetter, TintLayer, INpc, INpcGetter>(
-                "TintLayers", ListSemantics.SortedKeyed, value => value.DeepCopy(), TintLayerMixIn.Equals,
-                keySelector: value => value.Index) },
-            { "Race", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, INpc, INpcGetter>("Race") },
             { "Destructible", new DestructibleHandler() },
-            { "Height", new SimpleReflectionPropertyHandler<float, INpc, INpcGetter>("Height", 0.001f) },
-            { "Weight", new SimpleReflectionPropertyHandler<float, INpc, INpcGetter>("Weight", 0.001f) },
             { "ObjectBounds", new ObjectBoundsHandler() },
             { "Voice", new SimpleReflectionFormLinkPropertyHandler<IVoiceTypeGetter, INpc, INpcGetter>("Voice") },
-            { "Template", new SimpleReflectionFormLinkPropertyHandler<INpcSpawnGetter, INpc, INpcGetter>("Template") },
             { "ShortName", new TranslatedStringReflectionPropertyHandler<INpc, INpcGetter>("ShortName") },
             { "NAM5", new SimpleReflectionPropertyHandler<ushort, INpc, INpcGetter>("NAM5") },
             { "SoundLevel", new SimpleReflectionPropertyHandler<SoundLevel, INpc, INpcGetter>("SoundLevel") },
-            { "HeadParts", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IHeadPartGetter>, INpc, INpcGetter>(
-                "HeadParts", ListSemantics.SortedKeyed) },
-            { "WornArmor", new SimpleReflectionFormLinkPropertyHandler<IArmorGetter, INpc, INpcGetter>("WornArmor") },
             { "AttackRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, INpc, INpcGetter>("AttackRace") },
-            { "HairColor", new SimpleReflectionFormLinkPropertyHandler<IColorRecordGetter, INpc, INpcGetter>("HairColor") },
             { "DefaultOutfit", new SimpleReflectionFormLinkPropertyHandler<IOutfitGetter, INpc, INpcGetter>("DefaultOutfit") },
             { "FarAwayModel", new SimpleReflectionFormLinkPropertyHandler<IArmorGetter, INpc, INpcGetter>("FarAwayModel") },
             { "Attacks", new AttacksHandler() },
@@ -108,7 +102,6 @@ namespace DreadsMashedPatch.RecordHandlers
             { "SleepingOutfit", new SimpleReflectionFormLinkPropertyHandler<IOutfitGetter, INpc, INpcGetter>("SleepingOutfit") },
             { "DefaultPackageList", new SimpleReflectionFormLinkPropertyHandler<IFormListGetter, INpc, INpcGetter>("DefaultPackageList") },
             { "CrimeFaction", new SimpleReflectionFormLinkPropertyHandler<IFactionGetter, INpc, INpcGetter>("CrimeFaction") },
-            { "HeadTexture", new SimpleReflectionFormLinkPropertyHandler<ITextureSetGetter, INpc, INpcGetter>("HeadTexture") },
             { "Sound", new SoundHandler() }
         };
 

@@ -572,28 +572,6 @@
     "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
   },
   {
-    "RecordHandler": "HeadPartRecordHandler",
-    "Property": "ExtraParts",
-    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IHeadPartGetter\u003E\u003E",
-    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.SimpleReflectionListPropertyHandler\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IHeadPartGetter\u003E, Mutagen.Bethesda.Skyrim.IHeadPart, Mutagen.Bethesda.Skyrim.IHeadPartGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
-  },
-  {
-    "RecordHandler": "HeadPartRecordHandler",
-    "Property": "Parts",
-    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IPartGetter\u003E",
-    "HandlerType": "DreadsMashedPatch.PropertyHandlers.HeadPart.PartsHandler",
-    "MergeMode": "AlignedOrdered",
-    "IdentityPolicy": "Occurrence-specific aligned row key",
-    "CardinalityPolicy": "Ordered sequence; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
-  },
-  {
     "RecordHandler": "IdleAnimationRecordHandler",
     "Property": "Conditions",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IConditionGetter\u003E",
@@ -1057,17 +1035,6 @@
   },
   {
     "RecordHandler": "NpcRecordHandler",
-    "Property": "HeadParts",
-    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IHeadPartGetter\u003E\u003E",
-    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.SimpleReflectionListPropertyHandler\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IHeadPartGetter\u003E, Mutagen.Bethesda.Skyrim.INpc, Mutagen.Bethesda.Skyrim.INpcGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
-  },
-  {
-    "RecordHandler": "NpcRecordHandler",
     "Property": "Items",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.ContainerEntry\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.Npc.ItemHandler",
@@ -1130,17 +1097,6 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
-  },
-  {
-    "RecordHandler": "NpcRecordHandler",
-    "Property": "TintLayers",
-    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.ITintLayerGetter\u003E",
-    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GeneratedCopyReflectionListPropertyHandler\u003CMutagen.Bethesda.Skyrim.ITintLayerGetter, Mutagen.Bethesda.Skyrim.TintLayer, Mutagen.Bethesda.Skyrim.INpc, Mutagen.Bethesda.Skyrim.INpcGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
     "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
   },
   {

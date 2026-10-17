@@ -504,12 +504,6 @@
     "reason": "Unknown engine field outside the supported semantic conflict surface; the winning override is preserved."
   },
   {
-    "handler": "TreeRecordHandler.cs",
-    "property": "Unknown",
-    "status": "IntentionalExclusion",
-    "reason": "Unknown engine field outside the supported semantic conflict surface; the winning override is preserved."
-  },
-  {
     "handler": "WaterRecordHandler.cs",
     "property": "Unknown",
     "status": "IntentionalExclusion",

@@ -161,6 +161,7 @@ public sealed class PatcherConfiguration
             {
                 TreatCreationClubAsVanilla = Forwarding.TreatCreationClubAsVanilla,
                 EnforceSingleVanillaWeaponTypeKeyword = Forwarding.EnforceSingleVanillaWeaponTypeKeyword,
+                RestrictTreeForwarding = Forwarding.RestrictTreeForwarding,
                 VanillaWeaponTypeKeywords = new HashSet<string>(
                     Forwarding.VanillaWeaponTypeKeywords,
                     StringComparer.OrdinalIgnoreCase),
@@ -246,6 +247,12 @@ public sealed class ForwardingSettings
     /// explicitly contain multiple configured types are preserved as authored.
     /// </summary>
     public bool EnforceSingleVanillaWeaponTypeKeyword { get; set; } = true;
+
+    /// <summary>
+    /// Keeps TREE models, bounds, animation data, scripts and header flags from the
+    /// effective winner to avoid combining incompatible appearance and behavior.
+    /// </summary>
+    public bool RestrictTreeForwarding { get; set; } = true;
 
     public HashSet<string> VanillaWeaponTypeKeywords { get; set; } =
         new(DefaultVanillaWeaponTypeKeywordValues, StringComparer.OrdinalIgnoreCase);

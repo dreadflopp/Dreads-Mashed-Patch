@@ -2,9 +2,9 @@
 
 This report compares the generated runtime inventory with the independently maintained pinned-xEdit expectations.
 
-- Runtime registrations: 208
-- xEdit expectations: 208
-- Matched: 208
+- Runtime registrations: 204
+- xEdit expectations: 204
+- Matched: 204
 - Unresolved: 0
 - Mismatched: 0
 - Missing/invalid: 0
@@ -63,8 +63,6 @@ This report compares the generated runtime inventory with the independently main
 | `FurnitureRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `FurnitureRecordHandler.Markers` | Matched | Atomic | Atomic | The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations. |
 | `FurnitureRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `HeadPartRecordHandler.ExtraParts` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `HeadPartRecordHandler.Parts` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `IdleAnimationRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `IdleMarkerRecordHandler.Animations` | Matched | Atomic | Atomic | The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations. |
 | `ImageSpaceAdapterRecordHandler.BlurRadius` | Matched | Atomic | Atomic | Whole-curve ownership avoids synthesizing an interpolation curve that no source plugin authored. |
@@ -107,14 +105,12 @@ This report compares the generated runtime inventory with the independently main
 | `NpcRecordHandler.ActorEffect` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `NpcRecordHandler.Attacks` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `NpcRecordHandler.Factions` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `NpcRecordHandler.HeadParts` | Matched | SortedKeyed | SortedKeyed | NPC head parts are an xEdit sorted scalar FormID collection. |
 | `NpcRecordHandler.Items` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `NpcRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `NpcRecordHandler.Packages` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `NpcRecordHandler.Perks` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `NpcRecordHandler.PlayerSkills.SkillOffsets` | Matched | Atomic | Atomic | Mutagen dictionaries project fixed skill slots rather than independently declared collection rows. |
 | `NpcRecordHandler.PlayerSkills.SkillValues` | Matched | Atomic | Atomic | Mutagen dictionaries project fixed skill slots rather than independently declared collection rows. |
-| `NpcRecordHandler.TintLayers` | Matched | SortedKeyed | SortedKeyed | Tint Index identifies the row; color, interpolation, and preset are replaceable data. |
 | `NpcRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `ObjectEffectRecordHandler.Effects` | Matched | ExactOrdered | ExactOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `OutfitRecordHandler.Items` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |

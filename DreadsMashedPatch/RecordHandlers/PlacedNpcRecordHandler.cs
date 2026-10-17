@@ -32,7 +32,8 @@ namespace DreadsMashedPatch.RecordHandlers
     public class PlacedNpcRecordHandler : AbstractRecordHandler
     {
         protected override PropertyForwardingCoordination CoordinateForwardedProperties(
-            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts)
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             return PlacedReferenceUdrCoordinator.Coordinate(recordContexts, PropertyContexts);
         }

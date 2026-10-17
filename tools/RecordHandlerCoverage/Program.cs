@@ -313,6 +313,9 @@ static bool ImplementationReferencesProperty(
 
 static bool ExplicitlyOwnsProperty(HandlerRegistration registration, string propertyName)
 {
+    if (HandlerGroupOwnership.Members.TryGetValue(registration.HandlerType, out var members)
+        && members.Contains(propertyName)) return true;
+
     if (!registration.HandlerType.StartsWith("ModelBoundsHandler", StringComparison.Ordinal))
     {
         return false;
@@ -493,3 +496,13 @@ public sealed record HandlerRegistration(string Key, string HandlerType, int Sou
 public sealed record CoverageOverride(string Handler, string Property, CoverageStatus Status, string Reason);
 public sealed record PropertyReport(string Name, string Type, CoverageStatus Status, List<string> HandlerKeys, List<string> NestedLeaves, string? Reason);
 public sealed record HandlerReport(string Handler, string? Getter, List<HandlerRegistration> Registrations, List<PropertyReport> Properties, string? Error);
+
+internal static class HandlerGroupOwnership
+{
+    public static readonly IReadOnlyDictionary<string, IReadOnlySet<string>> Members =
+        typeof(DreadsMashedPatch.PropertyHandlers.Interfaces.IPropertyHandler).Assembly.GetTypes()
+            .Where(type => !type.IsAbstract && typeof(DreadsMashedPatch.PropertyHandlers.Interfaces.IPropertyGroupHandler).IsAssignableFrom(type))
+            .ToDictionary(type => type.Name, type =>
+                ((DreadsMashedPatch.PropertyHandlers.Interfaces.IPropertyGroupHandler)System.Activator.CreateInstance(type)!).GroupedProperties,
+                StringComparer.Ordinal);
+}

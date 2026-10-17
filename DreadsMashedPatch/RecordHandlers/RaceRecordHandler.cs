@@ -23,6 +23,11 @@ namespace DreadsMashedPatch.RecordHandlers;
 // - Intentionally excluded: DATADataTypeState and ExportingExtraNam2 are serialization state; Unknown is outside the semantic conflict surface.
 // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout and empty NAM2 marker state.
 
+// Appearance migration: HeadData (both genders), MorphRace, tint count and FaceGen clamps
+// select the complete effective winning snapshot. Generated copies preserve all nested head/tint assets.
+// Other gendered body data, legacy Hairs/Eyes availability and flags retain their existing policies.
+// Rationale: morph definitions, indexes and clamps must match the selected head data.
+
 // Header migration: raw/common/Race.MajorFlag flags share one masked integer handler.
 // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
 // Removed overlapping header registrations so selected clears cannot be reintroduced.
@@ -30,6 +35,7 @@ public class RaceRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
+        { "Appearance", new RaceAppearanceHandler() },
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Race.MajorFlag)) },
         { "Name", new TranslatedStringReflectionPropertyHandler<IRace, IRaceGetter>("Name") },
@@ -68,9 +74,6 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "Voices", new GenderedItemHandler<IFormLinkGetter<IVoiceTypeGetter>, IFormLinkGetter<IVoiceTypeGetter>, IRace, IRaceGetter>("Voices", record => record.Voices, (record, value) => { if (value != null) record.Voices = value; }, value => new FormLink<IVoiceTypeGetter>(value.FormKey), (left, right) => left.FormKey == right.FormKey) },
         { "DecapitateArmors", new GenderedItemHandler<IFormLinkGetter<IArmorGetter>, IFormLinkGetter<IArmorGetter>, IRace, IRaceGetter>("DecapitateArmors", record => record.DecapitateArmors, (record, value) => record.DecapitateArmors = value, value => new FormLink<IArmorGetter>(value.FormKey), (left, right) => left.FormKey == right.FormKey) },
         { "DefaultHairColors", new GenderedItemHandler<IFormLinkGetter<IColorRecordGetter>, IFormLinkGetter<IColorRecordGetter>, IRace, IRaceGetter>("DefaultHairColors", record => record.DefaultHairColors, (record, value) => record.DefaultHairColors = value, value => new FormLink<IColorRecordGetter>(value.FormKey), (left, right) => left.FormKey == right.FormKey) },
-        { "NumberOfTintsInList", new SimpleReflectionPropertyHandler<ushort?, IRace, IRaceGetter>("NumberOfTintsInList") },
-        { "FacegenMainClamp", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("FacegenMainClamp") },
-        { "FacegenFaceClamp", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("FacegenFaceClamp") },
         { "AttackRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, IRace, IRaceGetter>("AttackRace") },
         { "Attacks", new AttacksHandler() },
         { "BodyData", new GenderedItemHandler<IBodyDataGetter?, BodyData?, IRace, IRaceGetter>("BodyData", record => record.BodyData, (record, value) => { if (value != null) record.BodyData = value; }, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
@@ -98,8 +101,6 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "BaseMovementDefaultFly", new SimpleReflectionFormLinkPropertyHandler<IMovementTypeGetter, IRace, IRaceGetter>("BaseMovementDefaultFly") },
         { "BaseMovementDefaultSneak", new SimpleReflectionFormLinkPropertyHandler<IMovementTypeGetter, IRace, IRaceGetter>("BaseMovementDefaultSneak") },
         { "BaseMovementDefaultSprint", new SimpleReflectionFormLinkPropertyHandler<IMovementTypeGetter, IRace, IRaceGetter>("BaseMovementDefaultSprint") },
-        { "HeadData", new GenderedItemHandler<IHeadDataGetter?, HeadData?, IRace, IRaceGetter>("HeadData", record => record.HeadData, (record, value) => record.HeadData = value, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
-        { "MorphRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, IRace, IRaceGetter>("MorphRace") },
         { "ArmorRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, IRace, IRaceGetter>("ArmorRace") },
 
     };

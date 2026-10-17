@@ -39,7 +39,8 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
         /// properties coherent after the ordinary per-property conflict decisions.
         /// </summary>
         protected virtual PropertyForwardingCoordination CoordinateForwardedProperties(
-            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts)
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             return PropertyForwardingCoordination.None;
         }
@@ -179,7 +180,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
         /// </summary>
         /// <param name="originalContext"></param>
         /// <param name="winningContext"></param>
-        protected void InitializePropertyContexts(
+        protected virtual void InitializePropertyContexts(
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
         {
@@ -398,10 +399,10 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     var decisionAuditContexts = recordContexts
                         .Where(context => context.ModKey.ToString() != state.PatchMod.ModKey.ToString())
                         .ToArray();
-                    var coordination = CoordinateForwardedProperties(decisionAuditContexts);
+                    var coordination = CoordinateForwardedProperties(decisionAuditContexts, state);
                     if (auditContextChanges && coordination.AuditMessage != null)
                     {
-                        LogCollector.AddDecisionAudit("UDR", coordination.AuditMessage);
+                        LogCollector.AddDecisionAudit(coordination.AuditProperty, coordination.AuditMessage);
                     }
 
                     foreach (var kvp in PropertyContexts)

@@ -8,9 +8,7 @@ It may be useful to modlist creators, patch creators, and users who patch their 
 
 ## Download
 
-Download the patcher from **Nexus Mods**: [Nexus download page — placeholder](https://www.nexusmods.com/skyrimspecialedition/mods/REPLACE_WITH_MOD_ID).
-
-The link above will be replaced with the published mod page.
+Download the patcher from [Nexus Mods](https://www.nexusmods.com/skyrimspecialedition/mods/194421).
 
 ## Testing and manual review
 
@@ -67,7 +65,7 @@ Enter one full plugin filename per line to leave its overrides out of conflict d
 
 “Forwarding” means carrying a mod's accepted changes into the patch.
 
-| Setting | What it does |
+| Setting or rule | What it does |
 | --- | --- |
 | Treat Creation Club content as official baseline | Enabled by default. Treats installed Creation Club plugins as official game content. Disable it to evaluate their changes like ordinary mods. |
 | Keep one vanilla weapon type keyword | Enabled by default. When an accepted change gives a weapon exactly one configured vanilla type, removes the other configured types. Other keywords and deliberately authored combinations of several types are preserved. |
@@ -75,6 +73,7 @@ Enter one full plugin filename per line to leave its overrides out of conflict d
 | Editor IDs (EDID) | Controls internal record names. **Forward only on an existing patch record** (default) carries renames only when another change needs a patch. **Preserve the official Editor ID** keeps the latest official name. **Forward Editor ID changes** allows renames to create overrides on their own. |
 | NPC protection status | **Protect NPCs unless deliberately changed** (default) prefers Essential/Protected status. A later plugin can lower protection if it lists the plugin that supplied the selected status as a master, or has that relationship granted through **Master Rules**. **Always keep the strongest protection** keeps Essential over Protected over neither. **Forward each status change normally** uses ordinary forwarding rules. |
 | Tamriel persistent cell (000D74:Skyrim.esm) | Applies to the Tamriel persistent cell's header. The default patches normally, but uses Dawnguard's header when the winner matches Skyrim's original. You can instead always use Dawnguard, use Skyrim, keep the winning override, or patch normally. This option does not select the cell's placed objects or other child records. Priority Mods takes precedence. |
+| Restrict tree forwarding | Enabled by default. See [TREE patching rules](docs/record-patching/world.md#tree-tree) for the excluded fields and reasons. |
 
 ### Master Rules
 

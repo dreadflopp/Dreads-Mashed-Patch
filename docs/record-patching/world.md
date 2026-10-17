@@ -141,13 +141,26 @@ RegionAreas keeps area order and each polygon together; comparison normalizes po
 
 ## TREE — Tree
 
-| Properties | How they are patched |
+TREE remains enabled by default. Under **Smart Forwarding**, **Restrict tree forwarding (Recommended)** is checked by default. This checkbox controls the restriction; use **Record Types** to enable or disable TREE patching altogether. **Priority Mods** takes precedence by selecting a complete record. The winning record below means the last eligible override after Ignored Mods filtering.
+
+With the checkbox checked, the patcher does **not forward models, bounds, wind settings, scripts or record-header flags from other overrides**. It keeps those fields from the winning record. A tree's model and wind settings describe how its trunk, branches and leaves move; taking them from different mods can combine settings that neither mod authored. Independently merged bounds, scripts and flags can also change the tree's appearance or behavior.
+
+| Excluded properties while restricted | What is preserved and why |
 |---|---|
-| `Ingredient`, `HarvestSound`, `Name`, `TrunkFlexibility`, `BranchFlexibility`, `LeafAmplitude`, `LeafFrequency` | Select each value separately. |
-| `Production` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `VirtualMachineAdapter` | Merge rows by key. |
-| `Unknown` | Not independently forwarded. |
+| Model and bounds | Keep the winning record's complete values so an earlier model or bounds edit cannot replace part of its appearance. |
+| `TreeData` (CNAM) | Keep the winning record's complete animation configuration, including all wind values, with its model. |
+| `VirtualMachineAdapter` (VMAD/scripts) | Keep the winning adapter so scripts from other overrides cannot add or change behavior. |
+| Record-header flags | Keep the winning flags so independently selected bits cannot change the authored record behavior. |
+
+**Unchecking the checkbox uses ordinary forwarding for these fields.** Model/bounds uses the shared conditional coupling rule, scripts merge by key, approved header flag bits forward normally, and complete CNAM values use ordinary value selection and master/virtual-master restoration permissions. This can combine fields from different mods. There is no model-filename compatibility check or separate model/wind coordination step.
+
+CNAM stays atomic with either checkbox value: `TrunkFlexibility`, `BranchFlexibility`, `LeafAmplitude`, `LeafFrequency` and Mutagen's 32-byte `Unknown` block travel together. That block contains eight additional wind values and is preserved exactly; its name does not make it disposable data. It is never assembled from individual wind values across mods.
+
+The restriction does not affect `EditorID`, `Name`, `Ingredient` (PFIG), `HarvestSound` (SNAM) or `Production`. These follow the [shared selection rules](README.md), including the separate Editor ID setting. All four seasonal Production values are selected together; the remaining fields are separate decisions.
+
+For example, suppose mod A replaces a tree's model and wind data, then mod B changes harvesting but carries the original appearance. With the restriction enabled, the patch keeps B's winning model, bounds and wind data. It cannot infer whether B intended to restore the original appearance. An authored compatibility patch can explicitly select A's appearance and B's harvesting. Disabling the restriction instead allows ordinary forwarding, which may preserve earlier edits without establishing that the resulting fields are compatible.
+
+The patcher does not inspect the physical mesh chosen by your mod manager. Two mods can install different meshes at the same path, so preserving the winning record cannot guarantee that external assets match it. Review the result with the assets installed by your modlist.
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/TreeRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 

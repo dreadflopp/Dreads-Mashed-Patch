@@ -64,8 +64,7 @@ public sealed class CollectionSemanticsBinaryRoundTripTests
         var patch = new SkyrimMod(PatchModKey, SkyrimRelease.SkyrimSE);
         var target = new Npc(new FormKey(PatchModKey, 0x810), SkyrimRelease.SkyrimSE);
         patch.Npcs.Add(target);
-        handlers["HeadParts"].SetValue(target, handlers["HeadParts"].GetValue(overlayNpc));
-        handlers["TintLayers"].SetValue(target, handlers["TintLayers"].GetValue(overlayNpc));
+        handlers["Appearance"].SetValue(target, handlers["Appearance"].GetValue(overlayNpc));
 
         using var patchStream = Write(patch);
         using var patchOverlay = SkyrimMod.CreateFromBinaryOverlay(patchStream, SkyrimRelease.SkyrimSE, PatchModKey);

@@ -23,20 +23,14 @@ public sealed class DiagnosticValueFormatterTests
     }
 
     [Fact]
-    public void TintLayersUsesStructuralFormattingInsteadOfCollectionTypeName()
+    public void AppearanceTintLayersUsesStructuralFormattingInsteadOfCollectionTypeName()
     {
-        var handler = new NpcRecordHandler().PropertyHandlers["TintLayers"];
-        List<ITintLayerGetter> layers =
-        [
-            new TintLayer
-            {
-                Index = 3,
-                InterpolationValue = 0.5f,
-                Preset = 7
-            }
-        ];
+        var handler = new NpcRecordHandler().PropertyHandlers["Appearance"];
+        var npc = new Npc(new Mutagen.Bethesda.Plugins.FormKey(
+            Mutagen.Bethesda.Plugins.ModKey.FromNameAndExtension("Appearance.esp"), 0x800), SkyrimRelease.SkyrimSE);
+        npc.TintLayers.Add(new TintLayer { Index = 3, InterpolationValue = 0.5f, Preset = 7 });
 
-        var formatted = handler.FormatValue(layers);
+        var formatted = handler.FormatValue(handler.GetValue(npc));
 
         Assert.Contains("Index=3", formatted, StringComparison.Ordinal);
         Assert.Contains("InterpolationValue=0.5", formatted, StringComparison.Ordinal);

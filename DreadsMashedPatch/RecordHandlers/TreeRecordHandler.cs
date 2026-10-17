@@ -8,14 +8,18 @@ using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
+using DreadsMashedPatch.PropertyHandlers.Tree;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Migration note:
-// - Generalized: TREE scalars/links use typed handlers; Production uses generated copy/equality.
-// - Kept specialized: none.
-// - Intentionally excluded: Unknown is outside the semantic conflict surface.
-// - Rationale: surface aligns with existing flora/static forwarding patterns.
+// - Generalized: metadata/harvesting retain shared handlers and atomic seasonal Production.
+// - Specialized: CNAM is one complete TreeData snapshot including its 32-byte animation block.
+// - Restricted forwarding (default): model/bounds, CNAM, VMAD and approved header
+//   flags retain the effective winner; disabling the restriction uses the same handlers normally.
+// - Removed: four independent CNAM float registrations and optional model/wind selection;
+//   Unknown now travels inside TreeData. No separate model/wind selection path remains.
+// - Rationale: TREE stays enabled and users can opt out of preserving asset-dependent fields.
 
 // Header migration: raw/common/Tree.MajorFlag flags share one masked integer handler.
 // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
@@ -29,7 +33,7 @@ public class TreeRecordHandler : AbstractRecordHandler
     {
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Tree.MajorFlag)) },
-        // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
+        // The shared VMAD handler retains winner metadata; restrictive forwarding resolves its context from the winner.
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<ITree, ITreeGetter>() },
         { "ModelAndBounds", new ModelBoundsHandler() },
         { "Ingredient", new SimpleReflectionFormLinkPropertyHandler<IHarvestTargetGetter, ITree, ITreeGetter>("Ingredient") },
@@ -37,12 +41,33 @@ public class TreeRecordHandler : AbstractRecordHandler
         { "Production", new GeneratedCopyReflectionPropertyHandler<ISeasonalIngredientProductionGetter, SeasonalIngredientProduction, ITree, ITreeGetter>(
             "Production", value => value.DeepCopy(), SeasonalIngredientProductionMixIn.Equals) },
         { "Name", new TranslatedStringReflectionPropertyHandler<ITree, ITreeGetter>("Name") },
-        { "TrunkFlexibility", new SimpleReflectionPropertyHandler<float, ITree, ITreeGetter>("TrunkFlexibility") },
-        { "BranchFlexibility", new SimpleReflectionPropertyHandler<float, ITree, ITreeGetter>("BranchFlexibility") },
-        { "LeafAmplitude", new SimpleReflectionPropertyHandler<float, ITree, ITreeGetter>("LeafAmplitude") },
-        { "LeafFrequency", new SimpleReflectionPropertyHandler<float, ITree, ITreeGetter>("LeafFrequency") },
-
+        { "TreeData", new TreeDataHandler() },
     };
+
+    private static readonly string[] WinnerOwnedProperties =
+        ["MajorRecordFlagsRaw", "VirtualMachineAdapter", "ModelAndBounds", "TreeData"];
+
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        if (!PatcherSettings.RestrictTreeForwarding) return;
+
+        foreach (var property in WinnerOwnedProperties)
+        {
+            PropertyHandlers[property].InitializeContext(winningContext, winningContext, PropertyContexts[property]);
+            PropertyContexts[property].IsResolved = true;
+        }
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        PatcherSettings.RestrictTreeForwarding
+            ? new(new Dictionary<string, object?>(),
+                "TREE restricted forwarding: model/bounds, CNAM, scripts and flags retain the winning override to avoid mixing incompatible appearance and behavior.", "TreeData")
+            : PropertyForwardingCoordination.None;
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(
         IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,

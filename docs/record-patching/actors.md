@@ -116,11 +116,10 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 
 | Properties | How they are patched |
 |---|---|
-| `Name`, `Type`, `TextureSet`, `Color`, `ValidRaces` | Select each value separately. |
-| `Flags` | Merge registered flag bits separately. |
-| `Model` | Select each whole value separately. |
-| `ExtraParts` | Merge rows by key. |
-| `Parts` | Merge aligned rows in order. |
+| `Name` | Select the complete translated value independently. |
+| `Appearance`: `Model`, `Type`, `ExtraParts`, `Parts`, `TextureSet`, `Color`, `ValidRaces`, `Flags` | Keep the complete effective winning asset snapshot. Morph-file order and duplicates remain intact; registered appearance flags use the approved flag setter. |
+
+The model and all morph/extra-part assets come from one override, including when it restores original values. Header flags and EditorID retain their shared policies. Referenced NPC faces still depend on compatible winning mesh and FaceGen resources.
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/HeadPartRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -159,14 +158,18 @@ Configuration.Flags selects only Essential/Protected together; other configurati
 
 | Properties | How they are patched |
 |---|---|
-| `Name`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `TextureLighting`, `Race`, `Height`, `Weight`, `Voice`, `Template`, `ShortName`, `NAM5`, `SoundLevel`, `WornArmor`, `AttackRace`, `HairColor`, `DefaultOutfit`, `FarAwayModel`, `GuardWarnOverridePackageList`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction`, `HeadTexture` | Select each value separately. |
-| `Configuration.TemplateFlags` | Merge registered flag bits separately. |
-| `Configuration.Level`, `FaceMorph`, `FaceParts`, `Destructible`, `ObjectBounds`, `Sound` | Select each whole value separately. |
-| `Configuration.Flags` | Select Essential/Protected together; preserve other bits. See the protection rule above. |
+| `Appearance`: `HeadParts`, `FaceMorph`, `FaceParts`, `TintLayers`, `HairColor`, `HeadTexture`, `TextureLighting`, `Race`, `Height`, `Weight`, `WornArmor` and Female/OppositeGenderAnims | Keep one complete effective winning snapshot, including returns to original values. Preserve list order, duplicates and nullable subrecords; copy the selected assets into independent values. |
+| `TemplateAndTraits`: `Template`, template `Traits` | Traits keeps the winning bit. When set, the template pointer keeps that same winning override; otherwise the pointer forwards normally for gameplay inheritance. Other template bits remain independent. |
+| `Name`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `Voice`, `ShortName`, `NAM5`, `SoundLevel`, `AttackRace`, `DefaultOutfit`, `FarAwayModel`, `GuardWarnOverridePackageList`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction` | Select each value separately. |
+| `Configuration.TemplateFlags` | Merge registered bits except `Traits`, handled by TemplateAndTraits. |
+| `Configuration.Level`, `Destructible`, `ObjectBounds`, `Sound` | Select each whole value separately. |
+| `Configuration.Flags` | Select Essential/Protected together. Female and OppositeGenderAnims stay with Appearance; other bits retain the winning state. |
 | `PlayerSkills.SkillValues`, `PlayerSkills.SkillOffsets` | Select each whole collection separately. |
-| `Factions`, `ActorEffect`, `VirtualMachineAdapter`, `Items`, `Keywords`, `TintLayers`, `HeadParts`, `Attacks`, `Perks` | Merge rows by key. |
+| `Factions`, `ActorEffect`, `VirtualMachineAdapter`, `Items`, `Keywords`, `Attacks`, `Perks` | Merge rows by key. |
 | `Packages` | Merge aligned rows in order. |
 | `AIData.Unused`, `PlayerSkills.Unused`, `PlayerSkills.Unused2` | Serialization/unused state; no independent decision. |
+
+Appearance does not merge face parts or tint layers. Race, sex, weight and skin remain with that appearance. Traits inheritance uses the winning template; gameplay-only template references retain ordinary forwarding; protection and other gameplay fields continue through their own rules. This preserves the selected record data but does not generate or validate FaceGen assets.
 
 Selected Perks are written even when the winning NPC has no perk list. Absence and a present-empty list remain distinct in memory, and copied rows and perk links are independent of their sources.
 
@@ -190,9 +193,10 @@ SkillBoosts owns all seven physical skill slots. Padding is ignored; output is s
 
 | Properties | How they are patched |
 |---|---|
-| `Name`, `Description`, `Skin`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `NumberOfTintsInList`, `FacegenMainClamp`, `FacegenFaceClamp`, `AttackRace`, `BodyPartData`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `EquipmentFlags`, `UnarmedEquipSlot`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `MorphRace`, `ArmorRace` | Select each value separately. |
+| `Appearance`: `HeadData`, `MorphRace`, `NumberOfTintsInList`, `FacegenMainClamp`, `FacegenFaceClamp` | Keep the complete effective winning snapshot. Both genders, nested head parts, morph definitions, tint masks/presets, models and textures remain together. |
+| `Name`, `Description`, `Skin`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `AttackRace`, `BodyPartData`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `EquipmentFlags`, `UnarmedEquipSlot`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `ArmorRace` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `BodyTemplate`, `Height`, `Weight`, `MountData`, `SkeletalModel`, `Voices`, `DecapitateArmors`, `DefaultHairColors`, `BodyData`, `BehaviorGraph`, `FaceFxPhonemes`, `HeadData` | Select each whole value separately. |
+| `BodyTemplate`, `Height`, `Weight`, `MountData`, `SkeletalModel`, `Voices`, `DecapitateArmors`, `DefaultHairColors`, `BodyData`, `BehaviorGraph`, `FaceFxPhonemes` | Select each whole value separately. |
 | `Starting`, `Regen`, `BipedObjectNames` | Select each whole collection separately. |
 | `ActorEffect`, `Keywords`, `SkillBoosts`, `MovementTypeNames`, `Attacks`, `Hairs`, `Eyes`, `MovementTypes`, `EquipmentSlots` | Merge rows by key. |
 | `Unknown` | Not independently forwarded. |

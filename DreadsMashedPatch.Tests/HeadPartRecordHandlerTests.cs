@@ -1,4 +1,3 @@
-using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.HeadPart;
 using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda.Plugins;
@@ -15,25 +14,20 @@ public sealed class HeadPartRecordHandlerTests
     private static readonly ModKey PatchModKey = ModKey.FromNameAndExtension("HeadPartPatch.esp");
 
     [Fact]
-    public void PartsUsesSpecializedProgressiveOrderingHandler()
+    public void AppearanceComparisonIncludesCompleteOrderedMorphFiles()
     {
-        Assert.IsType<PartsHandler>(new HeadPartRecordHandler().PropertyHandlers["Parts"]);
-        var inspectable = new InspectablePartsHandler();
-
-        Assert.Equal(ListSemantics.AlignedOrdered, inspectable.ExposedSemantics);
-    }
-
-    [Fact]
-    public void PartsComparisonTreatsTypeAndFilenameAsAnOrderedAtomicUnit()
-    {
-        var handler = new PartsHandler();
-        var tri = CreatePart(Part.PartTypeEnum.Tri, "Actors/Character/Eyes.tri");
-        var chargen = CreatePart(Part.PartTypeEnum.ChargenMorph, "Actors/Character/EyesChargen.tri");
-        var differentTri = CreatePart(Part.PartTypeEnum.Tri, "Actors/Character/OtherEyes.tri");
-
-        Assert.True(handler.AreValuesEqual([tri, chargen], [tri.DeepCopy(), chargen.DeepCopy()]));
-        Assert.False(handler.AreValuesEqual([tri, chargen], [chargen, tri]));
-        Assert.False(handler.AreValuesEqual([tri], [differentTri]));
+        var handler = new HeadPartAppearanceHandler();
+        var original = new Mutagen.Bethesda.Skyrim.HeadPart(new FormKey(SourceModKey, 0x800), SkyrimRelease.SkyrimSE);
+        original.Parts.Add(CreatePart(Part.PartTypeEnum.Tri, "Actors/Character/Eyes.tri"));
+        original.Parts.Add(CreatePart(Part.PartTypeEnum.ChargenMorph, "Actors/Character/EyesChargen.tri"));
+        var reordered = original.DeepCopy();
+        reordered.Parts.Reverse();
+        var changed = original.DeepCopy();
+        changed.Parts[0].FileName = new AssetLink<SkyrimDeformedModelAssetType>("Actors/Character/OtherEyes.tri");
+        Assert.True(handler.AreValuesEqual(handler.GetValue(original), handler.GetValue(original.DeepCopy())));
+        Assert.False(handler.AreValuesEqual(handler.GetValue(original), handler.GetValue(reordered)));
+        Assert.False(handler.AreValuesEqual(handler.GetValue(original), handler.GetValue(changed)));
+        Assert.DoesNotContain("Parts", new HeadPartRecordHandler().PropertyHandlers.Keys);
     }
 
     [Fact]
@@ -45,7 +39,7 @@ public sealed class HeadPartRecordHandlerTests
             SkyrimRelease.SkyrimSE,
             SourceModKey);
         var overlayHeadPart = Assert.Single(sourceOverlay.HeadParts);
-        var overlayParts = new PartsHandler().GetValue(overlayHeadPart);
+        var appearance = new HeadPartAppearanceHandler().GetValue(overlayHeadPart);
 
         var patch = new SkyrimMod(PatchModKey, SkyrimRelease.SkyrimSE);
         var target = new Mutagen.Bethesda.Skyrim.HeadPart(
@@ -55,7 +49,7 @@ public sealed class HeadPartRecordHandlerTests
             Type = Mutagen.Bethesda.Skyrim.HeadPart.TypeEnum.Eyes
         };
         patch.HeadParts.Add(target);
-        new PartsHandler().SetValue(target, overlayParts);
+        new HeadPartAppearanceHandler().SetValue(target, appearance);
 
         Assert.Equal(
             [Path.Combine("Meshes", "Actors", "Character", "EyesFemale.tri"), Path.Combine("Meshes", "Actors", "Character", "EyesChildChargen.tri")],
@@ -101,8 +95,4 @@ public sealed class HeadPartRecordHandlerTests
             FileName = new AssetLink<SkyrimDeformedModelAssetType>(path)
         };
 
-    private sealed class InspectablePartsHandler : PartsHandler
-    {
-        public ListSemantics ExposedSemantics => Semantics;
-    }
 }

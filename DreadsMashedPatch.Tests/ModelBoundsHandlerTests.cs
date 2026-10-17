@@ -110,6 +110,23 @@ public sealed class ModelBoundsHandlerTests
         Assert.Equal(Bounds(7).Second, result.Bounds!.Second);
     }
 
+    [Fact]
+    public void AcceptedFilenameChangeUsesSelectedGeometryAfterAnEarlierRejectedReversion()
+    {
+        var original = CreateStatic("Meshes/Original.nif", 1, [1]);
+        var replacer = CreateStatic("Meshes/Replacer.nif", 7, [1]);
+        var rejectedReversion = CreateStatic("Meshes/Original.nif", 1, [1]);
+        // This model is a new complete value, so its filename is accepted despite the
+        // previous baseline reversion being denied. Bounds must follow that filename.
+        var laterEdit = CreateStatic("Meshes/Original.nif", 1, [2]);
+        var result = Resolve(original,
+            (ModelModKey, replacer), (BoundsModKey, rejectedReversion),
+            (ModKey.FromNameAndExtension("Later.esp"), laterEdit));
+
+        Assert.Equal("Meshes/Original.nif", GetModelPath(result));
+        Assert.Equal(Bounds(1).Second, result.Bounds!.Second);
+    }
+
     private static ModelBoundsValue Resolve(
         Mutagen.Bethesda.Skyrim.Static original,
         params (ModKey ModKey, Mutagen.Bethesda.Skyrim.Static Record)[] overrides)

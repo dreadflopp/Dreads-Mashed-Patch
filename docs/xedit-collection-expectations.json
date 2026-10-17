@@ -676,32 +676,6 @@
         "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
     },
     {
-        "RecordHandler":  "HeadPartRecordHandler",
-        "Property":  "ExtraParts",
-        "ReviewStatus":  "Reviewed",
-        "ExpectedRuntimeMode":  "SortedKeyed",
-        "XEditSemantics":  "SortedKeyed",
-        "XEditConstruct":  "wbArrayS/wbRArrayS or audited sorted VMAD collection",
-        "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
-        "Alignability":  "Sorted by xEdit key",
-        "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
-        "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
-    },
-    {
-        "RecordHandler":  "HeadPartRecordHandler",
-        "Property":  "Parts",
-        "ReviewStatus":  "Reviewed",
-        "ExpectedRuntimeMode":  "AlignedOrdered",
-        "XEditSemantics":  "AlignedOrdered",
-        "XEditConstruct":  "wbArray/wbRArray declaration-order collection",
-        "IdentityKey":  "Record-specific alignment key plus occurrence",
-        "Alignability":  "Alignable declaration order",
-        "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
-        "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
-    },
-    {
         "RecordHandler":  "IdleAnimationRecordHandler",
         "Property":  "Conditions",
         "ReviewStatus":  "Reviewed",
@@ -1249,19 +1223,6 @@
     },
     {
         "RecordHandler":  "NpcRecordHandler",
-        "Property":  "HeadParts",
-        "ReviewStatus":  "Reviewed",
-        "ExpectedRuntimeMode":  "SortedKeyed",
-        "XEditSemantics":  "SortedKeyed",
-        "XEditConstruct":  "wbRArrayS of Head Part FormIDs",
-        "IdentityKey":  "Head Part FormID",
-        "Alignability":  "Sorted by FormID",
-        "CountOrCoupling":  "None",
-        "XEditSource":  "XEditSource/Core/wbDefinitionsTES5.pas:8439",
-        "Rationale":  "NPC head parts are an xEdit sorted scalar FormID collection."
-    },
-    {
-        "RecordHandler":  "NpcRecordHandler",
         "Property":  "Items",
         "ReviewStatus":  "Reviewed",
         "ExpectedRuntimeMode":  "SortedKeyed",
@@ -1337,19 +1298,6 @@
         "CountOrCoupling":  "Serialized inside one DNAM struct",
         "XEditSource":  "XEditSource/Core/wbDefinitionsTES5.pas:8389-8429",
         "Rationale":  "Mutagen dictionaries project fixed skill slots rather than independently declared collection rows."
-    },
-    {
-        "RecordHandler":  "NpcRecordHandler",
-        "Property":  "TintLayers",
-        "ReviewStatus":  "Reviewed",
-        "ExpectedRuntimeMode":  "SortedKeyed",
-        "XEditSemantics":  "SortedKeyed",
-        "XEditConstruct":  "wbRArrayS + wbRStructSK([0])",
-        "IdentityKey":  "Tint Index",
-        "Alignability":  "Sorted by Tint Index",
-        "CountOrCoupling":  "None",
-        "XEditSource":  "XEditSource/Core/wbDefinitionsTES5.pas:8483-8489",
-        "Rationale":  "Tint Index identifies the row; color, interpolation, and preset are replaceable data."
     },
     {
         "RecordHandler":  "NpcRecordHandler",

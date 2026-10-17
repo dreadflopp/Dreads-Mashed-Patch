@@ -42,7 +42,7 @@ Treat the decompiled files as reference-only source for investigation and handle
 When repo usage is not enough to confirm a Mutagen member surface, consult the decompiled reference before asking for extra snippets.
 
 Documentation audience
-Keep setup, settings, and diagnostics in the root README. Public record descriptions may link to shared patching rules and other public record pages.
+Keep installation/downloads, setup, concise settings guidance, and diagnostics in the root README. Do not add detailed per-record forwarding behavior, property groups, coupling rationale, implementation notes, or migration/validation summaries there. Link to the public record patching documentation for those user-facing explanations; keep implementation rationale and evidence in internal developer documentation. This placement is a standing user preference for future changes.
+Public record descriptions may link to shared patching rules and other public record pages.
 Internal developer documentation is indexed in docs/README.md for the maintainer and AI agents. Do not mention or link to that index, development guides, audits, inventories, review evidence, migration history, or the internal KNOWN-ISSUES.md from the root README or public record pages.
 
-If you want, I can also produce a stricter version with Must and Must Not wording for stronger compliance by agents.

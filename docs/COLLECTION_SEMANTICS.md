@@ -77,7 +77,7 @@ writes patch plugins, and reopens those patches. These generated fixtures cover
 gender/model alternate-texture surfaces. No manually authored xEdit plugins are
 required for this regression coverage.
 
-## Completed xEdit cross-check
+## Earlier xEdit cross-check (before the appearance migration)
 
 All active registrations now have a reviewed expectation or an intentional
 exception. The cross-check corrected these mismatches:
@@ -114,3 +114,7 @@ their typed property-handler tests.
   handlers.
 - Diagnostics: use the verification command and the normal solution test suite;
   the binary round-trip tests exercise all seven corrected surfaces.
+
+## Appearance collection policy (2026-10-12)
+
+NPC HeadParts/TintLayers and HDPT ExtraParts/Parts are now nested in complete winner-owned Appearance snapshots. Their standalone keyed/aligned registrations and four collection-audit expectations were removed. xEdit's sorted/aligned display definitions still describe their binary surfaces; they do not require entry-by-entry patching. Appearance tests cover whole-source selection, order, duplicates, nullable removal and overlay/write/reload. The collection manifest now audits only the remaining independent collection registrations.

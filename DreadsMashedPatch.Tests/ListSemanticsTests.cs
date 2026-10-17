@@ -54,8 +54,6 @@ public sealed class ListSemanticsTests
     [InlineData(typeof(QuestRecordHandler), "TextDisplayGlobals", ListSemantics.AlignedOrdered)]
     [InlineData(typeof(WeatherRecordHandler), "Sounds", ListSemantics.ExactOrdered)]
     [InlineData(typeof(BodyPartDataRecordHandler), "Parts", ListSemantics.SortedKeyed)]
-    [InlineData(typeof(NpcRecordHandler), "HeadParts", ListSemantics.SortedKeyed)]
-    [InlineData(typeof(NpcRecordHandler), "TintLayers", ListSemantics.SortedKeyed)]
     [InlineData(typeof(ArmorAddonRecordHandler), "FirstPersonModel.Male.AlternateTextures", ListSemantics.SortedKeyed)]
     public void AuditedListRegistrationsUseTheirExplicitSemantics(
         Type recordHandlerType,

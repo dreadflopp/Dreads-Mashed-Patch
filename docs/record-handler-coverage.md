@@ -1,6 +1,6 @@
 # Record handler property coverage audit
 
-Generated: 2026-10-10 09:06:16 +02:00
+Generated: 2026-10-17 18:30:54 +02:00
 
 This is a static registration audit. `Covered` is an exact registration, `AggregateCovered` is inferred from a specialized handler implementation, `Partial` indicates nested/split handling, and `MissingCandidate` has no detected handler. Reviewed aliases and non-property surfaces are classified through the tracked overrides file.
 
@@ -65,7 +65,7 @@ Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File sc
 | GlobalUnknownRecordHandler.cs | IGlobalUnknownGetter | 4 | 0 | 0 | 0 | 2 |  |
 | GrassRecordHandler.cs | IGrassGetter | 12 | 2 | 0 | 0 | 4 |  |
 | HazardRecordHandler.cs | IHazardGetter | 14 | 2 | 0 | 0 | 1 |  |
-| HeadPartRecordHandler.cs | IHeadPartGetter | 11 | 0 | 0 | 0 | 2 |  |
+| HeadPartRecordHandler.cs | IHeadPartGetter | 3 | 8 | 0 | 0 | 2 |  |
 | IdleAnimationRecordHandler.cs | IIdleAnimationGetter | 11 | 0 | 0 | 0 | 1 |  |
 | IdleMarkerRecordHandler.cs | IIdleMarkerGetter | 5 | 2 | 0 | 0 | 2 |  |
 | ImageSpaceAdapterRecordHandler.cs | IImageSpaceAdapterGetter | 2 | 0 | 0 | 0 | 61 |  |
@@ -97,7 +97,7 @@ Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File sc
 | MusicTrackRecordHandler.cs | IMusicTrackGetter | 11 | 0 | 0 | 0 | 1 |  |
 | MusicTypeRecordHandler.cs | IMusicTypeGetter | 6 | 0 | 0 | 0 | 1 |  |
 | NavigationMeshRecordHandler.cs | INavigationMeshGetter | 6 | 0 | 0 | 0 | 2 |  |
-| NpcRecordHandler.cs | INpcGetter | 44 | 3 | 0 | 0 | 2 |  |
+| NpcRecordHandler.cs | INpcGetter | 32 | 15 | 0 | 0 | 2 |  |
 | ObjectEffectRecordHandler.cs | IObjectEffectGetter | 14 | 0 | 0 | 0 | 2 |  |
 | OutfitRecordHandler.cs | IOutfitGetter | 3 | 0 | 0 | 0 | 1 |  |
 | PackageRecordHandler.cs | IPackageGetter | 21 | 0 | 0 | 0 | 10 |  |
@@ -114,7 +114,7 @@ Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File sc
 | PlacedTrapRecordHandler.cs | IPlacedTrapGetter | 21 | 0 | 0 | 0 | 2 |  |
 | ProjectileRecordHandler.cs | IProjectileGetter | 12 | 21 | 0 | 0 | 2 |  |
 | QuestRecordHandler.cs | IQuestGetter | 16 | 1 | 0 | 0 | 3 |  |
-| RaceRecordHandler.cs | IRaceGetter | 65 | 7 | 0 | 0 | 5 |  |
+| RaceRecordHandler.cs | IRaceGetter | 60 | 12 | 0 | 0 | 5 |  |
 | RegionRecordHandler.cs | IRegionGetter | 11 | 0 | 0 | 0 | 2 |  |
 | RelationshipRecordHandler.cs | IRelationshipGetter | 7 | 0 | 0 | 0 | 3 |  |
 | ReverbParametersRecordHandler.cs | IReverbParametersGetter | 2 | 11 | 0 | 0 | 2 |  |
@@ -134,7 +134,7 @@ Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File sc
 | StoryManagerQuestNodeRecordHandler.cs | IStoryManagerQuestNodeGetter | 10 | 0 | 0 | 0 | 1 |  |
 | TalkingActivatorRecordHandler.cs | ITalkingActivatorGetter | 8 | 2 | 0 | 0 | 4 |  |
 | TextureSetRecordHandler.cs | ITextureSetGetter | 4 | 9 | 0 | 0 | 1 |  |
-| TreeRecordHandler.cs | ITreeGetter | 11 | 2 | 0 | 0 | 3 |  |
+| TreeRecordHandler.cs | ITreeGetter | 7 | 7 | 0 | 0 | 2 |  |
 | VisualEffectRecordHandler.cs | IVisualEffectGetter | 5 | 0 | 0 | 0 | 1 |  |
 | VoiceTypeRecordHandler.cs | IVoiceTypeGetter | 3 | 0 | 0 | 0 | 1 |  |
 | VolumetricLightingRecordHandler.cs | IVolumetricLightingGetter | 2 | 12 | 0 | 0 | 1 |  |
@@ -1312,7 +1312,6 @@ Getter: `ITreeGetter`
 |---|---|---|---|---|---|
 | `MajorFlags` | `MajorFlag` | AliasOrDuplicate |  | MajorFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
 | `SkyrimMajorRecordFlags` | `SkyrimMajorRecordFlag` | AliasOrDuplicate |  | SkyrimMajorRecordFlags | Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits. |
-| `Unknown` | `ReadOnlyMemorySlice<Byte>` | IntentionalExclusion |  | Unknown | Unknown engine field outside the supported semantic conflict surface; the winning override is preserved. |
 
 ## VisualEffectRecordHandler.cs
 
@@ -1458,7 +1457,7 @@ Getter: `IWorldspaceGetter`
 - **GlobalUnknownRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `TypeChar`, `Data`
 - **GrassRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `ModelAndBounds`, `Density`, `MinSlope`, `MaxSlope`, `UnitsFromWater`, `UnitsFromWaterType`, `PositionRange`, `HeightRange`, `ColorRange`, `WavePeriod`, `Flags`
 - **HazardRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `ModelAndBounds`, `ImageSpaceModifier`, `Limit`, `Radius`, `Lifetime`, `ImageSpaceRadius`, `TargetInterval`, `Flags`, `Spell`, `Light`, `ImpactDataSet`, `Sound`
-- **HeadPartRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `Model`, `Flags`, `Type`, `ExtraParts`, `Parts`, `TextureSet`, `Color`, `ValidRaces`
+- **HeadPartRecordHandler.cs**: `Appearance`, `EditorID`, `MajorRecordFlagsRaw`, `Name`
 - **IdleAnimationRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Conditions`, `Filename`, `AnimationEvent`, `RelatedIdles`, `LoopingSecondsMin`, `LoopingSecondsMax`, `Flags`, `AnimationGroupSection`, `ReplayDelay`
 - **IdleMarkerRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Flags`, `IdleTimer`, `Animations`, `ModelAndBounds`
 - **ImageSpaceAdapterRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `AnimationSettings`, `BlurRadius`, `DoubleVisionStrength`, `TintColor`, `FadeColor`, `RadialBlur`, `DepthOfField`, `MotionBlurStrength`, `HdrEyeAdaptSpeed`, `HdrBloomBlurRadius`, `HdrBloomThreshold`, `HdrBloomScale`, `HdrTargetLumMin`, `HdrTargetLumMax`, `HdrSunlightScale`, `HdrSkyScale`, `CinematicSaturation`, `CinematicBrightness`, `CinematicContrast`
@@ -1490,7 +1489,7 @@ Getter: `IWorldspaceGetter`
 - **MusicTrackRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Type`, `Duration`, `FadeOut`, `TrackFilename`, `FinaleFilename`, `LoopData`, `CuePoints`, `Conditions`, `Tracks`
 - **MusicTypeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Flags`, `Data`, `FadeDuration`, `Tracks`
 - **NavigationMeshRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Data`, `ONAM`, `PNAM`, `NNAM`
-- **NpcRecordHandler.cs**: `Name`, `MajorRecordFlagsRaw`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.Flags`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.Level`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.TemplateFlags`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `EditorID`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `Factions`, `Packages`, `ActorEffect`, `VirtualMachineAdapter`, `Items`, `Keywords`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `PlayerSkills.SkillValues`, `PlayerSkills.SkillOffsets`, `FaceMorph`, `FaceParts`, `TextureLighting`, `TintLayers`, `Race`, `Destructible`, `Height`, `Weight`, `ObjectBounds`, `Voice`, `Template`, `ShortName`, `NAM5`, `SoundLevel`, `HeadParts`, `WornArmor`, `AttackRace`, `HairColor`, `DefaultOutfit`, `FarAwayModel`, `Attacks`, `GuardWarnOverridePackageList`, `Perks`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction`, `HeadTexture`, `Sound`
+- **NpcRecordHandler.cs**: `Appearance`, `TemplateAndTraits`, `Name`, `MajorRecordFlagsRaw`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.Flags`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.Level`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.TemplateFlags`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `EditorID`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `Factions`, `Packages`, `ActorEffect`, `VirtualMachineAdapter`, `Items`, `Keywords`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `PlayerSkills.SkillValues`, `PlayerSkills.SkillOffsets`, `Destructible`, `ObjectBounds`, `Voice`, `ShortName`, `NAM5`, `SoundLevel`, `AttackRace`, `DefaultOutfit`, `FarAwayModel`, `Attacks`, `GuardWarnOverridePackageList`, `Perks`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction`, `Sound`
 - **ObjectEffectRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `ObjectBounds`, `EnchantmentCost`, `CastType`, `EnchantmentAmount`, `TargetType`, `EnchantType`, `ChargeTime`, `BaseEnchantment`, `WornRestrictions`, `Effects`, `Flags`
 - **OutfitRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Items`
 - **PackageRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `VirtualMachineAdapter`, `Flags`, `Type`, `InterruptOverride`, `PreferredSpeed`, `InterruptFlags`, `ScheduleMonth`, `ScheduleDayOfWeek`, `ScheduleDate`, `ScheduleHour`, `ScheduleMinute`, `ScheduleDurationInMinutes`, `Conditions`, `IdleAnimations`, `CombatStyle`, `OwnerQuest`, `OnBegin`, `OnEnd`, `OnChange`
@@ -1507,7 +1506,7 @@ Getter: `IWorldspaceGetter`
 - **PlacedTrapRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Projectile`, `VirtualMachineAdapter`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Reflections`, `LinkedReferences`, `ActivateParents`, `EnableParent`, `Emittance`, `MultiBoundReference`, `IgnoredBySandbox`, `LocationRefTypes`, `LocationReference`, `DistantLodData`, `Scale`, `Placement`
 - **ProjectileRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `ModelAndBounds`, `Destructible`, `Flags`, `Trajectory`, `Light`, `MuzzleFlashBehavior`, `TracerChance`, `ExplosionBehavior`, `Sound`, `FadeDuration`, `ImpactForce`, `PickupBehavior`, `DisableBehavior`, `Collision`, `DecalData`, `SoundLevel`
 - **QuestRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `VirtualMachineAdapter.Presence`, `VirtualMachineAdapter.Version`, `VirtualMachineAdapter.ObjectFormat`, `VirtualMachineAdapter.Scripts`, `VirtualMachineAdapter.ExtraBindDataVersion`, `VirtualMachineAdapter.FileName`, `VirtualMachineAdapter.Fragments`, `VirtualMachineAdapter.Aliases`, `Flags`, `Priority`, `Type`, `Event`, `TextDisplayGlobals`, `Filter`, `NextAliasID`, `Description`, `DialogConditions`, `EventConditions`, `Stages`, `Objectives`, `Aliases`
-- **RaceRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `Description`, `ActorEffect`, `Skin`, `BodyTemplate`, `Keywords`, `SkillBoosts`, `Height`, `Weight`, `Flags`, `Starting`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `Regen`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `MountData`, `SkeletalModel`, `MovementTypeNames`, `Voices`, `DecapitateArmors`, `DefaultHairColors`, `NumberOfTintsInList`, `FacegenMainClamp`, `FacegenFaceClamp`, `AttackRace`, `Attacks`, `BodyData`, `Hairs`, `Eyes`, `BodyPartData`, `BehaviorGraph`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `BipedObjectNames`, `MovementTypes`, `EquipmentFlags`, `EquipmentSlots`, `UnarmedEquipSlot`, `FaceFxPhonemes`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `HeadData`, `MorphRace`, `ArmorRace`
+- **RaceRecordHandler.cs**: `Appearance`, `EditorID`, `MajorRecordFlagsRaw`, `Name`, `Description`, `ActorEffect`, `Skin`, `BodyTemplate`, `Keywords`, `SkillBoosts`, `Height`, `Weight`, `Flags`, `Starting`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `Regen`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `MountData`, `SkeletalModel`, `MovementTypeNames`, `Voices`, `DecapitateArmors`, `DefaultHairColors`, `AttackRace`, `Attacks`, `BodyData`, `Hairs`, `Eyes`, `BodyPartData`, `BehaviorGraph`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `BipedObjectNames`, `MovementTypes`, `EquipmentFlags`, `EquipmentSlots`, `UnarmedEquipSlot`, `FaceFxPhonemes`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `ArmorRace`
 - **RegionRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `MapColor`, `Worldspace`, `RegionAreas`, `Objects`, `Weather`, `Map`, `Land`, `Grasses`, `Sounds`
 - **RelationshipRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Parent`, `Child`, `Rank`, `Flags`, `AssociationType`
 - **ReverbParametersRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `ReverbData`
@@ -1527,7 +1526,7 @@ Getter: `IWorldspaceGetter`
 - **StoryManagerQuestNodeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Parent`, `PreviousSibling`, `Conditions`, `Flags`, `QuestFlags`, `MaxConcurrentQuests`, `MaxNumQuestsToRun`, `Quests`
 - **TalkingActivatorRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `VirtualMachineAdapter`, `Name`, `ModelAndBounds`, `Destructible`, `Keywords`, `LoopingSound`, `Voice`
 - **TextureSetRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `ObjectBounds`, `TextureDefinition`, `Decal`
-- **TreeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `VirtualMachineAdapter`, `ModelAndBounds`, `Ingredient`, `HarvestSound`, `Production`, `Name`, `TrunkFlexibility`, `BranchFlexibility`, `LeafAmplitude`, `LeafFrequency`
+- **TreeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `VirtualMachineAdapter`, `ModelAndBounds`, `Ingredient`, `HarvestSound`, `Production`, `Name`, `TreeData`
 - **VisualEffectRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `EffectArt`, `Shader`, `Flags`
 - **VoiceTypeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Flags`
 - **VolumetricLightingRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `LightingPreset`

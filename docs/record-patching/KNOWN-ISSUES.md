@@ -6,6 +6,10 @@ Internal reference for the maintainer and AI agents. Public limitations are docu
 
 Reviewed on 2026-10-05 against the current implementation with Mutagen Skyrim 0.54.4. The current version is still being tested. Some record types rarely conflict and have not had their conflict behavior tested in real modlists. Inspect all generated plugins in xEdit, make manual corrections, and report unexpected results through the repository's Issues tab.
 
+## Appearance and tree forwarding
+
+NPC_, RACE and HDPT preserve complete winning appearance groups. TREE stays enabled. Its **Restrict tree forwarding** checkbox defaults to keeping model/bounds, full CNAM (including all 32 formerly excluded animation bytes), VMAD and header flags from the effective winner. Disabling the restriction uses ordinary forwarding, which can mix asset-dependent fields from different mods without verifying compatibility. Same-path mesh replacers and external FaceGen files remain outside record-only conflict decisions. Explicit priority mods continue to select whole records. The [checkbox implementation](REVIEW.md#tree-restriction-checkbox--2026-10-17) retains the earlier removal of model/wind coordination.
+
 ## Coverage and comparison limits
 
 The NPC Perks absent-destination write failure and GLOB/GMST mixed-subtype history casts were repaired on 2026-10-10. Perks retains selected presence and detached rows. GLOB/GMST use the latest eligible subtype transition as their baseline, resolve ignored winners before dispatch, and preserve only type-compatible official GMST names. The exact users' source plugins and in-game results remain unverified; [the investigation and regression evidence](../USER-REPORTED-FAILURES-2026-10-10.md) distinguish reproduced mechanisms from confirmed real-load-order causes.
