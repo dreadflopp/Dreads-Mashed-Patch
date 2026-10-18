@@ -13,10 +13,17 @@ public sealed class StandaloneSettings : INotifyPropertyChanged
     private string _loadOrderFilePath = string.Empty;
     private string _outputFolderPath = string.Empty;
     private int _historicalLogsToKeep = 10;
+    private AppTheme _theme = AppTheme.Light;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public int SettingsVersion { get; set; } = 5;
+
+    public AppTheme Theme
+    {
+        get => _theme;
+        set => SetProperty(ref _theme, value);
+    }
 
     public GameRelease GameRelease
     {
@@ -59,6 +66,11 @@ public sealed class StandaloneSettings : INotifyPropertyChanged
     public void Normalize()
     {
         SettingsVersion = 5;
+        if (!Enum.IsDefined(Theme))
+        {
+            Theme = AppTheme.Light;
+        }
+
         if (GameRelease is not (GameRelease.SkyrimSE or GameRelease.SkyrimSEGog or GameRelease.SkyrimVR))
         {
             GameRelease = GameRelease.SkyrimSE;

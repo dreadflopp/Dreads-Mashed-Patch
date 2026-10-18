@@ -10,7 +10,7 @@
         MinHeight="280"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False">
-    <Grid Margin="18" Background="{StaticResource WindowBackgroundBrush}">
+    <Grid Margin="18" Background="{DynamicResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -19,16 +19,28 @@
 
         <StackPanel Margin="0,0,0,12">
             <TextBlock Style="{StaticResource SectionTitle}" Text="Several Skyrim installations were found" TextWrapping="Wrap" />
-            <TextBlock Margin="0,4,0,0" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap"
+            <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"
                        Text="Choose the installation this patcher should use. Wabbajack Stock Game folders can be selected manually from the General tab." />
         </StackPanel>
 
-        <ListBox x:Name="InstallationList" Grid.Row="1" MouseDoubleClick="OnInstallationDoubleClick">
+        <ListBox x:Name="InstallationList" Grid.Row="1" MouseDoubleClick="OnInstallationDoubleClick"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Skyrim installations">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="7,5">
-                        <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" />
-                        <TextBlock Margin="0,2,0,0" Foreground="{StaticResource MutedTextBrush}" Text="{Binding GameFolder}" />
+                        <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" TextWrapping="Wrap" />
+                        <TextBlock Margin="0,2,0,0" Text="{Binding GameFolder}" TextWrapping="Wrap" ToolTip="{Binding GameFolder}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                            <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

@@ -76,6 +76,12 @@ public sealed class MainWindowViewModel : BindableBase
 
     public IReadOnlyList<GameReleaseChoice> GameReleaseChoices => GameReleaseChoice.Supported;
 
+    public IReadOnlyList<EnumChoice<AppTheme>> ThemeChoices { get; } =
+    [
+        new(AppTheme.Light, "Light theme"),
+        new(AppTheme.Dark, "Dark theme")
+    ];
+
     public string SelectedRecordTypeCountText =>
         $"{RecordTypes.Count(x => x.IsEnabled)} of {RecordTypes.Count} enabled";
 

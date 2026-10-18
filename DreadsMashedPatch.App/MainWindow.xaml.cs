@@ -43,13 +43,11 @@ public partial class MainWindow : Window
         try
         {
             var settings = await _settingsStore.LoadAsync();
-            _viewModel.Load(settings);
-            settings.PropertyChanged += OnPathSettingChanged;
+            LoadSettings(settings);
         }
         catch (Exception ex)
         {
-            _viewModel.Load(new StandaloneSettings());
-            _viewModel.Settings.PropertyChanged += OnPathSettingChanged;
+            LoadSettings(new StandaloneSettings());
             MessageBox.Show(
                 $"The saved settings could not be loaded. Defaults will be used.\n\n{ex.Message}",
                 "Could not load settings",
@@ -319,8 +317,30 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnPathSettingChanged(object? sender, PropertyChangedEventArgs e)
+    private void LoadSettings(StandaloneSettings settings)
     {
+        _viewModel.Settings.PropertyChanged -= OnSettingChanged;
+        _viewModel.Load(settings);
+        settings.PropertyChanged += OnSettingChanged;
+        ApplyTheme();
+    }
+
+    private void ApplyTheme()
+    {
+        if (Application.Current is App app)
+        {
+            app.SetTheme(_viewModel.Settings.Theme);
+        }
+    }
+
+    private void OnSettingChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(StandaloneSettings.Theme))
+        {
+            ApplyTheme();
+            return;
+        }
+
         if (e.PropertyName is not (nameof(StandaloneSettings.GameFolderPath)
             or nameof(StandaloneSettings.DataFolderPath) or nameof(StandaloneSettings.LoadOrderFilePath)
             or nameof(StandaloneSettings.OutputFolderPath) or nameof(StandaloneSettings.GameRelease))) return;

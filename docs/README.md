@@ -40,7 +40,8 @@ Registration coverage is evidence of implementation scope, not proof of gameplay
 
 [Windows and Proton UI styling review (2026-10-17)](UI-STYLING-REVIEW-2026-10-17.md)
 records isolated rendering evidence, proposed compact path help, native-theme state issues,
-and tab/editor layout findings. It proposes changes; production code was not changed by the review.
+and tab/editor layout findings. The original review changed no production code; its
+implementation follow-up records the subsequently authorized shared styling and layout changes.
 
 [User-reported failure investigation (2026-10-10)](USER-REPORTED-FAILURES-2026-10-10.md)
 records NPC Perks and GLOB/GMST cast reproductions, implemented repairs,

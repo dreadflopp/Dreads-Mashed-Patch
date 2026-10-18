@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Plum and green dark palette. -->
+    <SolidColorBrush x:Key="AccentBrush" Color="#2E8052" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#266D46" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#1F5939" />
+    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#242126" />
+    <SolidColorBrush x:Key="HeaderBrush" Color="#392C38" />
+    <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#F5EEF3" />
+    <SolidColorBrush x:Key="HeaderMutedTextBrush" Color="#CDBCC8" />
+    <SolidColorBrush x:Key="PanelBrush" Color="#302A32" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#6C5969" />
+    <SolidColorBrush x:Key="MutedTextBrush" Color="#BFB0BA" />
+    <SolidColorBrush x:Key="InfoPanelBrush" Color="#263B2E" />
+    <SolidColorBrush x:Key="InfoBorderBrush" Color="#5C8365" />
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#332D35" />
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="#1D1A20" />
+    <SolidColorBrush x:Key="ControlForegroundBrush" Color="#F5EEF3" />
+    <SolidColorBrush x:Key="ControlBorderBrush" Color="#9B8796" />
+    <SolidColorBrush x:Key="ControlHoverBrush" Color="#433442" />
+    <SolidColorBrush x:Key="ControlPressedBrush" Color="#51404F" />
+    <SolidColorBrush x:Key="ControlDisabledBrush" Color="#302A32" />
+    <SolidColorBrush x:Key="ControlDisabledTextBrush" Color="#B4A4AF" />
+    <SolidColorBrush x:Key="ControlReadOnlyBrush" Color="#28222B" />
+    <SolidColorBrush x:Key="FocusBrush" Color="#C5A1BC" />
+    <SolidColorBrush x:Key="SelectionBrush" Color="#74556B" />
+    <SolidColorBrush x:Key="SelectionTextBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="InactiveSelectionBrush" Color="#443440" />
+    <SolidColorBrush x:Key="InactiveSelectionTextBrush" Color="#F5EEF3" />
+    <SolidColorBrush x:Key="ValidationBrush" Color="#F17C8B" />
+    <SolidColorBrush x:Key="ScrollThumbBrush" Color="#8C7B88" />
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#BFB0BA" />
+    <SolidColorBrush x:Key="ScrollTrackBrush" Color="#242126" />
+</ResourceDictionary>
