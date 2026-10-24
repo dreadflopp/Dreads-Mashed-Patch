@@ -54,8 +54,8 @@ Null and empty are not interchangeable everywhere. Some handlers track presence;
 | Text | Many plain-string comparisons ignore trailing whitespace. Translated names select and copy one complete source value, retaining its target language and all available translations. Comparison follows Mutagen’s default-language/all-language setting and does not trim text. Optional null names remove the value; required null names become empty. MATT Name remains a plain string. |
 | Numbers | Ordinary reflection floats use a 0.0001 comparison tolerance; the specialized Weight handler uses 0.001. Not every numeric or grouped value shares that tolerance. |
 | Models and icons | Whole values, including ordered alternate textures/model data or icon paths. ARMA explicitly splits its models. Asset paths use path-aware comparison. |
-| ModelAndBounds | An accepted model filename/geometry change brings bounds from that source. A bounds-only change can still forward separately. It is not an unconditional atomic model-plus-bounds decision. |
-| WorldModelAndBounds | ARMO’s equivalent rule, with male/female models and icons together on the model side. |
+| ModelAndBounds | An accepted model filename change brings bounds from that source. A bounds-only change can forward separately when its source model filename matches the selected model, ignoring path case and slash direction. Bounds accompanying a rejected, different filename cannot replace the selected model's bounds. |
+| WorldModelAndBounds | ARMO’s equivalent rule, with male/female models and icons together on the model side. Bounds-only edits require both source model filenames to match the selected male/female filenames. |
 | ObjectBounds | Complete bounds, not individual coordinates. |
 | Destructible | Complete structure, including stages and their models/references. |
 | Binary payloads | Complete byte values; never merged byte by byte. |

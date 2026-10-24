@@ -11,7 +11,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General;
 
 /// <summary>
 /// Coordinates model and object-bounds ownership. A model filename change takes the bounds from
-/// the same override; bounds-only changes continue through the normal addition/reversion policy.
+/// the same override; bounds-only changes use the normal addition/reversion policy only when
+/// the source model filenames match the selected model.
 /// </summary>
 public sealed class ModelBoundsHandler : IPropertyHandler
 {
@@ -117,7 +118,9 @@ public sealed class ModelBoundsHandler : IPropertyHandler
             LogCollector.Add(PropertyName,
                 $"[{PropertyName}] {recordContext.ModKey}: Model geometry changed; bounds ownership followed the model");
         }
-        else if (boundsExplicitlyChanged && TryUpdateValue(
+        // A rejected filename reversion must not supply bounds for a different model.
+        // Geometry identity ignores metadata/icons and includes both armor world-model paths.
+        else if (!geometryChanged && boundsExplicitlyChanged && TryUpdateValue(
                      current.Bounds,
                      context.OriginalBounds,
                      context.ForwardBounds,

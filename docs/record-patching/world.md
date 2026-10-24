@@ -152,7 +152,7 @@ With the checkbox checked, the patcher does **not forward models, bounds, wind s
 | `VirtualMachineAdapter` (VMAD/scripts) | Keep the winning adapter so scripts from other overrides cannot add or change behavior. |
 | Record-header flags | Keep the winning flags so independently selected bits cannot change the authored record behavior. |
 
-**Unchecking the checkbox uses ordinary forwarding for these fields.** Model/bounds uses the shared conditional coupling rule, scripts merge by key, approved header flag bits forward normally, and complete CNAM values use ordinary value selection and master/virtual-master restoration permissions. This can combine fields from different mods. There is no model-filename compatibility check or separate model/wind coordination step.
+**Unchecking the checkbox uses ordinary forwarding for these fields.** Model/bounds uses the shared conditional coupling rule, including matching the source filename to the selected model for bounds-only edits. Scripts merge by key, approved header flag bits forward normally, and complete CNAM values use ordinary value selection and master/virtual-master restoration permissions. This can combine fields from different mods. Filename matching does not establish model/wind compatibility; there is no separate model/wind coordination step.
 
 CNAM stays atomic with either checkbox value: `TrunkFlexibility`, `BranchFlexibility`, `LeafAmplitude`, `LeafFrequency` and Mutagen's 32-byte `Unknown` block travel together. That block contains eight additional wind values and is preserved exactly; its name does not make it disposable data. It is never assembled from individual wind values across mods.
 
