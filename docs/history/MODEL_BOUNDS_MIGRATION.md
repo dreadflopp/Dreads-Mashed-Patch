@@ -1,42 +1,23 @@
-# Model and Object-Bounds Coordination
+# Model and bounds ownership decisions
 
-> Historical migration evidence. For current behavior, use the [record tables](../record-patching/INDEX.md), [collection guide](../COLLECTION_SEMANTICS.md), and [known limits](../record-patching/KNOWN-ISSUES.md). Historical recommendations and test gates describe the migration, not a fresh validation of every record.
+[Internal references](README.md) · [ModelBoundsHandler](../../DreadsMashedPatch/PropertyHandlers/General/ModelBoundsHandler.cs)
 
-The following record handlers now use one `ModelBoundsHandler` ownership path. A successfully
-forwarded model-filename change takes the bounds from the same override. Bounds-only edits remain
-independently mergeable, and model metadata or alternate-texture changes do not claim bounds.
+An accepted model-filename change brings bounds from the same source override.
+A bounds-only edit can forward independently. Model metadata and alternate-texture
+changes do not claim bounds. This is conditional ownership, not one unconditional
+atomic model-plus-bounds value.
 
-| Record type | Generalized | Specialized / intentionally unchanged | Why |
-|---|---|---|---|
-| Activator | Main model and bounds coordination | Other ACTI fields | Keep geometry and extents coherent. |
-| Addon Node | Main model and bounds coordination | Node index and flags | Keep geometry and extents coherent. |
-| Alchemical Apparatus | Main model and bounds coordination | Value, weight, and sounds | Keep geometry and extents coherent. |
-| Ammunition | Main model and bounds coordination | Projectile and ammunition data | Keep geometry and extents coherent. |
-| Armor | Gendered world-model filenames and bounds coordination | Icons, armature, and model metadata | Ground/world geometry owns OBND; worn-model data remains specialized. |
-| Art Object | Main model and bounds coordination | Art-specific fields | Keep geometry and extents coherent. |
-| Book | Main model and bounds coordination | Text, value, and inventory fields | Keep geometry and extents coherent. |
-| Container | Main model and bounds coordination | Inventory and sounds | Keep geometry and extents coherent. |
-| Door | Main model and bounds coordination | Door sounds and flags | Keep geometry and extents coherent. |
-| Explosion | Main model and bounds coordination | Explosion behavior | Keep geometry and extents coherent. |
-| Flora | Main model and bounds coordination | Harvest data | Keep geometry and extents coherent. |
-| Furniture | Main model and bounds coordination | Markers and furniture flags | Keep geometry and extents coherent. |
-| Grass | Main model and bounds coordination | Grass rendering data | Keep geometry and extents coherent. |
-| Hazard | Main model and bounds coordination | Hazard behavior | Keep geometry and extents coherent. |
-| Idle Marker | Main model and bounds coordination | Idle animations | Keep geometry and extents coherent. |
-| Ingestible | Main model and bounds coordination | Effects and inventory data | Keep geometry and extents coherent. |
-| Ingredient | Main model and bounds coordination | Effects and inventory data | Keep geometry and extents coherent. |
-| Key | Main model and bounds coordination | Inventory data | Keep geometry and extents coherent. |
-| Leveled NPC | Main model and bounds coordination | Leveled entries | Keep geometry and extents coherent. |
-| Light | Main model and bounds coordination | Light parameters | Keep geometry and extents coherent. |
-| Misc Item | Main model and bounds coordination | Inventory data | Keep geometry and extents coherent. |
-| Moveable Static | Main model and bounds coordination | Material and sound data | Keep geometry and extents coherent. |
-| Projectile | Main model and bounds coordination | Projectile behavior groups | Keep geometry and extents coherent. |
-| Scroll | Main model and bounds coordination | Spell and inventory data | Keep geometry and extents coherent. |
-| Soul Gem | Main model and optional-bounds coordination | Soul and inventory data | Keep geometry and optional extents coherent. |
-| Static | Main model and bounds coordination | LOD remains its own atomic value | Keep geometry and extents coherent without coupling LOD. |
-| Talking Activator | Main model and bounds coordination | Voice and dialogue data | Keep geometry and extents coherent. |
-| Tree | Main model and bounds coordination | Tree-specific data | Keep geometry and extents coherent. |
-| Weapon | Main model and bounds coordination | Scope model and weapon behavior | Main world geometry owns OBND; scope geometry does not. |
+| Record/surface | Shared behavior | Specialized boundary and reason |
+|---|---|---|
+| Ordinary ModelAndBounds registrations | Shared model copying and filename/bounds coordination | Other record fields retain their own handlers. Use executable registrations/inventory for the complete record list rather than duplicating it here. |
+| ARMO WorldModelAndBounds | Gendered dropped/world-model filenames coordinate bounds | Icons, armature and metadata retain separate policies. Worn models do not define dropped-object extents. |
+| SLGM | Shared model with optional bounds | Preserve nullable/absent bounds rather than inventing required extents. |
+| STAT | Main model coordinates bounds | LOD remains its own value. |
+| WEAP | Main world model coordinates bounds | ScopeModel does not own the world-object extents. |
+| TREE | Uses the same model/bounds handler | Its default forwarding restriction resolves this context from the effective winner; disabling it restores ordinary model/bounds forwarding. Wind data is a separate value with no geometry compatibility heuristic. |
 
-Obsolete static-only model copying and light-only bounds copying were removed. The shared model and
-bounds implementations are now the sole active paths for these properties.
+Do not add another static-only model copier or light-only bounds writer. One
+implementation path must apply each selected property. Tests:
+[ModelBoundsHandlerTests](../../DreadsMashedPatch.Tests/ModelBoundsHandlerTests.cs),
+[ModelHandlerRegressionTests](../../DreadsMashedPatch.Tests/ModelHandlerRegressionTests.cs),
+[AppearanceAndTreeForwardingTests](../../DreadsMashedPatch.Tests/AppearanceAndTreeForwardingTests.cs).

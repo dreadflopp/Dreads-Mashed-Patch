@@ -327,7 +327,15 @@ namespace DreadsMashedPatch
             var enabledRecordTypes = SupportedRecordTypes
                 .Where(PatcherSettings.IsRecordTypeEnabled)
                 .ToArray();
-            Console.WriteLine($"Processing {enabledRecordTypes.Length} of {SupportedRecordTypes.Length} record types");
+            var enabledRecordTypeCount = enabledRecordTypes
+                .Select(RecordTypeCatalog.GetSignature)
+                .Distinct()
+                .Count();
+            var supportedRecordTypeCount = SupportedRecordTypes
+                .Select(RecordTypeCatalog.GetSignature)
+                .Distinct()
+                .Count();
+            Console.WriteLine($"Processing {enabledRecordTypeCount} of {supportedRecordTypeCount} record types");
 
             if (LoggingSettings.DebugMode)
             {

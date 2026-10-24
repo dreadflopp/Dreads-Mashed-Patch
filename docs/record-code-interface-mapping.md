@@ -1,6 +1,6 @@
 # Skyrim Record Code to Mutagen Interface Mapping
 
-Reviewed on 2026-10-05 against the current working tree with Mutagen Skyrim 0.54.4. This table maps Bethesda record codes to Mutagen getter interfaces and actual processing routes. Property-level scope is in the [record index](record-patching/INDEX.md) and [coverage/comparison audit](record-patching/COVERAGE-COMPARISON-AUDIT.md).
+This table maps Bethesda record codes to Mutagen 0.54.4 getter interfaces and processing routes. Property-level scope is in the [record index](record-patching/INDEX.md) and [inventory](record-patching/INVENTORY.md). Verify query/filter/dispatch in Program when adding a route; a constructible handler alone does not establish support.
 
 Status values:
 

@@ -158,18 +158,24 @@ Configuration.Flags selects only Essential/Protected together; other configurati
 
 | Properties | How they are patched |
 |---|---|
-| `Appearance`: `HeadParts`, `FaceMorph`, `FaceParts`, `TintLayers`, `HairColor`, `HeadTexture`, `TextureLighting`, `Race`, `Height`, `Weight`, `WornArmor` and Female/OppositeGenderAnims | Select one complete snapshot through ordinary change/reversion rules. Preserve source list order, duplicates and nullable subrecords; copy the selected assets into independent values. |
+| `Appearance`: `HeadParts`, `FaceMorph`, `FaceParts`, `TintLayers`, `HairColor`, `HeadTexture`, `TextureLighting`, `Race`, `Weight`, `WornArmor` and Female | Select one complete snapshot through ordinary change/reversion rules. Preserve source list order, duplicates and nullable subrecords; copy the selected assets into independent values. |
+| `Height` | Select independently through ordinary change/reversion rules, comparing with the actual original height rather than assuming 1.0. |
+| `Configuration.Flags.OppositeGenderAnims` | Select this flag bit independently through ordinary change/reversion rules; preserve other configuration bits. |
 | `TemplateAndTraits`: `Template`, template `Traits` | Select the template pointer and Traits bit as one value through ordinary change/reversion rules. Other template bits remain independent. |
 | `Name`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `Voice`, `ShortName`, `NAM5`, `SoundLevel`, `AttackRace`, `DefaultOutfit`, `FarAwayModel`, `GuardWarnOverridePackageList`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction` | Select each value separately. |
 | `Configuration.TemplateFlags` | Merge registered bits except `Traits`, handled by TemplateAndTraits. |
 | `Configuration.Level`, `Destructible`, `ObjectBounds`, `Sound` | Select each whole value separately. |
-| `Configuration.Flags` | Select Essential/Protected together. Female and OppositeGenderAnims stay with Appearance; other bits retain the winning state. |
+| `Configuration.Flags` | Select Essential/Protected together. Female stays with Appearance; OppositeGenderAnims is selected independently; other bits retain the winning state. |
 | `PlayerSkills.SkillValues`, `PlayerSkills.SkillOffsets` | Select each whole collection separately. |
 | `Factions`, `ActorEffect`, `VirtualMachineAdapter`, `Items`, `Keywords`, `Attacks`, `Perks` | Merge rows by key. |
 | `Packages` | Merge aligned rows in order. |
 | `AIData.Unused`, `PlayerSkills.Unused`, `PlayerSkills.Unused2` | Serialization/unused state; no independent decision. |
 
 Appearance does not merge face parts or tint layers. Race, sex, weight and skin remain with that appearance. Head-part/tint-layer sorting alone is not an edit; complete entry contents and duplicate counts remain significant. An unrelated later override carrying the original appearance cannot erase an earlier change. Traits and its template pointer use the same atomic selection rules; protection and other gameplay fields continue through their own rules. This preserves the selected record data but does not generate or validate FaceGen assets.
+
+Height and OppositeGenderAnims can come from different mods than the selected face. A height-only or animation-only edit cannot replace the face or take ownership of it. An unrelated later face overhaul carrying the original height or animation bit cannot erase an earlier edit to that field; restoration requires a declared or virtual master relationship with that field's current owner under the [shared rules](README.md#how-a-value-is-selected).
+
+OppositeGenderAnims is relative to the selected sex and the race's animation behavior; forwarding the bit does not preserve an absolute masculine/feminine animation choice if another mod changes sex or race. WornArmor stays with the face because custom skin armor can supply its body, textures or wigs. When Traits inheritance is enabled, the engine can use the template's traits instead of local values; the patcher does not resolve that inheritance or validate compatibility between the selected face and other winning race, head-part or skin resources.
 
 Selected Perks are written even when the winning NPC has no perk list. Absence and a present-empty list remain distinct in memory, and copied rows and perk links are independent of their sources.
 

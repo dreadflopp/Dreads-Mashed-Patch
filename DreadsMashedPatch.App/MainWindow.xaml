@@ -360,8 +360,7 @@
                                      AutomationProperties.Name="Record types">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Background="Transparent"
-                                              ToolTip="{Binding DisplayName}">
+                                        <Grid Background="Transparent">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>

@@ -100,7 +100,8 @@ pwsh -NoProfile -File scripts/Audit-RecordHandlerCoverage.ps1
 On Windows PowerShell, use `powershell -NoProfile -ExecutionPolicy Bypass -File`
 instead. Add `-FailOnUnresolved` for strict classification checks. Review both
 `docs/record-handler-coverage.md` and `docs/record-handler-coverage.json` before
-committing them. The static scanner can detect commented-out registrations;
-confirm executable dictionaries and dispatch before documenting support.
+committing them. The static scanner excludes commented-out registrations;
+confirm executable dictionaries and dispatch before documenting support, because
+constructible dormant handlers are still included in coverage.
 For collection manifest regeneration and verification, see
 [Collection semantics](COLLECTION_SEMANTICS.md#workflow).

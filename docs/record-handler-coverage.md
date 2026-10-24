@@ -1,6 +1,6 @@
 # Record handler property coverage audit
 
-Generated: 2026-10-17 22:35:59 +02:00
+Generated: 2026-10-24 15:47:21 +02:00
 
 This is a static registration audit. `Covered` is an exact registration, `AggregateCovered` is inferred from a specialized handler implementation, `Partial` indicates nested/split handling, and `MissingCandidate` has no detected handler. Reviewed aliases and non-property surfaces are classified through the tracked overrides file.
 
@@ -97,7 +97,7 @@ Strict verification: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File sc
 | MusicTrackRecordHandler.cs | IMusicTrackGetter | 11 | 0 | 0 | 0 | 1 |  |
 | MusicTypeRecordHandler.cs | IMusicTypeGetter | 6 | 0 | 0 | 0 | 1 |  |
 | NavigationMeshRecordHandler.cs | INavigationMeshGetter | 6 | 0 | 0 | 0 | 2 |  |
-| NpcRecordHandler.cs | INpcGetter | 32 | 15 | 0 | 0 | 2 |  |
+| NpcRecordHandler.cs | INpcGetter | 33 | 14 | 0 | 0 | 2 |  |
 | ObjectEffectRecordHandler.cs | IObjectEffectGetter | 14 | 0 | 0 | 0 | 2 |  |
 | OutfitRecordHandler.cs | IOutfitGetter | 3 | 0 | 0 | 0 | 1 |  |
 | PackageRecordHandler.cs | IPackageGetter | 21 | 0 | 0 | 0 | 10 |  |
@@ -1489,7 +1489,7 @@ Getter: `IWorldspaceGetter`
 - **MusicTrackRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Type`, `Duration`, `FadeOut`, `TrackFilename`, `FinaleFilename`, `LoopData`, `CuePoints`, `Conditions`, `Tracks`
 - **MusicTypeRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Flags`, `Data`, `FadeDuration`, `Tracks`
 - **NavigationMeshRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Data`, `ONAM`, `PNAM`, `NNAM`
-- **NpcRecordHandler.cs**: `Appearance`, `TemplateAndTraits`, `Name`, `MajorRecordFlagsRaw`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.Flags`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.Level`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.TemplateFlags`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `EditorID`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `Factions`, `Packages`, `ActorEffect`, `VirtualMachineAdapter`, `Items`, `Keywords`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `PlayerSkills.SkillValues`, `PlayerSkills.SkillOffsets`, `Destructible`, `ObjectBounds`, `Voice`, `ShortName`, `NAM5`, `SoundLevel`, `AttackRace`, `DefaultOutfit`, `FarAwayModel`, `Attacks`, `GuardWarnOverridePackageList`, `Perks`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction`, `Sound`
+- **NpcRecordHandler.cs**: `Appearance`, `Height`, `Configuration.Flags.OppositeGenderAnims`, `TemplateAndTraits`, `Name`, `MajorRecordFlagsRaw`, `DeathItem`, `CombatOverridePackageList`, `SpectatorOverridePackageList`, `Configuration.Flags`, `Configuration.MagickaOffset`, `Configuration.StaminaOffset`, `Configuration.Level`, `Configuration.CalcMinLevel`, `Configuration.CalcMaxLevel`, `Configuration.SpeedMultiplier`, `Configuration.DispositionBase`, `Configuration.TemplateFlags`, `Configuration.HealthOffset`, `Configuration.BleedoutOverride`, `EditorID`, `Class`, `AIData.Aggression`, `AIData.Confidence`, `AIData.EnergyLevel`, `AIData.Responsibility`, `AIData.Mood`, `AIData.Assistance`, `AIData.AggroRadiusBehavior`, `AIData.Warn`, `AIData.WarnOrAttack`, `AIData.Attack`, `ObserveDeadBodyOverridePackageList`, `Factions`, `Packages`, `ActorEffect`, `VirtualMachineAdapter`, `Items`, `Keywords`, `PlayerSkills.Health`, `PlayerSkills.Magicka`, `PlayerSkills.Stamina`, `PlayerSkills.FarAwayModelDistance`, `PlayerSkills.GearedUpWeapons`, `PlayerSkills.SkillValues`, `PlayerSkills.SkillOffsets`, `Destructible`, `ObjectBounds`, `Voice`, `ShortName`, `NAM5`, `SoundLevel`, `AttackRace`, `DefaultOutfit`, `FarAwayModel`, `Attacks`, `GuardWarnOverridePackageList`, `Perks`, `CombatStyle`, `GiftFilter`, `SleepingOutfit`, `DefaultPackageList`, `CrimeFaction`, `Sound`
 - **ObjectEffectRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Name`, `ObjectBounds`, `EnchantmentCost`, `CastType`, `EnchantmentAmount`, `TargetType`, `EnchantType`, `ChargeTime`, `BaseEnchantment`, `WornRestrictions`, `Effects`, `Flags`
 - **OutfitRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `Items`
 - **PackageRecordHandler.cs**: `EditorID`, `MajorRecordFlagsRaw`, `VirtualMachineAdapter`, `Flags`, `Type`, `InterruptOverride`, `PreferredSpeed`, `InterruptFlags`, `ScheduleMonth`, `ScheduleDayOfWeek`, `ScheduleDate`, `ScheduleHour`, `ScheduleMinute`, `ScheduleDurationInMinutes`, `Conditions`, `IdleAnimations`, `CombatStyle`, `OwnerQuest`, `OnBegin`, `OnEnd`, `OnChange`

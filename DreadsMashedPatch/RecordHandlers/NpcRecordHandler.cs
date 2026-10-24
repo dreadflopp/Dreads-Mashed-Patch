@@ -17,8 +17,10 @@ namespace DreadsMashedPatch.RecordHandlers
     // - Generalized: semantic AIData, Configuration, and scalar PlayerSkills leaves use exact dotted shared handlers.
     // - Appearance migration: complete atomic facial/body snapshots use ordinary ownership/reversion forwarding.
     //   Generated masked copying retains nullable subrecords, order, duplicates and overlay assets.
-    //   Female/OppositeGenderAnims and Traits use approved masked flag setters; protection and other template bits remain specialized.
-    //   Race, height, weight and skin stay with the face because they control its interpretation.
+    //   Female and Traits use approved masked flag setters; protection and other template bits remain specialized.
+    //   Race, sex, weight and skin stay with the face because they control its interpretation.
+    //   Height now uses the shared scalar handler; OppositeGenderAnims uses an independent approved masked flag handler.
+    //   Neither field participates in appearance copying, equality or ownership. Unrelated flag bits remain intact.
     //   TemplateAndTraits selects the pointer and Traits bit atomically through the same shared algorithm.
     //   Sorted head/tint collections compare without order changes claiming ownership; copies retain source order.
     //   Other NPC gameplay properties retain their existing handlers.
@@ -41,6 +43,10 @@ namespace DreadsMashedPatch.RecordHandlers
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "Appearance", new NpcAppearanceHandler() },
+            { "Height", new SimpleReflectionPropertyHandler<float, INpc, INpcGetter>("Height") },
+            // The key identifies the bit's context; reflection reads/writes its containing enum field.
+            { "Configuration.Flags.OppositeGenderAnims", new SimpleReflectionFlagPropertyHandler<NpcConfiguration.Flag, INpc, INpcGetter>(
+                "Configuration.Flags", preserveUnknownBits: true, includedFlags: [NpcConfiguration.Flag.OppositeGenderAnims]) },
             { "TemplateAndTraits", new TemplateAndTraitsHandler() },
             { "Name", new TranslatedStringReflectionPropertyHandler<INpc, INpcGetter>("Name") },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Npc.MajorFlag)) },

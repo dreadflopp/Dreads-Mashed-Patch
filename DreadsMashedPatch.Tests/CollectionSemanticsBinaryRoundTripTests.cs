@@ -49,7 +49,8 @@ public sealed class CollectionSemanticsBinaryRoundTripTests
         var firstHeadPart = new FormKey(SourceModKey, 0x120);
         var secondHeadPart = new FormKey(SourceModKey, 0x121);
         var source = new SkyrimMod(SourceModKey, SkyrimRelease.SkyrimSE);
-        var sourceRecord = new Npc(new FormKey(SourceModKey, 0x810), SkyrimRelease.SkyrimSE);
+        var sourceRecord = new Npc(new FormKey(SourceModKey, 0x810), SkyrimRelease.SkyrimSE) { Height = 1.08f };
+        sourceRecord.Configuration.Flags = NpcConfiguration.Flag.Female | NpcConfiguration.Flag.OppositeGenderAnims;
         sourceRecord.HeadParts.Add(new FormLink<IHeadPartGetter>(firstHeadPart));
         sourceRecord.HeadParts.Add(new FormLink<IHeadPartGetter>(secondHeadPart));
         sourceRecord.TintLayers.Add(TintLayer(2, Color.FromArgb(255, 10, 20, 30), 0.25f, 4));
@@ -62,13 +63,23 @@ public sealed class CollectionSemanticsBinaryRoundTripTests
         var handlers = new NpcRecordHandler().PropertyHandlers;
 
         var patch = new SkyrimMod(PatchModKey, SkyrimRelease.SkyrimSE);
-        var target = new Npc(new FormKey(PatchModKey, 0x810), SkyrimRelease.SkyrimSE);
+        var target = new Npc(new FormKey(PatchModKey, 0x810), SkyrimRelease.SkyrimSE) { Height = 0.95f };
+        target.Configuration.Flags = NpcConfiguration.Flag.Invulnerable;
         patch.Npcs.Add(target);
         handlers["Appearance"].SetValue(target, handlers["Appearance"].GetValue(overlayNpc));
+        Assert.Equal(0.95f, target.Height);
+        Assert.Equal(NpcConfiguration.Flag.Female | NpcConfiguration.Flag.Invulnerable, target.Configuration.Flags);
+        handlers["Height"].SetValue(target, handlers["Height"].GetValue(overlayNpc));
+        handlers["Configuration.Flags.OppositeGenderAnims"].SetValue(target,
+            handlers["Configuration.Flags.OppositeGenderAnims"].GetValue(overlayNpc));
 
         using var patchStream = Write(patch);
         using var patchOverlay = SkyrimMod.CreateFromBinaryOverlay(patchStream, SkyrimRelease.SkyrimSE, PatchModKey);
         var written = Assert.Single(patchOverlay.Npcs);
+
+        Assert.Equal(1.08f, written.Height);
+        Assert.Equal(NpcConfiguration.Flag.Female | NpcConfiguration.Flag.OppositeGenderAnims | NpcConfiguration.Flag.Invulnerable,
+            written.Configuration.Flags);
 
         Assert.Equal([firstHeadPart, secondHeadPart], written.HeadParts.Select(link => link.FormKey));
         Assert.Equal(new ushort?[] { 2, 7 }, written.TintLayers.Select(layer => layer.Index));

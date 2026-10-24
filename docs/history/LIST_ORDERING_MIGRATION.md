@@ -1,76 +1,37 @@
-# List ordering migration
+# Collection implementation decisions
 
-> Historical migration evidence. For current behavior, use the [record tables](../record-patching/INDEX.md), [collection guide](../COLLECTION_SEMANTICS.md), and [known limits](../record-patching/KNOWN-ISSUES.md). Historical recommendations and test gates describe the migration, not a fresh validation of every record.
+[Internal references](README.md) · [Pinned xEdit evidence](LIST_ORDERING_AUDIT.md) · [Current expectations](../xedit-collection-expectations.json)
 
-## Shared behavior
+The filename is retained for expectation provenance. This is the current decision
+summary, not a pending migration. Generic list handlers require an explicit
+ListSemantics value; CLR collection interfaces do not select behavior.
 
-- `Unordered` merges entries by full semantic equality and does not reorder.
-- `SortedKeyed` separates xEdit identity from entry content, replaces data under
-  the same key, and emits active entries in lexicographic StructSK order.
-- FormID key components are compared in load-order space and then by local ID.
-- `AlignedOrdered` uses the progressive xEdit Myers alignment documented in
-  [alignment guide](../LIST_ALIGNMENT.md). Occurrence-specific row IDs locate entries and full
-  content equality detects changes within a row; permission checks still govern
-  removals, restorations, moves, and reversions.
-- `ExactOrdered` uses zero-based positional identity and atomic entry replacement
-  for arrays such as magic-item Effects whose outer xEdit entries have no sort key.
-- Structural and `dfNotAlignable` arrays use
-  `AtomicReflectionListPropertyHandler`, so the complete sequence has one owner.
-- `SimpleReflectionListPropertyHandler` requires an explicit semantic argument.
+## Shared machinery and exceptions
 
-## Record migrations
+| Surface | Shared behavior | Specialized boundary and reason |
+|---|---|---|
+| Sorted rows | XEditSortKeyComparer orders reviewed scalar/composite keys; FormIDs compare in load-order space then local ID | Row content is selected as a complete value. Duplicates remain occurrence-sensitive. |
+| Aligned rows | XEditSequenceAligner progressively aligns reviewed keys and reconciles persistent occurrence row IDs | Permissions still govern move/removal/restoration/reversion. Conditions, quest aliases and response rows retain their reviewed identity/copy adapters. |
+| ExactOrdered | Zero-based positional identity; each complete entry is atomic | Magic-item Effects, SNDR sound slots and REFR linked references have no outer alignment key. |
+| Atomic sequences | One owner retains complete authored order and payload | Structural/non-alignable arrays must not get generic per-entry ownership. |
+| ARMO Armature | Whole ordered Armor Addon list | Unioning independently authored rows can equip overlapping models that no source declared. |
+| NPC Packages / quest globals / CameraPath Shots / LinkTo / Branches / SlotParents / FLST Items / placed LocationRefTypes | Reviewed aligned references | Preserve source access/nullability behavior; FLST sorting is disabled by a callback. |
+| NPC/RACE gameplay rows, inventory, leveled entries and PERK effects | Reviewed keyed identities | Count/rank permissions, fixed skill-slot storage, COED and typed polymorphic copying stay specialized. |
+| NPC/HDPT Appearance | Atomic snapshot contains head/tint/extra-part/morph collections | Sorted equality ignores reordering for NPC heads/tints and HDPT extra parts without independent row merging. HDPT morph order remains significant. |
+| ARMA alternate textures / BPTD Parts | Key by (Name, Index) / PartNode | These are independent collection registrations and must not become atomic merely because NPC appearance is atomic. |
+| FURN Markers / IDLM Animations / MUSC Tracks / MUST Tracks / DEBR Models | Whole sequences | Marker structure, Run In Sequence, Maintain Track Order and payload ordering make union or arbitrary sorting unsafe. |
+| Scene/quest adapters, fragments and graphs | Record-specific contexts and validated structure | Use their actual registrations/presence gates; no blanket list classification describes every child. |
+| LAND Layers/Textures | Unordered | Dormant exceptions pending a dedicated binary model. Do not activate or assign generic keys as part of a handler cleanup. |
 
-| Record type | Generalized | Stayed specialized / reason |
-| --- | --- | --- |
-| Armor | BodyTemplate semantic leaves use shared scalar/flag handlers. | Armature is one atomic ordered Armor Addon list because merging independently authored entries can equip overlapping models; WorldModel remains one cohesive aggregate. |
-| Camera Path | Shots use aligned FormID rows; RelatedPaths is atomic. | Conditions retain the CTDA alignment key. |
-| Dialog Response | LinkTo uses aligned topic rows. | Responses retain response-specific copying and identity. |
-| Dialog View | Branches uses aligned FormID rows. | TNAM/binary fields remain specialized; Mutagen exposes no writable Topics collection. |
-| Equip Type | SlotParents uses aligned FormID rows. | Dedicated setter retains nullable Mutagen behavior. |
-| Quest | TextDisplayGlobals and aliases are aligned; stages, objectives, VMAD fragments, and VMAD aliases are keyed. | Conditions and VMAD copying remain specialized. |
-| Story Manager Quest Node | Quest rows align by Quest FormID. | None. |
-| Sound Descriptor | Sound files use exact positional identity for xEdit's indexed, non-sorted ANAM array. | Asset-link construction remains specialized so the serialized `GivenPath` is preserved instead of writing the lookup-normalized `DataRelativePath`. |
-| FormList | Items remain aligned and order-sensitive. | Specialized because xEdit disables FLST sorting. |
-| Head Part | Parts remain aligned; ExtraParts is sorted. | Parts retain PartType/path copying and identity. |
-| Message | Buttons remain aligned. | Button copying remains specialized. |
-| Ingredient / Ingestible / Object Effect / Scroll / Spell | Effects use exact positional identity and atomic generated Effect equality. | Record-specific collection access remains specialized; xEdit declares no outer effect-row key. |
-| NPC | Packages align; actor effects, attacks, factions, perks, inventory, HeadParts, and TintLayers are sorted/keyed. | Inventory metadata and duplicate matching remain specialized; HeadParts key by FormID and TintLayers by Tint Index. |
-| Race | Scalar collections and keyed attack/movement entries are sorted. | Race dictionaries and fixed structures remain specialized scalar properties. |
-| Magic Effect | CounterEffects and sounds are sorted; sound Type is the key. | Effects/conditions retain their specialized structures. |
-| Placed Object / Placed NPC | REFR LinkedReferences uses exact positional order; ACHR LinkedReferences and the other xEdit sorted arrays remain keyed; LocationRefTypes aligns. | Skyrim xEdit defines the two linked-reference surfaces differently: REFR uses unsorted `wbRArray`/plain `wbStruct`, while ACHR uses `wbRArrayS`/`wbStructSK([0])`. Portals remain atomic because their positions are structural. |
-| Location | All xEdit `ArrayS` projections use their declared Ref, Actor Ref, Worldspace, or parent-reference key. | Nested coordinate arrays remain data inside the keyed worldspace entry. |
-| Climate | WeatherTypes is keyed by Weather FormID. | Chance and Global are entry data. |
-| Container / Constructible Object | Inventory entries are keyed by Item FormID. | NPC/container metadata mutation remains specialized where required. |
-| Default Object Manager | Objects are keyed by Use record type. | Object FormID is data. |
-| Faction | Relations key by target faction; ranks key by rank number. | Conditions remain aligned CTDA lists. |
-| Leveled Item / NPC / Spell | Entries use xEdit composite level/reference keys. | Concrete entry copying remains specialized. |
-| Perk | Effects use the PRKE rank/priority/type and variant data key. | Polymorphic effect copying remains specialized. |
-| Armor Addon / Cell / Collision Layer / Landscape Texture / Outfit | Scalar FormLink collections are sorted. | Existing concrete setters remain where Mutagen collection types differ. |
-| Weather | Sounds key by Type; SkyStatics is sorted. | Weather structures outside these arrays are unchanged. |
-| Furniture / Idle Marker / Music Type / Music Track | Ordered sequences are atomic. | Whole-list ownership is required because order is semantic. |
-| Debris / Package / Region / Scene / Shout | Complex, positional, executable, geometric, or non-alignable sequences are atomic. | Shout retains its explicit deep-copy handler. |
+Unordered values use full semantic multiset equality without alignment rows.
+Do not resurrect the retired ListOrdering.None/PreserveModOrder model: it conflated
+sorted keys, unordered values and declaration-order/structural arrays.
 
-## Intentional exceptions
+Intentional exclusions: WATR UnusedNoisemaps has no active forwarding registration;
+DLVW Topics is absent from the referenced writable interface. SHOU WordsOfPower
+and REGN area geometry retain complete-sequence handlers. Fixed dictionaries and
+gendered aggregates are semantic values rather than generic row merges.
 
-- `Landscape.Layers` and `Landscape.Textures` remain `Unordered`: their xEdit
-  identity is union/context dependent and cannot be represented by a generic
-  key without a dedicated LAND model.
-- `Water.UnusedNoisemaps` is not registered in the current WATR handler.
-  The earlier unordered classification is superseded by its explicit exclusion.
-- `DialogView.Topics` is not registered because the current Mutagen
-  `IDialogViewGetter`/`IDialogView` surface does not expose that collection.
-
-## Removed code and diagnostics
-
-- Removed the obsolete `ListOrdering` enum and every call site.
-- Removed the superseded CameraPath RelatedPaths and Debris Models per-entry
-  handlers after migrating their only registrations to the atomic handler.
-- Sorted-key comparison is centralized in `XEditSortKeyComparer` and covered by
-  load-order FormID and composite-key tests.
-- Classification tests cover representative aligned, sorted, and atomic
-  registrations. The complete solution build and test suite are the migration
-  gate.
-- The post-migration collection cross-check additionally corrected BPTD Parts
-  to the `PartNode` key and Armor Addon alternate textures to xEdit's composite
-  `(3D Name, 3D Index)` key. The independent expectations and comparison report
-  are maintained by `scripts/Audit-CollectionSemantics.ps1`.
+For a change, check the pinned xEdit definition, writable Mutagen surface,
+independent expectation, setter copying and binary round trip. Passing a mode
+comparison alone does not establish correct identity or gameplay compatibility.

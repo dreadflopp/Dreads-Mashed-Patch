@@ -48,7 +48,8 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         earlier.TintLayers.Add(new TintLayer { Index = 1, Preset = 2 });
         earlier.FaceMorph!.NoseLongVsShort = 1;
         earlier.FaceParts!.Eyes = 2;
-        earlier.Configuration.Flags = NpcConfiguration.Flag.Female | NpcConfiguration.Flag.Essential;
+        earlier.Configuration.Flags = NpcConfiguration.Flag.Female | NpcConfiguration.Flag.Essential |
+            NpcConfiguration.Flag.OppositeGenderAnims;
         earlier.Configuration.TemplateFlags = NpcConfiguration.TemplateFlag.Traits | NpcConfiguration.TemplateFlag.Stats;
         earlier.Template.SetTo(new FormKey(EarlierKey, 0xA02));
         earlier.Weight = 70;
@@ -59,7 +60,8 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         winner.Template.SetTo(new FormKey(WinnerKey, 0xA02));
         winner.Race.SetTo(new FormKey(WinnerKey, 0xA03));
         winner.WornArmor.SetTo(new FormKey(WinnerKey, 0xA04));
-        winner.Configuration.Flags = NpcConfiguration.Flag.Invulnerable;
+        const NpcConfiguration.Flag unknown = (NpcConfiguration.Flag)0x80;
+        winner.Configuration.Flags = NpcConfiguration.Flag.Invulnerable | unknown;
 
         var patch = Run(new NpcRecordHandler(), original, earlier, winner);
         var result = Assert.Single(patch.Npcs);
@@ -68,11 +70,174 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         Assert.Equal(earlier.Class.FormKey, result.Class.FormKey);
         Assert.True(result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Essential));
         Assert.True(result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Invulnerable));
+        Assert.True(result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims));
+        Assert.True(result.Configuration.Flags.HasFlag(unknown));
         Assert.False(result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Female));
         Assert.True(result.Configuration.TemplateFlags.HasFlag(NpcConfiguration.TemplateFlag.Stats));
         Assert.False(result.Configuration.TemplateFlags.HasFlag(NpcConfiguration.TemplateFlag.Traits));
         Assert.Equal(2, result.HeadParts.Count);
         Assert.Equal(0, result.FaceMorph!.NoseLongVsShort);
+    }
+
+    [Theory]
+    [InlineData("Height", false, false)]
+    [InlineData("Height", true, false)]
+    [InlineData("Animation", false, false)]
+    [InlineData("Animation", true, false)]
+    [InlineData("Animation", false, true)]
+    [InlineData("Animation", true, true)]
+    public void NpcIndependentEditAndFaceOverhaulCombineInEitherOrder(string field, bool editFirst, bool originalAnimation)
+    {
+        var original = new Npc(RecordKey, SkyrimRelease.SkyrimSE)
+        {
+            Height = 0.98f, Weight = 20, FaceMorph = new NpcFaceMorph()
+        };
+        original.Configuration.Flags = originalAnimation ? NpcConfiguration.Flag.OppositeGenderAnims : 0;
+        var face = original.DeepCopy();
+        face.HeadParts.Add(new FormLink<IHeadPartGetter>(new FormKey(OriginalKey, 0xA00)));
+        face.FaceMorph!.NoseLongVsShort = 2;
+        face.TintLayers.Add(new TintLayer { Index = 1, Preset = 2 });
+        face.Race.SetTo(new FormKey(OriginalKey, 0xA01));
+        face.WornArmor.SetTo(new FormKey(OriginalKey, 0xA02));
+        face.Weight = 70;
+        face.Configuration.Flags |= NpcConfiguration.Flag.Female;
+        var edit = original.DeepCopy();
+        if (field == "Height") edit.Height = 1.05f;
+        else edit.Configuration.Flags ^= NpcConfiguration.Flag.OppositeGenderAnims;
+
+        var result = Assert.Single((editFirst
+            ? Run(new NpcRecordHandler(), original, edit, face)
+            : Run(new NpcRecordHandler(), original, face, edit)).Npcs);
+
+        Assert.Equal(edit.Height, result.Height);
+        Assert.Equal(edit.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims),
+            result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims));
+        Assert.Equal(face.HeadParts.Select(part => part.FormKey), result.HeadParts.Select(part => part.FormKey));
+        Assert.Equal(2, result.FaceMorph!.NoseLongVsShort);
+        Assert.Equal((short?)2, Assert.Single(result.TintLayers).Preset);
+        Assert.Equal(face.Race.FormKey, result.Race.FormKey);
+        Assert.Equal(face.WornArmor.FormKey, result.WornArmor.FormKey);
+        Assert.Equal(70, result.Weight);
+        Assert.True(result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Female));
+    }
+
+    [Theory]
+    [InlineData("None", false)]
+    [InlineData("Declared", false)]
+    [InlineData("Virtual", false)]
+    [InlineData("None", true)]
+    [InlineData("Declared", true)]
+    [InlineData("Virtual", true)]
+    public void NpcFaceHeightAndAnimationKeepSeparateOwnersForRestoration(string permission, bool originalAnimation)
+    {
+        var original = new Npc(RecordKey, SkyrimRelease.SkyrimSE)
+            { Height = 0.98f, FaceMorph = new NpcFaceMorph() };
+        original.Configuration.Flags = originalAnimation ? NpcConfiguration.Flag.OppositeGenderAnims : 0;
+        var face = original.DeepCopy();
+        face.FaceMorph!.NoseLongVsShort = 2;
+        var height = original.DeepCopy();
+        height.Height = 1.05f;
+        var animation = original.DeepCopy();
+        animation.Configuration.Flags ^= NpcConfiguration.Flag.OppositeGenderAnims;
+        if (permission == "Virtual")
+            PatcherSettings.Apply(new PatcherConfiguration
+            {
+                CompatibilityRules = [new VirtualMasterRule
+                {
+                    TargetMod = "Restoration.esp", VirtualMasters = [WinnerKey.ToString(), "Later.esp"]
+                }]
+            });
+
+        var result = Assert.Single(Run(new NpcRecordHandler(), mods =>
+        {
+            if (permission == "Declared")
+                foreach (var owner in new[] { mods[2].ModKey, mods[3].ModKey })
+                    mods[4].ModHeader.MasterReferences.Add(new MasterReference { Master = owner });
+        }, original, face, height, animation, original.DeepCopy()).Npcs);
+
+        Assert.Equal(2, result.FaceMorph!.NoseLongVsShort);
+        Assert.Equal(permission == "None" ? height.Height : original.Height, result.Height);
+        Assert.Equal(permission == "None" ? !originalAnimation : originalAnimation,
+            result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims));
+    }
+
+    [Theory]
+    [InlineData("Height")]
+    [InlineData("Animation")]
+    public void NpcIndependentEditDoesNotTakeOwnershipOfCopiedAppearance(string field)
+    {
+        var original = new Npc(RecordKey, SkyrimRelease.SkyrimSE)
+            { Height = 0.98f, FaceMorph = new NpcFaceMorph() };
+        var face = original.DeepCopy();
+        face.FaceMorph!.NoseLongVsShort = 2;
+        var copier = face.DeepCopy();
+        if (field == "Height") copier.Height = 1.05f;
+        else copier.Configuration.Flags = NpcConfiguration.Flag.OppositeGenderAnims;
+
+        var result = Assert.Single(Run(new NpcRecordHandler(), mods =>
+        {
+            // Permission to restore the independent edit does not authorize restoring the face.
+            mods[3].ModHeader.MasterReferences.Add(new MasterReference { Master = WinnerKey });
+        }, original, face, copier, original.DeepCopy()).Npcs);
+
+        Assert.Equal(2, result.FaceMorph!.NoseLongVsShort);
+        Assert.Equal(original.Height, result.Height);
+        Assert.False(result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims));
+    }
+
+    [Theory]
+    [InlineData(0.90005f, 0.9f)]
+    [InlineData(1.1f, 0.98f)]
+    public void NpcHeightToleranceDeterminesWhetherANewValueTakesOwnership(float laterHeight, float expectedHeight)
+    {
+        var original = new Npc(RecordKey, SkyrimRelease.SkyrimSE)
+            { Height = 0.98f, FaceMorph = new NpcFaceMorph() };
+        var earlier = original.DeepCopy();
+        earlier.Height = 0.9f;
+        earlier.FaceMorph!.NoseLongVsShort = 2;
+        var later = original.DeepCopy();
+        later.Height = laterHeight;
+
+        var result = Assert.Single(Run(new NpcRecordHandler(), mods =>
+        {
+            mods[3].ModHeader.MasterReferences.Add(new MasterReference { Master = WinnerKey });
+        }, original, earlier, later, original.DeepCopy()).Npcs);
+
+        Assert.Equal(expectedHeight, result.Height);
+        Assert.Equal(2, result.FaceMorph!.NoseLongVsShort);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void NpcAppearanceAnimationAndProtectionWritersPreserveDisjointBits(bool reverse)
+    {
+        const NpcConfiguration.Flag unknown = (NpcConfiguration.Flag)0x80;
+        var source = new Npc(RecordKey, SkyrimRelease.SkyrimSE) { Height = 0.8f };
+        source.Configuration.Flags = NpcConfiguration.Flag.Female | NpcConfiguration.Flag.Essential |
+            NpcConfiguration.Flag.OppositeGenderAnims;
+        var target = new Npc(RecordKey, SkyrimRelease.SkyrimSE) { Height = 1.2f };
+        target.Configuration.Flags = NpcConfiguration.Flag.Essential | NpcConfiguration.Flag.Invulnerable |
+            NpcConfiguration.Flag.OppositeGenderAnims | unknown;
+        var handler = new NpcRecordHandler();
+        var appearance = Assert.IsType<NpcAppearanceHandler>(handler.PropertyHandlers["Appearance"]);
+        var snapshot = appearance.GetValue(source)!;
+        var values = new Dictionary<string, object?>
+        {
+            ["Appearance"] = snapshot,
+            ["Height"] = 1.1f,
+            ["Configuration.Flags.OppositeGenderAnims"] = (NpcConfiguration.Flag)0,
+            ["Configuration.Flags"] = ProtectionStatus.Protected
+        };
+
+        handler.ApplyForwardedProperties(target, reverse ? values.Reverse().ToDictionary(pair => pair.Key, pair => pair.Value) : values);
+
+        Assert.Equal(1.1f, target.Height);
+        Assert.Equal(NpcConfiguration.Flag.Female | NpcConfiguration.Flag.Protected | NpcConfiguration.Flag.Invulnerable | unknown,
+            target.Configuration.Flags);
+        Assert.Equal(NpcConfiguration.Flag.Female, snapshot.AppearanceFlags);
+        Assert.DoesNotContain("OppositeGenderAnims", appearance.FormatValue(snapshot));
+        Assert.DoesNotContain("Essential", appearance.FormatValue(snapshot));
     }
 
     [Fact]
@@ -319,7 +484,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
     [Fact]
     public void NpcAppearanceCopyClearsAbsentSubrecordsAndDoesNotShareMutableLists()
     {
-        var source = new Npc(RecordKey, SkyrimRelease.SkyrimSE);
+        var source = new Npc(RecordKey, SkyrimRelease.SkyrimSE) { Height = 0.8f };
         source.HeadParts.Add(new FormLink<IHeadPartGetter>(new FormKey(OriginalKey, 0xA00)));
         source.TintLayers.Add(new TintLayer { Index = 2, Preset = 4 });
         var handler = new NpcAppearanceHandler();
@@ -332,7 +497,8 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         };
         target.Configuration.HealthOffset = 42;
         target.Configuration.Level = new NpcLevel { Level = 88 };
-        target.Configuration.Flags = NpcConfiguration.Flag.Essential;
+        target.Height = 1.17f;
+        target.Configuration.Flags = NpcConfiguration.Flag.Essential | NpcConfiguration.Flag.OppositeGenderAnims;
         handler.SetValue(target, value);
         Assert.Null(target.FaceMorph);
         Assert.Null(target.FaceParts);
@@ -341,6 +507,8 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         Assert.Equal(42, target.Configuration.HealthOffset);
         Assert.Equal(88, Assert.IsType<NpcLevel>(target.Configuration.Level).Level);
         Assert.True(target.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Essential));
+        Assert.True(target.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims));
+        Assert.Equal(1.17f, target.Height);
         target.TintLayers[0].Preset = 7;
         Assert.Equal((short?)4, Assert.Single(value.Snapshot.TintLayers).Preset);
     }
@@ -393,6 +561,14 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         foreach (var group in recordHandler.PropertyHandlers.Values.OfType<IPropertyGroupHandler>())
         foreach (var property in group.GroupedProperties)
             Assert.DoesNotContain(property, recordHandler.PropertyHandlers.Keys);
+
+        var npc = new NpcRecordHandler();
+        var appearance = Assert.IsType<NpcAppearanceHandler>(npc.PropertyHandlers["Appearance"]);
+        Assert.DoesNotContain("Height", appearance.GroupedProperties);
+        Assert.DoesNotContain("Configuration.Flags.OppositeGenderAnims", appearance.GroupedProperties);
+        Assert.IsType<SimpleReflectionPropertyHandler<float, INpc, INpcGetter>>(npc.PropertyHandlers["Height"]);
+        Assert.IsType<SimpleReflectionFlagPropertyHandler<NpcConfiguration.Flag, INpc, INpcGetter>>(
+            npc.PropertyHandlers["Configuration.Flags.OppositeGenderAnims"]);
     }
 
     [Fact]
@@ -742,7 +918,8 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
     private static SkyrimMod Run(AbstractRecordHandler handler, Action<SkyrimMod[]>? configureMods,
         params IMajorRecord[] versions)
     {
-        var keys = new[] { OriginalKey, EarlierKey, WinnerKey, ModKey.FromNameAndExtension("Later.esp") };
+        var keys = new[] { OriginalKey, EarlierKey, WinnerKey, ModKey.FromNameAndExtension("Later.esp"),
+            ModKey.FromNameAndExtension("Restoration.esp") };
         var mods = versions.Select((record, i) =>
         {
             var mod = new SkyrimMod(keys[i], SkyrimRelease.SkyrimSE);

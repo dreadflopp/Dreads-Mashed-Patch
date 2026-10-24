@@ -17,7 +17,7 @@ public sealed class NpcAppearanceHandler : AbstractPropertyHandler<NpcAppearance
     public IReadOnlySet<string> GroupedProperties { get; } = new HashSet<string>(StringComparer.Ordinal)
     {
         "HeadParts", "FaceMorph", "FaceParts", "TintLayers", "HairColor", "HeadTexture", "TextureLighting",
-        "Race", "Height", "Weight", "WornArmor", "Configuration.Flags.Female", "Configuration.Flags.OppositeGenderAnims"
+        "Race", "Weight", "WornArmor", "Configuration.Flags.Female"
     };
     private static readonly Mutagen.Bethesda.Skyrim.Npc.TranslationMask CopyMask = CreateMask(includeLists: true);
     private static readonly Mutagen.Bethesda.Skyrim.Npc.TranslationMask EqualityMask = CreateMask(includeLists: false);
@@ -26,17 +26,17 @@ public sealed class NpcAppearanceHandler : AbstractPropertyHandler<NpcAppearance
     {
         HeadParts = includeLists, FaceMorph = true, FaceParts = true, TintLayers = includeLists,
         HairColor = true, HeadTexture = true, TextureLighting = true,
-        Race = true, Height = true, Weight = true, WornArmor = true
+        Race = true, Weight = true, WornArmor = true
     };
 
     private static readonly SimpleReflectionFlagPropertyHandler<NpcConfiguration.Flag, INpc, INpcGetter> AppearanceFlags =
         new("Configuration.Flags", preserveUnknownBits: true,
-            includedFlags: [NpcConfiguration.Flag.Female, NpcConfiguration.Flag.OppositeGenderAnims]);
+            includedFlags: [NpcConfiguration.Flag.Female]);
 
     public override string PropertyName => "Appearance";
 
     public override NpcAppearanceValue? GetValue(IMajorRecordGetter record) => record is INpcGetter npc
-        ? new(npc.DeepCopy(CopyMask), AppearanceFlags.GetValue(npc))
+        ? new(npc.DeepCopy(CopyMask), AppearanceFlags.GetValue(npc) & NpcConfiguration.Flag.Female)
         : throw new ArgumentException("Expected an NPC record.", nameof(record));
 
     public override void SetValue(IMajorRecord record, NpcAppearanceValue? value)

@@ -24,7 +24,7 @@ value occupying the same row.
 The active implementation is `XEditSequenceAligner`, used by every list handler
 whose `Semantics` is `ListSemantics.AlignedOrdered`. This describes the aligner,
 not a claim that every registration is correctly classified or has the exact
-xEdit row key. See [historical ordering audit](history/LIST_ORDERING_AUDIT.md) for that property-level audit.
+xEdit row key. Use [pinned ordering evidence](history/LIST_ORDERING_AUDIT.md) and the [current collection expectations](xedit-collection-expectations.json) for property-specific classifications.
 
 1. Initialize one alignment row for every item in the original record.
 2. Process record overrides from original to winning, using the contexts already
@@ -69,9 +69,9 @@ are not part of the alignment key. They are row content: changing one replaces
 the value in that occurrence-specific row. Reversion to the original row value
 still requires permission to modify the current value owner.
 
-For the load-screen example, the rows remain `x, y, z`. The winning mod's `x=-1`
-reuses row `x`; the protected `z<200` remains in row `z`; removed `y` is a gap.
-The patch consequently writes `x=-1, z<200`.
+For conditions aligned in rows `x, y, z`, a value edit `x=-1` reuses row `x`;
+a protected `z<200` stays in row `z`; a removed `y` is a gap. The patch writes
+`x=-1, z<200`, rather than moving the protected row ahead of the edited one.
 
 ## How xEdit aligns arrays
 
@@ -105,76 +105,33 @@ References:
 - Skyrim condition keys: <https://github.com/TES5Edit/TES5Edit/blob/93cc0bc5a1251936c3c7859eee3150eda12a62d7/Core/wbDefinitionsTES5.pas#L3879-L3936>
 - Original alignment release note: <https://github.com/TES5Edit/TES5Edit/blob/93cc0bc5a1251936c3c7859eee3150eda12a62d7/whatsnew.md#L2139-L2162>
 
-## Previous implementations
+## Implementation constraints
 
-The retired implementations are documented here for diagnosis or a deliberate
-rollback. They are not retained as inactive code because each ordered property
-must have one implementation path.
+Do not replace persistent occurrence rows with neighbor-insertion heuristics,
+full-value identity or adjacency/topological constraints. Earlier approaches lost
+load-order-wide row identity through removals and re-additions. In particular,
+using full condition equality made `z<=200`→`z<200` a removed row plus an addition;
+a later independent `x=-1` could then produce `z<200, x=-1` rather than aligned
+`x=-1, z<200`. The source-based aligner and row-content replacement prevent this.
 
-### Neighbor placement
+- Conditions retain their reviewed CTDA key; aliases retain ID-based merging and
+  response rows retain normalization/copying after shared reconciliation.
+- CameraPath Shots, LinkTo, DLVW Branches, SlotParents, FLST Items, NPC Packages,
+  placed LocationRefTypes and quest globals use their reviewed reference keys.
+- StoryManagerQuestNode rows use Quest FormKey. Message buttons and dialog
+  responses have project-specific identities because xEdit supplies no explicit
+  outer key; do not claim exact key parity without investigating them.
+- HDPT Parts is ordered but nested in atomic Appearance, so it does not allocate
+  independent alignment rows. ARMO Armature is also one complete authored list
+  to prevent independently unioned overlapping models.
+- Magic-item Effects, SNDR sound slots and REFR LinkedReferences use exact
+  ordinal identity. ACHR LinkedReferences is independently sorted/keyed.
+- Unordered/sorted-keyed values use their own identity reconciliation, not the
+  aligner. Structural arrays remain atomic values rather than per-entry contexts.
 
-The oldest algorithm built a desired sequence from entries the current mod was
-allowed to move. Entries it could not move were reinserted after entries that had
-previously preceded them. It considered an existing entry moved only when both
-its before-neighbor and after-neighbor relationships changed. New entries were
-then inserted after the last declared predecessor that was already present.
-
-This was permission-aware but local: neighbor heuristics could not retain a
-stable, load-order-wide notion of an xEdit row, especially through removals and
-later re-additions.
-
-### Unified placement
-
-The unified implementation was a cleanup of neighbor placement. It matched
-duplicate occurrences by reference, separated movable existing entries, fixed
-existing entries, and new entries, then used a shared `PlaceAfter` helper to
-reinsert them around declared predecessors. Its behavior was intentionally close
-to neighbor placement and had the same lack of persistent aligned rows.
-
-### Progressive constraints
-
-The immediate predecessor assigned persistent order slots, retained removed
-slots as tombstones, and created ordering constraints from adjacent entries in
-each mod. A stable topological sort used the previous slot order as its tie
-breaker. Ownership determined which entries could accept new order placement.
-
-That version preserved more history than neighbor placement, but it used full
-semantic equality as row identity. A condition changing from `z<=200` to
-`z<200` therefore became a removed row plus a new row. An unrelated later mod
-adding `x=-1` could leave protected `z<200` before the new `x`, producing
-`z<200, x=-1` instead of xEdit's aligned `x=-1, z<200`.
-
-## Migration note
-
-- Generalized: all `AlignedOrdered` list handlers use one progressive xEdit-style
-  sequence aligner and one row-ID reconciliation path. Exact parity also requires
-  the correct property classification and row key documented in
-  [historical ordering audit](history/LIST_ORDERING_AUDIT.md).
-- Specialized: conditions override row identity with Skyrim's xEdit condition
-  key. Quest aliases retain ID-based property merging, and dialog responses retain
-  response-specific normalization and copying after shared row reconciliation.
-- Scalar aligned records: Camera Path Shots, Dialog Response
-  LinkTo, Dialog View Branches, Equip Type SlotParents, FormList Items, NPC
-  Packages, placed-reference LocationRefTypes, and Quest TextDisplayGlobals
-  retain their existing identities and copying behavior.
-- Atomic exception: Armor Armature preserves the complete ordered Armor Addon
-  list from one owner. Multiple entries remain supported when a source plugin
-  declares them together, but independent lists are never unioned.
-- Exact positional records: Ingredient, Ingestible, Object Effect, Scroll, and
-  Spell effects use ordinal identity and atomic generated Effect equality because
-  xEdit defines their outer Effects entries without a sort key. Placed Object
-  LinkedReferences likewise uses ordinal identity because REFR declares an unsorted
-  `wbRArray` with a plain `wbStruct`; ACHR remains independently sorted/keyed.
-- Composite aligned records: Story Manager Quest Node entries retain Quest
-  FormKey identity; Head Part parts and Message buttons retain their documented
-  project-specific identities.
-- Intentionally unchanged: `ListSemantics.Unordered` handlers remain unordered
-  and do not allocate alignment rows. Structural arrays use atomic property
-  handlers and therefore never allocate per-entry ownership or alignment rows.
-- Removed: neighbor placement, unified placement, progressive constraint sorting,
-  their obsolete order-slot fields, and the superseded identity-based aligned
-  ordering pass. Unordered and sorted-keyed identity reconciliation remains the
-  active implementation for those semantics.
-- Rollback: use version control to restore the desired implementation, or
-  reconstruct it from the descriptions above. Do not enable two ordering paths
-  simultaneously.
+Use [XEditListAlignmentTests](../DreadsMashedPatch.Tests/XEditListAlignmentTests.cs),
+[ConditionHandlerTests](../DreadsMashedPatch.Tests/ConditionHandlerTests.cs),
+[ListSemanticsTests](../DreadsMashedPatch.Tests/ListSemanticsTests.cs) and the
+[collection verification workflow](COLLECTION_SEMANTICS.md#workflow) when changing
+alignment. Keep one active implementation path; version control holds retired
+implementations if a deliberate investigation needs them.

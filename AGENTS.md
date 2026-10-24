@@ -46,3 +46,5 @@ Keep installation/downloads, setup, concise settings guidance, and diagnostics i
 Public record descriptions may link to shared patching rules and other public record pages.
 Internal developer documentation is indexed in docs/README.md for the maintainer and AI agents. Do not mention or link to that index, development guides, audits, inventories, review evidence, migration history, or the internal KNOWN-ISSUES.md from the root README or public record pages.
 
+Internal documentation retention
+Optimize internal documentation for AI agents: retain current architecture, invariants, record-specific exceptions and rationale, exact reference provenance, regression-test pointers, and unresolved limits. Completed migrations do not require permanent standalone documents. Consolidate useful decisions into the current guides or regression reference, then remove completed plans, duplicate checklists, superseded proposals, and repeated historical validation transcripts. Keep dated validation evidence only when its scope helps future investigation; never present old counts as current certification. Public README and record documentation remain the human-facing documentation.

@@ -1,14 +1,19 @@
-# Migration history
+# Retained implementation references
 
-[Documentation index](../README.md)
+[Internal index](../README.md) · [Collection workflow](../COLLECTION_SEMANTICS.md)
 
-These notes preserve decisions and cleanup evidence. Current registrations and exclusions are in the [record tables](../record-patching/INDEX.md) and [inventory](../record-patching/INVENTORY.md). Historical recommendations do not enable dormant handlers or override current project policy.
+These files retain decisions that help agents avoid regressions, not completed
+migration task lists. The existing paths remain stable because collection
+expectations cite the ordering references as provenance.
 
-| Note | Why it is retained |
+| Reference | Useful information retained |
 |---|---|
-| [Asset paths](ASSET_PATH_MIGRATION.md) | Record-specific copying decisions and preservation of serialized `GivenPath`. |
-| [Model and bounds](MODEL_BOUNDS_MIGRATION.md) | Which model-bearing records share geometry/bounds ownership and which fields remain independent. |
-| [Ordering audit](LIST_ORDERING_AUDIT.md) | Pinned xEdit evidence behind collection classifications. |
-| [Ordering migration](LIST_ORDERING_MIGRATION.md) | Resulting shared modes, specialized exceptions, and removed implementations. |
+| [Asset copying](ASSET_PATH_MIGRATION.md) | Serialized GivenPath, overlay copying and record-specific asset boundaries. |
+| [Model and bounds](MODEL_BOUNDS_MIGRATION.md) | Conditional geometry/bounds ownership and exceptions. |
+| [xEdit ordering evidence](LIST_ORDERING_AUDIT.md) | Pinned source constructs, keys and non-obvious array definitions. |
+| [Collection decisions](LIST_ORDERING_MIGRATION.md) | Shared versus specialized collection choices and reasons. |
 
-The active [collection workflow](../COLLECTION_SEMANTICS.md) and [alignment algorithm](../LIST_ALIGNMENT.md) are maintained separately. Later fixes and their dated checks remain in [review evidence](../record-patching/REVIEW.md).
+Use current [record registrations/inventory](../record-patching/INVENTORY.md),
+[collection expectations](../xedit-collection-expectations.json) and
+[alignment implementation](../LIST_ALIGNMENT.md) when changing a handler. The
+reference evidence does not enable dormant code or authorize a policy change.
