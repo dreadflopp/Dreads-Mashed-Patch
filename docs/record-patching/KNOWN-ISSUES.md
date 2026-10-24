@@ -14,11 +14,52 @@ not an open-issues list. Public limitations remain on the affected record pages.
 | NAVM / NAVI | NAVM is disabled by default and selects whole geometry/connectivity data when enabled. No independent NAVI route or patcher-owned reconstruction exists. A Mutagen writer branch for existing NavigationMeshInfoMaps is not a reconstruction algorithm. NAVM and REFR navigation-door-link forwarding do not establish navigation-map consistency. |
 | DIAL / DLBR / INFO / DLVW | Disabled by default. Enabling documented property selection can combine coupled dialogue data; tests do not establish dialogue correctness. |
 | ARMA model data | All four filename handlers carry detached Data bytes but compare only normalized paths. Byte-only changes have no independent forwarding path. Alternate textures merge separately. This retained policy must not become a blanket claim that other models ignore data bytes. See [GenderedModelFieldHandlers](../../DreadsMashedPatch/PropertyHandlers/General/GenderedModelFieldHandlers.cs) and [ArmorAddonRecordHandlerTests](../../DreadsMashedPatch.Tests/ArmorAddonRecordHandlerTests.cs). |
+| Model/bounds coupling | A later override can supply bounds for a rejected model filename. All 29 `ModelBoundsHandler` registrations share this path; TREE's default forwarding restriction bypasses it. See the reproduction below before treating the grouped registration as a geometry-consistency guarantee. |
 | Ordinary script-list VMAD | Version/ObjectFormat remain destination-owned. Metadata-only edits do not trigger output; INFO/PACK/PERK whole adapters and QUST/SCEN child fields differ. |
 | LTEX | HNAM/SNAM scalar interfaces do not expose absent-subrecord state; writing can normalize missing representations. Nullable snow INAM requires SSE FormVersion 43 or later. LAND remains excluded. |
 | Null/default writes | Setters normalize presence per property. Shared post-write validation checks non-null values only. Keywords and NPC Perks preserve absent versus present-empty, but there is no universal null-removal guarantee. |
 | Omitted/opaque data | Unregistered fields have no independent decision. Copying/writing may change representation. The meaning and safe combination of every exposed byte payload are not established. See [inventory exclusions](INVENTORY.md#exclusions-and-fields-that-are-not-independent-decisions). |
 | Policy performance | Priority/baseline identifier indexes are lazy and avoid full histories during policy checks, but their setup/memory cost has no broad real-modlist benchmark. |
+
+## Model/bounds coupling defect
+
+`ModelBoundsHandler.UpdatePropertyContext` takes bounds from an accepted filename
+change, but its subsequent bounds-only branch does not require the source model's
+normalized filename identity to match the selected model. A rejected filename
+reversion can therefore still supply a new, non-baseline bounds value. For ARMO,
+the geometry identity is the pair of male/female world-model filenames; icons are
+part of model selection but do not define that identity.
+
+Minimal reproduction, with both plugins depending only on Skyrim.esm:
+
+| Override order | Model filename | Bounds extent |
+|---|---|---|
+| Skyrim.esm | Original.nif | 1 |
+| ModelMod.esp | Replacement.nif | 7 |
+| BoundsMod.esp | Original.nif | 9 |
+| Computed patch | **Replacement.nif** | **9** |
+
+ModelMod's filename survives the unauthorized baseline reversion, while the new
+bounds value is accepted independently. No source record contains the resulting
+pair. Also, `boundsExplicitlyChanged` compares adjacent load-order overrides,
+not the plugin's actual master history: an inherited bounds edit can qualify
+when an unrelated preceding plugin has different bounds.
+
+On 2026-10-24, an isolated local investigation harness reproduced the three-source
+case through `AbstractRecordHandler.Process` and plugin binary write/reload for
+all 29 registered record types, with TREE's restriction disabled for its probe.
+Additional ARMO/STAT probes reproduced inherited bounds overwriting model-owned
+bounds and checked legitimate bounds corrections for the selected filename.
+A default-restricted TREE control and the six existing `ModelBoundsHandlerTests`
+also passed (40 checks total). These are synthetic findings; the user's actual
+armor record and plugin chain were not available. Forwarding code was not changed.
+
+The existing tests cover filename changes taking bounds, same-filename bounds
+corrections and metadata-only changes, but omit the rejected-filename/different-
+bounds combination. A prospective fix should gate independent bounds selection
+on matching the selected filename identity, while retaining same-filename bounds
+corrections and the existing approved model/reversion policies. Same-path asset
+replacements still cannot be verified from plugin records alone.
 
 ## Appearance and referenced assets
 

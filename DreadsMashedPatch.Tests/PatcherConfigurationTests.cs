@@ -40,8 +40,8 @@ public sealed class PatcherConfigurationTests
             settings.Forwarding.TamrielPersistentCellPolicy);
         Assert.False(settings.Diagnostics.DebugMode);
         Assert.Equal(PatcherLogVerbosity.ContextChanges, settings.Diagnostics.Verbosity);
-        Assert.Equal(58, settings.CompatibilityRules.Count);
-        Assert.Equal(66, settings.CompatibilityRules.Sum(rule => rule.VirtualMasters.Count));
+        Assert.Equal(59, settings.CompatibilityRules.Count);
+        Assert.Equal(67, settings.CompatibilityRules.Sum(rule => rule.VirtualMasters.Count));
         var compatibilityRules = settings.CompatibilityRules.ToDictionary(
             rule => rule.TargetMod,
             StringComparer.OrdinalIgnoreCase);
