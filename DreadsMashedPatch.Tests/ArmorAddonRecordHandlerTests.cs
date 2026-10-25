@@ -67,7 +67,7 @@ public sealed class ArmorAddonRecordHandlerTests
 
         Assert.False(handler.AreValuesEqual(
             new ModelFileValue("Armor\\Female.nif", [1, 2]),
-            new ModelFileValue("Meshes\\ARMOR\\FEMALE.NIF", [9, 9])));
+            new ModelFileValue("Meshes\\ARMOR\\FEMALE.NIF", [1, 2])));
     }
 
     [Fact]

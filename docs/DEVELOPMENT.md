@@ -106,6 +106,10 @@ On Windows, the scripts also accept `powershell -NoProfile -ExecutionPolicy Bypa
 
 Tests should establish behavior beyond registration counts: selection with declared/virtual-master permission, removal/restoration, duplicate/order handling where applicable, detached copies, and binary overlay/write/reload for affected fields. Passing audits do not establish gameplay safety or complete on-disk preservation.
 
+Keep expected results independent of the implementation being checked. Default compatibility rules may grow or change; validate filenames, unique targets and independent instances rather than freezing counts or repeating curated relationships in assertions. Copy tests should use explicit fixture values instead of assuming the current default keyword count. Exact counts remain useful for controlled fixtures when they detect lost or duplicated rows.
+
+Use `CollectionSemanticsManifestTests` and its reviewed manifest/xEdit expectations as the shared collection registration checks; do not repeat subsets in separate tests. Keep record-specific checks for disjoint grouped ownership, approved flag handlers and deliberately excluded fields, because those enforce patching safety boundaries. Prefer exercising registered handlers and checking their output over asserting an incidental class name. When removing a duplicate test, confirm the retained test covers its assertion; when comparing one changed field, keep unrelated inputs equal.
+
 ## Migration completion
 
 Update all call sites together, remove superseded classes/imports and redundant overrides, and search the workspace for obsolete references. Each property must have exactly one active implementation. Keep approved flag handlers. Add a short decision note per record type stating what was generalized, what stayed specialized or unregistered, and why. Report removed dead code and actual diagnostics/build/test results with their validation limits.

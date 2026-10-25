@@ -179,11 +179,12 @@ Sprite equality uses serialized RGB (alpha is not stored in LFSD), all other Dat
 
 ## TXST — Texture Set
 
-TextureDefinition keeps all eight texture paths and nullable Flags together. Those flags are not independently merged. Decal and ObjectBounds remain separate.
+TextureDefinition keeps all eight texture paths and nullable Flags together. Those flags are not independently merged. Decal remains separate; ObjectBounds stays with the effective winner.
 
 | Properties | How they are patched |
 |---|---|
-| `ObjectBounds`, `TextureDefinition`, `Decal` | Select each whole value separately. |
+| `TextureDefinition`, `Decal` | Select each whole value separately. |
+| `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/TextureSetRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 

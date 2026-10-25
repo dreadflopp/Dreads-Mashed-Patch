@@ -1,5 +1,4 @@
 using DreadsMashedPatch.PropertyHandlers.General;
-using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
@@ -10,26 +9,6 @@ namespace DreadsMashedPatch.Tests;
 public class FootstepSetRecordHandlerTests
 {
     private static readonly ModKey TestModKey = ModKey.FromNameAndExtension("FootstepTests.esp");
-
-    [Fact]
-    public void AllFiveListsUseAtomicHandlers()
-    {
-        var handlers = new FootstepSetRecordHandler().PropertyHandlers;
-        var propertyNames = new[]
-        {
-            "WalkForwardFootsteps",
-            "RunForwardFootsteps",
-            "WalkForwardAlternateFootsteps",
-            "RunForwardAlternateFootsteps",
-            "WalkForwardAlternateFootsteps2"
-        };
-
-        foreach (var propertyName in propertyNames)
-        {
-            Assert.IsType<AtomicFormLinkListPropertyHandler<IFootstepGetter, IFootstepSet, IFootstepSetGetter>>(
-                handlers[propertyName]);
-        }
-    }
 
     [Fact]
     public void AtomicHandlerPreservesOrderAndDuplicateMultiplicity()

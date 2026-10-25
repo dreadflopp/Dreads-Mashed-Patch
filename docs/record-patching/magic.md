@@ -14,7 +14,7 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 |---|---|
 | `Name`, `EnchantmentCost`, `CastType`, `EnchantmentAmount`, `TargetType`, `EnchantType`, `ChargeTime`, `BaseEnchantment`, `WornRestrictions` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `ObjectBounds` | Select each whole value separately. |
+| `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 | `Effects` | Merge rows by position. |
 | `ENITDataTypeState` | Serialization/unused state; no independent decision. |
 
@@ -56,7 +56,7 @@ Entries match by (Level, Reference), with complete row payloads/counts.
 |---|---|
 | `ChanceNone` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `ObjectBounds` | Select each whole value separately. |
+| `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 | `Entries` | Merge rows by key. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LeveledSpellRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
@@ -132,7 +132,7 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 |---|---|
 | `Name`, `MenuDisplayObject`, `Description`, `EquipmentType`, `BaseCost`, `Type`, `ChargeTime`, `CastType`, `TargetType`, `CastDuration`, `Range`, `HalfCostPerk` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `ObjectBounds` | Select each whole value separately. |
+| `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 | `Keywords` | Merge rows by key. |
 | `Effects` | Merge rows by position. |
 

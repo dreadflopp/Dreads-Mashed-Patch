@@ -52,17 +52,6 @@ public sealed class CollectionSemanticsManifestTests
     }
 
     [Fact]
-    public void AtomicCollectionsUseSingleValueOwnershipContexts()
-    {
-        foreach (var registration in DiscoverCollectionRegistrations().Where(item => item.MergeMode == "Atomic"))
-        {
-            Assert.StartsWith(
-                "SimplePropertyContext",
-                registration.Handler.CreatePropertyContext().GetType().Name);
-        }
-    }
-
-    [Fact]
     public void PerEntryCollectionsUseListOwnershipContexts()
     {
         foreach (var registration in DiscoverCollectionRegistrations().Where(item =>

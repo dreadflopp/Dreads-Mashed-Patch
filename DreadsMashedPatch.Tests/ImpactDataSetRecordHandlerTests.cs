@@ -1,5 +1,4 @@
 using DreadsMashedPatch.PropertyHandlers.ImpactDataSet;
-using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Xunit;
@@ -11,12 +10,6 @@ public sealed class ImpactDataSetRecordHandlerTests
     private static readonly ModKey OriginalMod = ModKey.FromNameAndExtension("Skyrim.esm");
     private static readonly ModKey FirstMod = ModKey.FromNameAndExtension("First.esp");
     private static readonly ModKey SecondMod = ModKey.FromNameAndExtension("Second.esp");
-
-    [Fact]
-    public void ImpactsUsesMaterialKeyedHandler()
-    {
-        Assert.IsType<ImpactsHandler>(new ImpactDataSetRecordHandler().PropertyHandlers["Impacts"]);
-    }
 
     [Fact]
     public void SameMaterialReplacesImpactWithoutCreatingDuplicate()

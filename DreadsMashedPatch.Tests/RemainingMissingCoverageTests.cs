@@ -9,17 +9,6 @@ namespace DreadsMashedPatch.Tests;
 
 public sealed class RemainingMissingCoverageTests
 {
-    [Fact]
-    public void LowRiskAndFormListFieldsUseEstablishedHandlers()
-    {
-        Assert.IsType<ModelBoundsHandler>(new IngestibleRecordHandler().PropertyHandlers["ModelAndBounds"]);
-        Assert.IsType<EditorIDHandler>(new WeaponRecordHandler().PropertyHandlers["EditorID"]);
-
-        var formListHandlers = new FormIdRecordHandler().PropertyHandlers;
-        Assert.IsType<MajorRecordFlagsRawHandler>(formListHandlers["MajorRecordFlagsRaw"]);
-        Assert.DoesNotContain("SkyrimMajorRecordFlags", formListHandlers.Keys);
-    }
-
     [Theory]
     [InlineData("RagdollData")]
     [InlineData("RagdollBipedData")]

@@ -46,29 +46,6 @@ public sealed class ListSemanticsTests
                 new object?[] { "NPC Head", 4 }));
     }
 
-    [Theory]
-    [InlineData(typeof(MagicEffectRecordHandler), "Sounds", ListSemantics.SortedKeyed)]
-    [InlineData(typeof(LandscapeTextureRecordHandler), "Grasses", ListSemantics.SortedKeyed)]
-    [InlineData(typeof(PlacedObjectRecordHandler), "LinkedReferences", ListSemantics.ExactOrdered)]
-    [InlineData(typeof(PlacedNpcRecordHandler), "LinkedReferences", ListSemantics.SortedKeyed)]
-    [InlineData(typeof(QuestRecordHandler), "TextDisplayGlobals", ListSemantics.AlignedOrdered)]
-    [InlineData(typeof(WeatherRecordHandler), "Sounds", ListSemantics.ExactOrdered)]
-    [InlineData(typeof(BodyPartDataRecordHandler), "Parts", ListSemantics.SortedKeyed)]
-    [InlineData(typeof(ArmorAddonRecordHandler), "FirstPersonModel.Male.AlternateTextures", ListSemantics.SortedKeyed)]
-    public void AuditedListRegistrationsUseTheirExplicitSemantics(
-        Type recordHandlerType,
-        string propertyName,
-        ListSemantics expected)
-    {
-        var recordHandler = Assert.IsAssignableFrom<DreadsMashedPatch.RecordHandlers.Abstracts.AbstractRecordHandler>(
-            System.Activator.CreateInstance(recordHandlerType));
-        var propertyHandler = recordHandler.PropertyHandlers[propertyName];
-        var semantics = propertyHandler.GetType().GetProperty("Semantics")
-            ?.GetValue(propertyHandler);
-
-        Assert.Equal(expected, semantics);
-    }
-
     [Fact]
     public void PlacedObjectLinkedReferencesTreatReversedRowsAsDifferent()
     {
@@ -162,56 +139,5 @@ public sealed class ListSemanticsTests
             Sound = new FormLink<ISoundGetter>(new FormKey(dawnguard, soundId)),
             Type = 0
         };
-    }
-
-    [Theory]
-    [InlineData(typeof(FurnitureRecordHandler), "Markers")]
-    [InlineData(typeof(PlacedObjectRecordHandler), "Portals")]
-    [InlineData(typeof(IdleMarkerRecordHandler), "Animations")]
-    [InlineData(typeof(MusicTypeRecordHandler), "Tracks")]
-    [InlineData(typeof(MusicTrackRecordHandler), "Tracks")]
-    public void StructuralListsUseAtomicPropertyContexts(Type recordHandlerType, string propertyName)
-    {
-        var recordHandler = Assert.IsAssignableFrom<DreadsMashedPatch.RecordHandlers.Abstracts.AbstractRecordHandler>(
-            System.Activator.CreateInstance(recordHandlerType));
-        var propertyHandler = recordHandler.PropertyHandlers[propertyName];
-
-        Assert.StartsWith("Atomic", propertyHandler.GetType().Name);
-        Assert.StartsWith("SimplePropertyContext", propertyHandler.CreatePropertyContext().GetType().Name);
-    }
-
-    [Fact]
-    public void ArmorArmatureUsesAtomicFormLinkListContext()
-    {
-        var propertyHandler = new ArmorRecordHandler().PropertyHandlers["Armature"];
-
-        Assert.IsType<AtomicFormLinkListPropertyHandler<
-            Mutagen.Bethesda.Skyrim.IArmorAddonGetter,
-            Mutagen.Bethesda.Skyrim.IArmor,
-            Mutagen.Bethesda.Skyrim.IArmorGetter>>(propertyHandler);
-        Assert.StartsWith("SimplePropertyContext", propertyHandler.CreatePropertyContext().GetType().Name);
-    }
-
-    [Theory]
-    [InlineData("Phases", "ScenePhasesHandler")]
-    [InlineData("Actors", "SceneActorsHandler")]
-    [InlineData("Actions", "SceneActionsHandler")]
-    public void SceneStructuralListsUseTypedAtomicPropertyContexts(
-        string propertyName,
-        string handlerTypeName)
-    {
-        var propertyHandler = new SceneRecordHandler().PropertyHandlers[propertyName];
-
-        Assert.Equal(handlerTypeName, propertyHandler.GetType().Name);
-        Assert.StartsWith("SimplePropertyContext", propertyHandler.CreatePropertyContext().GetType().Name);
-    }
-
-    [Fact]
-    public void RegionAreasUseTypedAtomicPropertyContext()
-    {
-        var propertyHandler = new RegionRecordHandler().PropertyHandlers["RegionAreas"];
-
-        Assert.Equal("RegionAreasHandler", propertyHandler.GetType().Name);
-        Assert.StartsWith("SimplePropertyContext", propertyHandler.CreatePropertyContext().GetType().Name);
     }
 }

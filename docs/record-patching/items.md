@@ -169,7 +169,7 @@ Entries match by (Level, Reference), with complete row payloads/counts. Entries 
 |---|---|
 | `ChanceNone`, `Global` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `ObjectBounds` | Select each whole value separately. |
+| `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 | `Entries` | Merge rows by key. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LeveledItemRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).

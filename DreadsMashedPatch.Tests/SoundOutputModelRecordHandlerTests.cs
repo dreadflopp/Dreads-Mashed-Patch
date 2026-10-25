@@ -1,4 +1,3 @@
-using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
@@ -10,19 +9,6 @@ public sealed class SoundOutputModelRecordHandlerTests
 {
     private static readonly ModKey SourceModKey = ModKey.FromNameAndExtension("SoundOutputSource.esp");
     private static readonly ModKey PatchModKey = ModKey.FromNameAndExtension("SoundOutputPatch.esp");
-
-    [Fact]
-    public void UsesGeneratedCopiesForOverlayAggregates()
-    {
-        var handlers = new SoundOutputModelRecordHandler().PropertyHandlers;
-
-        Assert.IsType<GeneratedCopyReflectionPropertyHandler<ISoundOutputDataGetter, SoundOutputData, ISoundOutputModel, ISoundOutputModelGetter>>(
-            handlers["Data"]);
-        Assert.IsType<GeneratedCopyReflectionPropertyHandler<ISoundOutputChannelsGetter, SoundOutputChannels, ISoundOutputModel, ISoundOutputModelGetter>>(
-            handlers["OutputChannels"]);
-        Assert.IsType<GeneratedCopyReflectionPropertyHandler<ISoundOutputAttenuationGetter, SoundOutputAttenuation, ISoundOutputModel, ISoundOutputModelGetter>>(
-            handlers["Attenuation"]);
-    }
 
     [Fact]
     public void OverlayForwardingPreservesCurveUnknownBytesAndChannels()

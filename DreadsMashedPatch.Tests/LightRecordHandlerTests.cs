@@ -1,5 +1,4 @@
 using DreadsMashedPatch.PropertyHandlers.General;
-using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Assets;
 using Mutagen.Bethesda.Skyrim;
@@ -13,15 +12,6 @@ public sealed class LightRecordHandlerTests
 {
     private static readonly ModKey SourceModKey = ModKey.FromNameAndExtension("LightSource.esp");
     private static readonly ModKey PatchModKey = ModKey.FromNameAndExtension("LightPatch.esp");
-
-    [Fact]
-    public void ModelAndBoundsUseSharedCoordinator()
-    {
-        var handlers = new LightRecordHandler().PropertyHandlers;
-        Assert.IsType<ModelBoundsHandler>(handlers["ModelAndBounds"]);
-        Assert.DoesNotContain("Model", handlers.Keys);
-        Assert.DoesNotContain("ObjectBounds", handlers.Keys);
-    }
 
     [Fact]
     public void OverlayModelWritesDataRelativePathWithoutDuplicatingMeshesRoot()

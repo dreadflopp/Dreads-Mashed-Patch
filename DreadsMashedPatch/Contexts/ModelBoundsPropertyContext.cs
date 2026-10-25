@@ -9,12 +9,13 @@ public sealed class ModelBoundsPropertyContext : IPropertyContext
     public object? OriginalModel { get; set; }
     public object? ForwardModel { get; set; }
     public string ModelOwner { get; set; } = string.Empty;
-    public IObjectBoundsGetter? OriginalBounds { get; set; }
-    public IObjectBoundsGetter? ForwardBounds { get; set; }
-    public string BoundsOwner { get; set; } = string.Empty;
-    public IObjectBoundsGetter? PreviousBounds { get; set; }
+    public object? SelectedFilenameIdentity { get; set; }
+    public object? WinningFilenameIdentity { get; set; }
+    public IObjectBoundsGetter? ModelBounds { get; set; }
+    public IObjectBoundsGetter? WinningBounds { get; set; }
 
-    public object GetForwardValue() => new ModelBoundsValue(ForwardModel, ForwardBounds);
+    public object GetForwardValue() => new ModelBoundsValue(ForwardModel,
+        Equals(SelectedFilenameIdentity, WinningFilenameIdentity) ? WinningBounds : ModelBounds);
 }
 
 public sealed record ModelBoundsValue(object? Model, IObjectBoundsGetter? Bounds);

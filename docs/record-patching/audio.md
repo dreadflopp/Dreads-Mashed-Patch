@@ -11,7 +11,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `AmbientSound`, `UseSoundFromRegion`, `EnvironmentType` | Select each value separately. |
-| `ObjectBounds` | Select each whole value separately. |
+| `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/AcousticSpaceRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
@@ -119,6 +119,7 @@ Data, OutputChannels and Attenuation are separate whole structures, including th
 | Properties | How they are patched |
 |---|---|
 | `SoundDescriptor` | Select each value separately. |
-| `ObjectBounds`, `FNAM`, `SNDD` | Select each whole value separately. |
+| `FNAM`, `SNDD` | Select each whole value separately. |
+| `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/SoundMarkerRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).

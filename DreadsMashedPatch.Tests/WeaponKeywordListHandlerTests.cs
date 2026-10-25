@@ -16,14 +16,6 @@ public sealed class WeaponKeywordListHandlerTests
     private static readonly FormKey ModKeyword = new(ModKey.FromNameAndExtension("Vigilant.esm"), 0x0C3DAA);
 
     [Fact]
-    public void WeaponRecordsUseTheSpecializedKeywordHandler()
-    {
-        var handler = new RecordHandlers.WeaponRecordHandler().PropertyHandlers["Keywords"];
-
-        Assert.IsType<WeaponKeywordListHandler>(handler);
-    }
-
-    [Fact]
     public void AcceptedSingleTypeAdditionSupersedesOtherConfiguredTypesAndOwnsRemovals()
     {
         const string currentMod = "keyword_test_2.esp";

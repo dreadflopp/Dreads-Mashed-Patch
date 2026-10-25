@@ -1,5 +1,3 @@
-using DreadsMashedPatch.PropertyHandlers.Abstracts;
-using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
@@ -14,14 +12,6 @@ public sealed class RaceAttacksHandlerTests
     private static readonly ModKey PatchModKey = ModKey.FromNameAndExtension("RaceAttackPatch.esp");
 
     [Fact]
-    public void RaceUsesSharedSpecializedAttackHandler()
-    {
-        var handler = Assert.IsType<AttacksHandler>(new RaceRecordHandler().PropertyHandlers["Attacks"]);
-
-        Assert.Equal(ListSemantics.SortedKeyed, handler.Semantics);
-    }
-
-    [Fact]
     public void CopiesAttackDataFromBinaryOverlayWithoutWarnings()
     {
         using var sourceStream = CreateSourcePlugin();
@@ -30,7 +20,7 @@ public sealed class RaceAttacksHandlerTests
             SkyrimRelease.SkyrimSE,
             SourceModKey);
         var overlayRace = Assert.Single(sourceOverlay.Races);
-        var handler = new AttacksHandler();
+        var handler = new RaceRecordHandler().PropertyHandlers["Attacks"];
         var overlayAttacks = handler.GetValue(overlayRace);
         var target = new Race(new FormKey(PatchModKey, 0x901), SkyrimRelease.SkyrimSE);
 

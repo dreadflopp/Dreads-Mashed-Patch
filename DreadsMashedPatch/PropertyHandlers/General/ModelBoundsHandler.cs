@@ -10,29 +10,28 @@ using Mutagen.Bethesda.Synthesis;
 namespace DreadsMashedPatch.PropertyHandlers.General;
 
 /// <summary>
-/// Coordinates model and object-bounds ownership. A model filename change takes the bounds from
-/// the same override; bounds-only changes use the normal addition/reversion policy only when
-/// the source model filenames match the selected model.
+/// Keeps winning bounds when the selected model filenames match the winner. Selecting different
+/// filenames takes the bounds supplied with that model; bounds are never merged independently.
 /// </summary>
 public sealed class ModelBoundsHandler : IPropertyHandler
 {
     private readonly IPropertyHandler _modelHandler;
     private readonly ObjectBoundsHandler _boundsHandler = new();
-    private readonly Func<object?, object?> _geometryIdentity;
+    private readonly Func<object?, object?> _filenameIdentity;
 
     public ModelBoundsHandler()
-        : this(new ModelHandler(), GetModelGeometryIdentity)
+        : this(new ModelHandler(), GetModelFilenameIdentity)
     {
     }
 
-    private ModelBoundsHandler(IPropertyHandler modelHandler, Func<object?, object?> geometryIdentity)
+    private ModelBoundsHandler(IPropertyHandler modelHandler, Func<object?, object?> filenameIdentity)
     {
         _modelHandler = modelHandler;
-        _geometryIdentity = geometryIdentity;
+        _filenameIdentity = filenameIdentity;
     }
 
     public static ModelBoundsHandler ForArmorWorldModel() =>
-        new(new WorldModelHandler(), GetArmorWorldModelGeometryIdentity);
+        new(new WorldModelHandler(), GetArmorWorldModelFilenameIdentity);
 
     public string PropertyName => $"{_modelHandler.PropertyName}AndBounds";
 
@@ -70,13 +69,14 @@ public sealed class ModelBoundsHandler : IPropertyHandler
     {
         var context = RequireContext(propertyContext);
         var original = (ModelBoundsValue)GetValue(originalContext.Record);
+        var winning = (ModelBoundsValue)GetValue(winningContext.Record);
         context.OriginalModel = original.Model;
         context.ForwardModel = original.Model;
         context.ModelOwner = originalContext.ModKey.ToString();
-        context.OriginalBounds = original.Bounds;
-        context.ForwardBounds = original.Bounds;
-        context.BoundsOwner = originalContext.ModKey.ToString();
-        context.PreviousBounds = original.Bounds;
+        context.SelectedFilenameIdentity = _filenameIdentity(original.Model);
+        context.WinningFilenameIdentity = _filenameIdentity(winning.Model);
+        context.ModelBounds = original.Bounds;
+        context.WinningBounds = winning.Bounds;
         context.IsResolved = false;
     }
 
@@ -87,12 +87,8 @@ public sealed class ModelBoundsHandler : IPropertyHandler
     {
         var context = RequireContext(propertyContext);
         var current = (ModelBoundsValue)GetValue(recordContext.Record);
-        var geometryChanged = !Equals(
-            _geometryIdentity(context.ForwardModel),
-            _geometryIdentity(current.Model));
-        var boundsExplicitlyChanged = !_boundsHandler.AreValuesEqual(
-            context.PreviousBounds,
-            current.Bounds);
+        var filenameIdentity = _filenameIdentity(current.Model);
+        var filenameChanged = !Equals(context.SelectedFilenameIdentity, filenameIdentity);
 
         var modelAccepted = TryUpdateValue(
             current.Model,
@@ -111,33 +107,13 @@ public sealed class ModelBoundsHandler : IPropertyHandler
             context.ModelOwner = nextModelOwner;
         }
 
-        if (modelAccepted && geometryChanged)
+        if (modelAccepted && filenameChanged)
         {
-            context.ForwardBounds = current.Bounds;
-            context.BoundsOwner = recordContext.ModKey.ToString();
+            context.SelectedFilenameIdentity = filenameIdentity;
+            context.ModelBounds = current.Bounds;
             LogCollector.Add(PropertyName,
-                $"[{PropertyName}] {recordContext.ModKey}: Model geometry changed; bounds ownership followed the model");
+                $"[{PropertyName}] {recordContext.ModKey}: Model filenames changed; source bounds follow when the selected filenames differ from the winner");
         }
-        // A rejected filename reversion must not supply bounds for a different model.
-        // Geometry identity ignores metadata/icons and includes both armor world-model paths.
-        else if (!geometryChanged && boundsExplicitlyChanged && TryUpdateValue(
-                     current.Bounds,
-                     context.OriginalBounds,
-                     context.ForwardBounds,
-                     context.BoundsOwner,
-                     recordContext,
-                     state,
-                     (left, right) => _boundsHandler.AreValuesEqual(
-                         left as IObjectBoundsGetter,
-                         right as IObjectBoundsGetter),
-                     out var nextBounds,
-                     out var nextBoundsOwner))
-        {
-            context.ForwardBounds = nextBounds as IObjectBoundsGetter;
-            context.BoundsOwner = nextBoundsOwner;
-        }
-
-        context.PreviousBounds = current.Bounds;
     }
 
     public string FormatValue(object? value)
@@ -183,11 +159,11 @@ public sealed class ModelBoundsHandler : IPropertyHandler
         return true;
     }
 
-    private static object? GetModelGeometryIdentity(object? value) => value is IModelGetter model
+    private static object? GetModelFilenameIdentity(object? value) => value is IModelGetter model
         ? AssetPathHelper.NormalizeForComparison(model.File.GivenPath).ToUpperInvariant()
         : null;
 
-    private static object GetArmorWorldModelGeometryIdentity(object? value)
+    private static object GetArmorWorldModelFilenameIdentity(object? value)
     {
         if (value is not IGenderedItemGetter<IArmorModelGetter?> models)
         {

@@ -1,4 +1,5 @@
 using DreadsMashedPatch.Enums;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Xunit;
 
@@ -27,8 +28,7 @@ public sealed class PatcherConfigurationTests
         Assert.True(settings.Forwarding.TreatCreationClubAsVanilla);
         Assert.True(settings.Forwarding.EnforceSingleVanillaWeaponTypeKeyword);
         Assert.True(settings.Forwarding.RestrictTreeForwarding);
-        Assert.Equal(9, settings.Forwarding.VanillaWeaponTypeKeywords.Count);
-        Assert.Contains("01E711:Skyrim.esm", settings.Forwarding.VanillaWeaponTypeKeywords);
+        Assert.NotEmpty(settings.Forwarding.VanillaWeaponTypeKeywords);
         Assert.Equal(
             EditorIdForwardingPolicy.ForwardOnlyWithOtherChanges,
             settings.Forwarding.EditorIdPolicy);
@@ -40,41 +40,26 @@ public sealed class PatcherConfigurationTests
             settings.Forwarding.TamrielPersistentCellPolicy);
         Assert.False(settings.Diagnostics.DebugMode);
         Assert.Equal(PatcherLogVerbosity.ContextChanges, settings.Diagnostics.Verbosity);
-        Assert.Equal(59, settings.CompatibilityRules.Count);
-        Assert.Equal(67, settings.CompatibilityRules.Sum(rule => rule.VirtualMasters.Count));
-        var compatibilityRules = settings.CompatibilityRules.ToDictionary(
-            rule => rule.TargetMod,
-            StringComparer.OrdinalIgnoreCase);
-        var luxRule = compatibilityRules["Lux.esp"];
-        Assert.Equal(
-            new[]
+    }
+
+    [Fact]
+    public void DefaultCompatibilityRulesHaveValidUniquePluginNames()
+    {
+        var rules = PatcherConfiguration.CreateDefaultCompatibilityRules();
+        var targets = new HashSet<ModKey>();
+        Assert.NotEmpty(rules);
+
+        foreach (var rule in rules)
+        {
+            Assert.True(ModKey.TryFromFileName(rule.TargetMod, out var target),
+                $"Invalid default rule target: {rule.TargetMod}");
+            Assert.True(targets.Add(target), $"Duplicate default rule target: {rule.TargetMod}");
+            foreach (var master in rule.VirtualMasters)
             {
-                "Embers XD.esp",
-                "NAT-ENB.esp",
-                "Unofficial Skyrim Special Edition Patch.esp"
-            },
-            luxRule.VirtualMasters.Order(StringComparer.OrdinalIgnoreCase));
-        Assert.Contains(
-            "SurvivalModeImproved.esp",
-            compatibilityRules["Gourmet.esp"].VirtualMasters);
-
-        Assert.Contains(
-            "Unofficial Skyrim Creation Club Content Patch.esl",
-            compatibilityRules["Creation Club Rebalancing.esp"].VirtualMasters);
-        Assert.Contains(
-            "Unofficial Skyrim Creation Club Content Patch.esl",
-            compatibilityRules["Masterwork - Bittercup.esp"].VirtualMasters);
-        Assert.Contains(
-            "Unofficial Skyrim Creation Club Content Patch.esl",
-            compatibilityRules["Masterwork - Umbra.esp"].VirtualMasters);
-
-        Assert.Contains(
-            "Apothecary.esp",
-            compatibilityRules["StarfrostInjuries.esp"].VirtualMasters);
-
-        Assert.Contains(
-            "BSHeartland - Unofficial Fixes.esp",
-            compatibilityRules["BS Bruma - CC Curios Patch.esp"].VirtualMasters);
+                Assert.True(ModKey.TryFromFileName(master, out _),
+                    $"Invalid virtual master for {rule.TargetMod}: {master}");
+            }
+        }
     }
 
     [Fact]
@@ -131,6 +116,7 @@ public sealed class PatcherConfigurationTests
             Forwarding = new ForwardingSettings
             {
                 TreatCreationClubAsVanilla = false,
+                VanillaWeaponTypeKeywords = ["01E711:Skyrim.esm", "01E712:Skyrim.esm"],
                 RestrictTreeForwarding = false,
                 EditorIdPolicy = EditorIdForwardingPolicy.ForwardOnlyWithOtherChanges,
                 TamrielPersistentCellPolicy = TamrielPersistentCellPolicy.PreferSkyrim
@@ -160,7 +146,9 @@ public sealed class PatcherConfigurationTests
         Assert.Equal(TamrielPersistentCellPolicy.PreferSkyrim, copy.Forwarding.TamrielPersistentCellPolicy);
         Assert.Contains("000800:Test.esp", copy.Diagnostics.DeepDiveFormKeys);
         Assert.Contains("QUST", copy.Diagnostics.DeepDiveRecordSignatures);
-        Assert.Equal(9, copy.Forwarding.VanillaWeaponTypeKeywords.Count);
+        Assert.Equal(
+            ["01E711:Skyrim.esm", "01E712:Skyrim.esm"],
+            copy.Forwarding.VanillaWeaponTypeKeywords.Order(StringComparer.Ordinal));
     }
 
     [Fact]

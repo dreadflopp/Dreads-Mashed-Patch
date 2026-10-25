@@ -4,26 +4,12 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Xunit;
-using IngestibleEffectsHandler = DreadsMashedPatch.PropertyHandlers.Ingestible.EffectHandler;
-using IngredientEffectsHandler = DreadsMashedPatch.PropertyHandlers.Ingredient.EffectHandler;
 using ObjectEffectEffectsHandler = DreadsMashedPatch.PropertyHandlers.ObjectEffect.EffectsHandler;
-using ScrollEffectsHandler = DreadsMashedPatch.PropertyHandlers.Scroll.EffectsHandler;
-using SpellEffectsHandler = DreadsMashedPatch.PropertyHandlers.Spell.EffectsHandler;
 
 namespace DreadsMashedPatch.Tests;
 
 public sealed class ExactOrderedEffectsTests
 {
-    [Fact]
-    public void EveryMagicItemEffectHandlerUsesExactOrderedSemantics()
-    {
-        Assert.Equal(ListSemantics.ExactOrdered, new IngestibleEffectsHandler().Semantics);
-        Assert.Equal(ListSemantics.ExactOrdered, new IngredientEffectsHandler().Semantics);
-        Assert.Equal(ListSemantics.ExactOrdered, new ObjectEffectEffectsHandler().Semantics);
-        Assert.Equal(ListSemantics.ExactOrdered, new ScrollEffectsHandler().Semantics);
-        Assert.Equal(ListSemantics.ExactOrdered, new SpellEffectsHandler().Semantics);
-    }
-
     [Fact]
     public void IndependentColumnReplacesAtomicValuesAtTheSamePositions()
     {

@@ -271,8 +271,13 @@ public sealed class MainWindowViewModel : BindableBase
     private void OnCompatibilityRulePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(VirtualMasterRuleViewModel.TargetMod)
-            || sender is not VirtualMasterRuleViewModel changedRule
-            || string.IsNullOrWhiteSpace(changedRule.TargetMod))
+            || sender is not VirtualMasterRuleViewModel changedRule)
+        {
+            return;
+        }
+
+        SortCompatibilityRules();
+        if (string.IsNullOrWhiteSpace(changedRule.TargetMod))
         {
             return;
         }
@@ -299,6 +304,26 @@ public sealed class MainWindowViewModel : BindableBase
     {
         rule.PropertyChanged += OnCompatibilityRulePropertyChanged;
         CompatibilityRules.Add(rule);
+        SortCompatibilityRules();
+    }
+
+    private void SortCompatibilityRules()
+    {
+        var selectedRule = SelectedCompatibilityRule;
+        var sortedRules = CompatibilityRules
+            .OrderBy(rule => rule.TargetMod.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        for (var index = 0; index < sortedRules.Length; index++)
+        {
+            var currentIndex = CompatibilityRules.IndexOf(sortedRules[index]);
+            if (currentIndex != index)
+            {
+                CompatibilityRules.Move(currentIndex, index);
+            }
+        }
+
+        SelectedCompatibilityRule = selectedRule;
     }
 
     private VirtualMasterRuleViewModel? FindRuleByTarget(string targetMod)

@@ -55,15 +55,16 @@ public sealed class ModelBoundsHandlerTests
     }
 
     [Fact]
-    public void BoundsOnlyChangeStillForwardsWhenModelDoesNotChange()
+    public void BoundsOnlyCorrectionDoesNotReplaceWinningBounds()
     {
         var original = CreateStatic("Meshes/Original.nif", 1);
         var boundsEdit = CreateStatic("Meshes/Original.nif", 2);
 
-        var result = Resolve(original, (BoundsModKey, boundsEdit));
+        var winner = CreateStatic("Meshes/Original.nif", 1);
+        var result = Resolve(original, (BoundsModKey, boundsEdit), (ModelModKey, winner));
 
         Assert.Equal("Meshes/Original.nif", GetModelPath(result));
-        Assert.Equal(Bounds(2).Second, result.Bounds!.Second);
+        Assert.Equal(Bounds(1).Second, result.Bounds!.Second);
     }
 
     [Fact]
@@ -79,7 +80,7 @@ public sealed class ModelBoundsHandlerTests
     }
 
     [Fact]
-    public void LaterExplicitBoundsChangeCanOverrideModelOwnedBounds()
+    public void WinningBoundsAreKeptWhenWinningModelFilenameIsSelected()
     {
         var original = CreateStatic("Meshes/Original.nif", 1);
         var modelEdit = CreateStatic("Meshes/Replacer.nif", 7);
@@ -95,7 +96,7 @@ public sealed class ModelBoundsHandlerTests
     }
 
     [Fact]
-    public void ModelMetadataChangeDoesNotClaimBounds()
+    public void ModelMetadataChangeKeepsWinningBounds()
     {
         var original = CreateStatic("Meshes/Original.nif", 1, [1]);
         var boundsEdit = CreateStatic("Meshes/Original.nif", 7, [1]);
@@ -107,7 +108,7 @@ public sealed class ModelBoundsHandlerTests
             (ModelModKey, metadataEdit));
 
         Assert.Equal(new byte[] { 2 }, Assert.IsAssignableFrom<IModelGetter>(result.Model).Data!.Value.ToArray());
-        Assert.Equal(Bounds(7).Second, result.Bounds!.Second);
+        Assert.Equal(Bounds(1).Second, result.Bounds!.Second);
     }
 
     [Fact]

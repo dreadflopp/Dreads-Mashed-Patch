@@ -76,6 +76,7 @@ public sealed class PatcherConfiguration
             "cutting room floor.esp"),
         Rule("AI Overhaul.esp", "Unofficial Skyrim Special Edition Patch.esp"),
         Rule("water mod.esp", "Unofficial Skyrim Special Edition Patch.esp"),
+        Rule("PathsOfEmpyrean.esp", "Unofficial Skyrim Special Edition Patch.esp"),
 
         Rule("Creation Club Rebalancing.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
         Rule("Masterwork - Bittercup.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),

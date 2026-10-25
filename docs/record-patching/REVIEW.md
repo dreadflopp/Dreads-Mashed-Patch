@@ -25,41 +25,50 @@ in the inventory and public record pages.
 | LENS | Both globals and the ordered nullable sprite sequence form one value. Retain order, duplicates, nullability and detached nested data. Compare serialized RGB separately from Opacity; do not compare non-serialized CLR alpha. LFSP counts are generated. | [AdditionalRecordSupportTests](../../DreadsMashedPatch.Tests/AdditionalRecordSupportTests.cs) |
 | LTEX | Scalar friction/restitution remain independent; snow uses approved nullable flag handling. Absent INAM differs from present zero. Grass membership is sorted by FormID. | [AdditionalRecordSupportTests](../../DreadsMashedPatch.Tests/AdditionalRecordSupportTests.cs) |
 | NPC Perks and GLOB/GMST | Perks must populate an absent destination and preserve selected presence. Subtype histories resolve through the shared group getter and stop at the latest eligible subtype boundary; no older subtype reconnection or scalar conversion. | [UserReportedFailureRegressionTests](../../DreadsMashedPatch.Tests/UserReportedFailureRegressionTests.cs), [diagnostic details](../USER-REPORTED-FAILURES-2026-10-10.md) |
-| Asset paths and model bounds | Preserve GivenPath; accepted filename changes carry bounds. Bounds-only selection requires matching the selected filename identity, including both ARMO gender paths. Keep the shared selection gate rather than adding record-specific handlers. See the [model/bounds decisions](#model-and-bounds). ARMA model metadata has a separate comparison policy. | [AssetPathHandlingTests](../../DreadsMashedPatch.Tests/AssetPathHandlingTests.cs), [ModelBoundsHandlerTests](../../DreadsMashedPatch.Tests/ModelBoundsHandlerTests.cs), [ModelBoundsForwardingTests](../../DreadsMashedPatch.Tests/ModelBoundsForwardingTests.cs), [ModelHandlerRegressionTests](../../DreadsMashedPatch.Tests/ModelHandlerRegressionTests.cs) |
+| Asset paths and model bounds | Preserve GivenPath. Final filenames matching the winner retain winning bounds; selecting different filenames carries their source bounds. Bounds are never independently merged, including standalone registrations. See the [model/bounds decisions](#model-and-bounds). ARMA model metadata has a separate comparison policy. | [AssetPathHandlingTests](../../DreadsMashedPatch.Tests/AssetPathHandlingTests.cs), [ModelBoundsHandlerTests](../../DreadsMashedPatch.Tests/ModelBoundsHandlerTests.cs), [ModelBoundsForwardingTests](../../DreadsMashedPatch.Tests/ModelBoundsForwardingTests.cs), [ModelHandlerRegressionTests](../../DreadsMashedPatch.Tests/ModelHandlerRegressionTests.cs) |
 | Collection identity | Sorted keys, aligned occurrence IDs, exact positions and whole sequences are distinct policies. Do not use full row equality as a substitute for the reviewed identity key. | [XEditListAlignmentTests](../../DreadsMashedPatch.Tests/XEditListAlignmentTests.cs), [ListSemanticsTests](../../DreadsMashedPatch.Tests/ListSemanticsTests.cs), [ExactOrderedEffectsTests](../../DreadsMashedPatch.Tests/ExactOrderedEffectsTests.cs), [CollectionSemanticsBinaryRoundTripTests](../../DreadsMashedPatch.Tests/CollectionSemanticsBinaryRoundTripTests.cs) |
 
 ## Model and bounds
 
 All record types registered with `ModelAndBounds` and ARMO's `WorldModelAndBounds`
-share `ModelBoundsHandler`. An accepted filename change takes the source's bounds;
-a bounds-only edit must match the selected normalized filename identity before
-ordinary addition/reversion permission is evaluated. ARMO uses both male/female
-world-model paths, including absent sides. Metadata/icons remain part of model
-selection but do not define filename identity. Case and slash direction do not
-distinguish filenames. Accepted declared/virtual-master model reversions still
-take the reverting source's bounds.
+share `ModelBoundsHandler`. Model values keep ordinary selection and declared/
+virtual-master reversion permissions. The final selected normalized filenames
+determine bounds: matching the effective winner retains its bounds; otherwise
+the bounds come from the source of the accepted filename change. The context
+retains the winner and filename-source bounds separately so metadata-only edits
+and returning to the winner's filenames cannot replace winning bounds. ARMO
+compares both male/female paths, including absent sides. Case and slash direction
+do not distinguish filenames. Metadata/icons remain in model selection but do
+not define filename identity. Optional bounds retain the chosen source's presence.
 
-The rejected approach was to let every adjacent bounds difference proceed through
-ordinary selection: a later source carrying Original.nif plus new bounds could
-have its filename rejected while replacing Replacement.nif's bounds. An inherited
-bounds edit could do the same. Comparing adjacent bounds still identifies candidate
-edits; matching the selected filename makes that candidate eligible. Do not replace
-this with unconditional atomic grouping, which would lose valid bounds-only fixes.
+Independent bounds forwarding was deliberately removed, with no opt-in setting.
+A correction such as USSEP's nonzero circlet bounds may be useful, but a later
+same-path mesh replacement may intentionally restore original bounds. Plugin
+records cannot establish the deployed mesh's geometry. Preserving a baseline
+conflict is preferred to introducing a new one while guessing at asset ownership.
+Removing only the bounds-only branch is insufficient: a filename accepted earlier
+in the history may already match the final winner, whose bounds must then stay.
 
 The [inventory](INVENTORY.md#record-and-property-matrix) gives each record's shared
 registration and specialized exceptions. ASPC, DUAL, ENCH, LVLI, LVSP, NPC_, SOUN,
-SPEL and TXST retain independent complete bounds:
-they have no corresponding main model filename to coordinate. NPC appearance and
-referenced models are outside this direct model/bounds rule. TREE retains its
-winner-owned restriction by default; unrestricted forwarding uses the shared gate.
-No handler was replaced, no duplicate implementation was added, and approved flag
-handlers remain unchanged.
+SPEL and TXST have no corresponding main model filename and retain winning bounds.
+Their `ObjectBoundsHandler` follows the last eligible override in the shared
+chronological pass rather than applying addition/reversion permissions. Its
+getter/setter/equality still serve model/bounds copying; no parallel handler is
+registered. NPC appearance and referenced models remain specialized. TREE retains
+its winner-owned restriction by default; unrestricted forwarding uses the same
+shared model/bounds rule. Approved flag handlers and Armature remain unchanged.
+
+Removed state: independent original/previous bounds and bounds ownership, the
+bounds-only selection branch, and the misleading geometry-identity naming. Filename
+identity is a path comparison, not evidence that a same-path mesh is unchanged.
 
 `ModelBoundsForwardingTests` discovers every shared registration and covers both
 rejected-filename scenarios through patch processing and binary write/reload,
-plus matching-filename corrections. It also covers both armor genders, absent
-counterparts, path spelling, declared/virtual-master reversions, restricted TREE,
-and the independent-bounds registrations. These synthetic tests do not inspect
+plus winner preservation, ignored bounds corrections, forwarded metadata, and
+returning to winning filenames. It also covers both armor genders, absent
+counterparts, path spelling, declared/virtual-master reversions, optional bounds
+binary presence, restricted TREE, and standalone bounds. These synthetic tests do not inspect
 the deployed mesh for a same-path replacement or establish gameplay compatibility.
 
 ## Appearance boundaries

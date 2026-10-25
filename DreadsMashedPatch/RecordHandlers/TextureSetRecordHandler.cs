@@ -13,7 +13,7 @@ namespace DreadsMashedPatch.RecordHandlers
     // Migration note:
     // - Kept specialized/atomic: TX00-TX07 plus typed DNAM flags form one authored texture
     //   definition; the complete DODT decal payload remains a separate cohesive value.
-    // - Independent: ObjectBounds remains independently forwardable.
+    // - Bounds policy: ObjectBounds stays with the effective winner; there is no main model filename to coordinate.
     // - Flag decision: TextureDefinition delegates DNAM presence/bit copying and equality to the
     //   project-approved typed nullable flag handler rather than generic reflection.
     // - Rationale: DNAM changes how several texture slots are interpreted, and independently

@@ -33,7 +33,7 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Projectile`, `Explosion`, `EffectShader`, `HitEffectArt`, `ImpactDataSet`, `InheritScale` | Select each value separately. |
-| `ObjectBounds` | Select each whole value separately. |
+| `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 
 [Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/DualCastDataRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 

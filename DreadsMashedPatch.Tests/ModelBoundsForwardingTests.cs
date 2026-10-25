@@ -58,11 +58,17 @@ public sealed class ModelBoundsForwardingTests : IDisposable
         AssertModelAndBounds(handler, Assert.Single(overlay.EnumerateMajorRecords()), "Replacement.nif", expectedSize);
     }
 
-    public static IEnumerable<object[]> SharedRecordTypes() => typeof(ArmorRecordHandler).Assembly.GetTypes()
+    private static IEnumerable<AbstractRecordHandler> RecordHandlers() => typeof(ArmorRecordHandler).Assembly.GetTypes()
         .Where(type => !type.IsAbstract && typeof(AbstractRecordHandler).IsAssignableFrom(type)
             && type.GetConstructor(Type.EmptyTypes) != null)
-        .Select(type => (AbstractRecordHandler)System.Activator.CreateInstance(type)!)
+        .Select(type => (AbstractRecordHandler)System.Activator.CreateInstance(type)!);
+
+    public static IEnumerable<object[]> SharedRecordTypes() => RecordHandlers()
         .Where(handler => handler.PropertyHandlers.Values.OfType<ModelBoundsHandler>().Any())
+        .Select(handler => new object[] { handler.GetType().Name.Replace("RecordHandler", "") });
+
+    public static IEnumerable<object[]> StandaloneBoundsRecordTypes() => RecordHandlers()
+        .Where(handler => handler.PropertyHandlers.Values.OfType<ObjectBoundsHandler>().Any())
         .Select(handler => new object[] { handler.GetType().Name.Replace("RecordHandler", "") });
 
     public static IEnumerable<object[]> GeometryConflictCases() => SharedRecordTypes()
@@ -79,27 +85,84 @@ public sealed class ModelBoundsForwardingTests : IDisposable
 
     [Theory]
     [MemberData(nameof(SharedRecordTypes))]
-    public void BoundsCorrectionForSelectedGeometryRemainsValid(string type)
+    public void BoundsOnlyCorrectionsDoNotChangeTheWinner(string type)
     {
         var handler = Handler(type);
         var patch = Run(handler, Record(type, "Original.nif", 1),
             Record(type, "Replacement.nif", 7), Record(type, "Replacement.nif", 9),
             Record(type, "Replacement.nif", 1));
-        AssertModelAndBounds(handler, Assert.Single(patch.EnumerateMajorRecords()), "Replacement.nif", 9);
+        Assert.Empty(patch.EnumerateMajorRecords());
+    }
+
+    [Theory]
+    [MemberData(nameof(SharedRecordTypes))]
+    public void ForwardedModelMetadataKeepsWinningBounds(string type)
+    {
+        var handler = Handler(type);
+        var patch = Run(handler, Record(type, "Original.nif", 1, [1]),
+            Record(type, "Original.nif", 7, [2]), Record(type, "Original.nif", 1, [1]));
+        var result = Assert.Single(patch.EnumerateMajorRecords());
+        AssertModelAndBounds(handler, result, "Original.nif", 1);
+        Assert.Equal(new byte[] { 2 }, ModelOf(result).Data!.Value.ToArray());
+    }
+
+    [Theory]
+    [MemberData(nameof(SharedRecordTypes))]
+    public void ForwardedFilenameKeepsItsSourceBoundsDespiteLaterBoundsEdits(string type)
+    {
+        var handler = Handler(type);
+        var patch = Run(handler, Record(type, "Original.nif", 1),
+            Record(type, "Replacement.nif", 7), Record(type, "Replacement.nif", 9),
+            Record(type, "Original.nif", 1));
+        AssertModelAndBounds(handler, Assert.Single(patch.EnumerateMajorRecords()), "Replacement.nif", 7);
+    }
+
+    [Theory]
+    [MemberData(nameof(SharedRecordTypes))]
+    public void ReturningToWinningFilenameUsesWinningBoundsRatherThanEarlierSourceBounds(string type)
+    {
+        var handler = Handler(type);
+        var patch = Run(handler, Record(type, "Original.nif", 1, [1]),
+            Record(type, "Replacement.nif", 7, [1]), Record(type, "Original.nif", 5, [2]),
+            Record(type, "Original.nif", 9, [1]));
+        var result = Assert.Single(patch.EnumerateMajorRecords());
+        AssertModelAndBounds(handler, result, "Original.nif", 9);
+        Assert.Equal(new byte[] { 2 }, ModelOf(result).Data!.Value.ToArray());
     }
 
     [Theory]
     [InlineData("Armor")]
     [InlineData("Static")]
-    public void BoundsCorrectionAcceptsEquivalentPathCaseAndSeparators(string type)
+    public void EquivalentPathCaseAndSeparatorsKeepWinningBounds(string type)
     {
         var handler = Handler(type);
-        var correction = Record(type, "replacement.nif", 9);
-        var model = correction is Armor armor ? armor.WorldModel!.Male!.Model! : ((IModeled)correction).Model!;
-        model.File = new AssetLink<SkyrimModelAssetType>(@"meshes\replacement.nif");
-        var patch = Run(handler, Record(type, "Original.nif", 1), Record(type, "Replacement.nif", 7),
-            correction, Record(type, "Replacement.nif", 1));
-        AssertModelAndBounds(handler, Assert.Single(patch.EnumerateMajorRecords()), "Replacement.nif", 9);
+        var winner = Record(type, "original.nif", 9, [1]);
+        ModelOf(winner).File = new AssetLink<SkyrimModelAssetType>(@"meshes\original.nif");
+        var patch = Run(handler, Record(type, "Original.nif", 1, [1]),
+            Record(type, "Original.nif", 7, [2]), winner);
+        AssertModelAndBounds(handler, Assert.Single(patch.EnumerateMajorRecords()), "Original.nif", 9);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void OptionalBoundsPreserveAbsenceFromTheChosenSourceThroughBinaryOutput(bool changeFilename)
+    {
+        var original = (SoulGem)Record("SoulGem", "Original.nif", 1, [1]);
+        var earlier = (SoulGem)Record("SoulGem", changeFilename ? "Replacement.nif" : "Original.nif", 7, [2]);
+        var winner = (SoulGem)Record("SoulGem", "Original.nif", 1, [1]);
+        if (changeFilename) earlier.ObjectBounds = null;
+        else winner.ObjectBounds = null;
+
+        var patch = Run(new SoulGemRecordHandler(), original, earlier, winner);
+        var result = Assert.Single(patch.SoulGems);
+        Assert.Equal(earlier.Model!.File.GivenPath, result.Model!.File.GivenPath);
+        Assert.Null(result.ObjectBounds);
+        using var stream = new MemoryStream();
+        patch.WriteToBinary(stream);
+        stream.Position = 0;
+        using var reloaded = SkyrimMod.CreateFromBinaryOverlay(stream, SkyrimRelease.SkyrimSE, PatchKey);
+        Assert.Null(Assert.Single(reloaded.SoulGems).ObjectBounds);
     }
 
     [Theory]
@@ -157,23 +220,22 @@ public sealed class ModelBoundsForwardingTests : IDisposable
         Assert.Empty(patch.EnumerateMajorRecords());
     }
 
-    [Fact]
-    public void IndependentBoundsHandlersHaveNoMainModelToCoordinate()
+    [Theory]
+    [MemberData(nameof(StandaloneBoundsRecordTypes))]
+    public void StandaloneBoundsRemainWinnerOwned(string type)
     {
-        foreach (var type in typeof(AbstractRecordHandler).Assembly.GetTypes().Where(type =>
-                     !type.IsAbstract && typeof(AbstractRecordHandler).IsAssignableFrom(type)
-                     && type.GetConstructor(Type.EmptyTypes) != null))
+        var handler = Handler(type);
+        IMajorRecord Version(short size)
         {
-            var handler = (AbstractRecordHandler)System.Activator.CreateInstance(type)!;
-            if (!handler.PropertyHandlers.Values.OfType<ObjectBoundsHandler>().Any()) continue;
-
-            var record = NewRecord(type.Name.Replace("RecordHandler", ""));
-            Assert.False(record is IModeledGetter, type.Name);
-            Assert.False(record is IArmorGetter, type.Name);
-            var bounds = Assert.IsType<ObjectBoundsHandler>(handler.PropertyHandlers["ObjectBounds"]);
-            bounds.SetValue(record, new ObjectBounds { Second = new P3Int16(2, 3, 4) });
-            Assert.Equal(new P3Int16(2, 3, 4), bounds.GetValue(record)!.Second);
+            var record = NewRecord(type);
+            Assert.False(record is IModeledGetter, type);
+            Assert.False(record is IArmorGetter, type);
+            handler.PropertyHandlers["ObjectBounds"].SetValue(record,
+                new ObjectBounds { Second = new P3Int16(size, size, size) });
+            return record;
         }
+
+        Assert.Empty(Run(handler, Version(1), Version(7), Version(1)).EnumerateMajorRecords());
     }
 
     private static AbstractRecordHandler Handler(string type) =>
@@ -186,10 +248,14 @@ public sealed class ModelBoundsForwardingTests : IDisposable
         return (IMajorRecord)System.Activator.CreateInstance(recordType, RecordKey, SkyrimRelease.SkyrimSE)!;
     }
 
-    private static IMajorRecord Record(string type, string path, short bounds)
+    private static IMajorRecord Record(string type, string path, short bounds, byte[]? modelData = null)
     {
         var record = NewRecord(type);
-        var model = new Model { File = new AssetLink<SkyrimModelAssetType>("Meshes/" + path) };
+        var model = new Model
+        {
+            File = new AssetLink<SkyrimModelAssetType>("Meshes/" + path),
+            Data = modelData == null ? (MemorySlice<byte>?)null : new MemorySlice<byte>(modelData)
+        };
         if (record is Armor armor)
             armor.WorldModel = new GenderedItem<ArmorModel?>(new ArmorModel { Model = model }, null);
         else
@@ -201,6 +267,10 @@ public sealed class ModelBoundsForwardingTests : IDisposable
         });
         return record;
     }
+
+    private static Model ModelOf(IMajorRecord record) => record is Armor armor
+        ? armor.WorldModel!.Male!.Model!
+        : ((IModeled)record).Model!;
 
     private static void AssertModelAndBounds(AbstractRecordHandler handler, IMajorRecordGetter record, string path, short size)
     {
