@@ -52,7 +52,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     newAdapter.ObjectFormat = destinationAdapter.ObjectFormat;
                 }
 
-                // Add all scripts from the list
                 foreach (var script in value)
                 {
                     if (script == null) continue;

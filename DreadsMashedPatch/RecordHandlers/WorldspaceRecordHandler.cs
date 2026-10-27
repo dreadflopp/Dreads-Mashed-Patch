@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins.Records;
@@ -11,20 +12,24 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: independent links, assets, translated name, and flags use shared semantic handlers.
-    // - Kept specialized: LOD Data, World Map Offset, and Distant LOD use WRLD-aware aggregate/default handlers.
-    // - Intentionally excluded: MHDT MaxHeight is generated/no-copy height data; NNAM CanopyShadow is unused/cpIgnore;
-    //   object bounds and WRLD child-group/runtime data remain owned by the winning override.
-    // - Coupled forwarding: parent inheritance fields and fixed-dimension controls establish complete-record
-    //   ownership boundaries so null local values cannot be combined with incompatible inheritance flags.
-    // - Rationale: xEdit models these as removable/required structures, and generated Mutagen copies are required
-    //   to preserve overlay form links and aggregate payloads.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // Parent inheritance and fixed-dimension controls establish complete-record ownership boundaries;
+    // null local values must not combine with incompatible inheritance flags. MaxHeight is generated/no-copy,
+    // CanopyShadow is unused/cpIgnore, and child-group/runtime data remain outside independent forwarding.
     public class WorldspaceRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         private static readonly IReadOnlySet<string> StructuralPropertyNames = new HashSet<string>(StringComparer.Ordinal)
         {
             "Parent",
@@ -65,7 +70,6 @@ namespace DreadsMashedPatch.RecordHandlers
             { "HdLodNormalTexture", new HdLodNormalTextureHandler() },
             { "WaterEnvironmentMap", new WaterEnvironmentMapHandler() },
         };
-
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,

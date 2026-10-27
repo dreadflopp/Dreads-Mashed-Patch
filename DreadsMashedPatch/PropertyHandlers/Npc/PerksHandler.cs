@@ -39,11 +39,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return true;
         }
 
-        /// <summary>
-        /// Formats a list of perks into a string.
-        /// </summary>
-        /// <param name="perks">The list of perks to format.</param>
-        /// <returns>A string representation of the perks.</returns>
         public string FormatPerkList(List<IPerkPlacementGetter>? perks)
         {
             if (perks == null || perks.Count == 0)
@@ -52,12 +47,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return string.Join(", ", perks.Select(p => FormatItem(p)));
         }
 
-        /// <summary>
-        /// Checks if two perks are equal.
-        /// </summary>
-        /// <param name="item1">The first perk to compare.</param>
-        /// <param name="item2">The second perk to compare.</param>
-        /// <returns>True if the perks are equal, false otherwise.</returns>
         protected override bool IsItemEqual(IPerkPlacementGetter? item1, IPerkPlacementGetter? item2)
         {
             // Only check perk reference equality, not rank
@@ -65,12 +54,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return IsPerkReferenceEqual(item1, item2);
         }
 
-        /// <summary>
-        /// Checks if two perks are equal by their reference.
-        /// </summary>
-        /// <param name="item1">The first perk to compare.</param>
-        /// <param name="item2">The second perk to compare.</param>
-        /// <returns>True if the perks are equal, false otherwise.</returns>
         protected bool IsPerkReferenceEqual(IPerkPlacementGetter? item1, IPerkPlacementGetter? item2)
         {
             if (ReferenceEquals(item1, item2)) return true;
@@ -78,12 +61,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return item1.Perk.FormKey.Equals(item2.Perk.FormKey);
         }
 
-        /// <summary>
-        /// Checks if two perks are equal by their rank.
-        /// </summary>
-        /// <param name="item1">The first perk to compare.</param>
-        /// <param name="item2">The second perk to compare.</param>
-        /// <returns>True if the perks are equal, false otherwise.</returns>
         protected bool IsRankEqual(IPerkPlacementGetter? item1, IPerkPlacementGetter? item2)
         {
             if (ReferenceEquals(item1, item2)) return true;
@@ -91,22 +68,12 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return item1.Rank == item2.Rank;
         }
 
-        /// <summary>
-        /// Formats a perk into a string.
-        /// </summary>
-        /// <param name="item">The perk to format.</param>
-        /// <returns>A string representation of the perk.</returns>
         protected override string FormatItem(IPerkPlacementGetter? item)
         {
             if (item == null) return "null";
             return $"{item.Perk.FormKey}(Rank {item.Rank})";
         }
 
-        /// <summary>
-        /// Sets the perks of an NPC.
-        /// </summary>
-        /// <param name="record">The NPC to set the perks of.</param>
-        /// <param name="value">The perks to set.</param>
         public override void SetValue(IMajorRecord record, List<IPerkPlacementGetter>? value)
         {
             if (record is INpc npc)
@@ -122,11 +89,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             }
         }
 
-        /// <summary>
-        /// Gets the perks of an NPC.
-        /// </summary>
-        /// <param name="record">The context of the NPC.</param>
-        /// <returns>The perks of the NPC.</returns>
         public override List<IPerkPlacementGetter>? GetValue(IMajorRecordGetter record)
         {
             if (record is INpcGetter npc)
@@ -151,20 +113,16 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             // Collect items to modify to avoid collection modification during enumeration
             var itemsToModify = new List<(ListPropertyValueContext<IPerkPlacementGetter> oldItem, ListPropertyValueContext<IPerkPlacementGetter> newItem)>();
 
-            // Check each current perk for rank changes
             foreach (var forwardItem in currentForwardItems.Where(i => !i.IsRemoved))
             {
                 var matchingRecordItem = recordItems.FirstOrDefault(r => IsPerkReferenceEqual(r, forwardItem.Value));
                 if (matchingRecordItem != null && !IsRankEqual(matchingRecordItem, forwardItem.Value))
                 {
-                    // Rank has changed, check if we can update it
                     var canModify = HasPermissionsToModify(recordMod, forwardItem.OwnerMod);
                     if (canModify)
                     {
-                        // Create new item with updated rank
                         var newItem = new ListPropertyValueContext<IPerkPlacementGetter>(matchingRecordItem!, context.ModKey.ToString());
 
-                        // Collect for later modification
                         itemsToModify.Add((forwardItem, newItem));
                         LogCollector.Add(PropertyName, $"[{PropertyName}] {context.ModKey}: Updating rank for perk {FormatItem(matchingRecordItem)} (new owner: {newItem.OwnerMod}) Success");
                     }
@@ -175,7 +133,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
                 }
             }
 
-            // Apply modifications after iteration is complete
             foreach (var (oldItem, newItem) in itemsToModify)
             {
                 var index = currentForwardItems.IndexOf(oldItem);

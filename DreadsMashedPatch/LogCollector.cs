@@ -133,9 +133,8 @@ namespace DreadsMashedPatch
 
         private static bool ShouldEmit(string identifier, string line)
         {
-            // Actionable diagnostics must bypass verbosity filtering. Add remains
-            // backwards-compatible with existing handlers while new code should use
-            // AddWarning/AddError so severity does not depend on message wording.
+            // Actionable diagnostics bypass verbosity filtering. Prefer AddWarning/AddError
+            // when severity is known so classification does not depend on message wording.
             if (IsDiagnostic(line, "Warning") || IsDiagnostic(line, "Error"))
             {
                 return true;
@@ -231,10 +230,10 @@ namespace DreadsMashedPatch
         }
 
         /// <summary>
-        /// Removes non-printable control characters from a string while preserving printable characters.
+        /// Escapes control characters for diagnostics while retaining tabs and line breaks.
         /// </summary>
         /// <param name="input">The input string to sanitize</param>
-        /// <returns>A sanitized string with control characters removed</returns>
+        /// <returns>Text with non-whitespace control characters represented as hexadecimal markers</returns>
         private static string SanitizeString(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -244,17 +243,14 @@ namespace DreadsMashedPatch
 
             foreach (char c in input)
             {
-                // Keep printable characters and essential whitespace
                 if (char.IsControl(c))
                 {
-                    // Only preserve essential whitespace characters
                     if (c == '\t' || c == '\n' || c == '\r' || c == ' ')
                     {
                         sanitized.Append(c);
                     }
                     else
                     {
-                        // Replace all other control characters with hex representation
                         sanitized.Append($"<0x{(int)c:X2}>");
                     }
                 }

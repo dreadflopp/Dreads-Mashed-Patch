@@ -14,10 +14,15 @@ Placement keeps position and rotation together at the project’s comparison pre
 |---|---|
 | `Base`, `EncounterZone`, `LevelModifier`, `MerchantContainer`, `Count`, `Radius`, `Health`, `PersistentLocation`, `LocationReference`, `IsIgnoredBySandbox`, `HeadTrackingWeight`, `Horse`, `FavorCost`, `Owner`, `FactionRank`, `Emittance`, `MultiBoundReference`, `IsIgnoredBySandbox2`, `Scale` | Select each value separately. |
 | `RagdollData`, `RagdollBipedData`, `Patrol`, `ActivateParents`, `LinkedReferenceColor`, `EnableParent`, `Placement` | Select each whole value separately. |
-| `LinkedReferences`, `VirtualMachineAdapter` | Merge rows by key. |
+| `LinkedReferences` | Merge rows by key. |
 | `LocationRefTypes` | Merge aligned rows in order. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedNpcRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="parw-placedarrow"></a>
 
@@ -29,13 +34,17 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 |---|---|
 | `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
 | `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
-| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
 | `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
 | `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
 | `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
 | `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedArrowRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="pbar-placedbarrier"></a>
 
@@ -47,13 +56,17 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 |---|---|
 | `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
 | `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
-| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
 | `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
 | `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
 | `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
 | `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedBarrierRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="pbea-placedbeam"></a>
 
@@ -65,13 +78,17 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 |---|---|
 | `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
 | `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
-| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
 | `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
 | `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
 | `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
 | `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedBeamRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="pcon-placedcone"></a>
 
@@ -83,13 +100,17 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 |---|---|
 | `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
 | `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
-| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
 | `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
 | `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
 | `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
 | `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedConeRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="pfla-placedflame"></a>
 
@@ -101,13 +122,17 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 |---|---|
 | `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
 | `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
-| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
 | `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
 | `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
 | `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
 | `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedFlameRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="pgre-placedtrap"></a>
 
@@ -119,13 +144,17 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 |---|---|
 | `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
 | `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
-| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
 | `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
 | `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
 | `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
 | `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedTrapRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="pmis-placedmissile"></a>
 
@@ -137,13 +166,17 @@ Discovered through the shared placed-trap query, then narrowed to this concrete 
 |---|---|
 | `Projectile`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
 | `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
-| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
 | `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. These linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
 | `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
 | `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
 | `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedMissileRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="phzd-placedhazard"></a>
 
@@ -155,13 +188,17 @@ Discovered through the placed-trap query, then narrowed to hazards. All eighteen
 |---|---|
 | `Hazard`, `EncounterZone`, `Owner`, `FactionRank`, `HeadTrackingWeight`, `FavorCost`, `Emittance`, `MultiBoundReference`, `LocationReference`, `Scale` | Select each value separately. |
 | `Placement`, `ActivateParents`, `EnableParent` | Select each whole value separately. |
-| `VirtualMachineAdapter` | Merge scripts by name; retain destination Version/ObjectFormat using the shared ordinary VMAD policy. |
 | `Reflections`, `LinkedReferences` | Merge rows by key: Water and KeywordOrReference respectively. Each selected row carries its complete payload. PHZD linked references follow ACHR’s sorted definition, rather than REFR’s positional list. |
 | `LocationRefTypes` | Merge aligned rows in declaration order; null and present-empty remain distinct. |
 | `DistantLodData` | Select the whole ordered XLOD float collection, representing one fixed three-float value. |
 | `IgnoredBySandbox` | Select the complete nullable XIS2 byte slice/marker. Absence and present-empty are distinct; no boolean conversion. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedHazardRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="refr-placedobject"></a>
 
@@ -175,9 +212,13 @@ Placement keeps position and rotation together at the project’s comparison pre
 | `Action` | Merge registered flag bits separately. |
 | `Primitive`, `OcclusionPlane`, `RoomPortal`, `NavigationDoorLink`, `TeleportDestination`, `ActivateParents`, `Lock`, `LightData`, `Alpha`, `Patrol`, `MapMarker`, `Placement`, `EnableParent`, `WaterVelocity`, `XORD`, `RagdollData`, `RagdollBipedData`, `XWCN`, `XWCS`, `XCVL`, `XCZA`, `DistantLodData` | Select each whole value separately. |
 | `Portals` | Select each whole collection separately. |
-| `LinkedRooms`, `Reflections`, `LitWater`, `VirtualMachineAdapter` | Merge rows by key. |
+| `LinkedRooms`, `Reflections`, `LitWater` | Merge rows by key. |
 | `LocationRefTypes` | Merge aligned rows in order. |
 | `LinkedReferences` | Merge rows by position. |
 | `Unknown` | Not independently forwarded. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/PlacedObjectRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |

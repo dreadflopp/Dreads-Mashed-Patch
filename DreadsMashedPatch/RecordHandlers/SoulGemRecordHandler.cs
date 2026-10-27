@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -10,20 +11,21 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
-
-// Migration note:
-// - Generalized: SLGM item fields, soul-capacity enums, and link fields via existing handlers.
-// - Kept specialized: ObjectBounds/Model/Value/Weight via existing project handlers.
-// - Rationale: follows established misc-item forwarding pattern while preserving shared behavior.
-
-// Header migration: raw/common/SoulGem.MajorFlag flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
-// Name migration: translated Name uses generated copying to retain every selected language.
-// Optional null names remove the value; comparison follows Mutagen's language policy.
-// Other specialized fields/flags retain their policies; translations are selected as one value.
 public class SoulGemRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
@@ -31,7 +33,8 @@ public class SoulGemRecordHandler : AbstractRecordHandler
         { "Name", new TranslatedStringReflectionPropertyHandler<ISoulGem, ISoulGemGetter>("Name") },
         { "ModelAndBounds", new ModelBoundsHandler() },
         { "Icons", new SimpleReflectionIconsPropertyHandler<ISoulGem, ISoulGemGetter>("Icons") },
-        { "Destructible", new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, ISoulGem, ISoulGemGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals) },
+        { "Destructible", DestructibleDataHandlers.Data(new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, ISoulGem, ISoulGemGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals)) },
+        { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, ISoulGem, ISoulGemGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals)) },
         { "PickUpSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, ISoulGem, ISoulGemGetter>("PickUpSound") },
         { "PutDownSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, ISoulGem, ISoulGemGetter>("PutDownSound") },
         { "Keywords", new KeywordListHandler() },

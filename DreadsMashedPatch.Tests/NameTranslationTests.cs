@@ -37,7 +37,7 @@ public sealed class NameTranslationTests : IDisposable
 
     public static IEnumerable<object[]> MigratedNames()
     {
-        // Explicit migration inventory, including required names and ColorRecord's interface alias.
+        // Explicit coverage includes required names and ColorRecord's interface alias.
         yield return [typeof(ActivatorRecordHandler), typeof(Mutagen.Bethesda.Skyrim.Activator), false];
         yield return [typeof(ActorValueInformationRecordHandler), typeof(ActorValueInformation), false];
         yield return [typeof(AlchemicalApparatusRecordHandler), typeof(AlchemicalApparatus), false];

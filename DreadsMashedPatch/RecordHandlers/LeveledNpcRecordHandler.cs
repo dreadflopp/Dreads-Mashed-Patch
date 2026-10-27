@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
@@ -12,17 +13,23 @@ using Noggog;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: entry owner copying/equality uses Mutagen's OwnerTarget implementation,
-    //   and unordered list matching now preserves duplicate occurrence counts.
-    // - Specialized: leveled-NPC entry sorting/data comparison remains record-specific; Flags stays on the approved flag handler.
-    // - Rationale: entries are an unordered multiset, so equal values may legitimately occur more than once.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Entries are an unordered multiset: identical values may occur more than once.
+    // OwnerTarget generated copies preserve all owner variants.
     public class LeveledNpcRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },

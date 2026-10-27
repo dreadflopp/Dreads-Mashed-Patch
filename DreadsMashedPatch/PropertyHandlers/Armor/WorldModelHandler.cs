@@ -6,7 +6,7 @@ using DreadsMashedPatch.PropertyHandlers.General;
 namespace DreadsMashedPatch.PropertyHandlers.Armor
 {
     /// <summary>
-    /// Handles ARMO's gendered ArmorModel aggregate, including each model and its icons.
+    /// Handles ARMO's gendered ArmorModel aggregate, including meshes only; icons have independent forwarding owners.
     /// </summary>
     public sealed class WorldModelHandler : AbstractPropertyHandler<IGenderedItemGetter<IArmorModelGetter?>?>
     {
@@ -14,7 +14,10 @@ namespace DreadsMashedPatch.PropertyHandlers.Armor
 
         public override IGenderedItemGetter<IArmorModelGetter?>? GetValue(IMajorRecordGetter record)
         {
-            return record is IArmorGetter armor ? armor.WorldModel : null;
+            if (record is not IArmorGetter armor) return null;
+            var male = CopyMesh(armor.WorldModel?.Male);
+            var female = CopyMesh(armor.WorldModel?.Female);
+            return male == null && female == null ? null : new GenderedItem<ArmorModel?>(male, female);
         }
 
         public override void SetValue(IMajorRecord record, IGenderedItemGetter<IArmorModelGetter?>? value)
@@ -25,9 +28,9 @@ namespace DreadsMashedPatch.PropertyHandlers.Armor
                 return;
             }
 
-            armor.WorldModel = value == null
-                ? null
-                : new GenderedItem<ArmorModel?>(value.Male?.DeepCopy(), value.Female?.DeepCopy());
+            var male = WithIcons(value?.Male, armor.WorldModel?.Male?.Icons);
+            var female = WithIcons(value?.Female, armor.WorldModel?.Female?.Icons);
+            armor.WorldModel = male == null && female == null ? null : new GenderedItem<ArmorModel?>(male, female);
         }
 
         public override bool AreValuesEqual(
@@ -51,6 +54,13 @@ namespace DreadsMashedPatch.PropertyHandlers.Armor
             return $"Male: {FormatModel(gendered.Male)}, Female: {FormatModel(gendered.Female)}";
         }
 
+        private static ArmorModel? CopyMesh(IArmorModelGetter? value) => value?.Model == null
+            ? null : new ArmorModel { Model = value.Model.DeepCopy() };
+
+        private static ArmorModel? WithIcons(IArmorModelGetter? value, IIconsGetter? icons) =>
+            value?.Model == null && icons == null ? null
+                : new ArmorModel { Model = value?.Model?.DeepCopy(), Icons = icons?.DeepCopy() };
+
         private static bool ModelsEqual(IArmorModelGetter? value1, IArmorModelGetter? value2)
         {
             if (value1 == null && value2 == null) return true;
@@ -63,9 +73,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Armor
             if (value == null) return "null";
 
             var modelFile = AssetPathHelper.Format(value.Model?.File);
-            var largeIcon = AssetPathHelper.Format(value.Icons?.LargeIconFilename);
-            var smallIcon = AssetPathHelper.Format(value.Icons?.SmallIconFilename);
-            return $"Model(File: {modelFile}, LargeIcon: {largeIcon}, SmallIcon: {smallIcon})";
+            return $"Model(File: {modelFile})";
         }
     }
 }

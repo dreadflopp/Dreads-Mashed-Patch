@@ -18,7 +18,6 @@ namespace DreadsMashedPatch.PropertyHandlers.SoundDescriptor
 
         protected override void UpdateConditionsCollection(ISoundDescriptor record, List<IConditionGetter> conditions)
         {
-            // Clear the existing conditions and add the new ones
             if (record.Conditions != null)
             {
                 record.Conditions.Clear();
@@ -32,7 +31,6 @@ namespace DreadsMashedPatch.PropertyHandlers.SoundDescriptor
                     }
                     else
                     {
-                        // Convert IConditionGetter to Condition
                         var newCondition = condition.DeepCopy();
                         record.Conditions.Add(newCondition);
                     }

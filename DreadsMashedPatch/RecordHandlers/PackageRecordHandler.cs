@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -14,22 +15,24 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: PACK scalar, flag, list, binary, link, and nested properties, including the corrected InterruptFlags path.
-// - Temporarily disabled: PackageTemplateGraph would atomically own the template reference, version, indexed data,
-//   marker, and ordered procedure tree. Mutagen 0.54.4 sorts PACK data values by UNAM key while writing, which changes
-//   their physical xEdit row order. Keep the registration commented out until an order-preserving writer is available.
-// - Kept specialized: Conditions uses polymorphic copying; VMAD/events and IdleAnimations use Mutagen-generated
-//   aggregate copies so overlay-backed nested values become mutable safely.
-// - Intentionally excluded: Unknown* fields are outside the semantic conflict surface.
-// - Rationale: procedure branches refer to package data indexes, so splitting the graph can invent invalid combinations;
-//   abstract Condition values still need typed copying, and InterruptFlags is a normal flag field.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// PackageTemplateGraph remains unregistered: Mutagen 0.54.4 writes data in UNAM-key order,
+// changing xEdit positional rows. Procedure branches use data indexes; re-enable only with an
+// order-preserving writer and the existing binary regressions. Idle selection has separate ownership.
 public class PackageRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
@@ -52,8 +55,6 @@ public class PackageRecordHandler : AbstractRecordHandler
             "IdleAnimations", value => value.DeepCopy(), PackageIdlesMixIn.Equals) },
         { "CombatStyle", new SimpleReflectionFormLinkPropertyHandler<ICombatStyleGetter, IPackage, IPackageGetter>("CombatStyle") },
         { "OwnerQuest", new SimpleReflectionFormLinkPropertyHandler<IQuestGetter, IPackage, IPackageGetter>("OwnerQuest") },
-        // TEMPORARILY DISABLED: Mutagen's PACK writer reorders package data by UNAM key.
-        // { "PackageTemplateGraph", new PackageTemplateGraphHandler() },
         { "OnBegin", new GeneratedCopyReflectionPropertyHandler<IPackageEventGetter, PackageEvent, IPackage, IPackageGetter>(
             "OnBegin", value => value.DeepCopy(), PackageEventMixIn.Equals) },
         { "OnEnd", new GeneratedCopyReflectionPropertyHandler<IPackageEventGetter, PackageEvent, IPackage, IPackageGetter>(

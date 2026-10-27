@@ -44,7 +44,6 @@ namespace DreadsMashedPatch.PropertyHandlers.EffectShader
         {
             if (record is IEffectShader effectShaderRecord && value != null)
             {
-                // Copy all properties from Unknown onwards
                 effectShaderRecord.Unknown = value.Unknown;
                 effectShaderRecord.MembraneSourceBlendMode = value.MembraneSourceBlendMode;
                 effectShaderRecord.MembraneBlendOperation = value.MembraneBlendOperation;
@@ -107,7 +106,6 @@ namespace DreadsMashedPatch.PropertyHandlers.EffectShader
                 effectShaderRecord.ParticleRotationSpeedDegreePerSec = value.ParticleRotationSpeedDegreePerSec;
                 effectShaderRecord.ParticleRotationSpeedDegreePerSecPlusMinus = value.ParticleRotationSpeedDegreePerSecPlusMinus;
 
-                // Handle form links
                 if (value.AddonModels != null && !value.AddonModels.FormKey.IsNull)
                 {
                     effectShaderRecord.AddonModels = new FormLink<IDebrisGetter>(value.AddonModels.FormKey);
@@ -133,7 +131,6 @@ namespace DreadsMashedPatch.PropertyHandlers.EffectShader
                 effectShaderRecord.AddonModelsScaleInTime = value.AddonModelsScaleInTime;
                 effectShaderRecord.AddonModelsScaleOutTime = value.AddonModelsScaleOutTime;
 
-                // Handle AmbientSound form link
                 if (value.AmbientSound != null && !value.AmbientSound.FormKey.IsNull)
                 {
                     effectShaderRecord.AmbientSound = new FormLink<ISoundGetter>(value.AmbientSound.FormKey);

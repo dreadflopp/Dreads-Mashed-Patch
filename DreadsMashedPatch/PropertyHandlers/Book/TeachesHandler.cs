@@ -22,7 +22,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Book
                     return;
                 }
 
-                // Handle different concrete implementations
                 if (value is BookSkill bookSkill)
                 {
                     var newBookSkill = new BookSkill();
@@ -46,7 +45,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Book
                 }
                 else
                 {
-                    // Unknown concrete type, set to null
                     bookRecord.Teaches = null;
                 }
             }
@@ -74,10 +72,8 @@ namespace DreadsMashedPatch.PropertyHandlers.Book
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Check if they are the same concrete type
             if (value1.GetType() != value2.GetType()) return false;
 
-            // Handle different concrete implementations
             if (value1 is BookSkill bookSkill1 && value2 is BookSkill bookSkill2)
             {
                 return bookSkill1.Skill == bookSkill2.Skill;
@@ -91,7 +87,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Book
                 return bookTeachesNothing1.RawContent == bookTeachesNothing2.RawContent;
             }
 
-            // Fallback to reference equality for unknown concrete types
             return ReferenceEquals(value1, value2);
         }
     }

@@ -29,7 +29,7 @@ public sealed class ModelBoundsForwardingTests : IDisposable
     public ModelBoundsForwardingTests()
     {
         var configuration = new PatcherConfiguration();
-        configuration.Forwarding.RestrictTreeForwarding = false;
+        configuration.Forwarding.ForwardTreeGroups = true;
         PatcherSettings.Apply(configuration);
     }
     public void Dispose() => PatcherSettings.Apply(new PatcherConfiguration());

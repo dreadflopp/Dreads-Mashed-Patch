@@ -734,7 +734,7 @@ public abstract class AbstractListPropertyHandler<T> : IPropertyHandler<List<T>>
 
     /// <summary>
     /// Logical entry identity used for ownership, additions, removals, and
-    /// same-key replacement. The default preserves the legacy full-value identity.
+    /// same-key replacement. By default, identity uses full semantic equality.
     /// </summary>
     protected virtual bool IsItemIdentityEqual(T? item1, T? item2)
         => IsItemEqual(item1, item2);

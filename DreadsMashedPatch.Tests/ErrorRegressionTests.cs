@@ -143,7 +143,7 @@ public sealed class ErrorRegressionTests
     [Fact]
     public void BodyPartRowsUseGeneratedElementCopies()
     {
-        var handler = Assert.IsType<GeneratedCopyReflectionListPropertyHandler<
+        var handler = Assert.IsAssignableFrom<GeneratedCopyReflectionListPropertyHandler<
             IBodyPartGetter,
             BodyPart,
             IBodyPartData,

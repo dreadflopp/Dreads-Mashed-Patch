@@ -12,14 +12,7 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: ECZN owner/location links and level/rank scalars use shared semantic handlers.
-    // - Kept specialized: Flags retains the approved record-specific flag handler.
-    // - Intentionally excluded: DATADataTypeState is serializer layout state.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // DATADataTypeState controls serializer layout and is not an independently forwarded field.
     public class EncounterZoneRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -49,8 +42,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

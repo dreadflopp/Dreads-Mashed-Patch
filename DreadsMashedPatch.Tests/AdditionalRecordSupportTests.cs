@@ -50,7 +50,7 @@ public sealed class AdditionalRecordSupportTests : IDisposable
     }
 
     [Fact]
-    public void IndependentlyAuthoredLightingAndFlareEditsSelectCompletePresets()
+    public void LightingPresetsRemainAtomicWhileFlareGlobalsAreIndependentOfSprites()
     {
         CoverageTestHistory.Configure();
         var mods = CoverageTestHistory.Mods();
@@ -69,7 +69,9 @@ public sealed class AdditionalRecordSupportTests : IDisposable
         Program.RunPatch(state);
         // A new complete preset from the winner is already effective; earlier components must not leak into it.
         Assert.Empty(state.PatchMod.VolumetricLightings);
-        Assert.Empty(state.PatchMod.LensFlares);
+        var savedFlare = Assert.Single(state.PatchMod.LensFlares);
+        Assert.Equal(0.9f, savedFlare.ColorInfluence);
+        Assert.Equal(12, savedFlare.Sprites![0].Data!.Width);
     }
 
     [Theory]
@@ -326,7 +328,7 @@ public sealed class AdditionalRecordSupportTests : IDisposable
                 var handler = signature switch
                 {
                     "VOLI" => new VolumetricLightingRecordHandler().PropertyHandlers["LightingPreset"],
-                    "LENS" => new LensFlareRecordHandler().PropertyHandlers["FlareDefinition"],
+                    "LENS" => new LensFlareRecordHandler().PropertyHandlers["FlareSprites"],
                     _ => new LandscapeTextureRecordHandler().PropertyHandlers["HavokFriction"]
                 };
                 Assert.True(handler.AreValuesEqual(handler.GetValue(expected), handler.GetValue(output)));

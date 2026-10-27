@@ -82,6 +82,8 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
     [Theory]
     [InlineData("Height", false, false)]
     [InlineData("Height", true, false)]
+    [InlineData("HairColor", false, false)]
+    [InlineData("HairColor", true, false)]
     [InlineData("Animation", false, false)]
     [InlineData("Animation", true, false)]
     [InlineData("Animation", false, true)]
@@ -103,6 +105,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         face.Configuration.Flags |= NpcConfiguration.Flag.Female;
         var edit = original.DeepCopy();
         if (field == "Height") edit.Height = 1.05f;
+        else if (field == "HairColor") edit.HairColor.SetTo(new FormKey(OriginalKey, 0xA03));
         else edit.Configuration.Flags ^= NpcConfiguration.Flag.OppositeGenderAnims;
 
         var result = Assert.Single((editFirst
@@ -110,6 +113,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
             : Run(new NpcRecordHandler(), original, face, edit)).Npcs);
 
         Assert.Equal(edit.Height, result.Height);
+        Assert.Equal(edit.HairColor.FormKey, result.HairColor.FormKey);
         Assert.Equal(edit.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims),
             result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims));
         Assert.Equal(face.HeadParts.Select(part => part.FormKey), result.HeadParts.Select(part => part.FormKey));
@@ -164,6 +168,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
     [Theory]
     [InlineData("Height")]
     [InlineData("Animation")]
+    [InlineData("HairColor")]
     public void NpcIndependentEditDoesNotTakeOwnershipOfCopiedAppearance(string field)
     {
         var original = new Npc(RecordKey, SkyrimRelease.SkyrimSE)
@@ -172,6 +177,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         face.FaceMorph!.NoseLongVsShort = 2;
         var copier = face.DeepCopy();
         if (field == "Height") copier.Height = 1.05f;
+        else if (field == "HairColor") copier.HairColor.SetTo(new FormKey(OriginalKey, 0xA03));
         else copier.Configuration.Flags = NpcConfiguration.Flag.OppositeGenderAnims;
 
         var result = Assert.Single(Run(new NpcRecordHandler(), mods =>
@@ -182,7 +188,61 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
 
         Assert.Equal(2, result.FaceMorph!.NoseLongVsShort);
         Assert.Equal(original.Height, result.Height);
+        Assert.Equal(original.HairColor.FormKey, result.HairColor.FormKey);
         Assert.False(result.Configuration.Flags.HasFlag(NpcConfiguration.Flag.OppositeGenderAnims));
+    }
+
+    [Theory]
+    [InlineData("None")]
+    [InlineData("Declared")]
+    [InlineData("Virtual")]
+    public void NpcHairColorRestorationUsesItsOwnOwnerWithoutRestoringTheFace(string permission)
+    {
+        var original = new Npc(RecordKey, SkyrimRelease.SkyrimSE) { FaceMorph = new NpcFaceMorph() };
+        original.HairColor.SetTo(new FormKey(OriginalKey, 0xA00));
+        var face = original.DeepCopy();
+        face.FaceMorph!.NoseLongVsShort = 2;
+        var color = original.DeepCopy();
+        color.HairColor.SetTo(new FormKey(OriginalKey, 0xA01));
+        if (permission == "Virtual")
+            PatcherSettings.Apply(new PatcherConfiguration
+            {
+                CompatibilityRules = [new VirtualMasterRule
+                {
+                    TargetMod = "Later.esp", VirtualMasters = [WinnerKey.ToString()]
+                }]
+            });
+
+        var result = Assert.Single(Run(new NpcRecordHandler(), mods =>
+        {
+            if (permission == "Declared")
+                mods[3].ModHeader.MasterReferences.Add(new MasterReference { Master = WinnerKey });
+        }, original, face, color, original.DeepCopy()).Npcs);
+
+        Assert.Equal(2, result.FaceMorph!.NoseLongVsShort);
+        Assert.Equal(permission == "None" ? color.HairColor.FormKey : original.HairColor.FormKey,
+            result.HairColor.FormKey);
+    }
+
+    [Fact]
+    public void NpcHairColorAndGroupedAppearanceForwardAndSurviveBinaryOutput()
+    {
+        var config = new PatcherConfiguration();
+        PatcherSettings.Apply(config);
+        var original = new Npc(RecordKey, SkyrimRelease.SkyrimSE) { FaceMorph = new NpcFaceMorph() };
+        var color = original.DeepCopy();
+        color.HairColor.SetTo(new FormKey(OriginalKey, 0xA00));
+        color.FaceMorph!.NoseLongVsShort = 2;
+        var face = original.DeepCopy();
+
+        var patch = Run(new NpcRecordHandler(), original, color, face);
+        using var stream = new MemoryStream();
+        patch.WriteToBinary(stream);
+        stream.Position = 0;
+        using var overlay = SkyrimMod.CreateFromBinaryOverlay(stream, SkyrimRelease.SkyrimSE, PatchKey);
+        var saved = Assert.Single(overlay.Npcs);
+        Assert.Equal(2, saved.FaceMorph!.NoseLongVsShort);
+        Assert.Equal(color.HairColor.FormKey, saved.HairColor.FormKey);
     }
 
     [Theory]
@@ -241,7 +301,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
     }
 
     [Fact]
-    public void RaceHeadDefinitionsAndTheirCountClampsAndMorphRaceStayTogether()
+    public void RaceHeadShapeAndTintDefinitionsSelectIndependentSources()
     {
         var original = new Race(RecordKey, SkyrimRelease.SkyrimSE)
         {
@@ -258,8 +318,9 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         winner.HeadData!.Female!.TintMasks.Add(new TintAssets { Index = 3 });
 
         var result = Assert.Single(Run(new RaceRecordHandler(), original, earlier, winner).Races);
-        var handler = new RaceAppearanceHandler();
-        Assert.True(handler.AreValuesEqual(handler.GetValue(winner), handler.GetValue(result)));
+        Assert.Equal(earlier.MorphRace.FormKey, result.MorphRace.FormKey);
+        Assert.Equal(9, result.FacegenMainClamp);
+        Assert.Equal(winner.NumberOfTintsInList, result.NumberOfTintsInList);
         Assert.Equal(90, result.BaseCarryWeight);
         Assert.Empty(result.HeadData!.Male!.TintMasks);
         Assert.Equal((ushort?)3, Assert.Single(result.HeadData.Female!.TintMasks).Index);
@@ -311,7 +372,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
 
         var patch = Run(handler, original, earlier, latest, baseline);
         var result = Assert.Single(patch.EnumerateMajorRecords());
-        var appearance = handler.PropertyHandlers["Appearance"];
+        var appearance = handler.PropertyHandlers[recordType switch { "HDPT" => "Mesh", "RACE" => "HeadData.Female.Shape", _ => "Appearance" }];
         Assert.True(appearance.AreValuesEqual(appearance.GetValue(latest), appearance.GetValue(result)));
         Assert.False(appearance.AreValuesEqual(appearance.GetValue(earlier), appearance.GetValue(result)));
         if (result is INpcGetter npc)
@@ -357,7 +418,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         else
         {
             var result = Assert.Single(patch.EnumerateMajorRecords());
-            var appearance = handler.PropertyHandlers["Appearance"];
+            var appearance = handler.PropertyHandlers[recordType switch { "HDPT" => "Mesh", "RACE" => "HeadData.Female.Shape", _ => "Appearance" }];
             Assert.True(appearance.AreValuesEqual(appearance.GetValue(earlier), appearance.GetValue(result)));
         }
     }
@@ -377,7 +438,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         }, original, earlier, unchanged, ReorderedAppearance(original));
 
         var result = Assert.Single(patch.EnumerateMajorRecords());
-        var appearance = handler.PropertyHandlers["Appearance"];
+        var appearance = handler.PropertyHandlers[recordType switch { "HDPT" => "Mesh", "RACE" => "HeadData.Female.Shape", _ => "Appearance" }];
         Assert.True(appearance.AreValuesEqual(appearance.GetValue(earlier), appearance.GetValue(result)));
     }
 
@@ -401,7 +462,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
             Assert.Empty(patch.EnumerateMajorRecords());
         else
         {
-            var appearance = handler.PropertyHandlers["Appearance"];
+            var appearance = handler.PropertyHandlers[recordType switch { "HDPT" => "Mesh", "RACE" => "HeadData.Female.Shape", _ => "Appearance" }];
             var result = Assert.Single(patch.EnumerateMajorRecords());
             Assert.True(appearance.AreValuesEqual(appearance.GetValue(latest), appearance.GetValue(result)));
         }
@@ -474,7 +535,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         winner.Flags = HeadPart.Flag.Female;
 
         var result = Assert.Single(Run(new HeadPartRecordHandler(), original, earlier, winner).HeadParts);
-        var handler = new HeadPartAppearanceHandler();
+        var handler = new HeadPartMeshHandler();
         Assert.True(handler.AreValuesEqual(handler.GetValue(winner), handler.GetValue(result)));
         Assert.Equal("Translated name", result.Name!.String);
         Assert.Single(result.ExtraParts);
@@ -542,7 +603,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         original.Parts.Add(new Part { PartType = Part.PartTypeEnum.ChargenMorph,
             FileName = new AssetLink<SkyrimDeformedModelAssetType>("Meshes/Chargen.tri") });
         var reordered = (HeadPart)ReorderedAppearance(original);
-        var handler = new HeadPartAppearanceHandler();
+        var handler = new HeadPartMeshHandler();
         Assert.True(handler.AreValuesEqual(handler.GetValue(original), handler.GetValue(reordered)));
         reordered.ExtraParts.RemoveAt(0);
         Assert.False(handler.AreValuesEqual(handler.GetValue(original), handler.GetValue(reordered)));
@@ -572,7 +633,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
     }
 
     [Fact]
-    public void RaceAppearanceOverlayCopyPreservesNullableGendersAndLeavesBodyValuesAlone()
+    public void RaceTintOverlayCopyPreservesNullableGendersAndLeavesBodyValuesAlone()
     {
         var source = new SkyrimMod(OriginalKey, SkyrimRelease.SkyrimSE);
         var race = new Race(RecordKey, SkyrimRelease.SkyrimSE)
@@ -589,7 +650,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         source.WriteToBinary(input);
         input.Position = 0;
         using var overlay = SkyrimMod.CreateFromBinaryOverlay(input, SkyrimRelease.SkyrimSE, OriginalKey);
-        var handler = new RaceAppearanceHandler();
+        var handler = new RaceHeadDataHandler(MaleFemaleGender.Female, RaceHeadDataPart.Tints);
         var value = handler.GetValue(Assert.Single(overlay.Races))!;
         var target = new Race(new FormKey(PatchKey, 0x800), SkyrimRelease.SkyrimSE)
             { Height = new GenderedItem<float>(7, 8), BaseMass = 9 };
@@ -599,7 +660,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         Assert.Equal(9, target.BaseMass);
         Assert.True(handler.AreValuesEqual(value, handler.GetValue(target)));
         target.HeadData!.Female!.TintMasks[0].Presets[0].DefaultValue = 0.75f;
-        Assert.Equal(0.5f, value.HeadData!.Female!.TintMasks[0].Presets[0].DefaultValue);
+        Assert.Equal(0.5f, value.TintMasks[0].Presets[0].DefaultValue);
         handler.SetValue(target, value);
         var outputMod = new SkyrimMod(PatchKey, SkyrimRelease.SkyrimSE);
         outputMod.Races.Add(target);
@@ -610,21 +671,12 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         Assert.True(handler.AreValuesEqual(value, handler.GetValue(Assert.Single(reloaded.Races))));
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("1")]
-    [InlineData("\"Coordinated\"")]
-    [InlineData("999")]
-    public void TreesStayEnabledAndPreserveWinningAppearanceWhenLoadingOldSettings(string? obsoletePolicy)
+    [Fact]
+    public void TreesStayEnabledAndPreserveWinningAppearanceByDefault()
     {
-        var json = obsoletePolicy is null
-            ? "{}"
-            : "{\"Forwarding\":{\"TreePolicy\":" + obsoletePolicy + "}}";
-        var settings = JsonSerializer.Deserialize<PatcherConfiguration>(json)!.Copy();
+        var settings = JsonSerializer.Deserialize<PatcherConfiguration>("{}")!.Copy();
         Assert.DoesNotContain(typeof(ITreeGetter).FullName!, settings.DisabledRecordTypes);
-        Assert.True(settings.Forwarding.RestrictTreeForwarding);
-        using var savedSettings = JsonDocument.Parse(JsonSerializer.Serialize(settings));
-        Assert.False(savedSettings.RootElement.GetProperty("Forwarding").TryGetProperty("TreePolicy", out _));
+        Assert.False(settings.Forwarding.ForwardTreeGroups);
         PatcherSettings.Apply(settings);
 
         var original = Tree("Meshes/Original.nif", 1);
@@ -708,13 +760,15 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
     {
         var settings = new PatcherConfiguration
         {
-            Forwarding = new ForwardingSettings { RestrictTreeForwarding = restrict }
+            Forwarding = new ForwardingSettings { ForwardTreeGroups = !restrict }
         };
         var reloaded = JsonSerializer.Deserialize<PatcherConfiguration>(JsonSerializer.Serialize(settings))!;
-        Assert.Equal(restrict, reloaded.Forwarding.RestrictTreeForwarding);
+        Assert.Equal(!restrict, reloaded.Forwarding.ForwardTreeGroups);
         PatcherSettings.Apply(reloaded);
 
         var original = Tree("Meshes/Original.nif", 1);
+        original.VirtualMachineAdapter = new VirtualMachineAdapter { Version = 4, ObjectFormat = 1 };
+        original.VirtualMachineAdapter.Scripts.Add(new ScriptEntry { Name = "WinnerScript" });
         original.ObjectBounds.Second = new P3Int16(1, 1, 1);
         var earlier = Tree("Meshes/Replacer.nif", 9);
         earlier.Name = "Harvestable tree";
@@ -724,8 +778,6 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         earlier.VirtualMachineAdapter = new VirtualMachineAdapter();
         earlier.VirtualMachineAdapter.Scripts.Add(new ScriptEntry { Name = "EarlierScript" });
         var winner = original.DeepCopy();
-        winner.VirtualMachineAdapter = new VirtualMachineAdapter { Version = 4, ObjectFormat = 1 };
-        winner.VirtualMachineAdapter.Scripts.Add(new ScriptEntry { Name = "WinnerScript" });
 
         var result = Assert.Single(Run(new TreeRecordHandler(), original, earlier, winner).Trees);
         var expectedAppearance = restrict ? winner : earlier;
@@ -735,18 +787,18 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         Assert.True(new TreeDataHandler().AreValuesEqual(
             new TreeDataHandler().GetValue(expectedAppearance), new TreeDataHandler().GetValue(result)));
         Assert.Equal(expectedAppearance.MajorRecordFlagsRaw, result.MajorRecordFlagsRaw);
-        Assert.Equal(restrict ? new[] { "WinnerScript" } : new[] { "EarlierScript", "WinnerScript" },
+        Assert.Equal(restrict ? new[] { "WinnerScript" } : new[] { "EarlierScript" },
             result.VirtualMachineAdapter!.Scripts.Select(script => script.Name).Order(StringComparer.Ordinal));
         Assert.Equal(4, result.VirtualMachineAdapter.Version);
         Assert.Equal(1, result.VirtualMachineAdapter.ObjectFormat);
     }
 
     [Fact]
-    public void UnrestrictedTreeForwardingSelectsWholeWindDataWithoutModelCoordination()
+    public void TreeGroupKeepsModelWithLatestWindEdit()
     {
         PatcherSettings.Apply(new PatcherConfiguration
         {
-            Forwarding = new ForwardingSettings { RestrictTreeForwarding = false }
+            Forwarding = new ForwardingSettings { ForwardTreeGroups = true }
         });
         var original = Tree("Meshes/Original.nif", 1);
         var earlier = Tree("Meshes/Replacer.nif", 9);
@@ -757,7 +809,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         winner.Unknown = Enumerable.Repeat((byte)4, 32).ToArray();
 
         var result = Assert.Single(Run(new TreeRecordHandler(), original, earlier, winner).Trees);
-        Assert.Equal(earlier.Model!.File.GivenPath, result.Model!.File.GivenPath);
+        Assert.Equal(winner.Model!.File.GivenPath, result.Model!.File.GivenPath);
         Assert.True(new TreeDataHandler().AreValuesEqual(
             new TreeDataHandler().GetValue(winner), new TreeDataHandler().GetValue(result)));
     }
@@ -773,7 +825,7 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
         PatcherSettings.Apply(new PatcherConfiguration
         {
             AlwaysWinningMods = [EarlierKey.ToString()],
-            Forwarding = new ForwardingSettings { RestrictTreeForwarding = restrict }
+            Forwarding = new ForwardingSettings { ForwardTreeGroups = !restrict }
         });
         var result = Assert.Single(Run(new TreeRecordHandler(), original, earlier, winner).Trees);
         Assert.Equal(earlier.Model!.File.GivenPath, result.Model!.File.GivenPath);
@@ -855,12 +907,11 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
                     NumberOfTintsInList = 1, FacegenMainClamp = 1, FacegenFaceClamp = 1
                 };
                 var earlier = original.DeepCopy();
-                earlier.HeadData!.Male!.TintMasks.Add(new TintAssets { Index = 2 });
-                earlier.NumberOfTintsInList = 2;
+                earlier.HeadData!.Female!.HeadParts.Add(new HeadPartReference { Number = 2 });
                 earlier.FacegenMainClamp = 9;
                 earlier.MorphRace.SetTo(new FormKey(OriginalKey, 0xA00));
                 var latest = original.DeepCopy();
-                latest.HeadData!.Female!.TintMasks.Add(new TintAssets { Index = 3 });
+                latest.HeadData!.Female!.HeadParts.Add(new HeadPartReference { Number = 3 });
                 return (new RaceRecordHandler(), original, earlier, latest);
             }
             case "HDPT":
@@ -874,10 +925,10 @@ public sealed class AppearanceAndTreeForwardingTests : IDisposable
                 var earlier = original.DeepCopy();
                 earlier.ExtraParts.Add(new FormLink<IHeadPartGetter>(new FormKey(OriginalKey, 0xA02)));
                 earlier.Parts[0].FileName = new AssetLink<SkyrimDeformedModelAssetType>("Meshes/Earlier.tri");
-                earlier.Flags = HeadPart.Flag.Male;
+
                 var latest = (HeadPart)ReorderedAppearance(original);
                 latest.Model = Model("Meshes/Latest.nif");
-                latest.Flags = HeadPart.Flag.Female;
+
                 return (new HeadPartRecordHandler(), original, earlier, latest);
             }
             default: throw new ArgumentException("Unsupported appearance record.", nameof(recordType));

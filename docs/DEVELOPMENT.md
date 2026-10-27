@@ -19,6 +19,26 @@ Use the [standalone development guide](STANDALONE_DEVELOPMENT.md#build-and-publi
 
 ## Handler selection
 
+### Source comments and decision notes
+
+Comments should explain constraints that a reader cannot infer from names and
+control flow: ownership boundaries, serialization and overlay limitations,
+null/presence semantics, ordering evidence, and reasons for specialized copying.
+Put them beside the affected decision or on the shared implementation. Avoid
+assignment/loop narration, copied member documentation, repeated registration
+lists, completed cleanup checklists, and historical wording such as “now handled
+by the base class.” Describe current behavior and check comments when it changes.
+
+Keep concise per-record decisions in the [record inventory](record-patching/INVENTORY.md)
+and regression rationale/test pointers in the [regression reference](record-patching/REVIEW.md).
+These satisfy the per-record decision-note requirement: record what uses shared
+handlers, what remains specialized or excluded, and why. Routine migrations do
+not need an additional source-code history block. Document shared header-flag,
+translated-name, script-metadata and asset-ownership rules once in their shared
+implementation and current guides instead of repeating them in every record.
+
+### Shared forwarding patterns
+
 All record types share one original-to-winning forwarding pass. The former
 winning-to-original second pass and its quick-check branch were removed because
 every property handler required the complete override history. The constant
@@ -42,33 +62,45 @@ Find an existing equivalent handler in the same layer before adding one. Verify 
 | Collection | Explicit [collection semantics](COLLECTION_SEMANTICS.md), with a reviewed xEdit key, order, presence, duplicates, and ownership policy. Use generated-copy handlers for complex rows. |
 | Binary payload | Existing typed binary handler; copy the whole detached payload and preserve its documented presence policy. Binary data is not categorically unsupported. |
 
-This table selects implementation patterns; it does not authorize changing an existing property's policy. Record-specific exceptions are in the [property tables](record-patching/INDEX.md). For example, NPC protection, ARMA filename/data comparison, QUST/SCEN adapter presence, and model/bounds coupling retain their specialized behavior. WATR's nullable `Flags` currently selects a whole scalar value; document that existing exception rather than assuming every enum is merged per bit.
+This table selects implementation patterns; it does not authorize changing an existing property's policy. Record-specific exceptions are in the [property tables](record-patching/INDEX.md). For example, NPC protection, ARMA filename/data comparison, QUST/SCEN adapter presence, and model/bounds coupling retain their specialized behavior. WATR uses disjoint approved damage/rendering flag masks and retains destination nullable presence for zero clears; see the asset forwarding guide.
 
 Generated mutable copies must be detached from source records, including nested lists and links. Do not directly reuse a mutable source merely because its concrete type matches. Match nullability and setter normalization to the actual interface and existing policy. The shared keyword setter distinguishes absent from present-empty lists; that does not establish a universal null-removal rule.
 
 Translated names retain the target language and available translations. Equality follows `TranslatedString.DefaultLanguageComparisonOnly`. Required CLAS/EYES/FLOR/KEYM names normalize null to a fresh empty translated value; optional names permit removal. MATT Name remains a plain string. Ordinary script-list adapters retain destination Version/ObjectFormat when replacing scripts; whole adapters and QUST/SCEN child fields have separate policies.
 
-VOLI’s `LightingPresetHandler` and LENS’s `FlareDefinitionHandler` follow the existing grouped-snapshot pattern: each complete authored preset has one owner, with no parallel leaf handlers. LENS copies sprites with generated deep copies but compares tint as serialized RGB; the extra CLR alpha component is not in LFSD. Texture comparison uses `GivenPath` through the existing asset helper. Its embedded flags travel inside the atomic definition.
+VOLI’s `LightingPresetHandler` keeps one complete authored preset. LENS reuses `FlareDefinitionHandler` through a projection owning only ordered sprites and their texture/data; both globals have ordinary scalar handlers. Projection writes preserve the globals, so no field has parallel selection owners. LENS copies sprites with generated deep copies but compares tint as serialized RGB; the extra CLR alpha component is not in LFSD. Texture comparison uses `GivenPath` through the existing asset helper. Its embedded flags travel inside the atomic definition.
 
 All seven placed-projectile handlers reuse PHZD’s inherited-field patterns and concrete narrowing from the shared `IAPlacedTrap` query. ACHR/REFR UDR coordination remains outside these routes. LTEX uses the approved nullable snow flag handler; nullable presence and zero are distinct. Its xEdit HNAM friction/restitution fields remain separate scalar decisions, and GNAM grasses use sorted FormID keys. See [record-specific completion evidence](record-patching/REVIEW.md#regression-map).
 
-Appearance groups derive directly from `AbstractPropertyHandler` and use ordinary value ownership and declared/virtual-master reversion permissions. NPC/HDPT use generated masked copies plus approved masked flag setters. Their equality excludes sorted NPC HeadParts/TintLayers and HDPT ExtraParts from positional generated equality and uses the shared duplicate-aware unordered comparison instead; copying preserves source order. Ordered HDPT morph-file pairs remain order-sensitive. TemplateAndTraits selects its pointer and Traits bit as one atomic value through the same base algorithm. RACE uses typed gendered copying and generated HeadData equality because its generated record copy bypasses some gendered masks. `IPropertyGroupHandler` declares exact grouped ownership for coverage checks. TREE resolves asset-dependent contexts from the effective winner when its default-enabled forwarding restriction is active; disabling it uses the same shared handlers normally. See the [appearance decisions and regressions](record-patching/REVIEW.md#appearance-boundaries).
+Appearance always forwards as a group. There is no appearance setting. NPC retains its typed masked snapshot; RACE HeadShape coordinates typed per-gender head-part/morph slices with MorphRace and clamps. Meshes, textures, tint definitions/count and race choices have narrower ownership described in [asset forwarding](ASSET_FORWARDING.md#character-resource-boundaries-and-migration-decisions). HDPT is a mesh definition, using generated masked copying and approved rendering flags; applicability remains ordinary. `IPropertyGroupHandler` exposes exact ownership to UI help and coverage. Its implementations may require constructor arguments; audit actual record registrations rather than creating handler types with guessed defaults. TemplateAndTraits retains atomic pointer/Traits selection.
 
-NPC appearance owns only the Female configuration bit. Height uses `SimpleReflectionPropertyHandler<float, INpc, INpcGetter>` with the shared 0.0001 tolerance. The independent `Configuration.Flags.OppositeGenderAnims` registration uses the approved masked flag handler against the actual `Configuration.Flags` enum property; its dictionary key labels a bit, not a reflection member. Appearance, animation and protection setters own disjoint masks and preserve unrelated/unknown bits. Race, sex, weight and WornArmor remain with the face. RACE/HDPT appearance implementations and the separate TemplateAndTraits group retain their policies. See the [appearance decisions and regressions](record-patching/REVIEW.md#appearance-boundaries).
+NPC appearance owns only the Female configuration bit. Height uses `SimpleReflectionPropertyHandler<float, INpc, INpcGetter>` with the shared 0.0001 tolerance. The independent `Configuration.Flags.OppositeGenderAnims` registration uses the approved masked flag handler against the actual `Configuration.Flags` enum property; its dictionary key labels a bit, not a reflection member. Appearance, animation and protection setters own disjoint masks and preserve unrelated/unknown bits. Race, sex, weight and WornArmor remain with the face. HairColor uses ordinary forwarding through the shared nullable form-link handler, without an asset group or gate; it is excluded from face snapshots, comparisons and ownership. RACE’s separate resource groups and TemplateAndTraits retain their own policies. See the [appearance decisions and regressions](record-patching/REVIEW.md#appearance-boundaries).
+
+Animation forwarding has narrowly scoped reference packages: male/female RACE rig
+pairs, a separate body-part reference, IDLE filename/event, IDLM idle list/flags/timer,
+PACK PackageIdles and NPC animation gender. Combat/movement tuning and IDLE legacy
+DATA keep ordinary handlers. The [animation architecture](ASSET_FORWARDING.md#animation-and-skeleton-boundaries)
+records generic side copying, nullable flags, exact source provenance and regressions.
 
 ### TREE Smart Forwarding design
 
-The [public TREE description](record-patching/world.md#tree-tree) explains the restriction checkbox, excluded fields and asset limits. Keep detailed user-facing behavior out of the root README; its settings table should link to the public description. Developer rationale and validation evidence belong here and in internal review documents.
+TREE has one TreeAssets group under ForwardingRule.Trees. ForwardTreeGroups defaults
+false; other resource and appearance groups always forward. Its record hooks use the
+standard catalog initialization and final-coordination pattern, with no additional
+winner-context reset. The [TREE architecture](ASSET_FORWARDING.md#tree-selection-boundary)
+records retained model/bounds, VMAD metadata, CNAM and flag invariants and regression
+entry points. [Public TREE guidance](record-patching/world.md#tree-tree) explains
+its single checkbox and keeps user-facing behavior out of the root README.
 
-TREE stays enabled. `ForwardingSettings.RestrictTreeForwarding` defaults to true, follows the existing boolean forwarding-setting pattern, is copied into the runtime snapshot, and binds directly to the Smart Forwarding checkbox. Missing settings receive the restrictive default. Explicit false survives serialization, configuration copying and runtime application. The retired TreePolicy JSON property is still ignored and cannot restore model/wind coordination.
+## Asset group policies
 
-In [TreeRecordHandler](../DreadsMashedPatch/RecordHandlers/TreeRecordHandler.cs), all contexts initialize through the base implementation. When restricted, model/bounds, TreeData, VMAD and header flag contexts are reinitialized from the effective winner and marked resolved. The ordinary pass then skips them. When unrestricted, this early resolution is skipped, so the same registered handlers perform normal value, model/bounds, script and approved flag selection. Priority record selection still precedes either behavior. No handler is swapped or duplicated, and approved flag handlers remain in use.
-
-The specialized TreeData snapshot always keeps all twelve wind values together: the four named Mutagen floats plus eight values represented by its 32-byte `Unknown` block. Copy that block exactly into detached storage. In unrestricted forwarding, CNAM is selected independently from the model through the normal whole-value ownership rules. No geometry-owner tracking or filename compatibility heuristic is reintroduced. TREE's coordination hook only emits an exclusion explanation when restricted and returns the shared no-op result otherwise.
-
-The checkbox help leads with models, bounds, wind settings, scripts and flags that are excluded, then explains that the restriction avoids mixing incompatible appearance and behavior. This policy preserves the winning record even when it restores an earlier value. It cannot infer deployed mesh ownership or whether a later override accidentally copied original appearance data. An authored compatibility patch provides an explicit choice when an earlier replacement should survive. The [appearance regression reference](record-patching/REVIEW.md#appearance-boundaries) identifies the tests and retained asset boundaries.
-
-The [appearance and TREE regression tests](../DreadsMashedPatch.Tests/AppearanceAndTreeForwardingTests.cs) cover legacy settings, both checkbox values through JSON/runtime application, excluded fields, unrestricted whole-CNAM selection, priority precedence and binary copying. [Configuration tests](../DreadsMashedPatch.Tests/PatcherConfigurationTests.cs) verify the default and snapshot copying. The [model/bounds tests](../DreadsMashedPatch.Tests/ModelBoundsHandlerTests.cs) retain shared behavior coverage. Keep actual build, test and audit results in internal validation evidence with their stated limits.
+Read the [asset forwarding guide](ASSET_FORWARDING.md) and generated
+[ownership manifest](asset-forwarding-groups.json) before changing a resource field.
+Record-local hooks disable independent member decisions; final coordination owns
+one choice per group and reuses registered setters/comparers. The common application loop orders ordinary container writes before nested reference writes. Multi-member collections are atomic snapshots rather than
+independently merged lists. Existing whole-record/UDR/TREE precedence, structural
+resets, bounds provenance and approved disjoint flag masks must remain intact.
+Resource/appearance policy is fixed true in FixedForwardingRules, with no serialized controls. ForwardTreeGroups defaults off. Current behavior and exact per-record members are in [grouped forwarding](record-patching/assets.md). Restoration steps for future controls are retained in [the architecture guide](ASSET_FORWARDING.md#restoring-asset-or-appearance-controls-later).
 
 ## Output and diagnostics
 

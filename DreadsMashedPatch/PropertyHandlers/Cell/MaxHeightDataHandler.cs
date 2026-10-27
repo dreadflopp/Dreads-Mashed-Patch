@@ -58,7 +58,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
                 return false;
             }
 
-            // Compare HeightMaps
             var heightMap1 = value1.HeightMap;
             var heightMap2 = value2.HeightMap;
 
@@ -120,14 +119,12 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
                 return value?.ToString() ?? "null";
             }
 
-            // Show Offset and HeightMap summary
             var heightMap = maxHeightData.HeightMap;
             if (heightMap == null)
             {
                 return $"Offset: {maxHeightData.Offset}, HeightMap: null";
             }
 
-            // Calculate HeightMap summary statistics
             var min = byte.MaxValue;
             var max = byte.MinValue;
             var sum = 0;

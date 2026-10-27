@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System.Collections;
 using System.Text.Json;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
@@ -9,6 +10,7 @@ namespace DreadsMashedPatch.Tests;
 
 public sealed class CollectionSemanticsManifestTests
 {
+
     [Fact]
     public void EveryActiveCollectionRegistrationMatchesTheReviewedManifest()
     {
@@ -119,7 +121,8 @@ public sealed class CollectionSemanticsManifestTests
                     propertyName,
                     FriendlyName(valueType),
                     FriendlyName(handler.GetType()),
-                    GetMergeMode(handler),
+                    AssetGroupCatalog.For(recordHandlerType).Any(group => group.Members.Count > 1 && group.Members.Contains(propertyName))
+                        ? "Atomic" : GetMergeMode(handler),
                     handler));
             }
         }

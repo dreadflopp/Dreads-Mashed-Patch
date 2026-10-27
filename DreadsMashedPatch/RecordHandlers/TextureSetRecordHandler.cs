@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins.Records;
@@ -10,16 +11,23 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Kept specialized/atomic: TX00-TX07 plus typed DNAM flags form one authored texture
-    //   definition; the complete DODT decal payload remains a separate cohesive value.
-    // - Bounds policy: ObjectBounds stays with the effective winner; there is no main model filename to coordinate.
-    // - Flag decision: TextureDefinition delegates DNAM presence/bit copying and equality to the
-    //   project-approved typed nullable flag handler rather than generic reflection.
-    // - Rationale: DNAM changes how several texture slots are interpreted, and independently
-    //   combining channels can create a texture set no source plugin authored.
+    // TX00-TX07 and DNAM define one authored texture set; DNAM changes channel interpretation.
+    // The nullable flag handler owns DNAM presence/bits. DODT remains a separate complete decal value.
     public class TextureSetRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
@@ -31,7 +39,6 @@ namespace DreadsMashedPatch.RecordHandlers
                 value => value.DeepCopy(),
                 DecalMixIn.Equals) },
         };
-
 
         public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,
@@ -45,8 +52,5 @@ namespace DreadsMashedPatch.RecordHandlers
                 .ResolveAllContexts<ISkyrimMod, ISkyrimModGetter, ITextureSet, ITextureSetGetter>(state.LinkCache)
                 .ToArray();
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

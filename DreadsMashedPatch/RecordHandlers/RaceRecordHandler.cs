@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -15,28 +16,44 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: RACE scalar/list/link fields plus generated copies for BodyTemplate, MountData, FaceFxPhonemes, and MovementTypes.
-// - Kept specialized: gendered aggregates use typed male/female copying and equality; Skill Boosts are
-//   grouped as xEdit's fixed sorted array keyed by Skill instead of Mutagen's seven physical slots; Attacks
-//   use Mutagen's typed deep copy so binary-overlay AttackData is materialized as mutable AttackData.
-// - Intentionally excluded: DATADataTypeState and ExportingExtraNam2 are serialization state; Unknown is outside the semantic conflict surface.
-// - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout and empty NAM2 marker state.
-
-// Appearance migration: HeadData (both genders), MorphRace, tint count and FaceGen clamps
-// select one complete snapshot through ordinary ownership/reversion forwarding.
-// Generated copies preserve all nested head/tint assets.
-// Other gendered body data, legacy Hairs/Eyes availability and flags retain their existing policies.
-// Rationale: morph definitions, indexes and clamps must match the selected head data.
-
-// Header migration: raw/common/Race.MajorFlag flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Head shape keeps parts/morph definitions and clamps together; tint count travels with both lists.
+// Parent/gender presence gates child writes, and typed masked copies preserve sibling selections.
+// Each gender owns a skeleton/behavior pair; combat and movement edits cannot claim rig ownership.
+// Skill boosts use xEdit Skill keys rather than physical slots; AttackData needs generated overlay copies.
 public class RaceRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
-        { "Appearance", new RaceAppearanceHandler() },
+        { "HeadData.Presence", new RaceHeadDataPresenceHandler() },
+        { "HeadData.Male.Shape", new RaceHeadDataHandler(MaleFemaleGender.Male, RaceHeadDataPart.Shape) },
+        { "HeadData.Female.Shape", new RaceHeadDataHandler(MaleFemaleGender.Female, RaceHeadDataPart.Shape) },
+        { "HeadData.Male.Mesh", new RaceHeadDataHandler(MaleFemaleGender.Male, RaceHeadDataPart.Mesh) },
+        { "HeadData.Female.Mesh", new RaceHeadDataHandler(MaleFemaleGender.Female, RaceHeadDataPart.Mesh) },
+        { "HeadData.Male.FaceTextures", new RaceHeadDataHandler(MaleFemaleGender.Male, RaceHeadDataPart.FaceTextures) },
+        { "HeadData.Female.FaceTextures", new RaceHeadDataHandler(MaleFemaleGender.Female, RaceHeadDataPart.FaceTextures) },
+        { "HeadData.Male.Tints", new RaceHeadDataHandler(MaleFemaleGender.Male, RaceHeadDataPart.Tints) },
+        { "HeadData.Female.Tints", new RaceHeadDataHandler(MaleFemaleGender.Female, RaceHeadDataPart.Tints) },
+        { "HeadData.Male.RacePresets", new RaceHeadChoicesHandler<INpcGetter>(MaleFemaleGender.Male, "RacePresets", h => h.RacePresets, h => h.RacePresets) },
+        { "HeadData.Female.RacePresets", new RaceHeadChoicesHandler<INpcGetter>(MaleFemaleGender.Female, "RacePresets", h => h.RacePresets, h => h.RacePresets) },
+        { "HeadData.Male.AvailableHairColors", new RaceHeadChoicesHandler<IColorRecordGetter>(MaleFemaleGender.Male, "AvailableHairColors", h => h.AvailableHairColors, h => h.AvailableHairColors) },
+        { "HeadData.Female.AvailableHairColors", new RaceHeadChoicesHandler<IColorRecordGetter>(MaleFemaleGender.Female, "AvailableHairColors", h => h.AvailableHairColors, h => h.AvailableHairColors) },
+        { "MorphRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, IRace, IRaceGetter>("MorphRace") },
+        { "NumberOfTintsInList", new SimpleReflectionPropertyHandler<ushort?, IRace, IRaceGetter>("NumberOfTintsInList") },
+        { "FacegenMainClamp", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("FacegenMainClamp") },
+        { "FacegenFaceClamp", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("FacegenFaceClamp") },
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Race.MajorFlag)) },
         { "Name", new TranslatedStringReflectionPropertyHandler<IRace, IRaceGetter>("Name") },
@@ -49,7 +66,7 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "SkillBoosts", new RaceSkillBoostsHandler() },
         { "Height", new GenderedItemHandler<float, float, IRace, IRaceGetter>("Height", record => record.Height, (record, value) => { if (value != null) record.Height = value; }, value => value) },
         { "Weight", new GenderedItemHandler<float, float, IRace, IRaceGetter>("Weight", record => record.Weight, (record, value) => { if (value != null) record.Weight = value; }, value => value) },
-        { "Flags", new SimpleReflectionFlagPropertyHandler<Race.Flag, IRace, IRaceGetter>("Flags") },
+        { "Flags", new SimpleReflectionFlagPropertyHandler<Race.Flag, IRace, IRaceGetter>("Flags", preserveUnknownBits: true) },
         { "Starting", new RaceStartingHandler() },
         { "BaseCarryWeight", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("BaseCarryWeight") },
         { "BaseMass", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("BaseMass") },
@@ -70,7 +87,8 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "AngularTolerance", new SimpleReflectionPropertyHandler<float, IRace, IRaceGetter>("AngularTolerance") },
         { "MountData", new GeneratedCopyReflectionPropertyHandler<IMountDataGetter, MountData, IRace, IRaceGetter>(
             "MountData", value => value.DeepCopy(), MountDataMixIn.Equals) },
-        { "SkeletalModel", new GenderedItemHandler<ISimpleModelGetter?, SimpleModel?, IRace, IRaceGetter>("SkeletalModel", record => record.SkeletalModel, (record, value) => record.SkeletalModel = value, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
+        { "SkeletalModel.Male", new GenderedItemSideHandler<ISimpleModelGetter?, SimpleModel?, IRace, IRaceGetter>("SkeletalModel", MaleFemaleGender.Male, record => record.SkeletalModel, (record, value) => record.SkeletalModel = value == null || (value.Male == null && value.Female == null) ? null : value, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
+        { "SkeletalModel.Female", new GenderedItemSideHandler<ISimpleModelGetter?, SimpleModel?, IRace, IRaceGetter>("SkeletalModel", MaleFemaleGender.Female, record => record.SkeletalModel, (record, value) => record.SkeletalModel = value == null || (value.Male == null && value.Female == null) ? null : value, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
         { "MovementTypeNames", new SimpleReflectionListPropertyHandler<string, IRace, IRaceGetter>("MovementTypeNames", ListSemantics.SortedKeyed) },
         { "Voices", new GenderedItemHandler<IFormLinkGetter<IVoiceTypeGetter>, IFormLinkGetter<IVoiceTypeGetter>, IRace, IRaceGetter>("Voices", record => record.Voices, (record, value) => { if (value != null) record.Voices = value; }, value => new FormLink<IVoiceTypeGetter>(value.FormKey), (left, right) => left.FormKey == right.FormKey) },
         { "DecapitateArmors", new GenderedItemHandler<IFormLinkGetter<IArmorGetter>, IFormLinkGetter<IArmorGetter>, IRace, IRaceGetter>("DecapitateArmors", record => record.DecapitateArmors, (record, value) => record.DecapitateArmors = value, value => new FormLink<IArmorGetter>(value.FormKey), (left, right) => left.FormKey == right.FormKey) },
@@ -81,7 +99,8 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "Hairs", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IHairGetter>, IRace, IRaceGetter>("Hairs", ListSemantics.SortedKeyed) },
         { "Eyes", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IEyesGetter>, IRace, IRaceGetter>("Eyes", ListSemantics.SortedKeyed) },
         { "BodyPartData", new SimpleReflectionFormLinkPropertyHandler<IBodyPartDataGetter, IRace, IRaceGetter>("BodyPartData") },
-        { "BehaviorGraph", new GenderedItemHandler<IModelBehaviorGetter?, ModelBehavior?, IRace, IRaceGetter>("BehaviorGraph", record => record.BehaviorGraph, (record, value) => { if (value != null) record.BehaviorGraph = value; }, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
+        { "BehaviorGraph.Male", new GenderedItemSideHandler<IModelBehaviorGetter?, ModelBehavior?, IRace, IRaceGetter>("BehaviorGraph", MaleFemaleGender.Male, record => record.BehaviorGraph, (record, value) => { if (value != null) record.BehaviorGraph = value; }, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
+        { "BehaviorGraph.Female", new GenderedItemSideHandler<IModelBehaviorGetter?, ModelBehavior?, IRace, IRaceGetter>("BehaviorGraph", MaleFemaleGender.Female, record => record.BehaviorGraph, (record, value) => { if (value != null) record.BehaviorGraph = value; }, value => value?.DeepCopy(), (left, right) => left == null ? right == null : right != null && left.Equals(right)) },
         { "MaterialType", new SimpleReflectionFormLinkPropertyHandler<IMaterialTypeGetter, IRace, IRaceGetter>("MaterialType") },
         { "ImpactDataSet", new SimpleReflectionFormLinkPropertyHandler<IImpactDataSetGetter, IRace, IRaceGetter>("ImpactDataSet") },
         { "DecapitationFX", new SimpleReflectionFormLinkPropertyHandler<IArtObjectGetter, IRace, IRaceGetter>("DecapitationFX") },
@@ -105,6 +124,26 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "ArmorRace", new SimpleReflectionFormLinkPropertyHandler<IRaceGetter, IRace, IRaceGetter>("ArmorRace") },
 
     };
+
+    public override void ApplyForwardedProperties(IMajorRecord record, Dictionary<string, object?> propertiesToForward)
+    {
+        if (record is not IRace race) throw new ArgumentException("Expected a RACE record.", nameof(record));
+        const string presenceKey = "HeadData.Presence";
+        var hasPresence = propertiesToForward.TryGetValue(presenceKey, out var value);
+        var presence = hasPresence
+            ? value as RaceHeadDataPresence ?? throw new ArgumentException("Expected RACE head presence.")
+            : new RaceHeadDataPresence(race.HeadData is not null, race.HeadData?.Male is not null, race.HeadData?.Female is not null);
+        var coordinated = new Dictionary<string, object?>();
+        if (hasPresence) coordinated[presenceKey] = presence;
+        foreach (var (key, selected) in propertiesToForward)
+        {
+            if (key == presenceKey) continue;
+            if (key.StartsWith("HeadData.Male.", StringComparison.Ordinal) && (!presence.Present || !presence.Male)) continue;
+            if (key.StartsWith("HeadData.Female.", StringComparison.Ordinal) && (!presence.Present || !presence.Female)) continue;
+            coordinated[key] = selected;
+        }
+        base.ApplyForwardedProperties(record, coordinated);
+    }
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(
         IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,

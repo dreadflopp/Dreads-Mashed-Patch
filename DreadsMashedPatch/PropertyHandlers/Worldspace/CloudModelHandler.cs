@@ -75,7 +75,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Worldspace
         {
             var newModel = new Model();
 
-            // Copy File
             if (value.File != null)
             {
                 newModel.File = AssetPathHelper.Copy(value.File)!;
@@ -83,7 +82,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Worldspace
 
             newModel.Data = value.Data?.ToArray();
 
-            // Copy AlternateTextures
             if (value.AlternateTextures != null)
             {
                 newModel.AlternateTextures = new ExtendedList<AlternateTexture>();

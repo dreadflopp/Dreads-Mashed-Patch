@@ -11,15 +11,9 @@ using Noggog;
 namespace DreadsMashedPatch.PropertyHandlers.General
 {
     /// <summary>
-    /// A generic property handler that uses reflection to access simple properties.
-    /// This handler is limited to value types and strings, which do not require deep copying.
-    /// 
-    /// Supports nested property paths (e.g., "Placement.Position") and will automatically
-    /// create intermediate objects if they are null when setting values.
+    /// Forwards value types and plain strings; complex references require a deep-copy handler.
+    /// Nested paths create missing intermediate objects when their types can be constructed.
     /// </summary>
-    /// <typeparam name="TValue">The type of the property value</typeparam>
-    /// <typeparam name="TRecord">The record type that contains the property (e.g., IPlacedObject)</typeparam>
-    /// <typeparam name="TRecordGetter">The getter record type (e.g., IPlacedObjectGetter)</typeparam>
     public class SimpleReflectionPropertyHandler<TValue, TRecord, TRecordGetter> : AbstractPropertyHandler<TValue>
         where TRecord : class, IMajorRecord
         where TRecordGetter : class, IMajorRecordGetter
@@ -46,10 +40,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             _p3FloatEpsilon = p3FloatEpsilon;
             _propertyPath = propertyName.Split('.');
 
-            // Find the property on the getter interface
             _getterProperty = FindProperty(typeof(TRecordGetter), _propertyPath);
 
-            // Find the property on the setter interface
             _setterProperty = FindProperty(typeof(TRecord), _propertyPath);
 
             if (_getterProperty == null)
@@ -58,7 +50,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     $"Property '{propertyName}' not found on {typeof(TRecordGetter).Name}");
             }
 
-            // Build path for nested properties
             if (_propertyPath.Length > 1)
             {
                 _getterPathProperties = BuildPropertyPath(typeof(TRecordGetter), _propertyPath, out _);
@@ -82,11 +73,9 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     return null;
                 }
 
-                // If not the last property in the path, get the type for the next iteration
                 if (i < path.Length - 1)
                 {
                     currentType = property.PropertyType;
-                    // Handle nullable types
                     if (currentType.IsGenericType && currentType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     {
                         currentType = currentType.GetGenericArguments()[0];
@@ -115,7 +104,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 pathProperties[i] = property;
 
                 var propType = property.PropertyType;
-                // Handle nullable types - get the underlying type
                 if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     propType = propType.GetGenericArguments()[0];
@@ -155,7 +143,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             {
                 object? currentObject = typedRecord;
 
-                // Navigate through nested properties
                 if (_getterPathProperties != null)
                 {
                     for (int i = 0; i < _getterPathProperties.Length; i++)
@@ -167,7 +154,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                         currentObject = _getterPathProperties[i].GetValue(currentObject);
 
-                        // If we got a null value and there are more properties to navigate, return default
                         if (currentObject == null && i < _getterPathProperties.Length - 1)
                         {
                             return default;
@@ -208,7 +194,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             {
                 object? currentObject = typedRecord;
 
-                // Navigate through nested properties, creating intermediate objects if needed
                 if (_setterPathProperties != null && _setterPathTypes != null)
                 {
                     for (int i = 0; i < _setterPathProperties.Length; i++)
@@ -216,13 +201,10 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         var pathProperty = _setterPathProperties[i];
                         var pathType = _setterPathTypes[i];
 
-                        // Get the current value of the intermediate property
                         var intermediateValue = pathProperty.GetValue(currentObject);
 
-                        // If null and we need to set a value, create a new instance
                         if (intermediateValue == null && value != null)
                         {
-                            // Try to create an instance using the default constructor
                             var newInstance = System.Activator.CreateInstance(pathType);
                             if (newInstance == null)
                             {
@@ -230,7 +212,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                                 return;
                             }
 
-                            // Set the intermediate property
                             pathProperty.SetValue(currentObject, newInstance);
                             intermediateValue = newInstance;
                         }
@@ -239,7 +220,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                         if (currentObject == null)
                         {
-                            // Can't proceed if intermediate object is null and we can't create it
                             return;
                         }
                     }
@@ -251,12 +231,10 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     return;
                 }
 
-                // Handle nullable value types - extract value if it's a nullable type
                 object? valueToSet = value;
                 if (value != null && value.GetType().IsGenericType &&
                     value.GetType().GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
-                    // Check if it has a value using reflection
                     var hasValueProperty = value.GetType().GetProperty("HasValue");
                     var valueProperty = value.GetType().GetProperty("Value");
 
@@ -292,12 +270,10 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 return StringComparisonHelper.EqualsNormalized(s1, s2);
             }
 
-            // For nullable float types, use epsilon comparison
             if (typeof(TValue).IsGenericType && typeof(TValue).GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 var underlyingType = typeof(TValue).GetGenericArguments()[0];
 
-                // Handle float? with epsilon comparison
                 if (underlyingType == typeof(float))
                 {
                     var v1 = value1 as float?;
@@ -308,13 +284,10 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     }
                 }
 
-                // Handle P3Float? - extract Value and use explicit epsilon comparison
-                // Use component-wise epsilon (0.0001f) to match float? handling - ensures reversions
-                // are correctly detected when values come from different mods/serialization (Position, Rotation, etc.)
+                // Nullable vectors use the same configured tolerance as non-nullable vectors,
+                // so serialization noise cannot change reversion classification.
                 if (underlyingType == typeof(P3Float))
                 {
-                    // For P3Float?, we need to handle nullable comparison
-                    // Use reflection to get HasValue and Value properties
                     var hasValueProp = typeof(TValue).GetProperty("HasValue");
                     var valueProp = typeof(TValue).GetProperty("Value");
                     if (hasValueProp != null && valueProp != null)
@@ -322,16 +295,12 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         var hasValue1 = (bool)(hasValueProp.GetValue(value1) ?? false);
                         var hasValue2 = (bool)(hasValueProp.GetValue(value2) ?? false);
 
-                        // Both null
                         if (!hasValue1 && !hasValue2) return true;
-                        // One null, one not
                         if (!hasValue1 || !hasValue2) return false;
 
-                        // Both have values - extract and compare using explicit epsilon
                         var v1 = valueProp.GetValue(value1);
                         var v2 = valueProp.GetValue(value2);
 
-                        // Try to cast to P3Float - this should work since underlyingType is P3Float
                         if (v1 != null && v2 != null)
                         {
                             if (v1 is P3Float p1 && v2 is P3Float p2)
@@ -339,7 +308,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                                 return P3FloatComparison.EqualsWithin(p1, p2, _p3FloatEpsilon ?? P3FloatComparison.DefaultEpsilon);
                             }
 
-                            // Fallback: try to convert and compare directly
                             try
                             {
                                 var p1Fallback = (P3Float)v1;
@@ -355,13 +323,10 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                             }
                         }
 
-                        // If we got here, we couldn't extract/compare the values properly
-                        // Fall through to other comparison methods below
                     }
                 }
             }
 
-            // For P3Float (non-nullable), use explicit epsilon comparison
             if (typeof(TValue) == typeof(P3Float))
             {
                 if (value1 is P3Float p1 && value2 is P3Float p2)
@@ -370,7 +335,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 }
             }
 
-            // For float types (non-nullable), use epsilon comparison
             if (typeof(TValue) == typeof(float))
             {
                 if (value1 is float f1 && value2 is float f2)
@@ -379,11 +343,9 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 }
             }
 
-            // For Mutagen types (like P3Float, Placement, etc.), they implement IEquatable with their getter interface
-            // Try to find and use the Equals method from IEquatable<IGetterType>
+            // Mutagen value types can implement IEquatable against a getter interface.
             var valueType = value1.GetType();
 
-            // Check all interfaces for IEquatable<T> where T might be a getter interface
             var equatableInterfaces = valueType.GetInterfaces()
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEquatable<>))
                 .ToList();
@@ -395,7 +357,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 {
                     try
                     {
-                        // Try to invoke Equals with value2 - it might be compatible even if types don't match exactly
                         var result = equalsMethod.Invoke(value1, new object[] { value2! });
                         if (result is bool boolResult)
                         {
@@ -412,14 +373,11 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 }
             }
 
-            // Try to use IEquatable<TValue> if available (for simple types)
             if (value1 is IEquatable<TValue> equatable1)
             {
                 return equatable1.Equals(value2!);
             }
 
-            // Use the type's Equals method (for Mutagen types that override Equals like P3Float)
-            // This will use the overridden Equals which calls CommonInstance().Equals() for Mutagen types
             try
             {
                 return value1.Equals(value2);
@@ -434,15 +392,10 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             }
         }
 
-        /// <summary>
-        /// Format a value for display in logs. Override to provide custom formatting for P3Float values.
-        /// Uses invariant culture to ensure consistent formatting with period as decimal separator.
-        /// </summary>
         public override string FormatValue(object? value)
         {
             if (value == null) return "null";
 
-            // Helper method to format a P3Float value
             string FormatP3Float(P3Float p3Float)
             {
                 // Use invariant culture to ensure period as decimal separator
@@ -454,13 +407,11 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 return $"{x.ToString("F4", CultureInfo.InvariantCulture)}, {y.ToString("F4", CultureInfo.InvariantCulture)}, {z.ToString("F4", CultureInfo.InvariantCulture)}";
             }
 
-            // Handle P3Float? (nullable)
             if (typeof(TValue).IsGenericType && typeof(TValue).GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 var underlyingType = typeof(TValue).GetGenericArguments()[0];
                 if (underlyingType == typeof(P3Float))
                 {
-                    // Use reflection to get HasValue and Value properties
                     var hasValueProp = typeof(TValue).GetProperty("HasValue");
                     var valueProp = typeof(TValue).GetProperty("Value");
                     if (hasValueProp != null && valueProp != null)
@@ -477,7 +428,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 }
             }
 
-            // Handle P3Float (non-nullable)
             if (typeof(TValue) == typeof(P3Float))
             {
                 if (value is P3Float p3Float)
@@ -486,7 +436,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 }
             }
 
-            // Default to base implementation for other types
             return base.FormatValue(value);
         }
     }

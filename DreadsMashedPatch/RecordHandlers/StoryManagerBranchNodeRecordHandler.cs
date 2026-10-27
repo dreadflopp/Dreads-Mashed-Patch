@@ -12,17 +12,8 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: SMBN links and scalar fields use shared semantic handlers.
-// - Kept specialized: Conditions uses the shared polymorphic condition handler.
-// - Intentionally non-migrated: none; Parent and PreviousSibling remain registered so topology changes are detected.
-// - Coupled forwarding: every topology or behavior change always establishes complete-node ownership.
-// - Rationale: parent/sibling links, conditions, flags, and concurrency form one behavior-graph decision;
-//   independent configuration forwarding is intentionally unavailable.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Topology, conditions, flags and concurrency form one behavior-graph decision;
+// a change to any of them establishes complete-node ownership.
 public class StoryManagerBranchNodeRecordHandler : AbstractRecordHandler
 {
     private static readonly IReadOnlySet<string> ConfigurationPropertyNames = new HashSet<string>(StringComparer.Ordinal)

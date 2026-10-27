@@ -50,7 +50,6 @@ namespace DreadsMashedPatch.PropertyHandlers.MagicEffect
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Compare all properties of the archetype
             return value1.Type == value2.Type &&
                    value1.ActorValue == value2.ActorValue &&
                    value1.AssociationKey.FormKey == value2.AssociationKey.FormKey;

@@ -78,38 +78,39 @@ public sealed class GenderedItemHandler<TGetterItem, TMutableItem, TRecord, TRec
 
 /// <summary>
 /// Tracks one side of a gendered aggregate independently and preserves the
-/// opposite side when applying a forwarded value.
+/// opposite side when applying a forwarded value. Getter/mutable item types can
+/// differ so binary-overlay model values use the same detached copying path.
 /// </summary>
-public sealed class GenderedItemSideHandler<TItem, TRecord, TRecordGetter>
-    : AbstractPropertyHandler<TItem>
+public sealed class GenderedItemSideHandler<TGetterItem, TMutableItem, TRecord, TRecordGetter>
+    : AbstractPropertyHandler<TGetterItem>
     where TRecord : class, IMajorRecord
     where TRecordGetter : class, IMajorRecordGetter
 {
     private readonly MaleFemaleGender _gender;
-    private readonly Func<TRecordGetter, IGenderedItemGetter<TItem>?> _getValue;
-    private readonly Action<TRecord, IGenderedItem<TItem>?> _setValue;
-    private readonly Func<TItem, TItem> _copyItem;
-    private readonly Func<TItem, TItem, bool> _itemsEqual;
+    private readonly Func<TRecordGetter, IGenderedItemGetter<TGetterItem>?> _getValue;
+    private readonly Action<TRecord, IGenderedItem<TMutableItem>?> _setValue;
+    private readonly Func<TGetterItem, TMutableItem> _copyItem;
+    private readonly Func<TGetterItem, TGetterItem, bool> _itemsEqual;
 
     public GenderedItemSideHandler(
         string propertyName,
         MaleFemaleGender gender,
-        Func<TRecordGetter, IGenderedItemGetter<TItem>?> getValue,
-        Action<TRecord, IGenderedItem<TItem>?> setValue,
-        Func<TItem, TItem> copyItem,
-        Func<TItem, TItem, bool>? itemsEqual = null)
+        Func<TRecordGetter, IGenderedItemGetter<TGetterItem>?> getValue,
+        Action<TRecord, IGenderedItem<TMutableItem>?> setValue,
+        Func<TGetterItem, TMutableItem> copyItem,
+        Func<TGetterItem, TGetterItem, bool>? itemsEqual = null)
     {
         PropertyName = $"{propertyName}.{gender}";
         _gender = gender;
         _getValue = getValue;
         _setValue = setValue;
         _copyItem = copyItem;
-        _itemsEqual = itemsEqual ?? EqualityComparer<TItem>.Default.Equals;
+        _itemsEqual = itemsEqual ?? EqualityComparer<TGetterItem>.Default.Equals;
     }
 
     public override string PropertyName { get; }
 
-    public override TItem? GetValue(IMajorRecordGetter record)
+    public override TGetterItem? GetValue(IMajorRecordGetter record)
     {
         if (record is not TRecordGetter typedRecord)
         {
@@ -120,7 +121,7 @@ public sealed class GenderedItemSideHandler<TItem, TRecord, TRecordGetter>
         return gendered == null ? default : gendered[_gender];
     }
 
-    public override void SetValue(IMajorRecord record, TItem? value)
+    public override void SetValue(IMajorRecord record, TGetterItem? value)
     {
         if (record is not TRecord typedRecord || record is not TRecordGetter getterRecord)
         {
@@ -130,10 +131,10 @@ public sealed class GenderedItemSideHandler<TItem, TRecord, TRecordGetter>
         var current = _getValue(getterRecord);
         var male = _gender == MaleFemaleGender.Male ? value! : current == null ? default! : current.Male;
         var female = _gender == MaleFemaleGender.Female ? value! : current == null ? default! : current.Female;
-        _setValue(typedRecord, new GenderedItem<TItem>(_copyItem(male), _copyItem(female)));
+        _setValue(typedRecord, new GenderedItem<TMutableItem>(_copyItem(male), _copyItem(female)));
     }
 
-    public override bool AreValuesEqual(TItem? value1, TItem? value2)
+    public override bool AreValuesEqual(TGetterItem? value1, TGetterItem? value2)
     {
         if (value1 is null || value2 is null)
         {

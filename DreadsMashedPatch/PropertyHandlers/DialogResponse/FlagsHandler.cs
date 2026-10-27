@@ -27,7 +27,6 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogResponse
         {
             if (record is IDialogResponses dialogResponseRecord)
             {
-                // Ensure Flags object exists
                 if (dialogResponseRecord.Flags == null)
                 {
                     dialogResponseRecord.Flags = new DialogResponseFlags();

@@ -38,16 +38,13 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     return;
                 }
 
-                // Create a new Icons instance and copy properties
                 var newIcons = new Icons();
 
-                // Copy LargeIconFilename
                 if (value.LargeIconFilename != null && !value.LargeIconFilename.IsNull)
                 {
                     newIcons.LargeIconFilename = AssetPathHelper.Copy(value.LargeIconFilename)!;
                 }
 
-                // Copy SmallIconFilename
                 if (value.SmallIconFilename != null && !value.SmallIconFilename.IsNull)
                 {
                     newIcons.SmallIconFilename = AssetPathHelper.Copy(value.SmallIconFilename);
@@ -66,10 +63,8 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Compare LargeIconFilename
             if (!AssetPathHelper.AreEqual(value1.LargeIconFilename, value2.LargeIconFilename)) return false;
 
-            // Compare SmallIconFilename
             if (!AssetPathHelper.AreEqual(value1.SmallIconFilename, value2.SmallIconFilename)) return false;
 
             return true;

@@ -18,14 +18,12 @@ namespace DreadsMashedPatch.PropertyHandlers.Spell
             {
                 if (value == null)
                 {
-                    // Create an empty translated string since Description is not nullable
                     var emptyDescription = new TranslatedString(Language.English);
                     emptyDescription.String = "";
                     spellRecord.Description = emptyDescription;
                 }
                 else
                 {
-                    // Create a deep copy of the translated string
                     var newDescription = new TranslatedString(Language.English);
                     newDescription.String = value.String;
                     spellRecord.Description = newDescription;

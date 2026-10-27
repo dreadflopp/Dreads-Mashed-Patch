@@ -37,7 +37,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     return;
                 }
 
-                // Convert to a list that we can modify
                 var effects = effectsEnumerable.ToList();
                 effects.Clear();
 
@@ -54,7 +53,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     }
                 }
 
-                // Update the record's effects collection
                 UpdateEffectsCollection(typedRecord, effects);
             }
         }

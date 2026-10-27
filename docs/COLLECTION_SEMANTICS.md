@@ -1,5 +1,11 @@
 # Collection semantics and verification
 
+Collections owned by a multi-member [asset group](ASSET_FORWARDING.md) select
+one complete snapshot; their registered list contexts are disabled. Runtime
+collection audits account for that owner and retain xEdit ordering/key facts as
+intentional policy exceptions. Single-member groups retain their existing list
+algorithm when forwarding is enabled.
+
 ## Purpose
 
 Every registered record-handler property whose handled value is a collection is
@@ -20,7 +26,7 @@ count/coupling concerns, source evidence, and rationale. The pinned source inter
 The manifest includes constructible dormant handlers, including LAND. Use the
 [supported/excluded routes](record-patching/unsupported.md) to determine what runs.
 
-Use the generated comparison report for current registration counts. Each of the seven placed-projectile variants contributes five shared ReferenceRecord collection registrations. LTEX grasses use sorted Grass FormID keys. LENS sprites are nested inside `FlareDefinition`, an atomic record value, so they are documented and tested separately rather than appearing as a directly registered collection. Sprite order, duplicates and presence travel together with both flare globals.
+Use the generated comparison report for current registration counts. Each of the seven placed-projectile variants contributes five shared ReferenceRecord collection registrations. LTEX grasses use sorted Grass FormID keys. LENS sprites are nested inside `FlareSprites`, an atomic resource value, so they are documented and tested separately rather than appearing as a directly registered collection. Sprite order, duplicates and presence travel together with each sprite's texture/settings. Both global flare parameters remain ordinary scalars. BPTD Parts retains keyed row reconciliation; Parts.LimbMeshes is a separate atomic resource projection restricted to surviving PartNode occurrences.
 
 ## Modes
 

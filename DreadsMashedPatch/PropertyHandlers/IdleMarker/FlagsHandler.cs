@@ -1,50 +1,19 @@
-using System;
+using DreadsMashedPatch.PropertyHandlers.General;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
-using DreadsMashedPatch.PropertyHandlers.Abstracts;
 
-namespace DreadsMashedPatch.PropertyHandlers.IdleMarker
+namespace DreadsMashedPatch.PropertyHandlers.IdleMarker;
+
+/// <summary>Approved masked flag copying with the same absent-zero normalization as water flags.</summary>
+public sealed class FlagsHandler() : SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.IdleMarker.Flag,
+    IIdleMarker, IIdleMarkerGetter>("Flags", preserveUnknownBits: true)
 {
-    public class FlagsHandler : AbstractFlagPropertyHandler<Mutagen.Bethesda.Skyrim.IdleMarker.Flag>
+    public override void SetValue(IMajorRecord record, Mutagen.Bethesda.Skyrim.IdleMarker.Flag value)
     {
-        public override string PropertyName => "Flags";
-
-        public override Mutagen.Bethesda.Skyrim.IdleMarker.Flag GetValue(IMajorRecordGetter record)
-        {
-            if (record is IIdleMarkerGetter idleMarker)
-            {
-                return idleMarker.Flags ?? 0;
-            }
-
-            return 0;
-        }
-
-        public override void SetValue(IMajorRecord record, Mutagen.Bethesda.Skyrim.IdleMarker.Flag value)
-        {
-            if (record is IIdleMarker idleMarker)
-            {
-                idleMarker.Flags = value;
-            }
-        }
-
-        protected override Mutagen.Bethesda.Skyrim.IdleMarker.Flag[] GetAllFlags()
-        {
-            return Enum.GetValues<Mutagen.Bethesda.Skyrim.IdleMarker.Flag>();
-        }
-
-        protected override bool IsFlagSet(Mutagen.Bethesda.Skyrim.IdleMarker.Flag flags, Mutagen.Bethesda.Skyrim.IdleMarker.Flag flag)
-        {
-            return (flags & flag) == flag;
-        }
-
-        protected override Mutagen.Bethesda.Skyrim.IdleMarker.Flag SetFlag(Mutagen.Bethesda.Skyrim.IdleMarker.Flag flags, Mutagen.Bethesda.Skyrim.IdleMarker.Flag flag, bool value)
-        {
-            if (value)
-            {
-                return flags | flag;
-            }
-
-            return flags & ~flag;
-        }
+        if (record is not IIdleMarker marker)
+            throw new ArgumentException("Expected an IDLM record.", nameof(record));
+        var wasAbsent = marker.Flags is null;
+        base.SetValue(record, value);
+        if (wasAbsent && marker.Flags.GetValueOrDefault() == 0) marker.Flags = null;
     }
 }

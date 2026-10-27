@@ -11,14 +11,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: all footstep lists use the shared atomic form-link-list handler.
-    // - Kept specialized: none.
-    // - Rationale: each logical list is an ordered value with meaningful duplicates; Mutagen derives XCNT and DATA during serialization.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Each footstep list is an ordered value with meaningful duplicates; Mutagen derives XCNT/DATA.
     public class FootstepSetRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

@@ -33,7 +33,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
                     return;
                 }
 
-                // Handle different concrete implementations
                 if (value is INpcInheritSoundGetter inheritSound)
                 {
                     var newInheritSound = new NpcInheritSound
@@ -46,7 +45,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
                 {
                     var newSoundTypes = new NpcSoundTypes();
 
-                    // Deep copy the Types list
                     if (soundTypes.Types != null)
                     {
                         foreach (var soundType in soundTypes.Types)
@@ -58,7 +56,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
                                     Type = soundType.Type
                                 };
 
-                                // Deep copy the Sounds list
                                 if (soundType.Sounds != null)
                                 {
                                     foreach (var sound in soundType.Sounds)
@@ -84,7 +81,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
                 }
                 else
                 {
-                    // Unknown implementation - set to null
                     npcRecord.Sound = null;
                 }
             }
@@ -99,20 +95,17 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Handle different concrete implementations
             if (value1 is INpcInheritSoundGetter inheritSound1 && value2 is INpcInheritSoundGetter inheritSound2)
             {
                 return inheritSound1.InheritsSoundsFrom.FormKey == inheritSound2.InheritsSoundsFrom.FormKey;
             }
             else if (value1 is INpcSoundTypesGetter soundTypes1 && value2 is INpcSoundTypesGetter soundTypes2)
             {
-                // Compare Types list
                 if (soundTypes1.Types?.Count != soundTypes2.Types?.Count) return false;
 
                 if (soundTypes1.Types == null && soundTypes2.Types == null) return true;
                 if (soundTypes1.Types == null || soundTypes2.Types == null) return false;
 
-                // Compare each sound type
                 for (int i = 0; i < soundTypes1.Types.Count; i++)
                 {
                     var type1 = soundTypes1.Types[i];
@@ -123,10 +116,8 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
 
                     if (type1.Type != type2.Type) return false;
 
-                    // Compare Sounds list
                     if (type1.Sounds?.Count != type2.Sounds?.Count) return false;
 
-                    // Compare each sound
                     if (type1.Sounds != null && type2.Sounds != null)
                     {
                         for (int j = 0; j < type1.Sounds.Count; j++)
@@ -147,7 +138,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             }
             else
             {
-                // Different types or unknown implementations
                 return false;
             }
         }

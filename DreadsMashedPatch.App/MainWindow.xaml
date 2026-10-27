@@ -446,7 +446,7 @@
                         <TextBlock Style="{StaticResource SectionTitle}"
                                    Text="Smarter choices for complex records"/>
                         <TextBlock Style="{StaticResource HelpText}"
-                                   Text="These options apply specialized forwarding rules,"/>
+                                   Text="Choose how the patcher handles records with related properties or special forwarding rules."/>
 
                         <CheckBox Content="Treat Creation Club content as official baseline"
                                   FontWeight="SemiBold"
@@ -501,11 +501,15 @@
                         <TextBlock Style="{StaticResource HelpText}"
                                    Text="Recommended hybrid: patch normally unless the winning CELL header matches Skyrim.esm, then use Dawnguard.esm instead."/>
 
-                        <CheckBox Content="Restrict tree forwarding (Recommended)"
-                                  FontWeight="SemiBold"
-                                  IsChecked="{Binding Settings.Patcher.Forwarding.RestrictTreeForwarding}"/>
-                        <TextBlock Style="{StaticResource HelpText}"
-                                   Text="Does not forward tree models, bounds, wind settings, scripts or record flags from other overrides. Keeps these fields from the winning plugin to avoid mixing incompatible tree appearance and behavior. Uncheck to use normal forwarding."/>
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="Tree forwarding" Margin="0,22,0,0"/>
+                        <CheckBox Content="Forward tree changes as a group" FontWeight="SemiBold"
+                                  IsChecked="{Binding Settings.Patcher.Forwarding.ForwardTreeGroups}"/>
+                        <TextBlock Style="{StaticResource HelpText}" Margin="0,4,0,2">
+                            <Run FontWeight="SemiBold" Text="Off (default): "/><Run Text="Keep the last plugin's models, bounds, wind, script settings and flags together. Earlier changes may be lost."/>
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource HelpText}" Margin="0,4,0,2">
+                            <Run FontWeight="SemiBold" Text="On: "/><Run Text="Select tree mesh references, bounds, wind data, script attachments and flags together from one plugin. Mismatches with installed assets may cause visual and animation problems. Other property groups always use their normal forwarding rules."/>
+                        </TextBlock>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

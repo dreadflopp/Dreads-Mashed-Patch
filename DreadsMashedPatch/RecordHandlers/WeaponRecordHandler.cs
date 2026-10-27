@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
@@ -11,21 +12,23 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: inherited EditorID and reflection-safe WEAP aggregate leaves use shared handlers.
-    // - Kept specialized: model, script, destructible, description, flags, and the weapon-only mutually-exclusive type keyword rule.
-    // - Intentionally excluded: Unused*, Data.Unused*, Critical.Unused*, and Data.Unknown* are outside the semantic conflict surface.
-    // - Rationale: exact dotted registrations expose semantic leaves while preserving dedicated copy/flag behavior;
-    //   only WEAP keywords need the configured type-family ownership rule, so other record keyword handlers stay generic.
-
-    // Header migration: raw/common/Weapon.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // Only WEAP keywords apply the configured mutually exclusive type-family ownership rule;
+    // other record keyword lists use ordinary merging.
     public class WeaponRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             // General properties (using existing handlers)
@@ -35,13 +38,13 @@ namespace DreadsMashedPatch.RecordHandlers
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Icons", new IconsHandler() },
             { "Keywords", new WeaponKeywordListHandler() },
-            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() },
 
             // Weapon-specific properties
             { "ObjectEffect", new SimpleReflectionFormLinkPropertyHandler<IEffectRecordGetter, IWeapon, IWeaponGetter>("ObjectEffect") },
             { "EnchantmentAmount", new SimpleReflectionPropertyHandler<ushort?, IWeapon, IWeaponGetter>("EnchantmentAmount") },
-            { "Destructible", new DestructibleHandler() },
+            { "Destructible", DestructibleDataHandlers.Data(new DestructibleHandler()) },
+            { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new DestructibleHandler()) },
             { "EquipmentType", new SimpleReflectionFormLinkPropertyHandler<IEquipTypeGetter, IWeapon, IWeaponGetter>("EquipmentType") },
             { "BlockBashImpact", new SimpleReflectionFormLinkPropertyHandler<IImpactDataSetGetter, IWeapon, IWeaponGetter>("BlockBashImpact") },
             { "AlternateBlockMaterial", new SimpleReflectionFormLinkPropertyHandler<IMaterialTypeGetter, IWeapon, IWeaponGetter>("AlternateBlockMaterial") },
@@ -66,7 +69,10 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Data.AnimationType", new SimpleReflectionPropertyHandler<WeaponAnimationType, IWeapon, IWeaponGetter>("Data.AnimationType") },
             { "Data.Speed", new SimpleReflectionPropertyHandler<float, IWeapon, IWeaponGetter>("Data.Speed") },
             { "Data.Reach", new SimpleReflectionPropertyHandler<float, IWeapon, IWeaponGetter>("Data.Reach") },
-            { "Data.Flags", new SimpleReflectionFlagPropertyHandler<WeaponData.Flag, IWeapon, IWeaponGetter>("Data.Flags", preserveUnknownBits: true) },
+            { "Data.Flags", new SimpleReflectionFlagPropertyHandler<WeaponData.Flag, IWeapon, IWeaponGetter>("Data.Flags", preserveUnknownBits: true,
+                includedFlags: Enum.GetValues<WeaponData.Flag>().Where(flag => flag != WeaponData.Flag.HasScope)) },
+            { "Data.Flags.HasScope", new SimpleReflectionFlagPropertyHandler<WeaponData.Flag, IWeapon, IWeaponGetter>("Data.Flags", preserveUnknownBits: true,
+                includedFlags: [WeaponData.Flag.HasScope]) },
             { "Data.SightFOV", new SimpleReflectionPropertyHandler<float, IWeapon, IWeaponGetter>("Data.SightFOV") },
             { "Data.BaseVATStoHitChance", new SimpleReflectionPropertyHandler<byte, IWeapon, IWeaponGetter>("Data.BaseVATStoHitChance") },
             { "Data.AttackAnimation", new SimpleReflectionPropertyHandler<WeaponData.AttackAnimationType, IWeapon, IWeaponGetter>("Data.AttackAnimation") },
@@ -104,8 +110,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

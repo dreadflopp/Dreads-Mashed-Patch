@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,18 +16,23 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: REGN map/worldspace and non-area region substructures via reflection handlers.
-// - Kept specialized: Region Areas are an atomic ordered array whose nested polygon points require
-//   typed copying and xEdit's direction normalization.
-// - Rationale: generic reflection cannot assign overlay IReadOnlyList<P2Float> values to Mutagen's
-//   mutable ExtendedList<P2Float>, and xEdit normalizes reversed polygon point sequences after load.
-
-// Header migration: raw/common/Region.MajorFlag flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Areas are one ordered polygon array. Typed copies convert overlay point lists, and equality
+// follows xEdit's normalization of reversed polygon directions.
 public class RegionRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
@@ -34,12 +40,20 @@ public class RegionRecordHandler : AbstractRecordHandler
         { "MapColor", new SimpleReflectionPropertyHandler<Color?, IRegion, IRegionGetter>("MapColor") },
         { "Worldspace", new SimpleReflectionFormLinkPropertyHandler<IWorldspaceGetter, IRegion, IRegionGetter>("Worldspace") },
         { "RegionAreas", new RegionAreasHandler() },
-        { "Objects", new GeneratedCopyReflectionPropertyHandler<IRegionObjectsGetter, RegionObjects, IRegion, IRegionGetter>("Objects", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
-        { "Weather", new GeneratedCopyReflectionPropertyHandler<IRegionWeatherGetter, RegionWeather, IRegion, IRegionGetter>("Weather", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
-        { "Map", new GeneratedCopyReflectionPropertyHandler<IRegionMapGetter, RegionMap, IRegion, IRegionGetter>("Map", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
-        { "Land", new GeneratedCopyReflectionPropertyHandler<IRegionLandGetter, RegionLand, IRegion, IRegionGetter>("Land", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
-        { "Grasses", new GeneratedCopyReflectionPropertyHandler<IRegionGrassesGetter, RegionGrasses, IRegion, IRegionGetter>("Grasses", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
-        { "Sounds", new GeneratedCopyReflectionPropertyHandler<IRegionSoundsGetter, RegionSounds, IRegion, IRegionGetter>("Sounds", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Objects", RegionDataHandlers.Body<IRegionObjectsGetter, RegionObjects>("Objects", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Objects.Icons", RegionDataHandlers.Icons<IRegionObjectsGetter, RegionObjects>("Objects", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Weather", RegionDataHandlers.Body<IRegionWeatherGetter, RegionWeather>("Weather", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Weather.Icons", RegionDataHandlers.Icons<IRegionWeatherGetter, RegionWeather>("Weather", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Map", RegionDataHandlers.Body<IRegionMapGetter, RegionMap>("Map", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Map.Icons", RegionDataHandlers.Icons<IRegionMapGetter, RegionMap>("Map", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Land", RegionDataHandlers.Body<IRegionLandGetter, RegionLand>("Land", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Land.Icons", RegionDataHandlers.Icons<IRegionLandGetter, RegionLand>("Land", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Grasses", RegionDataHandlers.Body<IRegionGrassesGetter, RegionGrasses>("Grasses", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Grasses.Icons", RegionDataHandlers.Icons<IRegionGrassesGetter, RegionGrasses>("Grasses", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Sounds", RegionDataHandlers.Body<IRegionSoundsGetter, RegionSounds>("Sounds", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
+        { "Sounds.Music", RegionDataHandlers.Audio(music: true) },
+        { "Sounds.Sounds", RegionDataHandlers.Audio(music: false) },
+        { "Sounds.Icons", RegionDataHandlers.Icons<IRegionSoundsGetter, RegionSounds>("Sounds", value => value.DeepCopy(), (left, right) => left.Equals(right)) },
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

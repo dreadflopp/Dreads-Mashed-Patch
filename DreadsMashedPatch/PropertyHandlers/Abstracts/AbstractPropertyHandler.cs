@@ -32,7 +32,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             return Equals(value1, value2);
         }
 
-        // Helper methods to reduce boilerplate
         protected static TRecord? TryCastRecord<TRecord>(IMajorRecordGetter record, string propertyName) where TRecord : class
         {
             if (record is TRecord typedRecord)
@@ -53,7 +52,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             return null;
         }
 
-        // Non-generic interface implementations
         void IPropertyHandler.SetValue(IMajorRecord record, object? value)
         {
             SetValue(record, (T?)value);
@@ -69,7 +67,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             return AreValuesEqual((T?)value1, (T?)value2);
         }
 
-        // Non-generic interface implementation for context creation
         IPropertyContext IPropertyHandler.CreatePropertyContext()
         {
             return new SimplePropertyContext<T>();

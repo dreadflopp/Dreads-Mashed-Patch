@@ -9,15 +9,9 @@ using DreadsMashedPatch.PropertyHandlers.Abstracts;
 namespace DreadsMashedPatch.PropertyHandlers.General
 {
     /// <summary>
-    /// A generic flag property handler that uses reflection to access simple flag enum properties.
-    /// This handler is designed for simple flag properties that don't require special handling.
-    /// 
-    /// Supports nested property paths (e.g., "SomeProperty.Flags") and will automatically
-    /// create intermediate objects if they are null when setting values.
+    /// Resolves enum flags through dotted property paths. Configured masks preserve unowned bits;
+    /// missing intermediate objects are created when their types can be constructed.
     /// </summary>
-    /// <typeparam name="TFlag">The flag enum type (e.g., PlacedObject.ActionFlag)</typeparam>
-    /// <typeparam name="TRecord">The record type that contains the property (e.g., IPlacedObject)</typeparam>
-    /// <typeparam name="TRecordGetter">The getter record type (e.g., IPlacedObjectGetter)</typeparam>
     public class SimpleReflectionFlagPropertyHandler<TFlag, TRecord, TRecordGetter> : AbstractFlagPropertyHandler<TFlag>
         where TFlag : struct, Enum
         where TRecord : class, IMajorRecord
@@ -46,10 +40,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             _includedFlags = includedFlags?.Distinct().ToArray();
             _propertyPath = propertyName.Split('.');
 
-            // Find the property on the getter interface
             _getterProperty = FindProperty(typeof(TRecordGetter), _propertyPath);
 
-            // Find the property on the setter interface
             _setterProperty = FindProperty(typeof(TRecord), _propertyPath);
 
             if (_getterProperty == null)
@@ -58,7 +50,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     $"Property '{propertyName}' not found on {typeof(TRecordGetter).Name}");
             }
 
-            // Build path for nested properties
             if (_propertyPath.Length > 1)
             {
                 _getterPathProperties = BuildPropertyPath(typeof(TRecordGetter), _propertyPath, out _);
@@ -85,11 +76,9 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     return null;
                 }
 
-                // If not the last property in the path, get the type for the next iteration
                 if (i < path.Length - 1)
                 {
                     currentType = property.PropertyType;
-                    // Handle nullable types
                     if (currentType.IsGenericType && currentType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     {
                         currentType = currentType.GetGenericArguments()[0];
@@ -118,7 +107,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 pathProperties[i] = property;
 
                 var propType = property.PropertyType;
-                // Handle nullable types - get the underlying type
                 if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     propType = propType.GetGenericArguments()[0];
@@ -148,7 +136,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             {
                 object? currentObject = typedRecord;
 
-                // Navigate through nested properties
                 if (_getterPathProperties != null)
                 {
                     for (int i = 0; i < _getterPathProperties.Length; i++)
@@ -160,7 +147,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                         currentObject = _getterPathProperties[i].GetValue(currentObject);
 
-                        // If we got a null value and there are more properties to navigate, return default
                         if (currentObject == null && i < _getterPathProperties.Length - 1)
                         {
                             return default;
@@ -175,7 +161,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                 var value = _getterProperty.GetValue(currentObject);
 
-                // Handle nullable flag types
                 if (value == null)
                 {
                     return default;
@@ -208,7 +193,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             {
                 object? currentObject = typedRecord;
 
-                // Navigate through nested properties, creating intermediate objects if needed
                 if (_setterPathProperties != null && _setterPathTypes != null)
                 {
                     for (int i = 0; i < _setterPathProperties.Length; i++)
@@ -216,13 +200,10 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         var pathProperty = _setterPathProperties[i];
                         var pathType = _setterPathTypes[i];
 
-                        // Get the current value of the intermediate property
                         var intermediateValue = pathProperty.GetValue(currentObject);
 
-                        // If null and we need to set a value, create a new instance
                         if (intermediateValue == null)
                         {
-                            // Try to create an instance using the default constructor
                             var newInstance = System.Activator.CreateInstance(pathType);
                             if (newInstance == null)
                             {
@@ -230,7 +211,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                                 return;
                             }
 
-                            // Set the intermediate property
                             pathProperty.SetValue(currentObject, newInstance);
                             intermediateValue = newInstance;
                         }
@@ -239,7 +219,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                         if (currentObject == null)
                         {
-                            // Can't proceed if intermediate object is null and we can't create it
                             return;
                         }
                     }
@@ -251,8 +230,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     return;
                 }
 
-                // Check if the property is nullable
-                var propertyType = _setterProperty.PropertyType;
                 object? valueToSet = value;
 
                 if (_preserveUnknownBits)
@@ -273,11 +250,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     }
                 }
 
-                if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    // Property is nullable, so we can set it directly (value is a struct)
-                    valueToSet = value;
-                }
+                // Reflection accepts the boxed enum for a nullable enum property too.
+                // Keep valueToSet: replacing it with value here loses preserved unowned bits.
 
                 _setterProperty.SetValue(currentObject, valueToSet);
             }
@@ -307,7 +281,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
         protected override bool IsFlagSet(TFlag flags, TFlag flag)
         {
-            // Standard bitwise flag check - convert to underlying integer type for bitwise operations
             var flagsInt = Convert.ToInt64(flags);
             var flagInt = Convert.ToInt64(flag);
             return (flagsInt & flagInt) == flagInt;
@@ -315,7 +288,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
         protected override TFlag SetFlag(TFlag flags, TFlag flag, bool value)
         {
-            // Standard bitwise flag set/clear - convert to underlying integer type for bitwise operations
             var flagsInt = Convert.ToInt64(flags);
             var flagInt = Convert.ToInt64(flag);
             long result;

@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
@@ -12,19 +13,23 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: translated text and LoopAndRumble use generated copies; scalar/link fields retain typed handlers.
-    // - Kept specialized: SoundFiles preserves exact indexed paths; BNAM pitch and volume pairs are
-    //   atomic semantic groups, while Priority remains independently mergeable.
-    // - Intentionally non-migrated: LoopAndRumble is LNAM, not part of the BNAM grouping.
-    // - Rationale: paired pitch and attenuation settings describe one adjustment, while grouping the
-    //   entire packed BNAM would unnecessarily couple Priority to unrelated acoustic changes.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Clips, type, loop/rumble, pitch/volume, routing and subtitles form one playback definition.
+    // Priority and Conditions remain independent so those edits cannot replace playback resources.
     public class SoundDescriptorRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
@@ -58,8 +63,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

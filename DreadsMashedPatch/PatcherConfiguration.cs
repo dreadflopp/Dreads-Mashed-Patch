@@ -1,4 +1,5 @@
 using DreadsMashedPatch.Enums;
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda.Skyrim;
 
 namespace DreadsMashedPatch;
@@ -163,7 +164,7 @@ public sealed class PatcherConfiguration
             {
                 TreatCreationClubAsVanilla = Forwarding.TreatCreationClubAsVanilla,
                 EnforceSingleVanillaWeaponTypeKeyword = Forwarding.EnforceSingleVanillaWeaponTypeKeyword,
-                RestrictTreeForwarding = Forwarding.RestrictTreeForwarding,
+                ForwardTreeGroups = Forwarding.ForwardTreeGroups,
                 VanillaWeaponTypeKeywords = new HashSet<string>(
                     Forwarding.VanillaWeaponTypeKeywords,
                     StringComparer.OrdinalIgnoreCase),
@@ -251,10 +252,16 @@ public sealed class ForwardingSettings
     public bool EnforceSingleVanillaWeaponTypeKeyword { get; set; } = true;
 
     /// <summary>
-    /// Keeps TREE models, bounds, animation data, scripts and header flags from the
-    /// effective winner to avoid combining incompatible appearance and behavior.
+    /// Allows one coherent TREE group to forward mesh references, bounds, wind data,
+    /// script attachments and supported header flags. Other groups always forward.
     /// </summary>
-    public bool RestrictTreeForwarding { get; set; } = true;
+    public bool ForwardTreeGroups { get; set; }
+
+    public bool Allows(ForwardingRule rule) => rule switch
+    {
+        ForwardingRule.Trees => ForwardTreeGroups,
+        _ => FixedForwardingRules.Allows(rule)
+    };
 
     public HashSet<string> VanillaWeaponTypeKeywords { get; set; } =
         new(DefaultVanillaWeaponTypeKeywordValues, StringComparer.OrdinalIgnoreCase);

@@ -74,10 +74,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             if (item1 == null && item2 == null) return true;
             if (item1 == null || item2 == null) return false;
 
-            // Compare AttackEvent
             if (item1.AttackEvent != item2.AttackEvent) return false;
 
-            // Compare AttackData
             if (item1.AttackData == null && item2.AttackData == null) return true;
             if (item1.AttackData == null || item2.AttackData == null) return false;
 

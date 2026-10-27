@@ -14,12 +14,19 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 |---|---|
 | `Name`, `Description`, `PickUpSound`, `PutDownSound`, `EquipmentType`, `Weight`, `Value`, `Addiction`, `AddictionChance`, `ConsumeSound` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `Destructible`, `Icons` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Keywords` | Merge rows by key. |
 | `Effects` | Merge rows by position. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/IngestibleRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="ammo-ammunition"></a>
 
@@ -29,12 +36,19 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Description`, `Projectile`, `Damage`, `Value`, `Weight`, `ShortName` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `Icons`, `Destructible` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Keywords` | Merge rows by key. |
 | `DATADataTypeState` | Serialization/unused state; no independent decision. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/AmmunitionRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="appa-alchemicalapparatus"></a>
 
@@ -43,63 +57,100 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Quality`, `Description`, `Value`, `Weight` | Select each value separately. |
-| `Icons`, `Destructible` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `VirtualMachineAdapter` | Merge rows by key. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/AlchemicalApparatusRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="arma-armoraddon"></a>
 
 ## ARMA — Armor Addon
 
-Male and female fields are separate. Each model filename is separate from its alternate textures, which match by (Name, Index). Selected filenames also carry model data bytes, but byte-only differences do not trigger forwarding. BodyTemplate.ActsLike44 is not independently patched.
+Each gender’s first/third-person meshes and alternate textures stay with its shared weight-slider switch under Meshes. Skin/swap references form a separate Textures group per gender. Body-template fields and supported races use ordinary forwarding. Selected filenames carry model data bytes, but byte-only differences do not claim ownership. BodyTemplate.ActsLike44 is not independently patched.
 
 | Properties | How they are patched |
 |---|---|
-| `WeightSliderEnabled.Male`, `WeightSliderEnabled.Female`, `BodyTemplate.ArmorType`, `Priority.Male`, `Priority.Female`, `DetectionSoundValue`, `WeaponAdjust`, `Race`, `FootstepSound`, `ArtObject`, `SkinTexture.Male`, `SkinTexture.Female`, `TextureSwapList.Male`, `TextureSwapList.Female` | Select each value separately. |
-| `BodyTemplate.FirstPersonFlags`, `BodyTemplate.Flags` | Merge registered flag bits separately. |
-| `WorldModel.Male.File`, `WorldModel.Female.File`, `FirstPersonModel.Male.File`, `FirstPersonModel.Female.File` | Select each whole value separately. |
-| `WorldModel.Male.AlternateTextures`, `WorldModel.Female.AlternateTextures`, `FirstPersonModel.Male.AlternateTextures`, `FirstPersonModel.Female.AlternateTextures`, `AdditionalRaces` | Merge rows by key. |
+| `Priority.Male`, `Priority.Female`, `DetectionSoundValue`, `WeaponAdjust`, `FootstepSound`, `ArtObject` | Select each value separately. |
 | `Unknown`, `Unknown2`, `WorldModel.Male.Data`, `WorldModel.Female.Data`, `FirstPersonModel.Male.Data`, `FirstPersonModel.Female.Data` | Not independently forwarded. |
+| `BodyTemplate.FirstPersonFlags`, `BodyTemplate.Flags` | Merge registered flag bits separately. |
+| `BodyTemplate.ArmorType`, `Race` | Select each value independently. |
+| `AdditionalRaces` | Merge rows by key. |
 | `BodyTemplate.ActsLike44` | Serialization/unused state; no independent decision. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ArmorAddonRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `MaleMeshes` (Meshes) | `WorldModel.Male.File`, `WorldModel.Male.AlternateTextures`, `FirstPersonModel.Male.File`, `FirstPersonModel.Male.AlternateTextures`, `WeightSliderEnabled.Male` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+| `MaleSkinTextures` (Textures) | `SkinTexture.Male`, `TextureSwapList.Male` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+| `FemaleMeshes` (Meshes) | `WorldModel.Female.File`, `WorldModel.Female.AlternateTextures`, `FirstPersonModel.Female.File`, `FirstPersonModel.Female.AlternateTextures`, `WeightSliderEnabled.Female` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+| `FemaleSkinTextures` (Textures) | `SkinTexture.Female`, `TextureSwapList.Female` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+
 
 <a id="armo-armor"></a>
 
 ## ARMO — Armor
 
-The whole male/female world-model-and-icon value follows the model/bounds rule. BodyTemplate flags and ArmorType remain separate; ActsLike44 is not independently patched.
+Dropped/world meshes follow the model/bounds rule under Meshes. Armature references have a separate Meshes decision. Male/female inventory icons use IconsAndImages independently. BodyTemplate fields and Race use ordinary forwarding. ActsLike44 is not independently patched.
 
 | Properties | How they are patched |
 |---|---|
-| `Name`, `ObjectEffect`, `EnchantmentAmount`, `BodyTemplate.ArmorType`, `PickUpSound`, `PutDownSound`, `RagdollConstraintTemplate`, `EquipmentType`, `BashImpactDataSet`, `AlternateBlockMaterial`, `Race`, `Description`, `Value`, `Weight`, `ArmorRating`, `TemplateArmor` | Select each value separately. |
+| `Name`, `ObjectEffect`, `EnchantmentAmount`, `PickUpSound`, `PutDownSound`, `RagdollConstraintTemplate`, `EquipmentType`, `BashImpactDataSet`, `AlternateBlockMaterial`, `Description`, `Value`, `Weight`, `ArmorRating`, `TemplateArmor` | Select each value separately. |
+| `Keywords` | Merge rows by key. |
 | `BodyTemplate.FirstPersonFlags`, `BodyTemplate.Flags` | Merge registered flag bits separately. |
-| `Destructible` | Select each whole value separately. |
-| `WorldModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `Armature` | Select each whole collection separately. |
-| `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
+| `BodyTemplate.ArmorType`, `Race` | Select each value independently. |
 | `BodyTemplate.ActsLike44` | Serialization/unused state; no independent decision. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ArmorRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+| `WorldModelAndBounds` (Meshes) | `WorldModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+| `MaleIcons` (IconsAndImages) | `WorldModel.Male.Icons` | Normal | Use the existing complete-value or collection policy. |
+| `FemaleIcons` (IconsAndImages) | `WorldModel.Female.Icons` | Normal | Use the existing complete-value or collection policy. |
+| `WornMeshes` (Meshes) | `Armature` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="book-book"></a>
 
 ## BOOK — Book
 
+BookText forwards normally as complete translated text, including embedded image markup. Icons forwards separately; it does not rewrite or freeze book text.
+
 Teaches keeps the teaching variant and its value together. It does not combine skill and spell teaching.
 
 | Properties | How they are patched |
 |---|---|
-| `Name`, `Value`, `Weight`, `Description`, `PickUpSound`, `PutDownSound`, `BookText`, `Type`, `InventoryArt` | Select each value separately. |
+| `BookText` | Select complete translated text, including embedded image markup. |
+| `Name`, `Value`, `Weight`, `Description`, `PickUpSound`, `PutDownSound`, `Type`, `InventoryArt` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `Destructible`, `Teaches`, `Icons` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `Keywords`, `VirtualMachineAdapter` | Merge rows by key. |
+| `Teaches` | Select each whole value separately. |
+| `Keywords` | Merge rows by key. |
 | `Unused` | Not independently forwarded. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/BookRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="cobj-constructibleobject"></a>
 
@@ -111,7 +162,6 @@ Teaches keeps the teaching variant and its value together. It does not combine s
 | `Items` | Merge rows by key. |
 | `Conditions` | Merge aligned rows in order. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ConstructibleObjectRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="cont-container"></a>
 
@@ -123,11 +173,18 @@ Items match by item reference, retaining duplicate rows and their complete owner
 |---|---|
 | `Name`, `Weight`, `OpenSound`, `CloseSound` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `Destructible` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `Items`, `VirtualMachineAdapter` | Merge rows by key. |
+| `Items` | Merge rows by key. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ContainerRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="ingr-ingredient"></a>
 
@@ -139,12 +196,20 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 |---|---|
 | `Name`, `EquipType`, `PickUpSound`, `PutDownSound`, `Value`, `Weight`, `IngredientValue` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `Icons`, `Destructible` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
+| `Keywords` | Merge rows by key. |
 | `Effects` | Merge rows by position. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/IngredientRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="keym-key"></a>
 
@@ -153,11 +218,19 @@ Effects merges by position. Each effect’s BaseEffect, Data and nested Conditio
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight` | Select each value separately. |
-| `Icons`, `Destructible` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
+| `Keywords` | Merge rows by key. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/KeyRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="lvli-leveleditem"></a>
 
@@ -172,7 +245,6 @@ Entries match by (Level, Reference), with complete row payloads/counts. Entries 
 | `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 | `Entries` | Merge rows by key. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LeveledItemRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="misc-miscitem"></a>
 
@@ -181,11 +253,19 @@ Entries match by (Level, Reference), with complete row payloads/counts. Entries 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight` | Select each value separately. |
-| `Icons`, `Destructible` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `VirtualMachineAdapter`, `Keywords` | Merge rows by key. |
+| `Keywords` | Merge rows by key. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/MiscItemRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="slgm-soulgem"></a>
 
@@ -194,11 +274,18 @@ Entries match by (Level, Reference), with complete row payloads/counts. Entries 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `PickUpSound`, `PutDownSound`, `Value`, `Weight`, `ContainedSoul`, `MaximumCapacity`, `LinkedTo` | Select each value separately. |
-| `Icons`, `Destructible` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 | `Keywords` | Merge rows by key. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/SoulGemRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="weap-weapon"></a>
 
@@ -208,12 +295,23 @@ By default, a newly accepted single configured vanilla weapon-type keyword repla
 
 | Properties | How they are patched |
 |---|---|
-| `Name`, `ObjectEffect`, `EnchantmentAmount`, `EquipmentType`, `BlockBashImpact`, `AlternateBlockMaterial`, `PickUpSound`, `PutDownSound`, `Description`, `ImpactDataSet`, `FirstPersonModel`, `AttackSound`, `AttackSound2D`, `AttackLoopSound`, `AttackFailSound`, `IdleSound`, `EquipSound`, `UnequipSound`, `BasicStats.Value`, `BasicStats.Weight`, `BasicStats.Damage`, `DetectionSoundLevel`, `Template`, `Data.AnimationType`, `Data.Speed`, `Data.Reach`, `Data.SightFOV`, `Data.BaseVATStoHitChance`, `Data.AttackAnimation`, `Data.NumProjectiles`, `Data.EmbeddedWeaponAV`, `Data.RangeMin`, `Data.RangeMax`, `Data.OnHit`, `Data.AnimationAttackMult`, `Data.RumbleLeftMotorStrength`, `Data.RumbleRightMotorStrength`, `Data.RumbleDuration`, `Data.Skill`, `Data.Resist`, `Data.Stagger`, `Critical.Damage`, `Critical.PercentMult`, `Critical.Effect` | Select each value separately. |
+| `Name`, `ObjectEffect`, `EnchantmentAmount`, `EquipmentType`, `BlockBashImpact`, `AlternateBlockMaterial`, `PickUpSound`, `PutDownSound`, `Description`, `ImpactDataSet`, `AttackSound`, `AttackSound2D`, `AttackLoopSound`, `AttackFailSound`, `IdleSound`, `EquipSound`, `UnequipSound`, `BasicStats.Value`, `BasicStats.Weight`, `BasicStats.Damage`, `DetectionSoundLevel`, `Template`, `Data.AnimationType`, `Data.Speed`, `Data.Reach`, `Data.BaseVATStoHitChance`, `Data.AttackAnimation`, `Data.NumProjectiles`, `Data.EmbeddedWeaponAV`, `Data.RangeMin`, `Data.RangeMax`, `Data.OnHit`, `Data.AnimationAttackMult`, `Data.RumbleLeftMotorStrength`, `Data.RumbleRightMotorStrength`, `Data.RumbleDuration`, `Data.Skill`, `Data.Resist`, `Data.Stagger`, `Critical.Damage`, `Critical.PercentMult`, `Critical.Effect` | Select each value separately. |
 | `Data.Flags`, `Critical.Flags` | Merge registered flag bits separately. |
-| `Icons`, `Destructible`, `ScopeModel` | Select each whole value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
-| `Keywords`, `VirtualMachineAdapter` | Merge rows by key. |
+| `Keywords` | Merge rows by key. |
 | `Unused`, `Data.Unknown`, `Data.Unknown2`, `Data.Unknown3`, `Data.Unknown4`, `Data.Unknown5` | Not independently forwarded. |
 | `Critical.Versioning`, `Critical.Unused`, `Critical.Unused2`, `Critical.Unused3`, `Critical.Unused4`, `Data.Unused`, `Data.Unused2` | Serialization/unused state; no independent decision. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/WeaponRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Destruction health, stage structure, flags, explosions and debris retain one ordinary forwarding decision. The stage-mesh group includes only stage models and their model metadata; it cannot restore removed stages.
+
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `DestructionMeshes` (Meshes) | `Destructible.StageModels` | Normal | Select stage models only; preserve the selected stage structure and gameplay data. |
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `VirtualMachineAdapter` (Scripts) | `VirtualMachineAdapter` | Normal | Use the existing complete-value or collection policy. |
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+| `Scope` (Meshes) | `ScopeModel`, `Data.SightFOV`, `Data.Flags.HasScope` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+| `FirstPersonGeometry` (Meshes) | `FirstPersonModel` | Normal | Use the existing complete-value or collection policy. |
+
+`Data.Flags` merges the remaining registered bits; HasScope is owned only by the Scope group. Main weapon geometry, scope and first-person references have separate groups.

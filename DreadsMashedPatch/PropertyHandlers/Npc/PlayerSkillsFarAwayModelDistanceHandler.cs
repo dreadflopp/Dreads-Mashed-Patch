@@ -28,7 +28,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             {
                 if (npcRecord.PlayerSkills == null)
                 {
-                    // Create new PlayerSkills if it doesn't exist
                     npcRecord.PlayerSkills = new PlayerSkills();
                 }
                 npcRecord.PlayerSkills.FarAwayModelDistance = value;

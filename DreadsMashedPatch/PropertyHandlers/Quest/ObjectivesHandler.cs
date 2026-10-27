@@ -45,7 +45,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                         }
                         else
                         {
-                            // Convert IQuestObjectiveGetter to QuestObjective
                             var newObjective = objective.DeepCopy();
                             questRecord.Objectives.Add(newObjective);
                         }
@@ -60,7 +59,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
             if (value1 == null || value2 == null) return false;
             if (value1.Count != value2.Count) return false;
 
-            // Group objectives by Index for efficient matching (order-independent)
             var objectives1ByIndex = value1
                 .Where(o => o != null)
                 .GroupBy(o => o.Index)
@@ -71,7 +69,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                 .GroupBy(o => o.Index)
                 .ToDictionary(g => g.Key, g => g.First());
 
-            // Check that all objectives in value1 have matching objectives in value2 with same properties
             foreach (var objective1 in objectives1ByIndex.Values)
             {
                 if (!objectives2ByIndex.TryGetValue(objective1.Index, out var objective2))
@@ -79,7 +76,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                     return false; // Objective Index not found in value2
                 }
 
-                // Compare objectives by all properties (for forwarding decision)
                 if (!AreObjectivesEqual(objective1, objective2))
                 {
                     return false; // Objectives differ
@@ -100,12 +96,10 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
 
         private bool AreObjectivesEqual(IQuestObjectiveGetter objective1, IQuestObjectiveGetter objective2)
         {
-            // Compare all quest objective properties for content-based equality
             if (objective1.Index != objective2.Index) return false;
             if (objective1.Flags != objective2.Flags) return false;
             if (!AreTranslatedStringsEqual(objective1.DisplayText, objective2.DisplayText)) return false;
 
-            // Compare targets by content
             if (!AreObjectiveTargetsEqual(objective1.Targets, objective2.Targets)) return false;
 
             return true;
@@ -170,11 +164,9 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
 
         private bool AreObjectiveTargetsEqual(IQuestObjectiveTargetGetter target1, IQuestObjectiveTargetGetter target2)
         {
-            // Compare all quest objective target properties
             if (target1.AliasID != target2.AliasID) return false;
             if (target1.Flags != target2.Flags) return false;
 
-            // Compare conditions by content
             if (!AreConditionsEqual(target1.Conditions, target2.Conditions)) return false;
 
             return true;

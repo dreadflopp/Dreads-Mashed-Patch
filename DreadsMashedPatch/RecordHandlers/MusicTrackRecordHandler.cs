@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -15,16 +16,22 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: MUST scalar, aggregate, and serialized asset-path fields use shared semantic handlers.
-// - Kept specialized: conditions retain CTDA alignment; cue points retain typed handling; Tracks is atomic.
-// - Rationale: xEdit declares track order semantic without an entry key, so the sequence has one owner.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Tracks is one ordered value: xEdit gives the sequence no stable row key.
 public class MusicTrackRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },

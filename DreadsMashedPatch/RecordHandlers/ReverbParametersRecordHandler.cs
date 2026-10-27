@@ -12,15 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: EditorID and record flags retain their shared handlers.
-// - Kept specialized: the complete packed REVB DATA subrecord is one atomic property.
-// - Intentionally non-migrated: no DATA members; the opaque byte is preserved in the snapshot.
-// - Rationale: reverb parameters form one acoustically coupled preset and must share ownership.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// The packed DATA subrecord is one acoustically coupled preset, including its opaque byte.
 public class ReverbParametersRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

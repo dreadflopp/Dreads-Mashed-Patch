@@ -18,7 +18,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
 
         protected override void UpdateConditionsCollection(IQuest record, List<IConditionGetter> conditions)
         {
-            // Clear the existing conditions and add the new ones
             if (record.DialogConditions != null)
             {
                 record.DialogConditions.Clear();
@@ -32,7 +31,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                     }
                     else
                     {
-                        // Convert IConditionGetter to Condition
                         var newCondition = condition.DeepCopy();
                         record.DialogConditions.Add(newCondition);
                     }

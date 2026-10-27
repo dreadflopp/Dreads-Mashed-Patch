@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,19 +17,23 @@ using Noggog;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: WTHR scalar/binary/link fields, generated sound-row copies, and CloudTextures/Clouds arrays.
-// - Collection decision: Sounds is a plain xEdit wbRArray without a StructSK, so complete rows use
-//   declaration position as identity; the display summary fields are not a sorting key.
-// - Kept specialized: generated Weather aggregate copying preserves indexed TimeOfDay members without reflecting over indexers.
-// - Intentionally excluded: NAM0DataTypeState is serialization state; Unknown is outside the semantic conflict surface.
-// - Rationale: semantic fields are forwarded while the winning record retains its binary NAM0 layout.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Sounds uses declaration position: xEdit specifies wbRArray without a StructSK key.
+// Generated aggregate copies preserve indexed TimeOfDay members without reflecting over indexers.
 public class WeatherRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },

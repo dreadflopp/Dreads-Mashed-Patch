@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
@@ -13,20 +14,23 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: independent CONT scalar, link, model, VMAD, and header fields use shared handlers.
-    // - Generalized: Items shares NPC inventory snapshots, duplicate matching, and COED reconciliation through AbstractInventoryItemsHandler.
-    // - Kept specialized: CONT's keyed count policy permits new counts but gates baseline reversions; destructible data and flags retain semantic handlers.
-    // - Rationale: generated copies preserve complete rows/owner variants; one metadata path prevents count forwarding from dropping or bypassing COED.
-
-    // Header migration: raw/common/Container.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // Inventory snapshots share NPC duplicate/COED reconciliation, but CONT permits new counts
+    // and requires ownership only for baseline reversions. Count writes must retain COED metadata.
     public class ContainerRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "Name", new TranslatedStringReflectionPropertyHandler<IContainer, IContainerGetter>("Name") },
@@ -35,9 +39,9 @@ namespace DreadsMashedPatch.RecordHandlers
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Weight", new SimpleReflectionPropertyHandler<float, IContainer, IContainerGetter>("Weight") },
             { "Items", new ItemHandler() },
-            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IContainer, IContainerGetter>() },
-            { "Destructible", new DestructibleHandler() },
+            { "Destructible", DestructibleDataHandlers.Data(new DestructibleHandler()) },
+            { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new DestructibleHandler()) },
             { "Flags", new FlagsHandler() },
             { "OpenSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IContainer, IContainerGetter>("OpenSound") },
             { "CloseSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IContainer, IContainerGetter>("CloseSound") },
@@ -57,8 +61,5 @@ namespace DreadsMashedPatch.RecordHandlers
                 .ResolveAllContexts<ISkyrimMod, ISkyrimModGetter, IContainer, IContainerGetter>(state.LinkCache)
                 .ToArray();
         }
-
-        // ApplyForwardedProperties is now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

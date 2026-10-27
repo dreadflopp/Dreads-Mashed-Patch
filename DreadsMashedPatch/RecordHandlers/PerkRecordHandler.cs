@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -14,16 +15,23 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: PERK scalar, translated text, and link fields.
-// - Kept specialized: polymorphic effects and condition lists.
-// - Flag decision: the raw record-header handler is the sole storage path and owns common Skyrim plus PERK flags.
-// - Coupled forwarding: gameplay-tree changes always establish a complete PERK ownership boundary.
-// - Rationale: generated DeepCopy dispatch preserves each concrete abstract-base subtype, while atomic ownership
-//   prevents independently merged ranks, entry points, conditions, and predecessor links from forming invalid trees;
-//   independent forwarding is intentionally not configurable.
+// Ranks, entry points, conditions and predecessor links cross-reference one another.
+// A gameplay-tree change therefore selects a complete PERK rather than independently merged fields.
 public class PerkRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     private static readonly IReadOnlySet<string> CoupledPropertyNames = new HashSet<string>(StringComparer.Ordinal)
     {
         "VirtualMachineAdapter",

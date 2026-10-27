@@ -11,15 +11,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: MOVT scalars/enums use typed reflection; AnimationChangeThresholds uses generated copying.
-// - Kept specialized: none.
-// - Intentionally excluded: SPEDDataTypeState is Mutagen serialization state, not an xEdit field.
-// - Rationale: semantic fields are forwarded while the winning record retains its binary SPED layout.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// SPEDDataTypeState controls serializer layout and is not an independently forwarded field.
 public class MovementTypeRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

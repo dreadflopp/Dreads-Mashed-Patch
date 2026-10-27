@@ -7,6 +7,7 @@ namespace DreadsMashedPatch.Tests;
 
 public sealed class PatcherConfigurationTests
 {
+
     [Fact]
     public void DefaultsPreserveForwardingPoliciesAndDisableStructurallyRiskyRecordTypes()
     {
@@ -27,7 +28,7 @@ public sealed class PatcherConfigurationTests
         Assert.Empty(settings.AlwaysWinningMods);
         Assert.True(settings.Forwarding.TreatCreationClubAsVanilla);
         Assert.True(settings.Forwarding.EnforceSingleVanillaWeaponTypeKeyword);
-        Assert.True(settings.Forwarding.RestrictTreeForwarding);
+        Assert.False(settings.Forwarding.ForwardTreeGroups);
         Assert.NotEmpty(settings.Forwarding.VanillaWeaponTypeKeywords);
         Assert.Equal(
             EditorIdForwardingPolicy.ForwardOnlyWithOtherChanges,
@@ -117,7 +118,7 @@ public sealed class PatcherConfigurationTests
             {
                 TreatCreationClubAsVanilla = false,
                 VanillaWeaponTypeKeywords = ["01E711:Skyrim.esm", "01E712:Skyrim.esm"],
-                RestrictTreeForwarding = false,
+                ForwardTreeGroups = true,
                 EditorIdPolicy = EditorIdForwardingPolicy.ForwardOnlyWithOtherChanges,
                 TamrielPersistentCellPolicy = TamrielPersistentCellPolicy.PreferSkyrim
             },
@@ -135,13 +136,13 @@ public sealed class PatcherConfigurationTests
         settings.AlwaysWinningMods.Clear();
         settings.Diagnostics.DeepDiveFormKeys.Clear();
         settings.Forwarding.VanillaWeaponTypeKeywords.Clear();
-        settings.Forwarding.RestrictTreeForwarding = true;
+        settings.Forwarding.ForwardTreeGroups = false;
 
         Assert.Contains("Mutagen.Bethesda.Skyrim.IQuestGetter", copy.DisabledRecordTypes);
         Assert.Contains("Ignored.esp", copy.IgnoredMods);
         Assert.Contains("Priority.esp", copy.AlwaysWinningMods);
         Assert.False(copy.Forwarding.TreatCreationClubAsVanilla);
-        Assert.False(copy.Forwarding.RestrictTreeForwarding);
+        Assert.True(copy.Forwarding.ForwardTreeGroups);
         Assert.Equal(EditorIdForwardingPolicy.ForwardOnlyWithOtherChanges, copy.Forwarding.EditorIdPolicy);
         Assert.Equal(TamrielPersistentCellPolicy.PreferSkyrim, copy.Forwarding.TamrielPersistentCellPolicy);
         Assert.Contains("000800:Test.esp", copy.Diagnostics.DeepDiveFormKeys);

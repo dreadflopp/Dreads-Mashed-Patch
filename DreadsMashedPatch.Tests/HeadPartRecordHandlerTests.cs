@@ -16,7 +16,7 @@ public sealed class HeadPartRecordHandlerTests
     [Fact]
     public void AppearanceComparisonIncludesCompleteOrderedMorphFiles()
     {
-        var handler = new HeadPartAppearanceHandler();
+        var handler = new HeadPartMeshHandler();
         var original = new Mutagen.Bethesda.Skyrim.HeadPart(new FormKey(SourceModKey, 0x800), SkyrimRelease.SkyrimSE);
         original.Parts.Add(CreatePart(Part.PartTypeEnum.Tri, "Actors/Character/Eyes.tri"));
         original.Parts.Add(CreatePart(Part.PartTypeEnum.ChargenMorph, "Actors/Character/EyesChargen.tri"));
@@ -39,7 +39,7 @@ public sealed class HeadPartRecordHandlerTests
             SkyrimRelease.SkyrimSE,
             SourceModKey);
         var overlayHeadPart = Assert.Single(sourceOverlay.HeadParts);
-        var appearance = new HeadPartAppearanceHandler().GetValue(overlayHeadPart);
+        var appearance = new HeadPartMeshHandler().GetValue(overlayHeadPart);
 
         var patch = new SkyrimMod(PatchModKey, SkyrimRelease.SkyrimSE);
         var target = new Mutagen.Bethesda.Skyrim.HeadPart(
@@ -49,7 +49,7 @@ public sealed class HeadPartRecordHandlerTests
             Type = Mutagen.Bethesda.Skyrim.HeadPart.TypeEnum.Eyes
         };
         patch.HeadParts.Add(target);
-        new HeadPartAppearanceHandler().SetValue(target, appearance);
+        new HeadPartMeshHandler().SetValue(target, appearance);
 
         Assert.Equal(
             [Path.Combine("Meshes", "Actors", "Character", "EyesFemale.tri"), Path.Combine("Meshes", "Actors", "Character", "EyesChildChargen.tri")],

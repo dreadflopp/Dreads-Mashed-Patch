@@ -11,14 +11,6 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: none.
-    // - Kept specialized: Objects via dedicated list handler.
-    // - Rationale: default-object list entries require concrete deep-copy semantics.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class DefaultObjectManagerRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

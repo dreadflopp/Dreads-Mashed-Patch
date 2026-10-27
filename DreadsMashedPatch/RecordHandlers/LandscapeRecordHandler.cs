@@ -14,14 +14,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: flags/form links use typed handlers; height-map and layer values use generated copy/equality.
-    // - Kept specialized: vertex normal/color arrays.
-    // - Rationale: overlays require generated mutable layer copies and typed mutable Array2d copies.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Generated copies materialize overlay layers; normal/color grids need typed mutable Array2d copies.
     public class LandscapeRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

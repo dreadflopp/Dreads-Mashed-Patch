@@ -32,13 +32,11 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             {
                 if (value == null)
                 {
-                    // ObjectBounds cannot be null, create a default object bounds
                     var defaultObjectBounds = new ObjectBounds();
                     objectBoundedRecord.ObjectBounds = defaultObjectBounds;
                 }
                 else
                 {
-                    // Create a deep copy of the object bounds
                     var newObjectBounds = new ObjectBounds();
                     newObjectBounds.First = value.First;
                     newObjectBounds.Second = value.Second;
@@ -83,7 +81,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Compare the First and Second properties
             return value1.First.Equals(value2.First) && value1.Second.Equals(value2.Second);
         }
 

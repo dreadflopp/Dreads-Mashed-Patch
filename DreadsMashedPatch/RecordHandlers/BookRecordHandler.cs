@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
@@ -11,19 +12,21 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: BOOK text, links, flags, and scalar fields use shared semantic handlers.
-    // - Kept specialized: Teaches and Icons retain their typed aggregate handlers.
-    // - Intentionally excluded: Unused is non-semantic storage; the winning value is preserved.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class BookRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
@@ -37,12 +40,12 @@ namespace DreadsMashedPatch.RecordHandlers
             { "PutDownSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IBook, IBookGetter>("PutDownSound") },
             { "Keywords", new KeywordListHandler() },
             { "BookText", new TranslatedStringReflectionPropertyHandler<IBook, IBookGetter>("BookText") },
-            { "Destructible", new DestructibleHandler() },
+            { "Destructible", DestructibleDataHandlers.Data(new DestructibleHandler()) },
+            { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new DestructibleHandler()) },
             { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.Book.Flag, IBook, IBookGetter>("Flags") },
             { "Type", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.Book.BookType, IBook, IBookGetter>("Type") },
             { "Teaches", new TeachesHandler() },
             { "InventoryArt", new SimpleReflectionFormLinkPropertyHandler<IStaticGetter, IBook, IBookGetter>("InventoryArt") },
-            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IBook, IBookGetter>() },
             { "Icons", new IconsHandler() }
         };
@@ -62,8 +65,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

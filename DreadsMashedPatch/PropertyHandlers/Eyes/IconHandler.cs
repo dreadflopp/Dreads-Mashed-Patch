@@ -12,7 +12,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Eyes
 
         public override AssetLinkGetter<SkyrimTextureAssetType> GetValue(Mutagen.Bethesda.Plugins.Records.IMajorRecordGetter record)
         {
-            if (record is IEyes eyes)
+            if (record is IEyesGetter eyes)
             {
                 return eyes.Icon;
             }

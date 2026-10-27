@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Plugins;
@@ -12,25 +13,29 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Appearance migration: model, type, extra parts, complete morph-file pairs, texture, color and valid races
-    //   select one generated-copy asset snapshot through ordinary ownership/reversion forwarding.
-    //   Appearance flags use the approved flag setter; sorted extra parts ignore reordering in equality.
-    // - Kept specialized: record header flags, translated name and EDID retain their existing policies.
-    // - Removed: the independent ordered Parts handler and list/link/model registrations.
-    // - Rationale: mixing mesh and morph sources can invalidate exported NPC faces.
-
-    // Header migration: raw/common/HeadPart.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // Keep mesh/TRI resources, extra parts, type, texture/color and rendering bits together.
+    // Eligibility flags and ValidRaces stay independent so applicability edits cannot select a mesh.
     public class HeadPartRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
-            { "Appearance", new HeadPartAppearanceHandler() },
+            { "Mesh", new HeadPartMeshHandler() },
+            { "ValidRaces", new SimpleReflectionFormLinkPropertyHandler<IFormListGetter, IHeadPart, IHeadPartGetter>("ValidRaces") },
+            { "Flags", new SimpleReflectionFlagPropertyHandler<HeadPart.Flag, IHeadPart, IHeadPartGetter>("Flags", preserveUnknownBits: true,
+                includedFlags: [HeadPart.Flag.Playable, HeadPart.Flag.Male, HeadPart.Flag.Female]) },
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(HeadPart.MajorFlag)) },
             { "Name", new TranslatedStringReflectionPropertyHandler<IHeadPart, IHeadPartGetter>("Name") },

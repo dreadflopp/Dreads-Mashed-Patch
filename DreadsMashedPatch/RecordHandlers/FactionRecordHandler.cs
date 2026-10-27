@@ -13,17 +13,6 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: Relations and Ranks use Mutagen-generated element copies; direct links and aggregates use shared handlers.
-    // - Kept specialized: Conditions (conditions-specific list semantics), Flags (project flag policy).
-    // - Rationale: generated copies materialize overlay rows safely; conditions and flags require project-specific behavior.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class FactionRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -70,10 +59,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
-
-
     }
 }

@@ -52,7 +52,7 @@ foreach (var sourcePath in Directory.EnumerateFiles(handlersDirectory, "*RecordH
 {
     var source = File.ReadAllText(sourcePath);
     var getterName = FindGetterName(source);
-    var registrations = FindRegistrations(source);
+    var registrations = FindRegistrations(source, Path.GetFileNameWithoutExtension(sourcePath));
 
     if (getterName is null)
     {
@@ -193,25 +193,19 @@ static string? FindGetterName(string source)
     return link.Success ? link.Groups["type"].Value : null;
 }
 
-static List<HandlerRegistration> FindRegistrations(string source)
+static List<HandlerRegistration> FindRegistrations(string source, string recordHandlerName)
 {
-    const string constructedPattern = "\\{\\s*\"(?<key>[^\"]+)\"\\s*,\\s*new\\s+(?<handler>[A-Za-z0-9_.]+)(?:<[^;{}]+?>)?\\s*\\(";
-    const string factoryPattern = "\\{\\s*\"(?<key>[^\"]+)\"\\s*,\\s*(?<handler>[A-Za-z_][A-Za-z0-9_.]*)\\s*\\(";
-    return Regex.Matches(source, constructedPattern, RegexOptions.Multiline)
-        .Concat(Regex.Matches(source, factoryPattern, RegexOptions.Multiline))
-        .Where(match =>
-        {
-            var lineStart = source.LastIndexOf('\n', Math.Max(0, match.Index - 1)) + 1;
-            var prefix = source[lineStart..match.Index];
-            return !prefix.Contains("//", StringComparison.Ordinal);
-        })
-        .Select(match => new HandlerRegistration(
-            match.Groups["key"].Value,
-            match.Groups["handler"].Value,
-            source.AsSpan(0, match.Index).Count('\n') + 1))
-        .DistinctBy(registration => registration.Key, StringComparer.OrdinalIgnoreCase)
-        .OrderBy(registration => registration.SourceLine)
-        .ToList();
+    // Construct the same registry as forwarding/help/collection audits. Factory calls and
+    // typed projections must not disappear or be misidentified as their factory method.
+    var type = typeof(DreadsMashedPatch.RecordHandlers.Abstracts.AbstractRecordHandler).Assembly.GetTypes()
+        .Single(type => type.Name == recordHandlerName);
+    var handler = (DreadsMashedPatch.RecordHandlers.Abstracts.AbstractRecordHandler)System.Activator.CreateInstance(type)!;
+    return handler.PropertyHandlers.Select(pair =>
+    {
+        var match = Regex.Match(source, "\\{\\s*\"" + Regex.Escape(pair.Key) + "\"\\s*,", RegexOptions.Multiline);
+        return new HandlerRegistration(pair.Key, pair.Value.GetType().Name.Split('`')[0],
+            match.Success ? source.AsSpan(0, match.Index).Count('\n') + 1 : 1);
+    }).OrderBy(registration => registration.SourceLine).ToList();
 }
 
 static PropertyReport AuditProperty(
@@ -260,7 +254,7 @@ static PropertyReport AuditProperty(
     var implementationCandidates = registrations.Where(registration =>
         ImplementationReferencesProperty(registration, property.Name, propertyHandlerSources));
     var explicitOwnershipCandidates = registrations.Where(registration =>
-        ExplicitlyOwnsProperty(registration, property.Name));
+        ExplicitlyOwnsProperty(handlerFile, registration, property.Name));
     var candidates = dotted
         .Concat(normalizedAliases)
         .Concat(implementationCandidates)
@@ -280,10 +274,11 @@ static PropertyReport AuditProperty(
         && nestedLeaves.All(leaf =>
             registrations.Any(registration => string.Equals(registration.Key, leaf, StringComparison.OrdinalIgnoreCase))
             || coverageOverrides.ContainsKey(OverrideKey(handlerFile, leaf))
+            || registrations.Any(registration => ExplicitlyOwnsProperty(handlerFile, registration, leaf))
             || registrations.Any(registration =>
                 ImplementationReferencesProperty(registration, LeafName(leaf), propertyHandlerSources)));
     var explicitlyAggregateCovered = candidates.Any(registration =>
-        ExplicitlyOwnsProperty(registration, property.Name));
+        ExplicitlyOwnsProperty(handlerFile, registration, property.Name));
     var status = candidates.Count == 0
         ? CoverageStatus.MissingCandidate
         : IsLeaf(Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType)
@@ -311,10 +306,15 @@ static bool ImplementationReferencesProperty(
     propertyHandlerSources.TryGetValue(registration.HandlerType, out var implementationSource)
     && Regex.IsMatch(implementationSource, $@"\.{Regex.Escape(propertyName)}\b");
 
-static bool ExplicitlyOwnsProperty(HandlerRegistration registration, string propertyName)
+static bool ExplicitlyOwnsProperty(string handlerFile, HandlerRegistration registration, string propertyName)
 {
-    if (HandlerGroupOwnership.Members.TryGetValue(registration.HandlerType, out var members)
-        && members.Contains(propertyName)) return true;
+    if (HandlerGroupOwnership.Members.TryGetValue($"{Path.GetFileNameWithoutExtension(handlerFile)}:{registration.Key}", out var members)
+        && members.Any(member => propertyName == member || propertyName.StartsWith(member + ".", StringComparison.Ordinal))) return true;
+
+    // The shared side adapter copies one complete typed value, including nested payloads.
+    // Its concrete registration key identifies that side without claiming the other gender.
+    if (registration.HandlerType.StartsWith("GenderedItemSideHandler", StringComparison.Ordinal)
+        && (propertyName == registration.Key || propertyName.StartsWith(registration.Key + ".", StringComparison.Ordinal))) return true;
 
     if (!registration.HandlerType.StartsWith("ModelBoundsHandler", StringComparison.Ordinal))
     {
@@ -500,9 +500,12 @@ public sealed record HandlerReport(string Handler, string? Getter, List<HandlerR
 internal static class HandlerGroupOwnership
 {
     public static readonly IReadOnlyDictionary<string, IReadOnlySet<string>> Members =
-        typeof(DreadsMashedPatch.PropertyHandlers.Interfaces.IPropertyHandler).Assembly.GetTypes()
-            .Where(type => !type.IsAbstract && typeof(DreadsMashedPatch.PropertyHandlers.Interfaces.IPropertyGroupHandler).IsAssignableFrom(type))
-            .ToDictionary(type => type.Name, type =>
-                ((DreadsMashedPatch.PropertyHandlers.Interfaces.IPropertyGroupHandler)System.Activator.CreateInstance(type)!).GroupedProperties,
+        typeof(DreadsMashedPatch.RecordHandlers.Abstracts.AbstractRecordHandler).Assembly.GetTypes()
+            .Where(type => !type.IsAbstract && typeof(DreadsMashedPatch.RecordHandlers.Abstracts.AbstractRecordHandler).IsAssignableFrom(type))
+            .SelectMany(type => ((DreadsMashedPatch.RecordHandlers.Abstracts.AbstractRecordHandler)System.Activator.CreateInstance(type)!)
+                .PropertyHandlers.Select(pair => (Record: type.Name, Entry: pair)))
+            .Where(item => item.Entry.Value is DreadsMashedPatch.PropertyHandlers.Interfaces.IPropertyGroupHandler)
+            .ToDictionary(item => $"{item.Record}:{item.Entry.Key}", item =>
+                ((DreadsMashedPatch.PropertyHandlers.Interfaces.IPropertyGroupHandler)item.Entry.Value).GroupedProperties,
                 StringComparer.Ordinal);
 }

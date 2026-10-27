@@ -12,12 +12,10 @@ namespace DreadsMashedPatch.PropertyHandlers.Interfaces
     {
         string PropertyName { get; }
 
-        // Non-generic versions for the registry
         void SetValue(IMajorRecord record, object? value);
         object? GetValue(IMajorRecordGetter record);
         bool AreValuesEqual(object? value1, object? value2);
 
-        // Context management methods
         IPropertyContext CreatePropertyContext();
 
         void UpdatePropertyContext(
@@ -30,7 +28,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Interfaces
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext,
             IPropertyContext propertyContext);
 
-        // Default implementation for formatting values
         string FormatValue(object? value) => DiagnosticValueFormatter.Format(value);
     }
 
@@ -40,7 +37,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Interfaces
     /// <typeparam name="T">The type of value this handler manages</typeparam>
     public interface IPropertyHandler<T> : IPropertyHandler
     {
-        // Type-safe versions for handlers to implement
         void SetValue(IMajorRecord record, T? value);
         new T? GetValue(IMajorRecordGetter record);
         bool AreValuesEqual(T? value1, T? value2);

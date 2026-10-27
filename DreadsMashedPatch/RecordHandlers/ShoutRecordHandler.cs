@@ -12,17 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: SHOU text, links, and metadata use shared semantic handlers.
-// - Kept specialized: WordsOfPower is an atomic non-alignable sequence; header flags use the approved composite raw handler.
-// - Rationale: xEdit marks the word sequence as declaration-ordered without a safe row identity.
-
-// Header migration: raw/common/Shout.MajorFlag flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
-// Name migration: translated Name uses generated copying to retain every selected language.
-// Optional null names remove the value; comparison follows Mutagen's language policy.
-// Other specialized fields/flags retain their policies; translations are selected as one value.
+// WordsOfPower is declaration-ordered without a safe row key; select the sequence as one value.
 public class ShoutRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

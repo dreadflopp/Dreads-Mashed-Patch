@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
@@ -12,16 +13,22 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: semantic scalar and link fields use shared reflection handlers.
-    // - Kept specialized/atomic: Model (file/data/alternate textures) and Lod (all four levels)
-    //   remain cohesive values because their members describe one mesh or LOD set.
-    // - Flag decision: the raw record-header handler is the sole storage path and owns common Skyrim plus STAT flags.
-    //   The snow DNAM flag retains its project-approved per-bit handler.
-    // - Intentionally excluded: Unused is serialization-only storage.
-    // - Rationale: unused storage is not an xEdit-visible conflict surface; retained fields have established deep-copy or flag behavior.
+    // Lod keeps all four levels together as one authored set. Unused is serialization-only storage.
     public class StaticRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
@@ -48,8 +55,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

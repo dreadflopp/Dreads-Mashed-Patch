@@ -2,10 +2,6 @@ using DreadsMashedPatch.Contexts.Interfaces;
 
 namespace DreadsMashedPatch.Contexts
 {
-    /// <summary>
-    /// Represents a context for a simple property value.
-    /// </summary>
-    /// <typeparam name="T">The type of the property value</typeparam>
     public class SimplePropertyValueContext<T>(T? item, string ownerMod) : IPropertyValueContext<T>
     {
         public T? Value { get; set; } = item;

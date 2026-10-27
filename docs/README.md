@@ -9,9 +9,10 @@ source code and executable tests determine actual behavior.
 
 | Task | Read |
 |---|---|
-| Architecture, handler choice, copying, errors, validation | [Development guide](DEVELOPMENT.md) |
+| Architecture, handler choice, source comments, copying, errors, validation | [Development guide](DEVELOPMENT.md) |
 | Record dispatch, supported and dormant variants | [Interface mapping](record-code-interface-mapping.md), [record inventory](record-patching/INVENTORY.md) |
 | Property ownership, grouping, exclusions and exceptions | [Record inventory](record-patching/INVENTORY.md), then the linked handler |
+| Property groups, fixed forwarding policy, future controls and resource ownership | [Asset forwarding guide](ASSET_FORWARDING.md) |
 | Find regressions and implementation decisions to preserve | [Regression reference](record-patching/REVIEW.md) |
 | Unresolved behavior, writer limits and validation gaps | [Known limits](record-patching/KNOWN-ISSUES.md) |
 | Collection mode, key, presence or duplicate behavior | [Collection workflow](COLLECTION_SEMANTICS.md), [alignment algorithm](LIST_ALIGNMENT.md), [source decisions](history/README.md) |

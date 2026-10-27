@@ -9,11 +9,9 @@ using DreadsMashedPatch.PropertyHandlers.Abstracts;
 namespace DreadsMashedPatch.PropertyHandlers.General
 {
     /// <summary>
-    /// A generic property handler that uses reflection to access VirtualMachineAdapter properties.
-    /// This handler treats VirtualMachineAdapter as a list of Scripts, which is what should be patched.
+    /// Adapts a VMAD property to shared name-keyed script forwarding. Script writes preserve
+    /// destination Version/ObjectFormat; the complete adapter is not selected on this path.
     /// </summary>
-    /// <typeparam name="TRecord">The record type that contains the property (e.g., IPlacedObject)</typeparam>
-    /// <typeparam name="TRecordGetter">The getter record type (e.g., IPlacedObjectGetter)</typeparam>
     public class SimpleReflectionVirtualMachineAdapterHandler<TRecord, TRecordGetter> : AbstractVirtualMachineAdapterHandler<TRecordGetter, TRecord, IVirtualMachineAdapterGetter, VirtualMachineAdapter>
         where TRecord : class, IMajorRecord
         where TRecordGetter : class, IMajorRecordGetter
@@ -23,10 +21,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
         public SimpleReflectionVirtualMachineAdapterHandler()
         {
-            // Find the VirtualMachineAdapter property on the getter interface
             _getterProperty = ReflectionPropertyResolver.Find(typeof(TRecordGetter), "VirtualMachineAdapter");
 
-            // Find the VirtualMachineAdapter property on the setter interface
             _setterProperty = ReflectionPropertyResolver.Find(typeof(TRecord), "VirtualMachineAdapter");
 
             if (_getterProperty == null)

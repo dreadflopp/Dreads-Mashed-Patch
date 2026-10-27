@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -11,26 +12,31 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: localized name and nullable form links use typed shared reflection handlers.
-// - Kept specialized/atomic: Model and ObjectBounds share one geometry owner; Destructible remains
-//   one generated-copy aggregate; Keywords and VMAD scripts retain their xEdit sorted/keyed handlers.
-// - Flag decision: the raw record-header handler is the sole storage path and owns common Skyrim
-//   plus TACT-specific flags.
-// - Intentionally excluded: xEdit marks PNAM and FNAM cpIgnore, so the winning binary values are preserved.
-// - Rationale: semantic TACT fields remain independently mergeable without splitting cohesive model,
-//   destructible, or header state, or manufacturing meaning for ignored binary data.
+// PNAM and FNAM are cpIgnore in xEdit; they are not independently conflict-resolved.
 public class TalkingActivatorRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(TalkingActivator.MajorFlag)) },
-        // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<ITalkingActivator, ITalkingActivatorGetter>() },
         { "Name", new TranslatedStringReflectionPropertyHandler<ITalkingActivator, ITalkingActivatorGetter>("Name") },
         { "ModelAndBounds", new ModelBoundsHandler() },
-        { "Destructible", new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, ITalkingActivator, ITalkingActivatorGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals) },
+        { "Destructible", DestructibleDataHandlers.Data(new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, ITalkingActivator, ITalkingActivatorGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals)) },
+        { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, ITalkingActivator, ITalkingActivatorGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals)) },
         { "Keywords", new KeywordListHandler() },
         { "LoopingSound", new SimpleReflectionFormLinkPropertyHandler<ISoundMarkerGetter, ITalkingActivator, ITalkingActivatorGetter>("LoopingSound") },
         { "Voice", new SimpleReflectionFormLinkPropertyHandler<IVoiceTypeGetter, ITalkingActivator, ITalkingActivatorGetter>("Voice") }

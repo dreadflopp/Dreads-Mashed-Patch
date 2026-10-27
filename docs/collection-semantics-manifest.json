@@ -19,7 +19,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "ActorValueInformationRecordHandler",
@@ -41,7 +41,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "AmmunitionRecordHandler",
@@ -70,44 +70,44 @@
     "Property": "FirstPersonModel.Female.AlternateTextures",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IAlternateTextureGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GenderedModelAlternateTexturesHandler\u003CMutagen.Bethesda.Skyrim.IArmorAddon, Mutagen.Bethesda.Skyrim.IArmorAddonGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group FemaleMeshes (Meshes); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "ArmorAddonRecordHandler",
     "Property": "FirstPersonModel.Male.AlternateTextures",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IAlternateTextureGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GenderedModelAlternateTexturesHandler\u003CMutagen.Bethesda.Skyrim.IArmorAddon, Mutagen.Bethesda.Skyrim.IArmorAddonGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group MaleMeshes (Meshes); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "ArmorAddonRecordHandler",
     "Property": "WorldModel.Female.AlternateTextures",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IAlternateTextureGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GenderedModelAlternateTexturesHandler\u003CMutagen.Bethesda.Skyrim.IArmorAddon, Mutagen.Bethesda.Skyrim.IArmorAddonGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group FemaleMeshes (Meshes); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "ArmorAddonRecordHandler",
     "Property": "WorldModel.Male.AlternateTextures",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IAlternateTextureGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GenderedModelAlternateTexturesHandler\u003CMutagen.Bethesda.Skyrim.IArmorAddon, Mutagen.Bethesda.Skyrim.IArmorAddonGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group MaleMeshes (Meshes); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "ArmorRecordHandler",
@@ -118,7 +118,7 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group WornMeshes (Meshes); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "ArmorRecordHandler",
@@ -140,18 +140,29 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "BodyPartDataRecordHandler",
     "Property": "Parts",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IBodyPartGetter\u003E",
-    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GeneratedCopyReflectionListPropertyHandler\u003CMutagen.Bethesda.Skyrim.IBodyPartGetter, Mutagen.Bethesda.Skyrim.BodyPart, Mutagen.Bethesda.Skyrim.IBodyPartData, Mutagen.Bethesda.Skyrim.IBodyPartDataGetter\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.BodyPartRowsHandler",
     "MergeMode": "SortedKeyed",
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
     "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "BodyPartDataRecordHandler",
+    "Property": "Parts.LimbMeshes",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IBodyPartGetter\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.NestedAssetPropertyHandler\u003CSystem.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IBodyPartGetter\u003E\u003E",
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group LimbMeshes (Meshes); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "BookRecordHandler",
@@ -173,7 +184,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "CameraPathRecordHandler",
@@ -305,7 +316,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "DebrisRecordHandler",
@@ -316,7 +327,7 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group Models (Meshes); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "DefaultObjectManagerRecordHandler",
@@ -393,7 +404,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "EquipTypeRecordHandler",
@@ -415,7 +426,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "FactionRecordHandler",
@@ -470,7 +481,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "FootstepSetRecordHandler",
@@ -569,7 +580,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "IdleAnimationRecordHandler",
@@ -591,7 +602,7 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group IdleSelection (Animations); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "ImageSpaceAdapterRecordHandler",
@@ -712,7 +723,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "KeyRecordHandler",
@@ -734,7 +745,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "LandscapeRecordHandler",
@@ -833,7 +844,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "LoadScreenRecordHandler",
@@ -910,7 +921,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "MaterialObjectRecordHandler",
@@ -954,7 +965,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "MusicTrackRecordHandler",
@@ -976,7 +987,7 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group MusicPlayback (Music); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "MusicTrackRecordHandler",
@@ -987,7 +998,7 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group MusicPlayback (Music); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "MusicTypeRecordHandler",
@@ -1108,7 +1119,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "ObjectEffectRecordHandler",
@@ -1218,7 +1229,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedBarrierRecordHandler",
@@ -1273,7 +1284,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedBeamRecordHandler",
@@ -1328,7 +1339,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedConeRecordHandler",
@@ -1383,7 +1394,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedFlameRecordHandler",
@@ -1438,7 +1449,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedHazardRecordHandler",
@@ -1493,7 +1504,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedMissileRecordHandler",
@@ -1548,7 +1559,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedNpcRecordHandler",
@@ -1581,7 +1592,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedObjectRecordHandler",
@@ -1658,7 +1669,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "PlacedTrapRecordHandler",
@@ -1713,7 +1724,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "QuestRecordHandler",
@@ -1786,33 +1797,33 @@
     "Property": "VirtualMachineAdapter.Aliases",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IQuestFragmentAliasGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.Quest.QuestFragmentAliasHandler",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group ScriptBindings (Scripts); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "QuestRecordHandler",
     "Property": "VirtualMachineAdapter.Fragments",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IQuestScriptFragmentGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.Quest.QuestScriptFragmentHandler",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group ScriptBindings (Scripts); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "QuestRecordHandler",
     "Property": "VirtualMachineAdapter.Scripts",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IScriptEntryGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.Quest.QuestScriptsHandler",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group ScriptBindings (Scripts); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "RaceRecordHandler",
@@ -1874,6 +1885,50 @@
     "Property": "Hairs",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IHairGetter\u003E\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.SimpleReflectionListPropertyHandler\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IHairGetter\u003E, Mutagen.Bethesda.Skyrim.IRace, Mutagen.Bethesda.Skyrim.IRaceGetter\u003E",
+    "MergeMode": "SortedKeyed",
+    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
+    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "RaceRecordHandler",
+    "Property": "HeadData.Female.AvailableHairColors",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IColorRecordGetter\u003E\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.Race.RaceHeadChoicesHandler\u003CMutagen.Bethesda.Skyrim.IColorRecordGetter\u003E",
+    "MergeMode": "SortedKeyed",
+    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
+    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "RaceRecordHandler",
+    "Property": "HeadData.Female.RacePresets",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.INpcGetter\u003E\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.Race.RaceHeadChoicesHandler\u003CMutagen.Bethesda.Skyrim.INpcGetter\u003E",
+    "MergeMode": "SortedKeyed",
+    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
+    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "RaceRecordHandler",
+    "Property": "HeadData.Male.AvailableHairColors",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IColorRecordGetter\u003E\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.Race.RaceHeadChoicesHandler\u003CMutagen.Bethesda.Skyrim.IColorRecordGetter\u003E",
+    "MergeMode": "SortedKeyed",
+    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
+    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+  },
+  {
+    "RecordHandler": "RaceRecordHandler",
+    "Property": "HeadData.Male.RacePresets",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.INpcGetter\u003E\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.Race.RaceHeadChoicesHandler\u003CMutagen.Bethesda.Skyrim.INpcGetter\u003E",
     "MergeMode": "SortedKeyed",
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
@@ -2006,11 +2061,11 @@
     "Property": "VirtualMachineAdapter.Scripts",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IScriptEntryGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.Scene.SceneScriptsHandler",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group ScriptBindings (Scripts); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "ScrollRecordHandler",
@@ -2072,11 +2127,11 @@
     "Property": "SoundFiles",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.Assets.IAssetLinkGetter\u003CMutagen.Bethesda.Skyrim.Assets.SkyrimSoundAssetType\u003E\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.SoundDescriptor.SoundFilesHandler",
-    "MergeMode": "ExactOrdered",
-    "IdentityPolicy": "Zero-based position",
-    "CardinalityPolicy": "Positional sequence",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group SoundPlayback (Sounds); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "SpellRecordHandler",
@@ -2164,18 +2219,18 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "TreeRecordHandler",
     "Property": "VirtualMachineAdapter",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IScriptEntryGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.SimpleReflectionVirtualMachineAdapterHandler\u003CMutagen.Bethesda.Skyrim.ITree, Mutagen.Bethesda.Skyrim.ITreeGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
+    "Evidence": "Asset group TreeAssets (Trees); winner preserved by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "WeaponRecordHandler",
@@ -2197,7 +2252,7 @@
     "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
     "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group VirtualMachineAdapter (Scripts); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
   },
   {
     "RecordHandler": "WeatherRecordHandler",
@@ -2208,7 +2263,7 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group CloudLayers (Textures); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "WeatherRecordHandler",
@@ -2219,7 +2274,7 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+    "Evidence": "Asset group CloudLayers (Textures); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "WeatherRecordHandler",

@@ -10,15 +10,6 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
-
-// Migration note:
-// - Generalized: SOUN marker fields via existing bounds/binary/form-link handlers.
-// - Kept specialized: none.
-// - Rationale: ISoundMarker has a compact field surface that maps cleanly to generic handlers.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class SoundMarkerRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

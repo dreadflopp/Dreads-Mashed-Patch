@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
@@ -11,28 +12,30 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: VM adapter, bounds, name, model, sounds, and major flags via shared handlers.
-    // - Kept specialized: Destructible via dedicated destructible handler.
-    // - Rationale: preserve destructible deep-copy semantics while reusing stable scalar/link handlers.
-
-    // Header migration: raw/common/Door.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class DoorRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Door.MajorFlag)) },
-            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IDoor, IDoorGetter>() },
             { "Name", new TranslatedStringReflectionPropertyHandler<IDoor, IDoorGetter>("Name") },
             { "ModelAndBounds", new ModelBoundsHandler() },
-            { "Destructible", new DestructibleHandler() },
+            { "Destructible", DestructibleDataHandlers.Data(new DestructibleHandler()) },
+            { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new DestructibleHandler()) },
             { "OpenSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IDoor, IDoorGetter>("OpenSound") },
             { "CloseSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IDoor, IDoorGetter>("CloseSound") },
             { "LoopSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IDoor, IDoorGetter>("LoopSound") },

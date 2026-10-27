@@ -7,6 +7,12 @@ migration plans and sequential build logs are not maintained here. Registrations
 and per-record decision notes live with the handlers; current field lists live
 in the inventory and public record pages.
 
+Asset-bearing values are now controlled by [asset family policies](../ASSET_FORWARDING.md).
+Resource and Appearance classifications are fixed true; only ForwardTreeGroups is configurable and defaults off.
+Reference rules own only references and required interpretation data. Existing forwarding regressions retain their permission/copying invariants.
+The [runtime group manifest](../asset-forwarding-groups.json) is authoritative for
+membership and the collection reports account for multi-member atomic selection.
+
 ## Regression map
 
 | Area | Preserve this behavior and rationale | Tests |
@@ -22,7 +28,7 @@ in the inventory and public record pages.
 | Keyword presence | Selected null removes the list, present-empty remains distinct, and written links are detached. WEAP exclusivity is an additional policy, not a replacement setter. | [KeywordRemovalTests](../../DreadsMashedPatch.Tests/KeywordRemovalTests.cs), [WeaponKeywordListHandlerTests](../../DreadsMashedPatch.Tests/WeaponKeywordListHandlerTests.cs) |
 | PHZD and placed projectiles | Review inherited getter/aspect fields, not only declared fields. Reuse compatible PHZD handlers with concrete context narrowing. Their IgnoredBySandbox is a nullable byte slice, not ACHR/REFR's boolean. UDR does not extend to these routes. | [PlacedHazardRecordHandlerTests](../../DreadsMashedPatch.Tests/PlacedHazardRecordHandlerTests.cs), [PlacedProjectileRecordHandlerTests](../../DreadsMashedPatch.Tests/PlacedProjectileRecordHandlerTests.cs) |
 | VOLI | All twelve nullable lighting parameters form one authored preset; independent leaves would mix presets. | [AdditionalRecordSupportTests](../../DreadsMashedPatch.Tests/AdditionalRecordSupportTests.cs) |
-| LENS | Both globals and the ordered nullable sprite sequence form one value. Retain order, duplicates, nullability and detached nested data. Compare serialized RGB separately from Opacity; do not compare non-serialized CLR alpha. LFSP counts are generated. | [AdditionalRecordSupportTests](../../DreadsMashedPatch.Tests/AdditionalRecordSupportTests.cs) |
+| LENS | Only the ordered nullable sprite sequence forms the texture-controlled value; global colour/fade scalars remain ordinary. Retain order, duplicates, nullability and detached nested data. Compare serialized RGB separately from Opacity; do not compare non-serialized CLR alpha. LFSP counts are generated. | [AdditionalRecordSupportTests](../../DreadsMashedPatch.Tests/AdditionalRecordSupportTests.cs) |
 | LTEX | Scalar friction/restitution remain independent; snow uses approved nullable flag handling. Absent INAM differs from present zero. Grass membership is sorted by FormID. | [AdditionalRecordSupportTests](../../DreadsMashedPatch.Tests/AdditionalRecordSupportTests.cs) |
 | NPC Perks and GLOB/GMST | Perks must populate an absent destination and preserve selected presence. Subtype histories resolve through the shared group getter and stop at the latest eligible subtype boundary; no older subtype reconnection or scalar conversion. | [UserReportedFailureRegressionTests](../../DreadsMashedPatch.Tests/UserReportedFailureRegressionTests.cs), [diagnostic details](../USER-REPORTED-FAILURES-2026-10-10.md) |
 | Asset paths and model bounds | Preserve GivenPath. Final filenames matching the winner retain winning bounds; selecting different filenames carries their source bounds. Bounds are never independently merged, including standalone registrations. See the [model/bounds decisions](#model-and-bounds). ARMA model metadata has a separate comparison policy. | [AssetPathHandlingTests](../../DreadsMashedPatch.Tests/AssetPathHandlingTests.cs), [ModelBoundsHandlerTests](../../DreadsMashedPatch.Tests/ModelBoundsHandlerTests.cs), [ModelBoundsForwardingTests](../../DreadsMashedPatch.Tests/ModelBoundsForwardingTests.cs), [ModelHandlerRegressionTests](../../DreadsMashedPatch.Tests/ModelHandlerRegressionTests.cs) |
@@ -31,7 +37,7 @@ in the inventory and public record pages.
 ## Model and bounds
 
 All record types registered with `ModelAndBounds` and ARMO's `WorldModelAndBounds`
-share `ModelBoundsHandler`. Model values keep ordinary selection and declared/
+share `ModelBoundsHandler`. When model forwarding is enabled, model values keep ordinary selection and declared/
 virtual-master reversion permissions. The final selected normalized filenames
 determine bounds: matching the effective winner retains its bounds; otherwise
 the bounds come from the source of the accepted filename change. The context
@@ -56,8 +62,7 @@ Their `ObjectBoundsHandler` follows the last eligible override in the shared
 chronological pass rather than applying addition/reversion permissions. Its
 getter/setter/equality still serve model/bounds copying; no parallel handler is
 registered. NPC appearance and referenced models remain specialized. TREE retains
-its winner-owned restriction by default; unrestricted forwarding uses the same
-shared model/bounds rule. Approved flag handlers and Armature remain unchanged.
+its winner-owned group by default; enabled forwarding uses one dedicated Trees selection independently of the fixed resource classifications. Approved flag handlers and Armature remain unchanged.
 
 Removed state: independent original/previous bounds and bounds ownership, the
 bounds-only selection branch, and the misleading geometry-identity naming. Filename
@@ -73,17 +78,40 @@ the deployed mesh for a same-path replacement or establish gameplay compatibilit
 
 ## Appearance boundaries
 
+NPC HairColor is excluded from both the appearance copy and equality masks, and from
+`GroupedProperties`. It has no asset-group membership: ordinary forwarding applies
+separately from the appearance group. HCLF directly references CLFM, whereas tint
+indices are interpreted using race and sex. An accepted color-only change must not
+select the whole face or transfer its owner. No obsolete handler remains: the
+existing form-link handler is the only HairColor setter. The appearance regression
+tests cover both load orders, separate ownership, declared/virtual-master restoration,
+normal grouped forwarding and binary output; help tests keep the displayed groups disjoint.
+These tests do not establish visible recoloring of custom hair or FaceGen assets.
+
+Race and Female remain together with the face as a conservative compatibility policy,
+not a serialization requirement or a guarantee against blackface. Exact evidence:
+[xEdit 93cc0bc, wbTintLayerToStr](https://github.com/TES5Edit/TES5Edit/blob/93cc0bc5a1251936c3c7859eee3150eda12a62d7/Core/wbDefinitionsTES5.pas#L1922-L2015)
+resolves tint indices from RNAM and ACBS Female; its bundled
+[Reuse faces script](https://github.com/TES5Edit/TES5Edit/blob/93cc0bc5a1251936c3c7859eee3150eda12a62d7/Build/Edit%20Scripts/Skyrim%20-%20Reuse%20faces.pas#L86-L105)
+selects donors by race/sex. Mutagen 0.54.4
+[Npc.xml](https://github.com/Mutagen-Modding/Mutagen/blob/0188012c607ce8bb283d2704400d37737f089134/Mutagen.Bethesda.Skyrim/Records/Major%20Records/Npc.xml)
+and [Race.xml](https://github.com/Mutagen-Modding/Mutagen/blob/0188012c607ce8bb283d2704400d37737f089134/Mutagen.Bethesda.Skyrim/Records/Major%20Records/Race.xml)
+expose NPC HairColor and race AvailableHairColors as color-record references, not
+race-indexed selections. Weight/WornArmor retain their existing grouping; this
+investigation did not justify a change to them.
+
+
 | Record | Shared selection | Specialized behavior and reason |
 |---|---|---|
-| NPC_ | Ordinary atomic value ownership and declared/virtual-master restoration. Height uses the existing scalar handler; OppositeGenderAnims uses its own approved masked flag handler. | Face fields, Race, Female, Weight and WornArmor retain generated masked copying as one coherent value. Height/animation edits do not replace or take ownership of that face. Appearance, animation and protection writers own disjoint flag masks. |
-| RACE | Ordinary atomic selection of HeadData, MorphRace, tint count and FaceGen clamps. Height/Weight are independent gendered values. | Typed gendered copying and deep HeadData equality are required: the generated record-level gendered copy bypasses some masks and wrapper equality is insufficient. |
-| HDPT | Ordinary atomic selection of model, type, extra parts, morph files, texture/color, valid races and approved flags. | Keep model and morph resources together. ExtraParts equality ignores sorting; morph-file order remains significant. |
-| TREE | Default RestrictTreeForwarding resolves model/bounds, TreeData, scripts and header flags from the effective winner. Disabling it uses the same registered handlers normally. | Preserve full CNAM, including eight floats represented as 32 Unknown bytes. There is no model-filename/geometry-owner heuristic to infer compatibility with wind data or same-path mesh replacers. Priority snapshots still take precedence. |
+| NPC_ | Configurable asset policy; opted-in atomic ownership and declared/virtual-master restoration. HairColor uses ordinary forwarding through the shared nullable form-link handler, without an asset gate; Height uses the existing scalar handler; OppositeGenderAnims has an animation-family policy and its own approved masked flag handler. | Face fields, Race, Female, Weight and WornArmor retain generated masked copying as one coherent value. Height/hair-color/animation edits do not replace or take ownership of that face. Appearance, animation and protection writers own disjoint flag masks. |
+| RACE | HeadShape selects both genders’ head parts/morph definitions, MorphRace and clamps under the separate Appearance rule. Meshes and Textures own narrower resource slices; preset/hair-color lists and flags use ordinary forwarding. | Male/female rig pairs and BodyPartData use separate animation-scope decisions; combat and movement rows retain ordinary reconciliation. Typed masked HeadData copying preserves sibling decisions. Parent/gender presence is applied first and gates child writes; tint lists retain their authored shared count. See [resource decisions](../ASSET_FORWARDING.md#character-resource-boundaries-and-migration-decisions). |
+| HDPT | Meshes controls model, type, extra parts, morph files, texture/color and rendering flags. Eligibility flags and ValidRaces remain ordinary. | Keep model and morph resources together. ExtraParts equality ignores sorting; morph-file order remains significant. |
+| TREE | ForwardTreeGroups defaults false and resolves model/bounds, TreeData, scripts and header flags from the effective winner. Enabling it selects one TreeAssets group independently of the fixed resource classifications; name and harvesting retain ordinary policies. | Preserve full CNAM, including eight floats represented as 32 Unknown bytes. There is no model-filename/geometry-owner heuristic to infer compatibility with wind data or same-path mesh replacers. Priority snapshots still take precedence. |
 
 NPC head/tint sorting and HDPT extra-part sorting alone do not claim ownership;
 complete entry contents and duplicate counts still matter. Copies retain source
-order. Do not reintroduce unconditional winning-appearance selection or independent
-head/tint row merging. TemplateAndTraits remains a separate atomic pointer/Traits
+order. Apply configurable winner preservation in the asset policy, rather than hard-coding
+it in appearance handlers. Do not reintroduce independent head/tint row merging. TemplateAndTraits remains a separate atomic pointer/Traits
 value. Effective template inheritance and deployed FaceGen compatibility are not
 resolved by selecting local fields.
 
@@ -102,16 +130,41 @@ ReferenceRecord definition. Collection evidence is retained in the
 xEdit trees with the [reference exporters](../REFERENCE_SOURCES.md) after version
 changes. They are reference-only inputs, not project code.
 
-## Validation scope
+## Asset policy regression scope
 
-The last implementation run, on 2026-10-24 before the documentation cleanup,
-built the solution/core/WPF projects with zero warnings/errors, passed 1,809
-workspace tests, audited 131 handlers and 1,750 registrations with zero
-missing/partial candidates, and verified 204 collection entries with zero
-unresolved entries/failures. The count included the workspace's untracked
-DisabledPluginLoadOrderTests.cs. Commands and future validation requirements
-live in the [development guide](../DEVELOPMENT.md#validation); this dated snapshot
-is not a claim about later changes.
+[AssetForwardingPolicyTests](../../DreadsMashedPatch.Tests/AssetForwardingPolicyTests.cs)
+covers family defaults and opt-in, all typed nested/inherited resource owners,
+complete snapshots through binary reload, no protected-only output, structural
+reset precedence, permission, priority/ignored sources, TREE, translated book
+markup and disjoint nullable/scope masks and ordinary race flags. The concrete nullable flag setter
+keeps its merged bits; zero water clears retain destination presence. Multi-member
+list exceptions retain independent xEdit order/key provenance in the reviewed
+expectations. Shared selection/flag/list algorithms are unchanged. The common application loop orders structural writes before nested resource writes and restricts references to surviving rows/parents.
+
+## Current validation scope
+
+On 2026-10-26, the solution (core, tests and WPF desktop) built with zero warnings
+or errors, and the full suite passed **2,057 tests**. Strict property coverage
+reported 131 handlers with zero missing/partial candidates. Collection verification
+covered 209 registrations/expectations with zero unresolved entries or failures.
+The generated catalog contains 72 record handlers, 161 groups and 234 registered
+member values. All 161 public group/forwarding rows matched it; local public links and
+anchors resolved. settings.md has one shared eligibility link and no source-file links.
+
+Mixed-setting regressions cover ARMO mesh/icon independence and clear order, ARMA
+gender mesh packages versus skin/gameplay, HDPT resources versus eligibility, EYES
+binary-overlay texture access, and RACE shape/mesh/texture/choice separation with
+absent-parent gating. TREE tests cover its sole group, independence from all mesh/script
+toggle combinations, complete script-list selection, latest wind/model coupling,
+retained bounds provenance and expanded UI help. Animation regressions cover per-gender
+rig selection and detached overlay copies, independent combat/movement and legacy
+IDLE fields, IDLM/PACK ordered idle packages, and nullable/unknown marker flags. Settings tests verify that saved resource/appearance keys cannot disable normal forwarding, serialization omits those keys, and the separate tree setting survives JSON/Copy/runtime snapshots. All property groups retain their existing selection/copying boundaries; no compatibility aliases remain. Future control restoration notes are in the architecture guide.
+
+Reference-scope regressions also cover REGN grass content and independent icon/audio gates, destruction gameplay versus stage meshes, keyed BPTD limb resources, EFSH atlas fields versus ordinary effects, ordinary camera/impact/sound/particle/water/material tuning, reversed write order and parent/row removal. Overlay/reload checks verify detached stage-model and limb-model data. BookText remains ordinary translated markup. The resource scope inventory and retained dependencies are consolidated in the architecture guide.
+
+These checks establish selection, copying, serialization and documentation
+consistency. They do not verify deployed assets, in-game rendering or desktop
+visual layout.
 
 A 2026-10-05 disk-backed check used the desktop runner services through a temporary
 native Linux harness with the maintainer's real load order. Output reloaded with

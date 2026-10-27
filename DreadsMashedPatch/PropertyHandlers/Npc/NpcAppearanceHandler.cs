@@ -16,7 +16,7 @@ public sealed class NpcAppearanceHandler : AbstractPropertyHandler<NpcAppearance
 {
     public IReadOnlySet<string> GroupedProperties { get; } = new HashSet<string>(StringComparer.Ordinal)
     {
-        "HeadParts", "FaceMorph", "FaceParts", "TintLayers", "HairColor", "HeadTexture", "TextureLighting",
+        "HeadParts", "FaceMorph", "FaceParts", "TintLayers", "HeadTexture", "TextureLighting",
         "Race", "Weight", "WornArmor", "Configuration.Flags.Female"
     };
     private static readonly Mutagen.Bethesda.Skyrim.Npc.TranslationMask CopyMask = CreateMask(includeLists: true);
@@ -25,7 +25,7 @@ public sealed class NpcAppearanceHandler : AbstractPropertyHandler<NpcAppearance
     private static Mutagen.Bethesda.Skyrim.Npc.TranslationMask CreateMask(bool includeLists) => new(false)
     {
         HeadParts = includeLists, FaceMorph = true, FaceParts = true, TintLayers = includeLists,
-        HairColor = true, HeadTexture = true, TextureLighting = true,
+        HeadTexture = true, TextureLighting = true,
         Race = true, Weight = true, WornArmor = true
     };
 

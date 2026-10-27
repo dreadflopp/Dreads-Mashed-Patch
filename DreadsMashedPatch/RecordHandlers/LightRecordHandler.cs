@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Drawing;
 using Mutagen.Bethesda;
@@ -12,30 +13,31 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: Model now uses the shared full-model handler for IModeled records.
-    // - Kept specialized: light flags, icons, bounds, destructible data, and VM data.
-    // - Rationale: the shared handler writes the model's data-relative path and copies the
-    //   complete model without serializing Mutagen's implied "Meshes" asset root.
-
-    // Header migration: raw/common/Light.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
     public class LightRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Light.MajorFlag)) },
             { "Name", new TranslatedStringReflectionPropertyHandler<ILight, ILightGetter>("Name") },
-            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() },
             { "ModelAndBounds", new ModelBoundsHandler() },
             { "Icons", new IconsHandler() },
-            { "Destructible", new DestructibleHandler() },
+            { "Destructible", DestructibleDataHandlers.Data(new DestructibleHandler()) },
+            { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new DestructibleHandler()) },
             { "Time", new SimpleReflectionPropertyHandler<int, ILight, ILightGetter>("Time") },
             { "Radius", new SimpleReflectionPropertyHandler<uint, ILight, ILightGetter>("Radius") },
             { "Color", new SimpleReflectionPropertyHandler<Color, ILight, ILightGetter>("Color") },

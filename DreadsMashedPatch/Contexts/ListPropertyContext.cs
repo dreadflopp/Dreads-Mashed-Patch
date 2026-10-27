@@ -2,10 +2,6 @@ using DreadsMashedPatch.Contexts.Interfaces;
 
 namespace DreadsMashedPatch.Contexts
 {
-    /// <summary>
-    /// Represents a context for a list property.
-    /// </summary>
-    /// <typeparam name="T">The type of the property value</typeparam>
     public class ListPropertyContext<T> : IPropertyContext where T : class
     {
         public bool IsResolved { get; set; }
@@ -13,6 +9,8 @@ namespace DreadsMashedPatch.Contexts
         public List<ListPropertyValueContext<T>>? ForwardValueContexts { get; set; }
         public List<ListAlignmentRow<T>> AlignmentRows { get; set; } = [];
         public int NextAlignmentRowId { get; set; }
+        // Presence has its own owner: removing the final row does not necessarily remove
+        // an optional list subrecord, and an empty list can still be explicitly authored.
         public bool CanBeNull { get; set; }
         public bool OriginalIsNull { get; set; }
         public bool ForwardIsNull { get; set; }

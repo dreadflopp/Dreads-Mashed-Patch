@@ -31,7 +31,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Compare byte arrays using SequenceEqual
             return value1.Value.Span.SequenceEqual(value2.Value.Span);
         }
 

@@ -11,15 +11,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: scalar fields use typed reflection; object aggregates use Mutagen-generated copy/equality.
-    // - Kept specialized: none.
-    // - Intentionally excluded: CSGDDataTypeState is Mutagen serialization state, not an xEdit field.
-    // - Rationale: semantic fields are forwarded while the winning record retains its binary CSGD layout.
-
-    // Header migration: raw/common/CombatStyle.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // CSGDDataTypeState controls serializer layout and is not an independently forwarded field.
     public class CombatStyleRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

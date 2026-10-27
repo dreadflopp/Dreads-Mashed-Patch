@@ -73,7 +73,8 @@ Enter one full plugin filename per line to leave its overrides out of conflict d
 | Editor IDs (EDID) | Controls internal record names. **Forward only on an existing patch record** (default) carries renames only when another change needs a patch. **Preserve the official Editor ID** keeps the latest official name. **Forward Editor ID changes** allows renames to create overrides on their own. |
 | NPC protection status | **Protect NPCs unless deliberately changed** (default) prefers Essential/Protected status. A later plugin can lower protection if it lists the plugin that supplied the selected status as a master, or has that relationship granted through **Master Rules**. **Always keep the strongest protection** keeps Essential over Protected over neither. **Forward each status change normally** uses ordinary forwarding rules. |
 | Tamriel persistent cell (000D74:Skyrim.esm) | Applies to the Tamriel persistent cell's header. The default patches normally, but uses Dawnguard's header when the winner matches Skyrim's original. You can instead always use Dawnguard, use Skyrim, keep the winning override, or patch normally. This option does not select the cell's placed objects or other child records. Priority Mods takes precedence. |
-| Restrict tree forwarding | Enabled by default. See [TREE patching rules](docs/record-patching/world.md#tree-tree) for the excluded fields and reasons. |
+| Grouped forwarding | Resource references and appearance forward normally as groups. See [grouped forwarding](docs/record-patching/assets.md). |
+| Forward tree changes as a group | Disabled by default. See [TREE patching rules](docs/record-patching/world.md#tree-tree) for the excluded fields and reasons. |
 
 ### Master Rules
 

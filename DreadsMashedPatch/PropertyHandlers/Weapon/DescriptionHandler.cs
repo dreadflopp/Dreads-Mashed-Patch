@@ -21,7 +21,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Weapon
                 }
                 else
                 {
-                    // Deep copy the translated string
                     var newDescription = new TranslatedString(Mutagen.Bethesda.Strings.Language.English);
                     newDescription.String = value.String;
                     weaponRecord.Description = newDescription;

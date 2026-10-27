@@ -12,15 +12,6 @@ using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.RecordHandlers;
-
-// Migration note:
-// - Generalized: MUSC scalar/flag/form-link-list fields use typed handlers; Data uses generated copy/equality.
-// - Kept specialized: none.
-// - Rationale: generated copying safely converts overlay Data to its mutable representation.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class MusicTypeRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

@@ -12,15 +12,6 @@ using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.RecordHandlers;
-
-// Migration note:
-// - Generalized: OTFT Items uses the shared sorted/keyed FormLink list implementation.
-// - Kept specialized: none; header flags retain the established shared handlers.
-// - Rationale: xEdit sorts outfit entries by FormID, so declaration order does not establish ownership.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class OutfitRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

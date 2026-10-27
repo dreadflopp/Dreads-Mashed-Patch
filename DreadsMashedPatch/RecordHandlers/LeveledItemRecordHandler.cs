@@ -12,14 +12,7 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: entry owner copying/equality now uses Mutagen's OwnerTarget implementation, including UntypedOwner.
-    // - Specialized: leveled-item entry sorting and data comparison remain record-specific; Flags stays on the approved flag handler.
-    // - Rationale: generated union behavior replaces obsolete raw reflection without changing list or flag policy.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // OwnerTarget generated copies preserve the owner union, including UntypedOwner.
     public class LeveledItemRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -48,8 +41,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

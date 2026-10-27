@@ -12,12 +12,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note, VolumetricLighting:
-// - Generalized: EditorID and header bits retain the approved shared handlers.
-// - Specialized: All twelve nullable lighting parameters share one authored preset; metadata/header flags remain independent.
-// - Intentionally non-migrated: no gameplay fields omitted; nested data is not independently merged.
-// - Reason: selecting complete authored definitions avoids mixed visual presets.
-// - Cleanup: new route with one aggregate registration; no parallel scalar implementation.
+// All twelve nullable parameters form one authored lighting preset; do not mix their sources.
 public class VolumetricLightingRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

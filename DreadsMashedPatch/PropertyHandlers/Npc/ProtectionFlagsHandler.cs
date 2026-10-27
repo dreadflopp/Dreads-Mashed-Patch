@@ -21,11 +21,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
     {
         public override string PropertyName => "Configuration.Flags";
 
-        /// <summary>
-        /// Get the protection status from the flags
-        /// </summary>
-        /// <param name="flags"></param>
-        /// <returns></returns>
         private static ProtectionStatus GetProtectionStatusFromFlags(NpcConfiguration.Flag flags)
         {
             if ((flags & NpcConfiguration.Flag.Essential) != 0)
@@ -39,11 +34,7 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return ProtectionStatus.None;
         }
 
-        /// <summary>
-        /// Set the protection state while preserving all unrelated configuration flags.
-        /// </summary>
-        /// <param name="record"></param>
-        /// <param name="value"></param>
+        /// <summary>Sets protection while preserving unrelated configuration flags.</summary>
         public override void SetValue(IMajorRecord record, ProtectionStatus value)
         {
             if (record is INpc npc)
@@ -69,11 +60,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             }
         }
 
-        /// <summary>
-        /// Get the protection state from the flags
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
         public override ProtectionStatus GetValue(IMajorRecordGetter record)
         {
             if (record is INpcGetter npc)
@@ -87,12 +73,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return ProtectionStatus.None;
         }
 
-        /// <summary>
-        /// Update the property context with the protection state
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="state"></param>
-        /// <param name="propertyContext"></param>
         public override void UpdatePropertyContext(
             IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> context,
             IPatcherState<ISkyrimMod, ISkyrimModGetter> state,

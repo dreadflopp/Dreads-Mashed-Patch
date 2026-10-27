@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -14,14 +15,23 @@ using Noggog;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note, PlacedArrow:
-// - Generalized: all eighteen inherited placed fields reuse PHZD's existing handlers and xEdit keys.
-// - Specialized: Projectile selects a complete PROJ identity; approved APlacedTrap header flags remain per bit.
-// - Intentionally non-migrated: ACHR/REFR UDR coordination; no projectile-specific UDR policy is established.
-// - Reason: xEdit uses ReferenceRecord for this signature; complete rows/aggregates preserve authored data.
-// - Cleanup: this is a new route, with one registration per field and no superseded implementation.
+// Inherited fields follow the PHZD/xEdit ReferenceRecord pattern.
+// Safe-disable UDR coordination remains limited to ACHR/REFR.
 public class PlacedArrowRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },

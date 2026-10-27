@@ -12,14 +12,6 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: Zoom and ZoomMustHaveCameraShots via reflection handlers.
-    // - Kept specialized: Conditions, RelatedPaths, and Shots via dedicated list handlers.
-    // - Rationale: preserve list/formlink merge behavior with concrete copy semantics.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class CameraPathRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

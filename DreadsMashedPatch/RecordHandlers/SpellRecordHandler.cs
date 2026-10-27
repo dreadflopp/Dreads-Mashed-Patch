@@ -12,16 +12,7 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Effects migration note: generalized reconciliation to the shared exact-position
-    // atomic handler; spell collection access stays specialized because xEdit gives
-    // the outer Effects entries no stable row key.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // xEdit gives outer Effects entries no stable key; each declaration position is one atomic row.
     public class SpellRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -61,8 +52,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

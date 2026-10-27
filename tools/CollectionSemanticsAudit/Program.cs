@@ -1,3 +1,5 @@
+using DreadsMashedPatch.AssetForwarding;
+using DreadsMashedPatch;
 using System.Collections;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -86,6 +88,7 @@ static List<CollectionRegistration> DiscoverEntries()
         .Where(type => !type.IsAbstract && typeof(AbstractRecordHandler).IsAssignableFrom(type))
         .OrderBy(type => type.Name, StringComparer.Ordinal);
     var registrations = new List<CollectionRegistration>();
+    var defaults = new PatcherConfiguration().Forwarding;
 
     foreach (var recordHandlerType in recordHandlerTypes)
     {
@@ -102,8 +105,12 @@ static List<CollectionRegistration> DiscoverEntries()
                 continue;
             }
 
-            var semantics = GetListSemantics(propertyHandler);
-            var mergeMode = GetMergeMode(propertyHandler, semantics);
+            var assetGroup = AssetGroupCatalog.For(recordHandlerType)
+                .SingleOrDefault(group => group.Members.Contains(propertyName));
+            var forwardByDefault = assetGroup != null && defaults.Allows(assetGroup.Family);
+            var coordinated = assetGroup?.Members.Count > 1;
+            var semantics = coordinated ? null : GetListSemantics(propertyHandler);
+            var mergeMode = coordinated ? "Atomic" : GetMergeMode(propertyHandler, semantics);
             registrations.Add(new CollectionRegistration(
                 recordHandlerType.Name,
                 propertyName,
@@ -118,7 +125,10 @@ static List<CollectionRegistration> DiscoverEntries()
                     "Specialized" => "Custom ownership context and handler-defined null/empty behavior.",
                     _ => "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable."
                 },
-                "Observed runtime behavior only; compare with xedit-collection-expectations.json."));
+                assetGroup == null ? "Observed runtime behavior only; compare with xedit-collection-expectations.json."
+                    : $"Asset group {assetGroup.Name} ({assetGroup.Family}); "
+                      + (forwardByDefault ? "forwarding enabled by default. " : "winner preserved by default. ")
+                      + (coordinated ? "One complete snapshot; member list reconciliation is inactive." : "When enabled, retains the member handler's collection policy.")));
         }
     }
 

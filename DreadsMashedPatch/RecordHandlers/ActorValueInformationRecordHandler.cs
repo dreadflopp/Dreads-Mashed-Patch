@@ -11,19 +11,8 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: Description and Skill use generated copying; Abbreviation remains a typed scalar.
-    // - Kept specialized: PerkTree via a record-specific structural handler.
-    // - Intentionally excluded: CNAM is engine-managed binary data outside the semantic conflict surface.
-    // - Rationale: PerkTree is a get-only mutable collection whose nested binary and list data require Mutagen's
-    //   generated deep-copy and equality semantics.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // PerkTree needs generated copies of its nested lists and binary data; it is a get-only collection.
+    // CNAM is engine-managed data and does not participate in conflict resolution.
     public class ActorValueInformationRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

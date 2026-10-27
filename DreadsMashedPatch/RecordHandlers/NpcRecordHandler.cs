@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
@@ -13,36 +14,29 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: semantic AIData, Configuration, and scalar PlayerSkills leaves use exact dotted shared handlers.
-    // - Appearance migration: complete atomic facial/body snapshots use ordinary ownership/reversion forwarding.
-    //   Generated masked copying retains nullable subrecords, order, duplicates and overlay assets.
-    //   Female and Traits use approved masked flag setters; protection and other template bits remain specialized.
-    //   Race, sex, weight and skin stay with the face because they control its interpretation.
-    //   Height now uses the shared scalar handler; OppositeGenderAnims uses an independent approved masked flag handler.
-    //   Neither field participates in appearance copying, equality or ownership. Unrelated flag bits remain intact.
-    //   TemplateAndTraits selects the pointer and Traits bit atomically through the same shared algorithm.
-    //   Sorted head/tint collections compare without order changes claiming ownership; copies retain source order.
-    //   Other NPC gameplay properties retain their existing handlers.
-    // - Generalized: Items' complete generated snapshots, duplicate matching, and COED reconciliation share AbstractInventoryItemsHandler with CONT.
-    // - Kept specialized: inventory count/COED edits retain NPC's ownership permission checks; only the Items surface adapter is record-specific.
-    // - Specialized: polymorphic Level, protection policy, skill dictionaries, float tolerance, remaining NPC collection merging, and typed attacks remain explicit.
-    // - Intentionally excluded: AIData.Unused and PlayerSkills.Unused* are serialization-only fields.
-    // - Rationale: Level uses generated subtype dispatch; unused storage is not an xEdit-visible conflict surface.
-
-    // Header migration: raw/common/Npc.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
-    // Output migration: shared staged context insertion replaces the separate NPC group path.
-    // NPC property/flag/ownership policies stay specialized; insertion needs no NPC exception.
+    // Race, Female, weight and skin stay with the face to preserve its interpretation.
+    // Height, HairColor and OppositeGenderAnims have separate owners; their setters must preserve face fields.
+    // TemplateAndTraits selects the template pointer and Traits bit together. Inventory uses the shared
+    // NPC/CONT snapshots, with NPC-specific ownership checks for both count and COED edits.
     public class NpcRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "Appearance", new NpcAppearanceHandler() },
+            { "HairColor", new SimpleReflectionFormLinkPropertyHandler<IColorRecordGetter, INpc, INpcGetter>("HairColor") },
             { "Height", new SimpleReflectionPropertyHandler<float, INpc, INpcGetter>("Height") },
             // The key identifies the bit's context; reflection reads/writes its containing enum field.
             { "Configuration.Flags.OppositeGenderAnims", new SimpleReflectionFlagPropertyHandler<NpcConfiguration.Flag, INpc, INpcGetter>(
@@ -81,7 +75,6 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Factions", new FactionHandler() },
             { "Packages", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IPackageGetter>, INpc, INpcGetter>("Packages", ListSemantics.AlignedOrdered) },
             { "ActorEffect", new SimpleReflectionListPropertyHandler<IFormLinkGetter<ISpellRecordGetter>, INpc, INpcGetter>("ActorEffect", ListSemantics.SortedKeyed) },
-            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() },
             { "Items", new ItemHandler() },
             { "Keywords", new KeywordListHandler() },
@@ -92,7 +85,8 @@ namespace DreadsMashedPatch.RecordHandlers
             { "PlayerSkills.GearedUpWeapons", new SimpleReflectionPropertyHandler<byte, INpc, INpcGetter>("PlayerSkills.GearedUpWeapons") },
             { "PlayerSkills.SkillValues", new PlayerSkillsSkillValuesHandler() },
             { "PlayerSkills.SkillOffsets", new PlayerSkillsSkillOffsetsHandler() },
-            { "Destructible", new DestructibleHandler() },
+            { "Destructible", DestructibleDataHandlers.Data(new DestructibleHandler()) },
+            { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new DestructibleHandler()) },
             { "ObjectBounds", new ObjectBoundsHandler() },
             { "Voice", new SimpleReflectionFormLinkPropertyHandler<IVoiceTypeGetter, INpc, INpcGetter>("Voice") },
             { "ShortName", new TranslatedStringReflectionPropertyHandler<INpc, INpcGetter>("ShortName") },
@@ -121,8 +115,5 @@ namespace DreadsMashedPatch.RecordHandlers
                 .ResolveAllContexts<ISkyrimMod, ISkyrimModGetter, INpc, INpcGetter>(state.LinkCache)
                 .ToArray();
         }
-
-        // ApplyForwardedProperties is now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

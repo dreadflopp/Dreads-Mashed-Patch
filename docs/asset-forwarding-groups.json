@@ -1,0 +1,1723 @@
+[
+  {
+    "RecordHandler": "ActivatorRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "AddonNodeRecordHandler",
+    "Groups": [
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "AlchemicalApparatusRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "AmmunitionRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "AnimatedObjectRecordHandler",
+    "Groups": [
+      {
+        "Name": "AnimatedModel",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Model",
+          "UnloadEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ArmorAddonRecordHandler",
+    "Groups": [
+      {
+        "Name": "MaleMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "WorldModel.Male.File",
+          "WorldModel.Male.AlternateTextures",
+          "FirstPersonModel.Male.File",
+          "FirstPersonModel.Male.AlternateTextures",
+          "WeightSliderEnabled.Male"
+        ]
+      },
+      {
+        "Name": "MaleSkinTextures",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "SkinTexture.Male",
+          "TextureSwapList.Male"
+        ]
+      },
+      {
+        "Name": "FemaleMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "WorldModel.Female.File",
+          "WorldModel.Female.AlternateTextures",
+          "FirstPersonModel.Female.File",
+          "FirstPersonModel.Female.AlternateTextures",
+          "WeightSliderEnabled.Female"
+        ]
+      },
+      {
+        "Name": "FemaleSkinTextures",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "SkinTexture.Female",
+          "TextureSwapList.Female"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ArmorRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "WorldModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "WorldModelAndBounds"
+        ]
+      },
+      {
+        "Name": "MaleIcons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "WorldModel.Male.Icons"
+        ]
+      },
+      {
+        "Name": "FemaleIcons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "WorldModel.Female.Icons"
+        ]
+      },
+      {
+        "Name": "WornMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Armature"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ArtObjectRecordHandler",
+    "Groups": [
+      {
+        "Name": "ArtModel",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds",
+          "Type"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "BodyPartDataRecordHandler",
+    "Groups": [
+      {
+        "Name": "BodyModel",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Model"
+        ]
+      },
+      {
+        "Name": "LimbMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Parts.LimbMeshes"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "BookRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "CameraShotRecordHandler",
+    "Groups": [
+      {
+        "Name": "CameraModel",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Model"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "CellRecordHandler",
+    "Groups": [
+      {
+        "Name": "WaterDisplay",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "WaterNoiseTexture",
+          "WaterEnvironmentMap"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ClassRecordHandler",
+    "Groups": [
+      {
+        "Name": "Icon",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icon"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ClimateRecordHandler",
+    "Groups": [
+      {
+        "Name": "Model",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Model"
+        ]
+      },
+      {
+        "Name": "SunImages",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "SunTexture",
+          "SunGlareTexture"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ContainerRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "DebrisRecordHandler",
+    "Groups": [
+      {
+        "Name": "Models",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Models"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "DialogResponseRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "DoorRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "EffectShaderRecordHandler",
+    "Groups": [
+      {
+        "Name": "MembraneTextures",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "FillTexture",
+          "HolesTexture",
+          "MembranePaletteTexture",
+          "FillTextureCoordinates"
+        ]
+      },
+      {
+        "Name": "ParticleTextures",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "ParticleShaderTexture",
+          "ParticlePaletteTexture",
+          "ParticleAtlas"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ExplosionRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "EyesRecordHandler",
+    "Groups": [
+      {
+        "Name": "EyeTexture",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icon"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "FloraRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "FurnitureRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      },
+      {
+        "Name": "ModelFilename",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelFilename"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "GrassRecordHandler",
+    "Groups": [
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "HazardRecordHandler",
+    "Groups": [
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "HeadPartRecordHandler",
+    "Groups": [
+      {
+        "Name": "HeadMesh",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Mesh"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "IdleAnimationRecordHandler",
+    "Groups": [
+      {
+        "Name": "IdleReference",
+        "Family": "Animations",
+        "ForwardByDefault": true,
+        "Members": [
+          "Filename",
+          "AnimationEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "IdleMarkerRecordHandler",
+    "Groups": [
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      },
+      {
+        "Name": "IdleSelection",
+        "Family": "Animations",
+        "ForwardByDefault": true,
+        "Members": [
+          "Animations",
+          "Flags",
+          "IdleTimer"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ImpactRecordHandler",
+    "Groups": [
+      {
+        "Name": "ImpactModel",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Model"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "IngestibleRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "IngredientRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "KeyRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "LandscapeTextureRecordHandler",
+    "Groups": [
+      {
+        "Name": "LandscapeMaterial",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "TextureSet"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "LensFlareRecordHandler",
+    "Groups": [
+      {
+        "Name": "FlareSprites",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "FlareSprites"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "LeveledNpcRecordHandler",
+    "Groups": [
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "LightRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "LoadScreenRecordHandler",
+    "Groups": [
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "DisplayModel",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "LoadingScreenNif",
+          "InitialScale",
+          "InitialRotation",
+          "RotationOffsetConstraints",
+          "InitialTranslationOffset",
+          "CameraPath"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "MagicEffectRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "MaterialObjectRecordHandler",
+    "Groups": [
+      {
+        "Name": "MaterialModel",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Model"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "MiscItemRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "MoveableStaticRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "MusicTrackRecordHandler",
+    "Groups": [
+      {
+        "Name": "MusicPlayback",
+        "Family": "Music",
+        "ForwardByDefault": true,
+        "Members": [
+          "Type",
+          "Duration",
+          "FadeOut",
+          "TrackFilename",
+          "FinaleFilename",
+          "LoopData",
+          "CuePoints",
+          "Tracks"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "NpcRecordHandler",
+    "Groups": [
+      {
+        "Name": "Appearance",
+        "Family": "Appearance",
+        "ForwardByDefault": true,
+        "Members": [
+          "Appearance"
+        ]
+      },
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "AnimationChoice",
+        "Family": "Animations",
+        "ForwardByDefault": true,
+        "Members": [
+          "Configuration.Flags.OppositeGenderAnims"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PackageRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "IdleSelection",
+        "Family": "Animations",
+        "ForwardByDefault": true,
+        "Members": [
+          "IdleAnimations"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PerkRecordHandler",
+    "Groups": [
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "ScriptBindings",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedArrowRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedBarrierRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedBeamRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedConeRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedFlameRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedHazardRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedMissileRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedNpcRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedObjectRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "PlacedTrapRecordHandler",
+    "Groups": [
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ProjectileRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      },
+      {
+        "Name": "MuzzleFlashBehavior",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "MuzzleFlashBehavior"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "QuestRecordHandler",
+    "Groups": [
+      {
+        "Name": "ScriptBindings",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter.Presence",
+          "VirtualMachineAdapter.Version",
+          "VirtualMachineAdapter.ObjectFormat",
+          "VirtualMachineAdapter.Scripts",
+          "VirtualMachineAdapter.ExtraBindDataVersion",
+          "VirtualMachineAdapter.FileName",
+          "VirtualMachineAdapter.Fragments",
+          "VirtualMachineAdapter.Aliases"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "RaceRecordHandler",
+    "Groups": [
+      {
+        "Name": "HeadShape",
+        "Family": "Appearance",
+        "ForwardByDefault": true,
+        "Members": [
+          "HeadData.Male.Shape",
+          "HeadData.Female.Shape",
+          "MorphRace",
+          "FacegenMainClamp",
+          "FacegenFaceClamp"
+        ]
+      },
+      {
+        "Name": "SkinMesh",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Skin"
+        ]
+      },
+      {
+        "Name": "BodyTextures",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "BodyData"
+        ]
+      },
+      {
+        "Name": "MaleHeadMesh",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "HeadData.Male.Mesh"
+        ]
+      },
+      {
+        "Name": "FemaleHeadMesh",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "HeadData.Female.Mesh"
+        ]
+      },
+      {
+        "Name": "MaleFaceTextures",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "HeadData.Male.FaceTextures"
+        ]
+      },
+      {
+        "Name": "FemaleFaceTextures",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "HeadData.Female.FaceTextures"
+        ]
+      },
+      {
+        "Name": "TintDefinitions",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "HeadData.Male.Tints",
+          "HeadData.Female.Tints",
+          "NumberOfTintsInList"
+        ]
+      },
+      {
+        "Name": "MaleRig",
+        "Family": "Animations",
+        "ForwardByDefault": true,
+        "Members": [
+          "SkeletalModel.Male",
+          "BehaviorGraph.Male"
+        ]
+      },
+      {
+        "Name": "FemaleRig",
+        "Family": "Animations",
+        "ForwardByDefault": true,
+        "Members": [
+          "SkeletalModel.Female",
+          "BehaviorGraph.Female"
+        ]
+      },
+      {
+        "Name": "BodyPartReference",
+        "Family": "Animations",
+        "ForwardByDefault": true,
+        "Members": [
+          "BodyPartData"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "RegionRecordHandler",
+    "Groups": [
+      {
+        "Name": "ObjectsIcons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Objects.Icons"
+        ]
+      },
+      {
+        "Name": "WeatherIcons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Weather.Icons"
+        ]
+      },
+      {
+        "Name": "MapIcons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Map.Icons"
+        ]
+      },
+      {
+        "Name": "LandIcons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Land.Icons"
+        ]
+      },
+      {
+        "Name": "GrassesIcons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Grasses.Icons"
+        ]
+      },
+      {
+        "Name": "SoundsIcons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Sounds.Icons"
+        ]
+      },
+      {
+        "Name": "RegionSounds",
+        "Family": "Sounds",
+        "ForwardByDefault": true,
+        "Members": [
+          "Sounds.Sounds"
+        ]
+      },
+      {
+        "Name": "RegionMusic",
+        "Family": "Music",
+        "ForwardByDefault": true,
+        "Members": [
+          "Sounds.Music"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "SceneRecordHandler",
+    "Groups": [
+      {
+        "Name": "ScriptBindings",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter.Presence",
+          "VirtualMachineAdapter.ScriptFragments",
+          "VirtualMachineAdapter.Version",
+          "VirtualMachineAdapter.ObjectFormat",
+          "VirtualMachineAdapter.Scripts"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ScrollRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "ShaderParticleGeometryRecordHandler",
+    "Groups": [
+      {
+        "Name": "ParticleTexture",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "NumSubtexturesX",
+          "NumSubtexturesY",
+          "ParticleTexture"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "SoulGemRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "SoundDescriptorRecordHandler",
+    "Groups": [
+      {
+        "Name": "SoundPlayback",
+        "Family": "Sounds",
+        "ForwardByDefault": true,
+        "Members": [
+          "Type",
+          "SoundFiles",
+          "LoopAndRumble"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "StaticRecordHandler",
+    "Groups": [
+      {
+        "Name": "Geometry",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds",
+          "Lod"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "TalkingActivatorRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "TextureSetRecordHandler",
+    "Groups": [
+      {
+        "Name": "TextureDefinition",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "TextureDefinition"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "TreeRecordHandler",
+    "Groups": [
+      {
+        "Name": "TreeAssets",
+        "Family": "Trees",
+        "ForwardByDefault": false,
+        "Members": [
+          "ModelAndBounds",
+          "TreeData",
+          "VirtualMachineAdapter",
+          "MajorRecordFlagsRaw"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "WaterRecordHandler",
+    "Groups": [
+      {
+        "Name": "NoiseLayerOne",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "NoiseLayerOneTexture",
+          "NoiseLayerOneUvScale"
+        ]
+      },
+      {
+        "Name": "NoiseLayerTwo",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "NoiseLayerTwoTexture",
+          "NoiseLayerTwoUvScale"
+        ]
+      },
+      {
+        "Name": "NoiseLayerThree",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "NoiseLayerThreeTexture",
+          "NoiseLayerThreeUvScale"
+        ]
+      },
+      {
+        "Name": "FlowTexture",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "FlowNormalsNoiseTexture",
+          "NoiseFlowmapScale",
+          "Flags.Surface"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "WeaponRecordHandler",
+    "Groups": [
+      {
+        "Name": "DestructionMeshes",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Destructible.StageModels"
+        ]
+      },
+      {
+        "Name": "Icons",
+        "Family": "IconsAndImages",
+        "ForwardByDefault": true,
+        "Members": [
+          "Icons"
+        ]
+      },
+      {
+        "Name": "VirtualMachineAdapter",
+        "Family": "Scripts",
+        "ForwardByDefault": true,
+        "Members": [
+          "VirtualMachineAdapter"
+        ]
+      },
+      {
+        "Name": "ModelAndBounds",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ModelAndBounds"
+        ]
+      },
+      {
+        "Name": "Scope",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "ScopeModel",
+          "Data.SightFOV",
+          "Data.Flags.HasScope"
+        ]
+      },
+      {
+        "Name": "FirstPersonGeometry",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "FirstPersonModel"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "WeatherRecordHandler",
+    "Groups": [
+      {
+        "Name": "Aurora",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "Aurora"
+        ]
+      },
+      {
+        "Name": "CloudLayers",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "CloudTextures",
+          "Clouds"
+        ]
+      }
+    ]
+  },
+  {
+    "RecordHandler": "WorldspaceRecordHandler",
+    "Groups": [
+      {
+        "Name": "CloudModel",
+        "Family": "Meshes",
+        "ForwardByDefault": true,
+        "Members": [
+          "CloudModel"
+        ]
+      },
+      {
+        "Name": "WaterDisplay",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "WaterNoiseTexture",
+          "WaterEnvironmentMap"
+        ]
+      },
+      {
+        "Name": "DistantTextures",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "HdLodDiffuseTexture",
+          "HdLodNormalTexture"
+        ]
+      },
+      {
+        "Name": "MapDisplay",
+        "Family": "Textures",
+        "ForwardByDefault": true,
+        "Members": [
+          "MapImage",
+          "MapData",
+          "WorldMapOffset"
+        ]
+      }
+    ]
+  }
+]

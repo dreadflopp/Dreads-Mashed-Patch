@@ -1,3 +1,5 @@
+using DreadsMashedPatch.AssetForwarding;
+using DreadsMashedPatch.PropertyHandlers.Water;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,27 +18,32 @@ using Noggog;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: WATR scalar/binary/link fields via reflection handlers.
-// - Kept specialized: none.
-// - Intentionally excluded: UnusedNoisemaps, DNAMDataTypeState, and Unknown* fields are outside the semantic conflict surface.
-// - Rationale: semantic fields are forwarded while the winning record retains its binary DNAM layout.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
-// Name migration: translated Name uses generated copying to retain every selected language.
-// Optional null names remove the value; comparison follows Mutagen's language policy.
-// Other specialized fields/flags retain their policies; translations are selected as one value.
+// Damage/rendering flags own disjoint masks and retain destination nullable presence.
+// Flow texture includes flowmap interpretation; each noise texture travels with its UV parameters.
+// Motion/amplitude/falloff and gameplay retain ordinary forwarding.
 public class WaterRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Name", new TranslatedStringReflectionPropertyHandler<IWater, IWaterGetter>("Name") },
         { "Opacity", new SimpleReflectionPropertyHandler<byte, IWater, IWaterGetter>("Opacity") },
-        { "Flags", new SimpleReflectionPropertyHandler<Water.Flag?, IWater, IWaterGetter>("Flags") },
+        { "Flags", new WaterFlagsHandler(damageFlags: true) },
+        { "Flags.Surface", new WaterFlagsHandler(damageFlags: false) },
         { "MNAM", new SimpleReflectionBinaryDataPropertyHandler<IWater, IWaterGetter>("MNAM") },
         { "Material", new SimpleReflectionFormLinkPropertyHandler<IMaterialTypeGetter, IWater, IWaterGetter>("Material") },
         { "OpenSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IWater, IWaterGetter>("OpenSound") },

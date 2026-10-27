@@ -1,3 +1,4 @@
+using DreadsMashedPatch.PropertyHandlers.General;
 using System;
 using System.Linq;
 using System.Collections;
@@ -22,7 +23,6 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
         protected static IReadOnlySet<string> EmptyAtomicOwnershipTriggerProperties { get; } =
             new HashSet<string>(StringComparer.Ordinal);
 
-        // Abstract property that all record handlers must implement
         public abstract Dictionary<string, IPropertyHandler> PropertyHandlers { get; }
 
         /// <summary>
@@ -46,9 +46,9 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
         }
 
         /// <summary>
-        /// Applies a narrowly scoped whole-record policy before the ordinary early-exit,
-        /// priority-mod, and property-forwarding paths. Returning true means the record
-        /// was fully handled, including policies which deliberately emit no override.
+        /// Applies a record-specific policy after priority snapshots and before ordinary
+        /// merging. Returning true means the record was fully handled, including policies
+        /// which deliberately emit no override.
         /// </summary>
         protected virtual bool TryApplyRecordPolicy(
             IPatcherState<ISkyrimMod, ISkyrimModGetter> state,
@@ -187,7 +187,6 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
             PropertyContexts.Clear();
             foreach (var (propertyName, handler) in PropertyHandlers)
             {
-                // Let each handler create its own properly typed context
                 var propertyContext = handler.CreatePropertyContext();
                 PropertyContexts[propertyName] = propertyContext;
                 handler.InitializeContext(originalContext, winningContext, propertyContext);
@@ -275,8 +274,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     Console.WriteLine($"Processing: {winningContext.Record.FormKey} ({winningContext.Record.EditorID})");
                     Console.WriteLine($"Record type: {RecordTypeCatalog.GetRecordDescription(winningContext.Record)}");
 
-                    // Shared policy migration: explicit priority snapshots are handled before
-                    // vanilla/short-history exits and before loading the merge history.
+                    // Priority snapshots bypass vanilla/short-history exits and avoid loading merge history.
                     if (policySources.TryGetAlwaysWinningMod(winningContext.Record, out var priorityMod))
                     {
                         if (priorityMod == winningContext.ModKey)
@@ -320,7 +318,6 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     Console.WriteLine($"Record contexts: {recordContexts.Length}");
                     Console.WriteLine($"Winning context: {winningContext.ModKey}");
 
-                    // Initialize property states before visiting the complete override history
                     var originalContext = recordContexts.Last();
                     Console.WriteLine($"Original context: {originalContext.ModKey}");
                     var usesAtomicOwnership = AtomicOwnershipTriggerProperties.Count > 0;
@@ -328,7 +325,6 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                         originalContext,
                         usesAtomicOwnership ? originalContext : winningContext);
 
-                    // print original and winning values for all properties
                     foreach (var (propName, handler) in PropertyHandlers)
                     {
                         var originalValue = handler.GetValue(originalContext.Record);
@@ -347,11 +343,9 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     // IsResolved still permits record-specific policies to stop early.
                     if (detailedRecord) Console.WriteLine("Processing forward pass");
 
-                    // iterate from original to winning
                     var chronologicalPreviousContext = originalContext;
                     foreach (var context in recordContexts.Reverse().Skip(1))
                     {
-                        // bugfix, skip if context is output mod
                         if (context.ModKey.ToString() == state.PatchMod.ModKey.ToString())
                         {
                             continue;
@@ -369,7 +363,6 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                             continue;
                         }
 
-                        // Update the property contexts, skip if resolved
                         foreach (var (propName, handler) in PropertyHandlers)
                         {
                             var propContext = PropertyContexts[propName];
@@ -393,7 +386,6 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     }
                     if (detailedRecord) Console.WriteLine("Forward pass complete");
 
-                    // Forward changes to the patcher
                     var propertiesToForward = new Dictionary<string, object?>();
                     int unchangedDecisionCount = 0;
                     var decisionAuditContexts = recordContexts
@@ -422,8 +414,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                             : propertyContext.GetForwardValue();
                         if (propertyName == "EditorID" && hasBaselineEditorId)
                         {
-                            // Shared EDID policy: every record family uses the latest configured
-                            // official baseline. Record-specific handlers remain otherwise unchanged.
+                            // EditorID preservation uses the latest configured official baseline.
                             forwardValue = baselineEditorId;
                         }
                         var shouldForward = !handler.AreValuesEqual(forwardValue, winningValue);
@@ -614,12 +605,16 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
         /// <param name="propertiesToForward">Dictionary of properties to forward</param>
         public virtual void ApplyForwardedProperties(IMajorRecord record, Dictionary<string, object?> propertiesToForward)
         {
-            foreach (var (propertyName, value) in propertiesToForward)
+            // Parent/list structure is written before independently selected nested resources.
+            foreach (var (propertyName, selectedValue) in propertiesToForward.OrderBy(entry =>
+                         PropertyHandlers.TryGetValue(entry.Key, out var item) && item is INestedAssetPropertyHandler ? 1 : 0))
             {
                 if (PropertyHandlers.TryGetValue(propertyName, out var handler))
                 {
                     try
                     {
+                        var value = handler is INestedAssetPropertyHandler nested
+                            ? nested.RestrictToTarget(record, selectedValue) : selectedValue;
                         if (LogCollector.IsDetailedMode) Console.WriteLine($"[{propertyName}] Applying value: {FormatForLogWithWarning(propertyName, handler, value, "apply", deepDiveRecord: LogCollector.IsDeepDiveMode)}, Type: {value?.GetType()}");
                         using var diagnostics = new PatchDiagnostics(record.FormKey);
                         handler.SetValue(record, value);

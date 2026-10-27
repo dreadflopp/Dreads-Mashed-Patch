@@ -10,15 +10,6 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
-
-// Migration note:
-// - Generalized: RFCT art/shader links, flags, and metadata use shared semantic handlers.
-// - Kept specialized: none.
-// - Rationale: the record exposes only independent links and flag values.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class VisualEffectRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

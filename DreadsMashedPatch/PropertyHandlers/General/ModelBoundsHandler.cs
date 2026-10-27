@@ -60,6 +60,12 @@ public sealed class ModelBoundsHandler : IPropertyHandler
             && _boundsHandler.AreValuesEqual(left.Bounds, right.Bounds);
     }
 
+    // Group coordination reuses the same model identity/comparison without letting
+    // bounds-only edits claim a multi-property geometry snapshot.
+    internal object? FilenameIdentity(ModelBoundsValue value) => _filenameIdentity(value.Model);
+    internal bool AreModelPayloadsEqual(ModelBoundsValue left, ModelBoundsValue right) =>
+        _modelHandler.AreValuesEqual(left.Model, right.Model);
+
     public IPropertyContext CreatePropertyContext() => new ModelBoundsPropertyContext();
 
     public void InitializeContext(

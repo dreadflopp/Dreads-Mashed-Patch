@@ -2,9 +2,9 @@
 
 This report compares the generated runtime inventory with the independently maintained pinned-xEdit expectations.
 
-- Runtime registrations: 204
-- xEdit expectations: 204
-- Matched: 204
+- Runtime registrations: 209
+- xEdit expectations: 209
+- Matched: 209
 - Unresolved: 0
 - Mismatched: 0
 - Missing/invalid: 0
@@ -16,15 +16,16 @@ This report compares the generated runtime inventory with the independently main
 | `ActorValueInformationRecordHandler.PerkTree` | Matched | Atomic | Atomic | Per-entry ownership could combine nodes and positional connection indexes from different source graphs. |
 | `AlchemicalApparatusRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `AmmunitionRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `ArmorAddonRecordHandler.AdditionalRaces` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `ArmorAddonRecordHandler.FirstPersonModel.Female.AlternateTextures` | Matched | SortedKeyed | SortedKeyed | xEdit keys alternate textures by 3D Name and 3D Index; New Texture is replaceable row data. |
-| `ArmorAddonRecordHandler.FirstPersonModel.Male.AlternateTextures` | Matched | SortedKeyed | SortedKeyed | xEdit keys alternate textures by 3D Name and 3D Index; New Texture is replaceable row data. |
-| `ArmorAddonRecordHandler.WorldModel.Female.AlternateTextures` | Matched | SortedKeyed | SortedKeyed | xEdit keys alternate textures by 3D Name and 3D Index; New Texture is replaceable row data. |
-| `ArmorAddonRecordHandler.WorldModel.Male.AlternateTextures` | Matched | SortedKeyed | SortedKeyed | xEdit keys alternate textures by 3D Name and 3D Index; New Texture is replaceable row data. |
+| `ArmorAddonRecordHandler.AdditionalRaces` | Matched | SortedKeyed | SortedKeyed | Restore ordinary FormKey-keyed reconciliation. Race eligibility does not index model alternate textures or choose a filename. |
+| `ArmorAddonRecordHandler.FirstPersonModel.Female.AlternateTextures` | Matched | Atomic | Atomic | Select alternate textures with their matching gender mesh package. Both views share the gender weight-slider flag; skin/swap textures and eligibility remain independent. |
+| `ArmorAddonRecordHandler.FirstPersonModel.Male.AlternateTextures` | Matched | Atomic | Atomic | Select alternate textures with their matching gender mesh package. Both views share the gender weight-slider flag; skin/swap textures and eligibility remain independent. |
+| `ArmorAddonRecordHandler.WorldModel.Female.AlternateTextures` | Matched | Atomic | Atomic | Select alternate textures with their matching gender mesh package. Both views share the gender weight-slider flag; skin/swap textures and eligibility remain independent. |
+| `ArmorAddonRecordHandler.WorldModel.Male.AlternateTextures` | Matched | Atomic | Atomic | Select alternate textures with their matching gender mesh package. Both views share the gender weight-slider flag; skin/swap textures and eligibility remain independent. |
 | `ArmorRecordHandler.Armature` | Matched | Atomic | Atomic | The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations. |
 | `ArmorRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `ArmorRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `BodyPartDataRecordHandler.Parts` | Matched | SortedKeyed | SortedKeyed | xEdit sorts body-part rows by PartNode; changes to other fields replace data under that key. |
+| `BodyPartDataRecordHandler.Parts` | Matched | SortedKeyed | SortedKeyed | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
+| `BodyPartDataRecordHandler.Parts.LimbMeshes` | Matched | Atomic | Atomic | The mesh rule controls limb resources, without gating damage, flags, targeting or row membership. Matching by PartNode occurrence preserves duplicates; nested writes cannot recreate removed rows. |
 | `BookRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `BookRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `CameraPathRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
@@ -64,7 +65,7 @@ This report compares the generated runtime inventory with the independently main
 | `FurnitureRecordHandler.Markers` | Matched | Atomic | Atomic | The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations. |
 | `FurnitureRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `IdleAnimationRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `IdleMarkerRecordHandler.Animations` | Matched | Atomic | Atomic | The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations. |
+| `IdleMarkerRecordHandler.Animations` | Matched | Atomic | Atomic | Keep the existing atomic ordered-list policy, selected with the flags and timer that interpret it. Marker mesh/bounds remain a separate Meshes decision. |
 | `ImageSpaceAdapterRecordHandler.BlurRadius` | Matched | Atomic | Atomic | Whole-curve ownership avoids synthesizing an interpolation curve that no source plugin authored. |
 | `ImageSpaceAdapterRecordHandler.DoubleVisionStrength` | Matched | Atomic | Atomic | Whole-curve ownership avoids synthesizing an interpolation curve that no source plugin authored. |
 | `ImageSpaceAdapterRecordHandler.FadeColor` | Matched | Atomic | Atomic | Whole-curve ownership avoids synthesizing an interpolation curve that no source plugin authored. |
@@ -115,8 +116,8 @@ This report compares the generated runtime inventory with the independently main
 | `ObjectEffectRecordHandler.Effects` | Matched | ExactOrdered | ExactOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `OutfitRecordHandler.Items` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `PackageRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `PerkRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `PerkRecordHandler.Effects` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `PerkRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
+| `PerkRecordHandler.Effects` | Matched | SortedKeyed | SortedKeyed | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
 | `PlacedArrowRecordHandler.DistantLodData` | Matched | Atomic | Atomic | Shared ReferenceRecord definition matches PHZD: Water and Keyword/Ref rows are keyed, LocationRefTypes retain declaration order, script rows follow the ordinary VMAD policy. Concrete overlay/copy/output tests verify this variant. |
 | `PlacedArrowRecordHandler.LinkedReferences` | Matched | SortedKeyed | SortedKeyed | Shared ReferenceRecord definition matches PHZD: Water and Keyword/Ref rows are keyed, LocationRefTypes retain declaration order, script rows follow the ordinary VMAD policy. Concrete overlay/copy/output tests verify this variant. |
 | `PlacedArrowRecordHandler.LocationRefTypes` | Matched | AlignedOrdered | AlignedOrdered | Shared ReferenceRecord definition matches PHZD: Water and Keyword/Ref rows are keyed, LocationRefTypes retain declaration order, script rows follow the ordinary VMAD policy. Concrete overlay/copy/output tests verify this variant. |
@@ -167,24 +168,28 @@ This report compares the generated runtime inventory with the independently main
 | `PlacedTrapRecordHandler.LocationRefTypes` | Matched | AlignedOrdered | AlignedOrdered | Shared ReferenceRecord definition matches PHZD: Water and Keyword/Ref rows are keyed, LocationRefTypes retain declaration order, script rows follow the ordinary VMAD policy. Concrete overlay/copy/output tests verify this variant. |
 | `PlacedTrapRecordHandler.Reflections` | Matched | SortedKeyed | SortedKeyed | Shared ReferenceRecord definition matches PHZD: Water and Keyword/Ref rows are keyed, LocationRefTypes retain declaration order, script rows follow the ordinary VMAD policy. Concrete overlay/copy/output tests verify this variant. |
 | `PlacedTrapRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Shared ReferenceRecord definition matches PHZD: Water and Keyword/Ref rows are keyed, LocationRefTypes retain declaration order, script rows follow the ordinary VMAD policy. Concrete overlay/copy/output tests verify this variant. |
-| `QuestRecordHandler.Aliases` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `QuestRecordHandler.DialogConditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `QuestRecordHandler.EventConditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `QuestRecordHandler.Objectives` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `QuestRecordHandler.Stages` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `QuestRecordHandler.TextDisplayGlobals` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `QuestRecordHandler.VirtualMachineAdapter.Aliases` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `QuestRecordHandler.VirtualMachineAdapter.Fragments` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `QuestRecordHandler.VirtualMachineAdapter.Scripts` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `QuestRecordHandler.Aliases` | Matched | AlignedOrdered | AlignedOrdered | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
+| `QuestRecordHandler.DialogConditions` | Matched | AlignedOrdered | AlignedOrdered | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
+| `QuestRecordHandler.EventConditions` | Matched | AlignedOrdered | AlignedOrdered | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
+| `QuestRecordHandler.Objectives` | Matched | SortedKeyed | SortedKeyed | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
+| `QuestRecordHandler.Stages` | Matched | SortedKeyed | SortedKeyed | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
+| `QuestRecordHandler.TextDisplayGlobals` | Matched | AlignedOrdered | AlignedOrdered | Retain the pinned xEdit row identity/order and the existing handler reconciliation. BPTD limb models are a separate nested resource projection; QUST/PERK structural resets remain independent of script forwarding. |
+| `QuestRecordHandler.VirtualMachineAdapter.Aliases` | Matched | Atomic | Atomic | VMAD metadata, scripts and fragment bindings select together. The record structural reset and graph validation remain separate invariants. |
+| `QuestRecordHandler.VirtualMachineAdapter.Fragments` | Matched | Atomic | Atomic | VMAD metadata, scripts and fragment bindings select together. The record structural reset and graph validation remain separate invariants. |
+| `QuestRecordHandler.VirtualMachineAdapter.Scripts` | Matched | Atomic | Atomic | VMAD metadata, scripts and fragment bindings select together. The record structural reset and graph validation remain separate invariants. |
 | `RaceRecordHandler.ActorEffect` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `RaceRecordHandler.Attacks` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `RaceRecordHandler.Attacks` | Matched | SortedKeyed | SortedKeyed | Restore existing row reconciliation: attacks match AttackEvent, movement names match their string key, and movement overrides match MOVT FormKey. Combat/speed edits must not select resource paths. Event and skeleton compatibility remain outside automatic validation. |
 | `RaceRecordHandler.BipedObjectNames` | Matched | Atomic | Atomic | Mutagen dictionary/list projections represent fixed enum or positional fields, not independently keyed rows. |
 | `RaceRecordHandler.EquipmentSlots` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `RaceRecordHandler.Eyes` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `RaceRecordHandler.Hairs` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `RaceRecordHandler.HeadData.Female.AvailableHairColors` | Matched | SortedKeyed | SortedKeyed | The xEdit definition declares an independently sorted list of NPC preset or CLFM hair-color identities. Merge membership through ordinary list ownership rather than selecting all head resources. |
+| `RaceRecordHandler.HeadData.Female.RacePresets` | Matched | SortedKeyed | SortedKeyed | The xEdit definition declares an independently sorted list of NPC preset or CLFM hair-color identities. Merge membership through ordinary list ownership rather than selecting all head resources. |
+| `RaceRecordHandler.HeadData.Male.AvailableHairColors` | Matched | SortedKeyed | SortedKeyed | The xEdit definition declares an independently sorted list of NPC preset or CLFM hair-color identities. Merge membership through ordinary list ownership rather than selecting all head resources. |
+| `RaceRecordHandler.HeadData.Male.RacePresets` | Matched | SortedKeyed | SortedKeyed | The xEdit definition declares an independently sorted list of NPC preset or CLFM hair-color identities. Merge membership through ordinary list ownership rather than selecting all head resources. |
 | `RaceRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `RaceRecordHandler.MovementTypeNames` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `RaceRecordHandler.MovementTypes` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `RaceRecordHandler.MovementTypeNames` | Matched | SortedKeyed | SortedKeyed | Restore existing row reconciliation: attacks match AttackEvent, movement names match their string key, and movement overrides match MOVT FormKey. Combat/speed edits must not select resource paths. Event and skeleton compatibility remain outside automatic validation. |
+| `RaceRecordHandler.MovementTypes` | Matched | SortedKeyed | SortedKeyed | Restore existing row reconciliation: attacks match AttackEvent, movement names match their string key, and movement overrides match MOVT FormKey. Combat/speed edits must not select resource paths. Event and skeleton compatibility remain outside automatic validation. |
 | `RaceRecordHandler.Regen` | Matched | Atomic | Atomic | Mutagen dictionary/list projections represent fixed enum or positional fields, not independently keyed rows. |
 | `RaceRecordHandler.SkillBoosts` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `RaceRecordHandler.Starting` | Matched | Atomic | Atomic | Mutagen dictionary/list projections represent fixed enum or positional fields, not independently keyed rows. |
@@ -193,13 +198,13 @@ This report compares the generated runtime inventory with the independently main
 | `SceneRecordHandler.Actors` | Matched | Atomic | Atomic | The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations. |
 | `SceneRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `SceneRecordHandler.Phases` | Matched | Atomic | Atomic | The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations. |
-| `SceneRecordHandler.VirtualMachineAdapter.Scripts` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `SceneRecordHandler.VirtualMachineAdapter.Scripts` | Matched | Atomic | Atomic | VMAD metadata, scripts and fragment bindings select together. The record structural reset and graph validation remain separate invariants. |
 | `ScrollRecordHandler.Effects` | Matched | ExactOrdered | ExactOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `ScrollRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `ShoutRecordHandler.WordsOfPower` | Matched | Atomic | Atomic | The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations. |
 | `SoulGemRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `SoundDescriptorRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `SoundDescriptorRecordHandler.SoundFiles` | Matched | ExactOrdered | ExactOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `SoundDescriptorRecordHandler.SoundFiles` | Matched | Atomic | Atomic | Asset policy intentionally selects a complete SoundPlayback snapshot instead of independently reconciling this collection. Original xEdit order/key still governs copied contents; individual member selection contexts are disabled. See docs/ASSET_FORWARDING.md and docs/asset-forwarding-groups.json. |
 | `SpellRecordHandler.Effects` | Matched | ExactOrdered | ExactOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `SpellRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `StoryManagerBranchNodeRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
@@ -208,7 +213,7 @@ This report compares the generated runtime inventory with the independently main
 | `StoryManagerQuestNodeRecordHandler.Quests` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `TalkingActivatorRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `TalkingActivatorRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `TreeRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `TreeRecordHandler.VirtualMachineAdapter` | Matched | Atomic | Atomic | TREE has one dedicated resource rule. Select the complete script list with the authored mesh/wind/flag package rather than independently merging attachments. Retain the shared destination VMAD metadata and Papyrus unused-data copy policies. |
 | `WeaponRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `WeaponRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `WeatherRecordHandler.CloudTextures` | Matched | Atomic | Atomic | Cloud data is reconstructed from several fixed parallel arrays; whole-value ownership prevents cross-layer desynchronization. |

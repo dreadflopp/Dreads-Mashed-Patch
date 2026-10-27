@@ -12,33 +12,44 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 |---|---|
 | `NodeIndex`, `Sound`, `MasterParticleSystemCap` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/AddonNodeRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `ModelAndBounds` (Meshes) | `ModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
+
 
 <a id="arto-artobject"></a>
 
 ## ARTO — Art Object
 
-| Properties | How they are patched |
-|---|---|
-| `Type` | Select each value separately. |
-| `ModelAndBounds` | Conditional model/bounds coupling; see the [shared rule](README.md#properties-shared-across-records). |
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ArtObjectRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `ArtModel` (Meshes) | `ModelAndBounds`, `Type` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+
 
 <a id="cams-camerashot"></a>
 
 ## CAMS — Camera Shot
 
+Action, location, target, timing, distances and flags follow their ordinary scalar or flag rules independently of the mesh reference.
+
 | Properties | How they are patched |
 |---|---|
-| `Action`, `Location`, `Target`, `TimeMultiplierPlayer`, `TimeMultiplierTarget`, `TimeMultiplierGlobal`, `MaxTime`, `MinTime`, `TargetPercentBetweenActors`, `NearTargetDistance`, `ImageSpaceModifier` | Select each value separately. |
+| `Action`, `Location`, `Target`, `TimeMultiplierPlayer`, `TimeMultiplierTarget`, `TimeMultiplierGlobal`, `MaxTime`, `MinTime`, `TargetPercentBetweenActors`, `NearTargetDistance` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `Model` | Select each whole value separately. |
+| `ImageSpaceModifier` | Select each value separately. |
 | `DATADataTypeState` | Serialization/unused state; no independent decision. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/CameraShotRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `CameraModel` (Meshes) | `Model` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="cpth-camerapath"></a>
 
@@ -50,31 +61,36 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | `RelatedPaths` | Select each whole collection separately. |
 | `Conditions`, `Shots` | Merge aligned rows in order. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/CameraPathRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="debr-debris"></a>
 
 ## DEBR — Debris
 
-| Properties | How they are patched |
-|---|---|
-| `Models` | Select each whole collection separately. |
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/DebrisRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `Models` (Meshes) | `Models` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="efsh-effectshader"></a>
 
 ## EFSH — Effect Shader
 
-EffectShaderData keeps all DATA controls together, including Unknown, Flags, AddonModels and AmbientSound. Only the five listed texture paths are separate from that value.
+EffectShaderData keeps the remaining DATA controls together, including Unknown, Flags, AddonModels, AmbientSound, colours, blending and timing. It forwards separately from the texture groups. FillTextureCoordinates contains FillTextureScaleU/V. ParticleAtlas contains TextureCountU/V and the ParticleAnimated start/end/loop/frame-count values and their variations, so atlas indices match the selected particle image.
 
 | Properties | How they are patched |
 |---|---|
-| `FillTexture`, `ParticleShaderTexture`, `HolesTexture`, `MembranePaletteTexture`, `ParticlePaletteTexture` | Select each value separately. |
-| `EffectShaderData` | Select each whole value separately. |
+| `EffectShaderData` | Select the remaining effect DATA as one value, excluding texture coordinates and atlas indices. |
 | `DATADataTypeState` | Serialization/unused state; no independent decision. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/EffectShaderRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `MembraneTextures` (Textures) | `FillTexture`, `HolesTexture`, `MembranePaletteTexture`, `FillTextureCoordinates` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+| `ParticleTextures` (Textures) | `ParticleShaderTexture`, `ParticlePaletteTexture`, `ParticleAtlas` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+
 
 <a id="imgs-imagespace"></a>
 
@@ -84,22 +100,29 @@ EffectShaderData keeps all DATA controls together, including Unknown, Flags, Add
 |---|---|
 | `ENAM`, `Hdr`, `Cinematic`, `Tint`, `DepthOfField` | Select each whole value separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ImageSpaceRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="ipct-impact"></a>
 
 ## IPCT — Impact
 
+Duration, orientation, angle threshold and placement radius forward independently of the mesh.
+
 Decal presence gates its child writes: an absent decal suppresses them. Bounds groups MinWidth, MaxWidth, MinHeight and MaxHeight; Parallax groups scale and passes. Depth, Shininess, Flags and Color remain separate. NoDecalData is independent of the presence decision.
 
 | Properties | How they are patched |
 |---|---|
-| `Duration`, `Orientation`, `AngleThreshold`, `PlacementRadius`, `SoundLevel`, `NoDecalData`, `Result`, `Decal.Presence`, `Decal.Depth`, `Decal.Shininess`, `Decal.Color`, `TextureSet`, `SecondaryTextureSet`, `Sound1`, `Sound2`, `Hazard` | Select each value separately. |
+| `Duration`, `Orientation`, `AngleThreshold`, `PlacementRadius` | Select each value separately. |
+| `SoundLevel`, `NoDecalData`, `Result`, `Decal.Presence`, `Decal.Depth`, `Decal.Shininess`, `Decal.Color`, `TextureSet`, `SecondaryTextureSet`, `Sound1`, `Sound2`, `Hazard` | Select each value separately. |
 | `Decal.Flags` | Merge registered flag bits separately. |
-| `Model`, `Decal.Bounds`, `Decal.Parallax` | Select each whole value separately. |
+| `Decal.Bounds`, `Decal.Parallax` | Select each whole value separately. |
 | `Unknown`, `Decal.Unknown` | Not independently forwarded. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ImpactRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `ImpactModel` (Meshes) | `Model` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="ipds-impactdataset"></a>
 
@@ -111,36 +134,46 @@ Impacts merges mappings by material with ownership checks. Invalid, null or dupl
 |---|---|
 | `Impacts` | Special material mapping. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ImpactDataSetRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="lens-lensflare"></a>
 
 ## LENS — Lens Flare
 
-The complete flare definition is one authored value. Global parameters and the ordered sprite sequence select together, preventing mixtures of different flare designs. Shared EditorID and header flags remain independent.
+The ordered sprite sequence keeps textures with their per-sprite data. Global ColorInfluence and FadeDistanceRadiusScale forward separately and are separate from the texture group. Shared EditorID and header flags remain independent.
 
 | Properties | How they are patched |
 |---|---|
-| `FlareDefinition` | Select `ColorInfluence`, `FadeDistanceRadiusScale` and `Sprites` together from one source. Null and present-empty sprites remain distinct; order and duplicate rows are retained. |
+| `ColorInfluence`, `FadeDistanceRadiusScale` | Select each value separately. |
 | `Sprites` contents | Each copied row retains its ID, texture and complete nullable Data: tint RGB, Width, Height, Position, AngularFade, Opacity and Flags. These fields and embedded flags have no independent merge path. |
 
 Sprite equality uses serialized RGB (alpha is not stored in LFSD), all other Data fields, IDs, order and duplicates. Textures use the project's case/slash-aware GivenPath comparison; selected copies retain the authored path. Mutagen writes the derived LFSP sprite count. There is no per-row alignment or per-bit sprite flag merge.
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LensFlareRecordHandler.cs); [atomic snapshot and comparison](../../DreadsMashedPatch/PropertyHandlers/LensFlare/FlareDefinitionHandler.cs).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `FlareSprites` (Textures) | `FlareSprites` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="mato-materialobject"></a>
 
 ## MATO — Material Object
 
+The NIF model forwards as its own mesh group. DNAMs, material falloff, UV/projection parameters, normal dampening, colour, HasSnow and approved Flags forwarding retain their ordinary decisions. Opaque DNAM bytes are not interpreted as texture references.
+
 | Properties | How they are patched |
 |---|---|
 | `FalloffScale`, `FalloffBias`, `NoiseUvScale`, `MaterialUvScale`, `ProjectionVector`, `NormalDampener`, `SinglePassColor`, `HasSnow` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `Model` | Select each whole value separately. |
-| `DNAMs` | Select each whole collection separately. |
+| `DNAMs` | Select the complete opaque byte sequence. |
 | `DATADataTypeState` | Serialization/unused state; no independent decision. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/MaterialObjectRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `MaterialModel` (Meshes) | `Model` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="matt-materialtype"></a>
 
@@ -151,7 +184,6 @@ Sprite equality uses serialized RGB (alpha is not stored in LFSD), all other Dat
 | `Parent`, `Name`, `HavokDisplayColor`, `Buoyancy`, `HavokImpactDataSet` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/MaterialTypeRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="rfct-visualeffect"></a>
 
@@ -162,18 +194,24 @@ Sprite equality uses serialized RGB (alpha is not stored in LFSD), all other Dat
 | `EffectArt`, `Shader` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/VisualEffectRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="spgd-shaderparticlegeometry"></a>
 
 ## SPGD — Shader Particle Geometry
 
+Only the particle texture and its subtexture grid dimensions stay together. Gravity, rotation, size, offsets, density, box size and particle Type forward normally.
+
 | Properties | How they are patched |
 |---|---|
-| `GravityVelocity`, `RotationVelocity`, `ParticleSizeX`, `ParticleSizeY`, `CenterOffsetMin`, `CenterOffsetMax`, `InitialRotationRange`, `NumSubtexturesX`, `NumSubtexturesY`, `Type`, `BoxSize`, `ParticleDensity`, `ParticleTexture` | Select each value separately. |
+| `GravityVelocity`, `RotationVelocity`, `ParticleSizeX`, `ParticleSizeY`, `CenterOffsetMin`, `CenterOffsetMax`, `InitialRotationRange`, `Type`, `BoxSize`, `ParticleDensity` | Select each value separately. |
 | `DATADataTypeState` | Serialization/unused state; no independent decision. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ShaderParticleGeometryRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `ParticleTexture` (Textures) | `NumSubtexturesX`, `NumSubtexturesY`, `ParticleTexture` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+
 
 <a id="txst-textureset"></a>
 
@@ -183,10 +221,15 @@ TextureDefinition keeps all eight texture paths and nullable Flags together. Tho
 
 | Properties | How they are patched |
 |---|---|
-| `TextureDefinition`, `Decal` | Select each whole value separately. |
+| `Decal` | Select each whole value separately. |
 | `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/TextureSetRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `TextureDefinition` (Textures) | `TextureDefinition` | Normal | Use the existing complete-value or collection policy. |
+
 
 <a id="voli-volumetriclighting"></a>
 
@@ -197,5 +240,3 @@ The twelve nullable lighting parameters form one complete preset. Color, density
 | Properties | How they are patched |
 |---|---|
 | `LightingPreset` | Select all twelve parameters together: `Intensity`, `CustomColorContribution`, `ColorR`, `ColorG`, `ColorB`, `DensityContribution`, `DensitySize`, `DensityWindSpeed`, `DensityFallingSpeed`, `PhaseFunctionContribution`, `PhaseFunctionScattering`, `SamplingRepartitionRangeFactor`. Presence and exact float values participate in comparison. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/VolumetricLightingRecordHandler.cs); [atomic snapshot](../../DreadsMashedPatch/PropertyHandlers/VolumetricLighting/LightingPresetHandler.cs).

@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -14,21 +15,23 @@ using Noggog;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: all eighteen inherited placed fields now use existing shared handlers.
-//   Scalars/links forward individually; generated aggregates and Placement retain whole-value ownership.
-// - Kept specialized: VMAD uses the shared script-name/metadata policy; header flags keep the approved composite.
-//   xEdit ReferenceRecord sorts LinkedReferences by Keyword/Ref and Reflections by Water; LocationRefTypes align
-//   in declaration order. DistantLodData is one complete XLOD vector, not independently merged coordinates.
-// - Intentionally non-migrated: UDR coordination remains scoped to ACHR/REFR; no PHZD UDR policy is established.
-// - Rationale: inherited interfaces expose writable semantic data; XIS2 retains nullable binary marker/payload
-//   handling rather than pretending it is ACHR/REFR's boolean. No old handler path or classes were superseded.
-
-// Header migration: raw/common/APlacedTrap.MajorFlag flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Inherited placed fields follow xEdit ReferenceRecord semantics. Safe-disable UDR coordination
+// is limited to ACHR/REFR; no PHZD UDR policy is established.
 public class PlacedHazardRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },

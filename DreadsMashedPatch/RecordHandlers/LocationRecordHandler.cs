@@ -12,17 +12,7 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: flags, names, keywords, links, and scalar values use project-approved shared handlers.
-    // - Intentionally non-migrated: Added/Static/Removed bookkeeping collections; conflict resolution is unnecessary for them.
-    // - Rationale: only semantic Location values participate in forwarding.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // Added/Static/Removed collections are bookkeeping, not independent semantic conflicts.
     public class LocationRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

@@ -146,7 +146,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             var originalFlags = GetValue(originalContext.Record);
             var winningFlags = GetValue(winningContext.Record);
 
-            // Initialize original flag contexts
             intFlagPropertyContext.OriginalFlagContexts = _flagDefinitions
                 .Select(kvp => new IntFlagPropertyValueContext(
                     kvp.Key,
@@ -155,7 +154,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     originalContext.ModKey.ToString()))
                 .ToList();
 
-            // Initialize forward flag contexts with original values (will be updated as we process mods through load order)
             intFlagPropertyContext.ForwardFlagContexts = _flagDefinitions
                 .Select(kvp => new IntFlagPropertyValueContext(
                     kvp.Key,
@@ -202,7 +200,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
             var recordFlags = GetValue(context.Record);
 
-            // Process each individual flag
             foreach (var flagDef in _flagDefinitions)
             {
                 var flagValue = flagDef.Key;
@@ -212,14 +209,12 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                 if (existingFlagContext == null)
                 {
-                    // New flag context - add it
                     var newFlagContext = new IntFlagPropertyValueContext(flagValue, flagName, isFlagSetInRecord, context.ModKey.ToString());
                     forwardFlagContexts.Add(newFlagContext);
                     LogCollector.Add(PropertyName, $"[{PropertyName}] {context.ModKey}: Adding flag {flagName} = {isFlagSetInRecord} Success");
                 }
                 else
                 {
-                    // Get original flag value for comparison
                     var originalFlagContext = intFlagPropertyContext.OriginalFlagContexts.FirstOrDefault(fc => fc.Flag == flagValue);
                     var originalValue = originalFlagContext?.IsSet ?? false;
 
@@ -227,7 +222,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     {
                         if (isFlagSetInRecord != originalValue)
                         {
-                            // Change/Addition: Different from original - always allowed
                             var oldState = existingFlagContext.IsSet;
                             existingFlagContext.IsSet = isFlagSetInRecord;
                             existingFlagContext.OwnerMod = context.ModKey.ToString();
@@ -235,7 +229,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         }
                         else
                         {
-                            // Reversion: Same as original, different from current - check permission
                             var canRevert = PatcherSettings.HasMasterOrVirtualMaster(
                                 recordMod,
                                 existingFlagContext.OwnerMod);
@@ -254,17 +247,14 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     }
                     else
                     {
-                        // Values match forward context - no change needed
                         LogCollector.Add(PropertyName, $"[{PropertyName}] [{context.ModKey}] No change needed for flag: {flagName}");
                     }
                 }
             }
 
-            // Update the state
             intFlagPropertyContext.ForwardFlagContexts = forwardFlagContexts;
         }
 
-        // Non-generic interface implementations
         void IPropertyHandler.SetValue(IMajorRecord record, object? value)
         {
             SetValue(record, (int)value!);

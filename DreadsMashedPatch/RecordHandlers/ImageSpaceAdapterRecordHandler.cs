@@ -12,15 +12,8 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: record metadata via shared handlers.
-    // - Kept specialized: ordered curves, radial blur, depth of field, and Mult/Add pairs are atomic units.
-    // - Intentionally excluded: Unknown* keyframe collections are outside the semantic conflict surface.
-    // - Rationale: merging individual keyframes can invent curves and invalidates the DNAM-derived counts.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Curves and Mult/Add pairs are atomic: merging keyframes can invent curves and invalidate
+    // DNAM-derived counts. Unknown keyframe collections do not participate in conflict resolution.
     public class ImageSpaceAdapterRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

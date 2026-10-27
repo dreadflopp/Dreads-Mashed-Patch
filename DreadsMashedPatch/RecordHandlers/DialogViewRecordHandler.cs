@@ -12,14 +12,6 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: Quest, ENAM, DNAM via reflection handlers.
-    // - Kept specialized: Branches and TNAMs via dedicated list/binary-slice handlers.
-    // - Rationale: preserve precise list mutation and binary sequence semantics.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
     public class DialogViewRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

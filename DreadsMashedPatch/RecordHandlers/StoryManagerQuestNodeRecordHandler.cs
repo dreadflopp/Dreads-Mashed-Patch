@@ -13,18 +13,8 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: SMQN links and controls use shared handlers; quest rows use Mutagen-generated element copies.
-// - Kept specialized: Conditions uses the shared polymorphic condition handler.
-// - Intentionally non-migrated: none; Parent and PreviousSibling remain registered so topology changes are detected.
-// - Coupled forwarding: topology, conditions, flags, and limits always establish complete-node ownership;
-//   quest rows remain mergeable while that configuration is stable.
-// - Rationale: quest FormID is xEdit's row key, but selection controls and list contents must not be mixed
-//   across a configuration boundary, so independent configuration forwarding is intentionally unavailable.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Topology, conditions, flags and limits establish complete-node ownership. Quest rows use
+// FormID keys and can merge only while that configuration is stable.
 public class StoryManagerQuestNodeRecordHandler : AbstractRecordHandler
 {
     private static readonly IReadOnlySet<string> ConfigurationPropertyNames = new HashSet<string>(StringComparer.Ordinal)

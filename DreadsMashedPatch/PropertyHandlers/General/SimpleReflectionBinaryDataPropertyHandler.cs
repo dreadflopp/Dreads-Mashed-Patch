@@ -9,11 +9,8 @@ using Noggog;
 namespace DreadsMashedPatch.PropertyHandlers.General
 {
     /// <summary>
-    /// A generic property handler that uses reflection to access ReadOnlyMemorySlice&lt;byte&gt;? properties.
-    /// This handler is designed for binary data properties that need to be copied as byte arrays.
+    /// Copies binary slice properties through detached byte arrays, preserving optional presence.
     /// </summary>
-    /// <typeparam name="TRecord">The record type that contains the property (e.g., IPlacedObject)</typeparam>
-    /// <typeparam name="TRecordGetter">The getter record type (e.g., IPlacedObjectGetter)</typeparam>
     public class SimpleReflectionBinaryDataPropertyHandler<TRecord, TRecordGetter> : AbstractPropertyHandler<ReadOnlyMemorySlice<byte>?>
         where TRecord : class, IMajorRecord
         where TRecordGetter : class, IMajorRecordGetter
@@ -31,10 +28,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             _propertyName = propertyName;
             _propertyPath = propertyName.Split('.');
 
-            // Find the property on the getter interface
             _getterProperty = FindProperty(typeof(TRecordGetter), _propertyPath);
 
-            // Find the property on the setter interface
             _setterProperty = FindProperty(typeof(TRecord), _propertyPath);
 
             if (_getterProperty == null)
@@ -194,7 +189,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                 var propertyType = _setterProperty.PropertyType;
 
-                // Handle nullable MemorySlice<byte>?
                 Type? underlyingType = null;
                 if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
@@ -217,19 +211,14 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     var genericTypeDefName = genericTypeDef.Name;
                     var genericArgs = underlyingType.GetGenericArguments();
 
-                    // Check if it's MemorySlice<byte> or ReadOnlyMemorySlice<byte>
                     if (genericArgs.Length == 1 && genericArgs[0] == typeof(byte))
                     {
                         if (genericTypeDefName == "MemorySlice`1" || genericTypeDefName.Contains("MemorySlice"))
                         {
-                            // Create MemorySlice<byte> from byte array
                             var arrayValue = value.Value.ToArray();
 
-                            // Use the actual underlying type (which is MemorySlice<byte>)
-                            // Create instance using the constructor that takes byte[]
                             try
                             {
-                                // MemorySlice<byte> has a constructor that takes byte[]
                                 var constructor = underlyingType.GetConstructor(new[] { typeof(byte[]) });
                                 if (constructor != null)
                                 {
@@ -237,7 +226,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                                 }
                                 else
                                 {
-                                    // Try using Activator
                                     valueToSet = System.Activator.CreateInstance(underlyingType, arrayValue);
                                 }
                             }
@@ -247,35 +235,29 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                                     PropertyName,
                                     $"Could not create {underlyingType.Name} from a byte array; trying direct assignment",
                                     createEx);
-                                // Fallback: try direct assignment (might have implicit conversion)
                                 valueToSet = arrayValue;
                             }
                         }
                         else if (genericTypeDefName == "ReadOnlyMemorySlice`1")
                         {
-                            // Property accepts ReadOnlyMemorySlice, use directly
                             valueToSet = value.Value;
                         }
                         else
                         {
-                            // Fallback: try byte[] (some properties accept byte[])
                             valueToSet = value.Value.ToArray();
                         }
                     }
                     else
                     {
-                        // Fallback: try byte[]
                         valueToSet = value.Value.ToArray();
                     }
                 }
                 else if (propertyType == typeof(byte[]) || (underlyingType != null && underlyingType == typeof(byte[])))
                 {
-                    // Property accepts byte[] directly
                     valueToSet = value.Value.ToArray();
                 }
                 else
                 {
-                    // Fallback: try byte[]
                     valueToSet = value.Value.ToArray();
                 }
 
@@ -296,7 +278,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Compare byte arrays using SequenceEqual
             return value1.Value.Span.SequenceEqual(value2.Value.Span);
         }
 

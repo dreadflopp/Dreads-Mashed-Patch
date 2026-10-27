@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -12,28 +13,31 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: independent PROJ scalar/form-link fields and unrelated flag bits.
-// - Kept specialized: trajectory, explosion, muzzle-flash, pickup, disable, and collision groups.
-// - Intentionally excluded: DATADataTypeState is Mutagen serialization state, not an xEdit field.
-// - Rationale: fields that jointly define one behavior are decided atomically, while unrelated DATA
-//   fields and flag bits remain independently mergeable and the winning binary layout is retained.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
-// Name migration: translated Name uses generated copying to retain every selected language.
-// Optional null names remove the value; comparison follows Mutagen's language policy.
-// Other specialized fields/flags retain their policies; translations are selected as one value.
+// Trajectory, explosion, muzzle-flash, pickup, disable and collision fields select as coupled
+// groups; independently mixing their members could invent behavior no source plugin authored.
 public class ProjectileRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
         { "Name", new TranslatedStringReflectionPropertyHandler<IProjectile, IProjectileGetter>("Name") },
         { "ModelAndBounds", new ModelBoundsHandler() },
-        { "Destructible", new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, IProjectile, IProjectileGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals) },
+        { "Destructible", DestructibleDataHandlers.Data(new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, IProjectile, IProjectileGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals)) },
+        { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, IProjectile, IProjectileGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals)) },
         { "Flags", new SimpleReflectionFlagPropertyHandler<Projectile.Flag, IProjectile, IProjectileGetter>(
             "Flags",
             preserveUnknownBits: true,

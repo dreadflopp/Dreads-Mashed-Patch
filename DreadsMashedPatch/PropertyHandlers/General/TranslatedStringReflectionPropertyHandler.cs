@@ -20,8 +20,8 @@ public sealed class TranslatedStringReflectionPropertyHandler<TRecord, TRecordGe
         _required = required;
     }
 
-    // Required names retain the former null-to-empty behavior without reducing
-    // non-null names to their default-language string.
+    // Required names normalize absence to empty text in Mutagen's default language.
+    // Non-null values keep all translations; optional names permit removal.
     public override void SetValue(IMajorRecord record, ITranslatedStringGetter? value)
         => base.SetValue(record, value ?? (_required
             ? new TranslatedString(TranslatedString.DefaultLanguage, string.Empty)

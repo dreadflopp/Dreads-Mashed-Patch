@@ -2182,5 +2182,11 @@
     "property": "SkyrimMajorRecordFlags",
     "status": "AliasOrDuplicate",
     "reason": "Owned by the single MajorRecordFlagsRaw handler, which combines base, common Skyrim and configured record-specific bits and preserves unknown winner bits."
+  },
+  {
+    "handler": "IdleAnimationRecordHandler.cs",
+    "property": "RelatedIdles",
+    "status": "IntentionalExclusion",
+    "reason": "RelatedIdles forwarding is deliberately inactive in the record handler; runtime sorts these relations. The source-only audit previously mistook its block-commented registration for an active writer. No resource policy owns or reconstructs it."
   }
 ]

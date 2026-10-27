@@ -46,7 +46,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                         }
                         else
                         {
-                            // Convert IQuestStageGetter to QuestStage
                             var newStage = stage.DeepCopy();
                             questRecord.Stages.Add(newStage);
                         }
@@ -61,7 +60,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
             if (value1 == null || value2 == null) return false;
             if (value1.Count != value2.Count) return false;
 
-            // Group stages by Index for efficient matching (order-independent)
             var stages1ByIndex = value1
                 .Where(s => s != null)
                 .GroupBy(s => s.Index)
@@ -72,7 +70,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                 .GroupBy(s => s.Index)
                 .ToDictionary(g => g.Key, g => g.First());
 
-            // Check that all stages in value1 have matching stages in value2 with same properties
             foreach (var stage1 in stages1ByIndex.Values)
             {
                 if (!stages2ByIndex.TryGetValue(stage1.Index, out var stage2))
@@ -80,7 +77,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                     return false; // Stage Index not found in value2
                 }
 
-                // Compare stages by all properties (for forwarding decision)
                 if (!AreStagesEqual(stage1, stage2))
                 {
                     return false; // Stages differ

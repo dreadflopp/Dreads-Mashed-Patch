@@ -11,15 +11,8 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: SOPM aggregates use Mutagen-generated copy/equality operations; top-level binary payloads use shared binary handlers.
-// - Kept specialized: none; generated aggregate copies preserve overlay-only nested values such as attenuation byte slices and channels.
-// - Intentionally non-migrated: none.
-// - Rationale: generic reflection cannot safely convert nested ReadOnlyMemorySlice or overlay objects to their mutable counterparts.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Generated copies materialize nested overlay attenuation bytes and channels; direct reflection
+// assignment cannot safely convert them to mutable values.
 public class SoundOutputModelRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

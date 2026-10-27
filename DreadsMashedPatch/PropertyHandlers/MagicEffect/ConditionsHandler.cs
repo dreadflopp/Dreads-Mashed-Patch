@@ -21,7 +21,6 @@ namespace DreadsMashedPatch.PropertyHandlers.MagicEffect
 
         protected override void UpdateConditionsCollection(IMagicEffect record, List<IConditionGetter> conditions)
         {
-            // Clear the existing conditions and add the new ones
             if (record.Conditions != null)
             {
                 record.Conditions.Clear();
@@ -36,7 +35,6 @@ namespace DreadsMashedPatch.PropertyHandlers.MagicEffect
                     }
                     else
                     {
-                        // Convert IConditionGetter to Condition
                         var newCondition = condition.DeepCopy();
                         record.Conditions.Add(newCondition);
                     }

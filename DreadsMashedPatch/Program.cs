@@ -351,10 +351,8 @@ namespace DreadsMashedPatch
             string outputModName = state.PatchMod.ModKey.ToString();
             Console.WriteLine($"Output mod name: {outputModName}");
 
-            // Get all contexts from the state and print the count
             Console.WriteLine("\nGetting all contexts from state...");
 
-            // Get counts by record type
             var npcContexts = LoadContextsSafely(
                 state.LoadOrder.PriorityOrder.WinningContextOverrides<ISkyrimMod, ISkyrimModGetter, INpc, INpcGetter>(state.LinkCache),
                 "npcContexts");
@@ -725,7 +723,6 @@ namespace DreadsMashedPatch
             var placedTrapContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedTrap, IPlacedTrapGetter>(placedTrapBaseContexts);
             var placedMissileContexts = NarrowContexts<IAPlacedTrap, IAPlacedTrapGetter, IPlacedMissile, IPlacedMissileGetter>(placedTrapBaseContexts);
 
-            // Filter out contexts that would break early
             Console.WriteLine("Filtering contexts (this may take a while)...");
             Console.WriteLine("Filtering Ingestibles...");
             var filteredIngestibleContexts = ingestibleContexts.Where(context => !ShouldBreakEarly(context, state, policySources)).ToArray();

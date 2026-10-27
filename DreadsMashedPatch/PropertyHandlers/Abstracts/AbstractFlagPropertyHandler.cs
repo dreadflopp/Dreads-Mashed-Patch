@@ -17,27 +17,10 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
         public abstract void SetValue(IMajorRecord record, TFlag value);
         public abstract TFlag GetValue(IMajorRecordGetter record);
 
-        /// <summary>
-        /// Gets all possible flags for this flag enum type
-        /// </summary>
-        /// <returns>Array of all possible flag values</returns>
         protected abstract TFlag[] GetAllFlags();
 
-        /// <summary>
-        /// Checks if a specific flag is set in the given flag value
-        /// </summary>
-        /// <param name="flags">The combined flag value</param>
-        /// <param name="flag">The specific flag to check</param>
-        /// <returns>True if the flag is set, false otherwise</returns>
         protected abstract bool IsFlagSet(TFlag flags, TFlag flag);
 
-        /// <summary>
-        /// Sets or clears a specific flag in the given flag value
-        /// </summary>
-        /// <param name="flags">The current flag value</param>
-        /// <param name="flag">The flag to set or clear</param>
-        /// <param name="value">True to set the flag, false to clear it</param>
-        /// <returns>The new flag value</returns>
         protected abstract TFlag SetFlag(TFlag flags, TFlag flag, bool value);
 
         public virtual bool AreValuesEqual(TFlag value1, TFlag value2)
@@ -59,7 +42,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             return true;
         }
 
-        // Helper methods to reduce boilerplate
         protected static TRecord? TryCastRecord<TRecord>(IMajorRecordGetter record, string propertyName) where TRecord : class
         {
             if (record is TRecord typedRecord)
@@ -116,7 +98,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             var recordFlags = GetValue(context.Record);
             var allFlags = GetAllFlags();
 
-            // Process each individual flag
             foreach (var flag in allFlags)
             {
                 var isFlagSetInRecord = IsFlagSet(recordFlags, flag);
@@ -124,14 +105,12 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
 
                 if (existingFlagContext == null)
                 {
-                    // New flag context - add it
                     var newFlagContext = new FlagPropertyValueContext<TFlag>(flag, isFlagSetInRecord, context.ModKey.ToString());
                     forwardFlagContexts.Add(newFlagContext);
                     LogCollector.Add(PropertyName, $"[{PropertyName}] {context.ModKey}: Adding flag {flag} = {isFlagSetInRecord} Success");
                 }
                 else
                 {
-                    // Get original flag value for comparison
                     var originalFlagContext = flagPropertyContext.OriginalFlagContexts.FirstOrDefault(fc => fc.Flag.Equals(flag));
                     var originalValue = originalFlagContext?.IsSet ?? false;
 
@@ -171,7 +150,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                 }
             }
 
-            // Update the state
             flagPropertyContext.ForwardFlagContexts = forwardFlagContexts;
         }
 
@@ -190,7 +168,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             var originalFlags = GetValue(originalContext.Record);
             var winningFlags = GetValue(winningContext.Record);
 
-            // Initialize original flag contexts
             flagPropertyContext.OriginalFlagContexts = allFlags
                 .Select(flag => new FlagPropertyValueContext<TFlag>(
                     flag,
@@ -198,7 +175,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     originalContext.ModKey.ToString()))
                 .ToList();
 
-            // Initialize forward flag contexts with winning values and winning context as owner
             flagPropertyContext.ForwardFlagContexts = allFlags
                 .Select(flag => new FlagPropertyValueContext<TFlag>(
                     flag,
@@ -209,17 +185,11 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             flagPropertyContext.IsResolved = false;
         }
 
-        /// <summary>
-        /// Format the flag for display in the log.
-        /// </summary>
-        /// <param name="flag">The flag to format</param>
-        /// <returns>The formatted flag</returns>
         protected virtual string FormatFlag(TFlag flag)
         {
             return flag.ToString();
         }
 
-        // Non-generic interface implementations
         void IPropertyHandler.SetValue(IMajorRecord record, object? value)
         {
             SetValue(record, (TFlag)value!);
@@ -235,7 +205,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             return AreValuesEqual((TFlag)value1!, (TFlag)value2!);
         }
 
-        // Non-generic interface implementation for context creation
         IPropertyContext IPropertyHandler.CreatePropertyContext()
         {
             return new FlagPropertyContext<TFlag>();

@@ -9,7 +9,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General;
 /// element copy and equality operations. No overlay collection or element is assigned
 /// directly to the mutable record.
 /// </summary>
-public sealed class GeneratedCopyReflectionListPropertyHandler<TGetter, TMutable, TRecord, TRecordGetter>
+public class GeneratedCopyReflectionListPropertyHandler<TGetter, TMutable, TRecord, TRecordGetter>
     : AbstractListPropertyHandler<TGetter>
     where TGetter : class
     where TMutable : class, TGetter

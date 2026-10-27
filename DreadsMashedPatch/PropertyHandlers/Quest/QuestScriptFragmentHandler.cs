@@ -36,7 +36,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                     {
                         if (fragment != null)
                         {
-                            // Convert IQuestScriptFragmentGetter to QuestScriptFragment
                             var newFragment = fragment.DeepCopy();
                             questRecord.VirtualMachineAdapter.Fragments.Add(newFragment);
                         }

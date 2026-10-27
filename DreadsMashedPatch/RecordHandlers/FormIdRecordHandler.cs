@@ -11,15 +11,7 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: inherited FormList record-header flags use the project-standard coordinated flag handlers.
-    // - Kept specialized: Items retains FormList ownership merging and progressive aligned-slot ordering.
-    // - Rationale: FormLists are mergeable collections whose order can be observed through indexed access;
-    //   Mutagen also exposes both flag views on IFormList/IFormListGetter, so generic reflection is not used for flags.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // FormList order is observable through indexed access; merge ownership uses aligned slots.
     public class FormIdRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -44,8 +36,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

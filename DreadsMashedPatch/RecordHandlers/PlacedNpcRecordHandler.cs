@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
@@ -13,29 +14,25 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: placed-NPC links/binary payloads use typed handlers; nested aggregates and linked-reference rows use generated copies.
-    //   XLRL/LocationReference intentionally stays on this conflict-aware path: a newly added value that
-    //   survives into the winner already produces no patch. A later omission may remove it only when that
-    //   mod has the adding mod as an actual or configured virtual master; otherwise the addition is retained.
-    // - Specialized: Placement is one cohesive value with xEdit-precision position equality, circular normalized-angle
-    //   equality, and degree diagnostics. A recognized safe UDR keeps Initially Disabled, Placement, and EnableParent
-    //   on the snapshot selected by the approved flag handler. Placement, ActivateParents, and NPC list behavior remain specialized.
-    // - Intentionally non-migrated: ordinary Initially Disabled references are not treated as UDRs, and
-    //   LocationReference remains independently conflict-resolved because it is not part of the safe-disable bundle.
-    // - Rationale: exact float equality creates invisible conflicts, and independent UDR fields can otherwise produce
-    //   contradictory hybrids. Mutagen 0.54.4 exposes LocationReference as ILocationGetter.
-
-    // Header migration: raw/common/PlacedNpc.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Placement uses xEdit precision and normalized circular angles to avoid invisible conflicts.
+    // Safe UDRs coordinate Initially Disabled, Placement and EnableParent; ordinary disabled references
+    // are not UDRs. LocationReference remains independent and requires ownership for removal.
     public class PlacedNpcRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
         protected override PropertyForwardingCoordination CoordinateForwardedProperties(
             IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
             IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            return PlacedReferenceUdrCoordinator.Coordinate(recordContexts, PropertyContexts);
+            return AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state,
+                AtomicOwnershipTriggerProperties, PlacedReferenceUdrCoordinator.Coordinate(recordContexts, PropertyContexts));
         }
 
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -75,7 +72,6 @@ namespace DreadsMashedPatch.RecordHandlers
             { "IsIgnoredBySandbox2", new SimpleReflectionPropertyHandler<bool, IPlacedNpc, IPlacedNpcGetter>("IsIgnoredBySandbox2") },
             { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedNpc, IPlacedNpcGetter>("Scale") },
             { "Placement", new PlacementHandler() },
-            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() }
         };
 
@@ -94,8 +90,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }

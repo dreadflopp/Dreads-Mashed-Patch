@@ -128,7 +128,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
             var recordMod = state.LoadOrder[context.ModKey].Mod;
             if (recordMod == null) return;
 
-            // Group items by FormKey for occurrence-aware matching
             var forwardItemsByFormKey = currentForwardItems
                 .Where(i => !i.IsRemoved)
                 .GroupBy(i => i.Value.Item.Item.FormKey)
@@ -139,7 +138,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                 .GroupBy(x => x.Item.Item.Item.FormKey)
                 .ToDictionary(g => g.Key, g => g.ToList());
 
-            // Process each FormKey group
             foreach (var formKeyGroup in forwardItemsByFormKey)
             {
                 var formKey = formKeyGroup.Key;
@@ -153,7 +151,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                 // Match each source occurrence at most once, preferring unchanged rows.
                 var matches = FindMatches(forwardItems, recordItemsForFormKey);
 
-                // Apply the matched metadata
                 foreach (var match in matches)
                 {
                     var forwardItem = match.ForwardItem;
@@ -167,7 +164,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                     bool hasChanges = false;
                     var changes = new List<string>();
 
-                    // Update count if it's different and we have permissions
                     if (recordItem.Item.Count != forwardItem.Value.Item.Count)
                     {
                         if (CanUpdateCount(recordMod, listPropertyContext, forwardItem, recordItem))
@@ -190,7 +186,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
                         recordItem.Data,
                         changes);
 
-                    // Log changes if any were made
                     if (hasChanges)
                     {
                         var oldOwner = forwardItem.OwnerMod;
@@ -325,7 +320,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts
         {
             int cost = 0;
 
-            // Count changes needed
             if (forwardItem.Item.Count != recordItem.Item.Count) cost += 1;
 
             if (forwardItem.Data == null || recordItem.Data == null)

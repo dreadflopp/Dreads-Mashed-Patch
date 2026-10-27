@@ -13,7 +13,6 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | `AmbientSound`, `UseSoundFromRegion`, `EnvironmentType` | Select each value separately. |
 | `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/AcousticSpaceRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="fstp-footstep"></a>
 
@@ -23,7 +22,6 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 |---|---|
 | `ImpactDataSet`, `Tag` | Select each value separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/FootstepRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="fsts-footstepset"></a>
 
@@ -33,7 +31,6 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 |---|---|
 | `WalkForwardFootsteps`, `RunForwardFootsteps`, `WalkForwardAlternateFootsteps`, `RunForwardAlternateFootsteps`, `WalkForwardAlternateFootsteps2` | Select each whole collection separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/FootstepSetRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="musc-musictype"></a>
 
@@ -46,7 +43,6 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | `Data` | Select each whole value separately. |
 | `Tracks` | Select each whole collection separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/MusicTypeRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="must-musictrack"></a>
 
@@ -54,12 +50,14 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 
 | Properties | How they are patched |
 |---|---|
-| `Type`, `Duration`, `FadeOut`, `TrackFilename`, `FinaleFilename` | Select each value separately. |
-| `LoopData` | Select each whole value separately. |
-| `CuePoints`, `Tracks` | Select each whole collection separately. |
 | `Conditions` | Merge aligned rows in order. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/MusicTrackRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `MusicPlayback` (Music) | `Type`, `Duration`, `FadeOut`, `TrackFilename`, `FinaleFilename`, `LoopData`, `CuePoints`, `Tracks` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+
 
 <a id="revb-reverbparameters"></a>
 
@@ -71,7 +69,6 @@ ReverbData groups DecayMilliseconds, HfReferenceHertz, RoomFilter, RoomHfFilter,
 |---|---|
 | `ReverbData` | Select each whole value separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ReverbParametersRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="snct-soundcategory"></a>
 
@@ -82,22 +79,28 @@ ReverbData groups DecayMilliseconds, HfReferenceHertz, RoomFilter, RoomHfFilter,
 | `Name`, `Parent`, `StaticVolumeMultiplier`, `DefaultMenuVolume` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/SoundCategoryRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="sndr-sounddescriptor"></a>
 
 ## SNDR — Sound Descriptor
 
+SoundPlayback keeps clip selection, descriptor type and looping together. Pitch, volume, routing, category, alternate descriptor, subtitle String, priority and conditions retain their ordinary decisions.
+
 Pitch groups PercentFrequencyShift and PercentFrequencyVariance. Volume groups Variance and StaticAttenuation. SoundFiles merges by position, without filename sorting or deduplication.
 
 | Properties | How they are patched |
 |---|---|
-| `Type`, `Category`, `AlternateSoundFor`, `OutputModel`, `String`, `Priority` | Select each value separately. |
-| `LoopAndRumble`, `Pitch`, `Volume` | Select each whole value separately. |
+| `Category`, `AlternateSoundFor`, `OutputModel`, `String` | Select each value separately. |
+| `Pitch`, `Volume` | Select each complete parameter pair separately. |
+| `Priority` | Select each value separately. |
 | `Conditions` | Merge aligned rows in order. |
-| `SoundFiles` | Merge rows by position. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/SoundDescriptorRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `SoundPlayback` (Sounds) | `Type`, `SoundFiles`, `LoopAndRumble` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
+
 
 <a id="sopm-soundoutputmodel"></a>
 
@@ -110,7 +113,6 @@ Data, OutputChannels and Attenuation are separate whole structures, including th
 | `Type` | Select each value separately. |
 | `Data`, `FNAM`, `CNAM`, `SNAM`, `OutputChannels`, `Attenuation` | Select each whole value separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/SoundOutputModelRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="soun-soundmarker"></a>
 
@@ -121,5 +123,3 @@ Data, OutputChannels and Attenuation are separate whole structures, including th
 | `SoundDescriptor` | Select each value separately. |
 | `FNAM`, `SNDD` | Select each whole value separately. |
 | `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/SoundMarkerRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).

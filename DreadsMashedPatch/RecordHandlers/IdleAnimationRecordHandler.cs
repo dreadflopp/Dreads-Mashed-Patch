@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Plugins;
@@ -14,16 +15,23 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: most scalar/asset/list properties via shared handlers.
-    // - Kept specialized: Conditions via the shared condition implementation and a record adapter.
-    // - Rationale: conditions require aligned list ordering, deep copies, and semantic CTDA comparison.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // Filename/AnimationEvent select together. Legacy DATA is marked unused by xEdit,
+    // so looping/flags/group/replay edits must not claim file-reference ownership.
     public class IdleAnimationRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
@@ -31,12 +39,10 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Conditions", new ConditionsHandler() },
             { "Filename", new SimpleReflectionAssetLinkPropertyHandler<SkyrimBehaviorAssetType, IIdleAnimation, IIdleAnimationGetter>("Filename") },
             { "AnimationEvent", new SimpleReflectionPropertyHandler<string?, IIdleAnimation, IIdleAnimationGetter>("AnimationEvent") },
-            /* RelatedIdles is intentionally excluded from forwarding. This data is sorted out at runtime.
-            { "RelatedIdles", new AtomicReflectionListPropertyHandler<IFormLinkGetter<IIdleRelationGetter>, IIdleAnimation, IIdleAnimationGetter>("RelatedIdles") },
-            */
+            // RelatedIdles is deliberately excluded; runtime sorts these relations.
             { "LoopingSecondsMin", new SimpleReflectionPropertyHandler<byte, IIdleAnimation, IIdleAnimationGetter>("LoopingSecondsMin") },
             { "LoopingSecondsMax", new SimpleReflectionPropertyHandler<byte, IIdleAnimation, IIdleAnimationGetter>("LoopingSecondsMax") },
-            { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.IdleAnimation.Flag, IIdleAnimation, IIdleAnimationGetter>("Flags") },
+            { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.IdleAnimation.Flag, IIdleAnimation, IIdleAnimationGetter>("Flags", preserveUnknownBits: true) },
             { "AnimationGroupSection", new SimpleReflectionPropertyHandler<byte, IIdleAnimation, IIdleAnimationGetter>("AnimationGroupSection") },
             { "ReplayDelay", new SimpleReflectionPropertyHandler<ushort, IIdleAnimation, IIdleAnimationGetter>("ReplayDelay") }
         };

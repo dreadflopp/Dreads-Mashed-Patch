@@ -43,11 +43,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return true;
         }
 
-        /// <summary>
-        /// Formats a list of factions into a string.
-        /// </summary>
-        /// <param name="factions">The list of factions to format.</param>
-        /// <returns>A string representation of the factions.</returns>
         public string FormatFactionList(List<IRankPlacementGetter>? factions)
         {
             if (factions == null || factions.Count == 0)
@@ -56,12 +51,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return string.Join(", ", factions.Select(f => FormatItem(f)));
         }
 
-        /// <summary>
-        /// Checks if two factions are equal.
-        /// </summary>
-        /// <param name="item1">The first faction to compare.</param>
-        /// <param name="item2">The second faction to compare.</param>
-        /// <returns>True if the factions are equal, false otherwise.</returns>
         protected override bool IsItemEqual(IRankPlacementGetter? item1, IRankPlacementGetter? item2)
         {
             // Only check faction reference equality, not rank
@@ -69,12 +58,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return IsFactionReferenceEqual(item1, item2);
         }
 
-        /// <summary>
-        /// Checks if two factions are equal by their reference.
-        /// </summary>
-        /// <param name="item1">The first faction to compare.</param>
-        /// <param name="item2">The second faction to compare.</param>
-        /// <returns>True if the factions are equal, false otherwise.</returns>
         protected bool IsFactionReferenceEqual(IRankPlacementGetter? item1, IRankPlacementGetter? item2)
         {
             if (ReferenceEquals(item1, item2)) return true;
@@ -82,12 +65,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return item1.Faction.FormKey.Equals(item2.Faction.FormKey);
         }
 
-        /// <summary>
-        /// Checks if two factions are equal by their rank.
-        /// </summary>
-        /// <param name="item1">The first faction to compare.</param>
-        /// <param name="item2">The second faction to compare.</param>
-        /// <returns>True if the factions are equal, false otherwise.</returns>
         protected bool IsRankEqual(IRankPlacementGetter? item1, IRankPlacementGetter? item2)
         {
             if (ReferenceEquals(item1, item2)) return true;
@@ -95,22 +72,12 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             return item1.Rank == item2.Rank;
         }
 
-        /// <summary>
-        /// Formats a faction into a string.
-        /// </summary>
-        /// <param name="item">The faction to format.</param>
-        /// <returns>A string representation of the faction.</returns>
         protected override string FormatItem(IRankPlacementGetter? item)
         {
             if (item == null) return "null";
             return $"{item.Faction.FormKey}(Rank {item.Rank})";
         }
 
-        /// <summary>
-        /// Sets the factions of an NPC.
-        /// </summary>
-        /// <param name="record">The NPC to set the factions of.</param>
-        /// <param name="value">The factions to set.</param>
         public override void SetValue(IMajorRecord record, List<IRankPlacementGetter>? value)
         {
             if (record is INpc npc)
@@ -131,11 +98,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             }
         }
 
-        /// <summary>
-        /// Gets the factions of an NPC.
-        /// </summary>
-        /// <param name="record">The context of the NPC.</param>
-        /// <returns>The factions of the NPC.</returns>
         public override List<IRankPlacementGetter>? GetValue(IMajorRecordGetter record)
         {
             if (record is INpcGetter npc)
@@ -160,20 +122,16 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             // Collect items to modify to avoid collection modification during enumeration
             var itemsToModify = new List<(ListPropertyValueContext<IRankPlacementGetter> oldItem, ListPropertyValueContext<IRankPlacementGetter> newItem)>();
 
-            // Check each current faction for rank changes
             foreach (var forwardItem in currentForwardItems.Where(i => !i.IsRemoved))
             {
                 var matchingRecordItem = recordItems.FirstOrDefault(r => IsFactionReferenceEqual(r, forwardItem.Value));
                 if (matchingRecordItem != null && !IsRankEqual(matchingRecordItem, forwardItem.Value))
                 {
-                    // Rank has changed, check if we can update it
                     var canModify = HasPermissionsToModify(recordMod, forwardItem.OwnerMod);
                     if (canModify)
                     {
-                        // Create new item with updated rank
                         var newItem = new ListPropertyValueContext<IRankPlacementGetter>(matchingRecordItem!, context.ModKey.ToString());
                         
-                        // Collect for later modification
                         itemsToModify.Add((forwardItem, newItem));
                         LogCollector.Add(PropertyName, $"[{PropertyName}] {context.ModKey}: Updating rank for faction {FormatItem(matchingRecordItem)} (new owner: {newItem.OwnerMod}) Success");
                     }
@@ -184,7 +142,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
                 }
             }
 
-            // Apply modifications after iteration is complete
             foreach (var (oldItem, newItem) in itemsToModify)
             {
                 var index = currentForwardItems.IndexOf(oldItem);

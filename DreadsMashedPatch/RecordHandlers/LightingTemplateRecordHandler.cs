@@ -11,15 +11,7 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: scalars use typed reflection; ambient color aggregates use generated copy/equality.
-    // - Kept specialized: none.
-    // - Intentionally excluded: DATADataTypeState is Mutagen serialization state; Unknown is outside the semantic conflict surface.
-    // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // DATADataTypeState controls serializer layout and is not an independently forwarded field.
     public class LightingTemplateRecordHandler : AbstractRecordHandler
     {
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

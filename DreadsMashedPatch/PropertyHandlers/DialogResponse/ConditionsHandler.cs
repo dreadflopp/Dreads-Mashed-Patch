@@ -18,7 +18,6 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogResponse
 
         protected override void UpdateConditionsCollection(IDialogResponses record, List<IConditionGetter> conditions)
         {
-            // Clear the existing conditions and add the new ones
             if (record.Conditions != null)
             {
                 record.Conditions.Clear();
@@ -32,7 +31,6 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogResponse
                     }
                     else
                     {
-                        // Convert IConditionGetter to Condition
                         var newCondition = condition.DeepCopy();
                         record.Conditions.Add(newCondition);
                     }

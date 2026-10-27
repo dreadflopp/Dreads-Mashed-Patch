@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -13,18 +14,22 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Effects migration note: generalized reconciliation to the shared exact-position
-// atomic handler; scroll collection access stays specialized because xEdit gives
-// the outer Effects entries no stable row key.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
-// Name migration: translated Name uses generated copying to retain every selected language.
-// Optional null names remove the value; comparison follows Mutagen's language policy.
-// Other specialized fields/flags retain their policies; translations are selected as one value.
+// xEdit gives outer Effects entries no stable key; each declaration position is one atomic row.
 public class ScrollRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
@@ -35,7 +40,8 @@ public class ScrollRecordHandler : AbstractRecordHandler
         { "EquipmentType", new SimpleReflectionFormLinkPropertyHandler<IEquipTypeGetter, IScroll, IScrollGetter>("EquipmentType") },
         { "Description", new TranslatedStringReflectionPropertyHandler<IScroll, IScrollGetter>("Description") },
         { "ModelAndBounds", new ModelBoundsHandler() },
-        { "Destructible", new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, IScroll, IScrollGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals) },
+        { "Destructible", DestructibleDataHandlers.Data(new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, IScroll, IScrollGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals)) },
+        { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new GeneratedCopyReflectionPropertyHandler<IDestructibleGetter, Destructible, IScroll, IScrollGetter>("Destructible", value => value.DeepCopy(), DestructibleMixIn.Equals)) },
         { "PickUpSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IScroll, IScrollGetter>("PickUpSound") },
         { "PutDownSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IScroll, IScrollGetter>("PutDownSound") },
         { "Value", new SimpleReflectionPropertyHandler<uint, IScroll, IScrollGetter>("Value") },

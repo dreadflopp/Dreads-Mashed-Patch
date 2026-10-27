@@ -13,7 +13,7 @@ not an open-issues list. Public limitations remain on the affected record pages.
 | PACK graph | PACK is disabled by default. PackageTemplate, DataInputVersion, Data, XnamMarker and ProcedureTree have no active property registration. Mutagen sorts indexed values/metadata by signed key; xEdit declares value rows in declaration order. [PackageTemplateGraphHandlerTests](../../DreadsMashedPatch.Tests/PackageTemplateGraphHandlerTests.cs) writes `[5,0,3]` as `[0,3,5]` while retaining index/value and procedure associations. This establishes physical reordering, not gameplay harm. Winner/priority copies still use that writer; leaving the graph unregistered does not guarantee identical physical order. |
 | NAVM / NAVI | NAVM is disabled by default and selects whole geometry/connectivity data when enabled. No independent NAVI route or patcher-owned reconstruction exists. A Mutagen writer branch for existing NavigationMeshInfoMaps is not a reconstruction algorithm. NAVM and REFR navigation-door-link forwarding do not establish navigation-map consistency. |
 | DIAL / DLBR / INFO / DLVW | Disabled by default. Enabling documented property selection can combine coupled dialogue data; tests do not establish dialogue correctness. |
-| ARMA model data | All four filename handlers carry detached Data bytes but compare only normalized paths. Byte-only changes have no independent forwarding path. Alternate textures merge separately. This retained policy must not become a blanket claim that other models ignore data bytes. See [GenderedModelFieldHandlers](../../DreadsMashedPatch/PropertyHandlers/General/GenderedModelFieldHandlers.cs) and [ArmorAddonRecordHandlerTests](../../DreadsMashedPatch.Tests/ArmorAddonRecordHandlerTests.cs). |
+| ARMA model data | All four filename handlers carry detached Data bytes but compare only normalized paths. Byte-only changes have no independent forwarding path. Alternate textures now travel inside the per-gender first/third-person mesh snapshot; their member row updater is inactive. This retained policy must not become a blanket claim that other models ignore data bytes. See [GenderedModelFieldHandlers](../../DreadsMashedPatch/PropertyHandlers/General/GenderedModelFieldHandlers.cs) and [ArmorAddonRecordHandlerTests](../../DreadsMashedPatch.Tests/ArmorAddonRecordHandlerTests.cs). |
 | Ordinary script-list VMAD | Version/ObjectFormat remain destination-owned. Metadata-only edits do not trigger output; INFO/PACK/PERK whole adapters and QUST/SCEN child fields differ. |
 | LTEX | HNAM/SNAM scalar interfaces do not expose absent-subrecord state; writing can normalize missing representations. Nullable snow INAM requires SSE FormVersion 43 or later. LAND remains excluded. |
 | Null/default writes | Setters normalize presence per property. Shared post-write validation checks non-null values only. Keywords and NPC Perks preserve absent versus present-empty, but there is no universal null-removal guarantee. |
@@ -24,8 +24,9 @@ not an open-issues list. Public limitations remain on the affected record pages.
 
 Record-only selection cannot identify the deployed winner of same-path mesh
 replacers or verify FaceGen, custom skins, or compatibility between the winning
-NPC, RACE, HDPT, ARMO and ARMA records. Turning off TREE's forwarding restriction
+NPC, RACE, HDPT, ARMO and ARMA records. Enabling tree-group forwarding
 can mix asset-dependent model, wind, scripts and flags without validating them.
+The [asset forwarding guide](../ASSET_FORWARDING.md) defines active group ownership and defaults, and the remaining resource/dependency limits. Restoring an earlier path can bypass a later same-path replacement; grouping does not verify deployed files.
 The implementation constraints and tests are in the
 [appearance regression reference](REVIEW.md#appearance-boundaries).
 

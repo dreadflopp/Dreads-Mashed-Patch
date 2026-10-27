@@ -26,7 +26,6 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
             left?.Data?.Level == right?.Data?.Level
             && left?.Data?.Reference.FormKey == right?.Data?.Reference.FormKey;
 
-        // Helper method to cast records (not available in AbstractListPropertyHandler)
         private static TRecord? TryCastRecord<TRecord>(IMajorRecord record, string propertyName) where TRecord : class
         {
             if (record is TRecord typedRecord)
@@ -70,7 +69,6 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
                     {
                         var newEntry = new LeveledItemEntry();
                         
-                        // Copy Data
                         if (entryGetter.Data != null)
                         {
                             newEntry.Data = new LeveledItemEntryData
@@ -83,7 +81,6 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
                             };
                         }
 
-                        // Copy ExtraData
                         if (entryGetter.ExtraData != null)
                         {
                             newEntry.ExtraData = DeepCopyExtraData(entryGetter.ExtraData);
@@ -100,7 +97,6 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
             var leveledItem = TryCastRecord<ILeveledItemGetter>(record, PropertyName);
             if (leveledItem != null && leveledItem.Entries != null)
             {
-                // Sort entries by Level first, then Reference string key for deterministic ordering.
                 return leveledItem.Entries
                     .OrderBy(e => e.Data?.Level ?? 0)
                     .ThenBy(e => GetReferenceSortKey(e), StringComparer.OrdinalIgnoreCase)
@@ -114,13 +110,11 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
             if (item1 == null && item2 == null) return true;
             if (item1 == null || item2 == null) return false;
 
-            // Compare Data
             if (!AreDataEqual(item1.Data, item2.Data))
             {
                 return false;
             }
 
-            // Compare ExtraData (both might be null)
             if (!AreExtraDataEqual(item1.ExtraData, item2.ExtraData))
             {
                 return false;
@@ -146,13 +140,11 @@ namespace DreadsMashedPatch.PropertyHandlers.LeveledItem
             if (extraData1 == null && extraData2 == null) return true;
             if (extraData1 == null || extraData2 == null) return false;
 
-            // Compare ItemCondition
             if (Math.Abs(extraData1.ItemCondition - extraData2.ItemCondition) > 0.0001f)
             {
                 return false;
             }
 
-            // Compare Owner
             if (!OwnerTargetUtility.AreEqual(extraData1.Owner, extraData2.Owner))
             {
                 return false;

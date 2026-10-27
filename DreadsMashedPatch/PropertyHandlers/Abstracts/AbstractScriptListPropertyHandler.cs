@@ -11,9 +11,8 @@ namespace DreadsMashedPatch.PropertyHandlers.Abstracts;
 /// Shared atomic forwarding behavior for Papyrus script entries.
 /// Script name is identity. Flags and the complete property collection are the
 /// script value and are replaced together when a new change is accepted.
-/// Migration note: VMAD script decision behavior is generalized here for every
-/// record type. Record-specific handlers retain only adapter access/construction
-/// because those Mutagen surfaces differ; script ownership semantics do not.
+/// Record-specific adapters supply VMAD access/construction; script ownership
+/// and comparison follow this shared policy.
 /// </summary>
 public abstract class AbstractScriptListPropertyHandler : AbstractListPropertyHandler<IScriptEntryGetter>
 {

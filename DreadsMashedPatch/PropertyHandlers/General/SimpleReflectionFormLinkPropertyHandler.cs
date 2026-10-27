@@ -8,14 +8,9 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 namespace DreadsMashedPatch.PropertyHandlers.General
 {
     /// <summary>
-    /// A generic property handler that uses reflection to access FormLink properties.
-    /// This handler is designed for simple FormLink properties that don't require special handling.
-    /// 
-    /// Supports both FormLink and FormLinkNullable types.
+    /// Forwards FormLink and FormLinkNullable properties by FormKey. Nullable absence is distinct
+    /// from a present link containing FormKey.Null.
     /// </summary>
-    /// <typeparam name="TTarget">The target type of the FormLink (e.g., IPlaceableObjectGetter)</typeparam>
-    /// <typeparam name="TRecord">The record type that contains the property (e.g., IPlacedObject)</typeparam>
-    /// <typeparam name="TRecordGetter">The getter record type (e.g., IPlacedObjectGetter)</typeparam>
     public class SimpleReflectionFormLinkPropertyHandler<TTarget, TRecord, TRecordGetter> : AbstractPropertyHandler<IFormLinkNullableGetter<TTarget>>
         where TTarget : class, IMajorRecordGetter
         where TRecord : class, IMajorRecord
@@ -29,10 +24,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             _propertyName = propertyName;
 
-            // Find the property on the getter interface
             _getterProperty = ReflectionPropertyResolver.Find(typeof(TRecordGetter), propertyName);
 
-            // Find the property on the setter interface
             _setterProperty = ReflectionPropertyResolver.Find(typeof(TRecord), propertyName);
 
             if (_getterProperty == null)
@@ -119,7 +112,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         return;
                     }
 
-                    // Prefer mutating existing link object (works for both FormLink and FormLinkNullable)
                     if (currentValue != null)
                     {
                         var setToFormKey = currentValue.GetType().GetMethod("SetTo", new[] { typeof(FormKey) });
@@ -130,7 +122,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         }
                     }
 
-                    // Fallback: create a new link object matching property type (nullable or non-nullable)
                     var propertyType = _setterProperty.PropertyType;
                     var concreteLinkType = propertyType;
                     if (propertyType.IsInterface || propertyType.IsAbstract)
@@ -186,7 +177,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         }
                     }
 
-                    // If property cannot be null, create a default null-form link instance.
                     var propertyType = _setterProperty.PropertyType;
                     var nullableType = typeof(FormLinkNullable<>).MakeGenericType(typeof(TTarget));
                     var nonNullableType = typeof(FormLink<>).MakeGenericType(typeof(TTarget));

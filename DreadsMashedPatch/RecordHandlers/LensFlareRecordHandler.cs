@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using System.Collections.Generic;
 using Mutagen.Bethesda;
@@ -11,20 +12,32 @@ using DreadsMashedPatch.PropertyHandlers.LensFlare;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
-
-// Migration note, LensFlare:
-// - Generalized: EditorID and header bits retain the approved shared handlers.
-// - Specialized: Global flare parameters and ordered sprite definitions share one owner; metadata/header flags remain independent.
-// - Intentionally non-migrated: no gameplay fields omitted; nested data is not independently merged.
-// - Reason: selecting complete authored definitions avoids mixed visual presets.
-// - Cleanup: new route with one aggregate registration; no parallel scalar implementation.
 public class LensFlareRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
     {
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
-        { "FlareDefinition", new FlareDefinitionHandler() },
+        { "ColorInfluence", new SimpleReflectionPropertyHandler<float?, ILensFlare, ILensFlareGetter>("ColorInfluence") },
+        { "FadeDistanceRadiusScale", new SimpleReflectionPropertyHandler<float?, ILensFlare, ILensFlareGetter>("FadeDistanceRadiusScale") },
+        { "FlareSprites", new NestedAssetPropertyHandler<FlareDefinitionValue>("FlareSprites", new FlareDefinitionHandler(),
+            value => value == null ? null : value with { ColorInfluence = null, FadeDistanceRadiusScale = null },
+            (value, destination) => value == null ? destination : value with
+            { ColorInfluence = destination?.ColorInfluence, FadeDistanceRadiusScale = destination?.FadeDistanceRadiusScale },
+            (value, _) => value, "Sprites") },
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

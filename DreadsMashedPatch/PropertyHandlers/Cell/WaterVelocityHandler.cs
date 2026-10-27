@@ -39,7 +39,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Compare all properties of ICellWaterVelocityGetter
             return value1.Offset.Equals(value2.Offset) &&
                    value1.Unknown == value2.Unknown &&
                    value1.Angle.Equals(value2.Angle) &&

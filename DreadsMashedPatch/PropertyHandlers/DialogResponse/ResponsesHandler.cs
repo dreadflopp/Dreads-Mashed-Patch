@@ -173,17 +173,14 @@ namespace DreadsMashedPatch.PropertyHandlers.DialogResponse
                 var emotion = item.Emotion.ToString();
                 var responseNumber = item.ResponseNumber;
 
-                // Try to get meaningful text content (truncated if too long)
                 var text = item.Text.String;
                 var displayText = string.IsNullOrEmpty(text) ? "NoText" :
                     text.Length > 30 ? text.Substring(0, 30) + "..." : text;
 
-                // Show the response type, emotion, number, and text
                 return $"{responseType}({emotion}, #{responseNumber}, \"{displayText}\")";
             }
             catch (Exception ex)
             {
-                // Fallback to showing the response type and hash code for uniqueness
                 return $"{item.GetType().Name}({item.GetHashCode():X8}) - " +
                     $"Warning: formatter failed ({ex.GetType().Name}: {ex.Message})";
             }

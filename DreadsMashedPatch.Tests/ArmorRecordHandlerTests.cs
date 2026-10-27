@@ -14,6 +14,7 @@ namespace DreadsMashedPatch.Tests;
 
 public sealed class ArmorRecordHandlerTests
 {
+
     [Fact]
     public void RegistersEveryArmorPilotProperty()
     {
@@ -168,7 +169,7 @@ public sealed class ArmorRecordHandlerTests
     }
 
     [Fact]
-    public void WorldModelHandlerDeepCopiesModelsAndIcons()
+    public void WorldModelHandlerDeepCopiesModelsAndPreservesDestinationIcons()
     {
         var source = CreateArmor(0x104);
         var target = CreateArmor(0x105);
@@ -176,18 +177,22 @@ public sealed class ArmorRecordHandlerTests
             CreateArmorModel("Meshes\\Armor\\male.nif", "Textures\\Armor\\male.dds"),
             CreateArmorModel("Meshes\\Armor\\female.nif", "Textures\\Armor\\female.dds"));
         var handler = new WorldModelHandler();
+        target.WorldModel = new GenderedItem<ArmorModel?>(
+            CreateArmorModel("old.nif", "Textures\\Armor\\destination.dds"), null);
 
         handler.SetValue(target, handler.GetValue(source));
 
-        Assert.True(handler.AreValuesEqual(source.WorldModel, target.WorldModel));
+        Assert.True(handler.AreValuesEqual(handler.GetValue(source), handler.GetValue(target)));
         Assert.NotSame(source.WorldModel, target.WorldModel);
         Assert.NotSame(source.WorldModel!.Male, target.WorldModel!.Male);
         Assert.NotSame(source.WorldModel.Male!.Model, target.WorldModel.Male!.Model);
         Assert.NotSame(source.WorldModel.Male.Icons, target.WorldModel.Male.Icons);
+        Assert.Contains("destination.dds", target.WorldModel.Male.Icons!.LargeIconFilename!.GivenPath);
+        Assert.Null(target.WorldModel.Female!.Icons);
     }
 
     [Fact]
-    public void WorldModelHandlerFormatsModelsAndIcons()
+    public void WorldModelHandlerFormatsOnlyItsMeshFields()
     {
         var armor = CreateArmor(0x107);
         armor.WorldModel = new GenderedItem<ArmorModel?>(
@@ -199,9 +204,23 @@ public sealed class ArmorRecordHandlerTests
 
         Assert.Contains("Male: Model(File:", formatted);
         Assert.Contains("Armor\\male.nif", formatted);
-        Assert.Contains("Armor\\male.dds", formatted);
+        Assert.DoesNotContain("male.dds", formatted);
         Assert.Contains("Female: null", formatted);
         Assert.DoesNotContain("GenderedItem`1", formatted);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ClearingArmorModelAndIconsIsIndependentOfWriteOrder(bool reverse)
+    {
+        var target = CreateArmor(0x108);
+        target.WorldModel = new GenderedItem<ArmorModel?>(CreateArmorModel("a.nif", "a.dds"), null);
+        var meshes = new WorldModelHandler();
+        var icons = new ArmorIconsHandler(MaleFemaleGender.Male);
+        if (reverse) { icons.SetValue(target, null); meshes.SetValue(target, null); }
+        else { meshes.SetValue(target, null); icons.SetValue(target, null); }
+        Assert.Null(target.WorldModel);
     }
 
     [Fact]

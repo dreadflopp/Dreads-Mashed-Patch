@@ -20,7 +20,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Static
                 }
                 else
                 {
-                    // Deep copy
                     var newLod = new Lod();
                     if (!value.Level0.IsNull)
                     {

@@ -12,18 +12,9 @@ using Noggog;
 namespace DreadsMashedPatch.PropertyHandlers.General
 {
     /// <summary>
-    /// A generic list property handler that uses reflection to access list properties.
-    /// Supports only string and FormLink lists. Complex Mutagen elements must use
-    /// <see cref="GeneratedCopyReflectionListPropertyHandler{TGetter, TMutable, TRecord, TRecordGetter}"/>.
-    /// 
-    /// Features:
-    /// - Automatic detection of FormLink items
-    /// - Explicit list semantics; callers must classify every registration
-    /// - Typed equality for strings and FormKey equality for FormLinks
+    /// Supports strings and FormLinks with explicitly classified list semantics; links compare by FormKey.
+    /// Complex elements require <see cref="GeneratedCopyReflectionListPropertyHandler{TGetter, TMutable, TRecord, TRecordGetter}"/>.
     /// </summary>
-    /// <typeparam name="TItem">The type of items in the list (e.g., IFormLinkGetter&lt;IPlacedObjectGetter&gt; or ILinkedReferencesGetter)</typeparam>
-    /// <typeparam name="TRecord">The record type that contains the property (e.g., IPlacedObject)</typeparam>
-    /// <typeparam name="TRecordGetter">The getter record type (e.g., IPlacedObjectGetter)</typeparam>
     public class SimpleReflectionListPropertyHandler<TItem, TRecord, TRecordGetter> : AbstractListPropertyHandler<TItem>
         where TItem : class
         where TRecord : class, IMajorRecord
@@ -46,10 +37,8 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             _semantics = semantics;
             _keySelector = keySelector;
 
-            // Find the property on the getter interface
             _getterProperty = ReflectionPropertyResolver.Find(typeof(TRecordGetter), propertyName);
 
-            // Find the property on the setter interface
             _setterProperty = ReflectionPropertyResolver.Find(typeof(TRecord), propertyName);
 
             if (_getterProperty == null)
@@ -60,7 +49,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
             _canBeNull = canBeNull ?? ReflectionPropertyResolver.IsNullable(_getterProperty);
 
-            // Detect if items are FormLinks
             _isFormLinkList = IsFormLinkType(typeof(TItem));
 
             if (!_isFormLinkList && typeof(TItem) != typeof(string))
@@ -99,7 +87,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     return null;
                 }
 
-                // Handle different collection types
                 List<TItem>? list;
                 if (value is IEnumerable<TItem> enumerable)
                 {
@@ -157,17 +144,14 @@ namespace DreadsMashedPatch.PropertyHandlers.General
             {
                 var currentList = _setterProperty.GetValue(typedRecord);
 
-                // Handle nullable properties (like LocationRefTypes)
                 if (_canBeNull && value == null)
                 {
                     _setterProperty.SetValue(typedRecord, null);
                     return;
                 }
 
-                // If currentList is null, we need to create a new list
                 if (currentList == null && value != null)
                 {
-                    // Check if the property type is nullable
                     var propertyType = _setterProperty.PropertyType;
                     Type? listType = null;
                     bool propertyIsNullable = false;
@@ -182,7 +166,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         listType = propertyType;
                     }
 
-                    // If property is not nullable and we have a value, create a new list
                     if (!propertyIsNullable && listType != null && listType.IsGenericType)
                     {
                         var genericArgs = listType.GetGenericArguments();
@@ -209,7 +192,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                         }
                     }
 
-                    // If we can't create a list and property is not nullable, warn and return
                     if (!propertyIsNullable)
                     {
                         Console.WriteLine($"Warning: Property '{PropertyName}' is null and cannot be set (property is not nullable and list creation failed)");
@@ -217,7 +199,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     }
                 }
 
-                // Clear the existing list
                 if (currentList != null)
                 {
                     var clearMethod = currentList.GetType().GetMethod("Clear");
@@ -227,7 +208,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                     }
                 }
 
-                // Add new items to existing list
                 if (value != null && currentList != null)
                 {
                     foreach (var item in value)
@@ -244,7 +224,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 }
                 else if (value != null && currentList == null && _canBeNull)
                 {
-                    // Create a new list if property is nullable
                     var listType = _setterProperty.PropertyType;
                     if (listType.IsGenericType)
                     {
@@ -285,7 +264,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
             if (_isFormLinkList)
             {
-                // For FormLinks, compare by FormKey
                 var formKey1 = GetFormKey(item1);
                 var formKey2 = GetFormKey(item2);
                 return formKey1.Equals(formKey2);
@@ -385,7 +363,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 return true;
             }
 
-            // Check if it's a FormLink or FormLinkNullable type
             if (type.Name == "FormLink`1" || type.Name == "FormLinkNullable`1" ||
                 (type.IsGenericType &&
                  (type.GetGenericTypeDefinition().Name == "FormLink`1" ||
@@ -462,21 +439,18 @@ namespace DreadsMashedPatch.PropertyHandlers.General
         {
             try
             {
-                // Try ExtendedList first (common in Mutagen)
                 var extendedListType = typeof(ExtendedList<>).MakeGenericType(itemType);
                 if (listType.IsAssignableFrom(extendedListType))
                 {
                     return System.Activator.CreateInstance(extendedListType);
                 }
 
-                // Try List<T>
                 var listGenericType = typeof(List<>).MakeGenericType(itemType);
                 if (listType.IsAssignableFrom(listGenericType))
                 {
                     return System.Activator.CreateInstance(listGenericType);
                 }
 
-                // Try direct instantiation
                 return System.Activator.CreateInstance(listType);
             }
             catch (Exception ex)

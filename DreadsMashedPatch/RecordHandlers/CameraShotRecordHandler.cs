@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using System;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
@@ -10,17 +11,22 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: Camera shot scalar/form-link fields and flags via reflection handlers.
-    // - Kept specialized: Model via shared model handler.
-    // - Intentionally excluded: DATADataTypeState is Mutagen serialization state, not an xEdit field.
-    // - Rationale: semantic fields are forwarded while the winning record retains its binary DATA layout.
-
-    // Header migration: raw/common flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
+    // DATADataTypeState controls serializer layout and is not an independently forwarded field.
     public class CameraShotRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
@@ -29,7 +35,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Action", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.CameraShot.ActionType, ICameraShot, ICameraShotGetter>("Action") },
             { "Location", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.CameraShot.LocationType, ICameraShot, ICameraShotGetter>("Location") },
             { "Target", new SimpleReflectionPropertyHandler<Mutagen.Bethesda.Skyrim.CameraShot.LocationType, ICameraShot, ICameraShotGetter>("Target") },
-            { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.CameraShot.Flag, ICameraShot, ICameraShotGetter>("Flags") },
+            { "Flags", new SimpleReflectionFlagPropertyHandler<Mutagen.Bethesda.Skyrim.CameraShot.Flag, ICameraShot, ICameraShotGetter>("Flags", preserveUnknownBits: true) },
             { "TimeMultiplierPlayer", new SimpleReflectionPropertyHandler<float, ICameraShot, ICameraShotGetter>("TimeMultiplierPlayer") },
             { "TimeMultiplierTarget", new SimpleReflectionPropertyHandler<float, ICameraShot, ICameraShotGetter>("TimeMultiplierTarget") },
             { "TimeMultiplierGlobal", new SimpleReflectionPropertyHandler<float, ICameraShot, ICameraShotGetter>("TimeMultiplierGlobal") },

@@ -21,7 +21,8 @@ namespace DreadsMashedPatch
         public static bool EnforceSingleVanillaWeaponTypeKeyword =>
             _current.Forwarding.EnforceSingleVanillaWeaponTypeKeyword;
 
-        public static bool RestrictTreeForwarding => _current.Forwarding.RestrictTreeForwarding;
+        public static bool AllowsForwarding(AssetForwarding.ForwardingRule family) =>
+            _current.Forwarding.Allows(family);
 
         public static IReadOnlySet<FormKey> VanillaWeaponTypeKeywords => _vanillaWeaponTypeKeywords;
 

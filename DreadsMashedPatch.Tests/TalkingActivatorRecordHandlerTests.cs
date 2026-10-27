@@ -26,11 +26,8 @@ public sealed class TalkingActivatorRecordHandlerTests
         Assert.IsType<TranslatedStringReflectionPropertyHandler<ITalkingActivator, ITalkingActivatorGetter>>(
             handlers["Name"]);
         Assert.IsType<ModelBoundsHandler>(handlers["ModelAndBounds"]);
-        Assert.IsType<GeneratedCopyReflectionPropertyHandler<
-            IDestructibleGetter,
-            Destructible,
-            ITalkingActivator,
-            ITalkingActivatorGetter>>(handlers["Destructible"]);
+        Assert.IsType<ProjectedPropertyHandler<IDestructibleGetter>>(handlers["Destructible"]);
+        Assert.IsType<NestedAssetPropertyHandler<IDestructibleGetter>>(handlers["Destructible.StageModels"]);
 
         var keywords = Assert.IsType<KeywordListHandler>(handlers["Keywords"]);
         Assert.Equal(ListSemantics.SortedKeyed, keywords.Semantics);

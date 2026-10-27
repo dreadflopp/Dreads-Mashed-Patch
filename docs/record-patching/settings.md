@@ -2,7 +2,7 @@
 
 [Record index](INDEX.md) · [Shared patching rules](README.md)
 
-The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header handling is not repeated. `MajorFlags` enum bits use the shared `MajorRecordFlagsRaw` handler; other flag fields keep their approved handlers.
+The [shared rules and table key](README.md#reading-the-property-tables) apply to every section. Each listed property is a separate decision unless the notes group it with other fields. Shared EditorID and record-header flag rules apply throughout and are not repeated. Record eligibility, Priority Mods and output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="aact-actionrecord"></a>
 
@@ -11,8 +11,6 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | Properties | How they are patched |
 |---|---|
 | `Color` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/ActionRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="coll-collisionlayer"></a>
 
@@ -24,8 +22,6 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | `Flags` | Merge registered flag bits separately. |
 | `CollidesWith` | Merge rows by key. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/CollisionLayerRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
-
 <a id="dual-dualcastdata"></a>
 
 ## DUAL — Dual Cast Data
@@ -35,115 +31,83 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 | `Projectile`, `Explosion`, `EffectShader`, `HitEffectArt`, `ImpactDataSet`, `InheritScale` | Select each value separately. |
 | `ObjectBounds` | Keep the effective winner's bounds; no independent forwarding. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/DualCastDataRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
-
 <a id="flst-formlist"></a>
 
 ## FLST — Form List
 
-This route uses FormIdRecordHandler despite the record’s FormList name. Items align across versions.
+Items align across versions so additions and removals can be reconciled while retaining meaningful order.
 
 | Properties | How they are patched |
 |---|---|
 | `Items` | Merge aligned rows in order. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/FormIdRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
-
 <a id="glob-globalfloat"></a>
 
 ## GLOB — Global Float
 
-Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
+The [value-type rules](README.md#how-a-value-is-selected) apply to all GLOB variants below: the effective winner determines the type, and the latest eligible type change starts a new baseline. Earlier types are not converted or merged back in. Known variants have a fixed `TypeChar`; the Unknown variant selects `TypeChar` explicitly.
 
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GlobalFloatRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="glob-globalint"></a>
 
 ## GLOB — Global Int
 
-Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
-
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GlobalIntRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="glob-globalshort"></a>
 
 ## GLOB — Global Short
 
-Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
-
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GlobalShortRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="glob-globalunknown"></a>
 
 ## GLOB — Global Unknown
 
-Discovered through the global-record query and narrowed to the concrete value type. Known variants have a fixed TypeChar; Unknown patches TypeChar explicitly. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
-
 | Properties | How they are patched |
 |---|---|
 | `TypeChar`, `Data` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GlobalUnknownRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="gmst-gamesettingbool"></a>
 
 ## GMST — Game Setting Bool
 
-Discovered through the game-setting query and narrowed to the concrete value type. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
+All GMST variants below follow the same value-type rules as GLOB. Priority Mods can select a complete record of another type. A preserved official `EditorID` is used only when its prefix matches the selected value type.
 
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GameSettingBoolRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="gmst-gamesettingfloat"></a>
 
 ## GMST — Game Setting Float
 
-Discovered through the game-setting query and narrowed to the concrete value type. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
-
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GameSettingFloatRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="gmst-gamesettingint"></a>
 
 ## GMST — Game Setting Int
 
-Discovered through the game-setting query and narrowed to the concrete value type. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
-
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GameSettingIntRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="gmst-gamesettingstring"></a>
 
 ## GMST — Game Setting String
 
-Discovered through the game-setting query and narrowed to the concrete value type. After ignored plugins are removed, the effective winner determines the value type and the latest type change starts a new merge baseline. There is no cross-type conversion.
-
 | Properties | How they are patched |
 |---|---|
 | `Data` | Select each value separately. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/GameSettingStringRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
 
 <a id="kywd-keyword"></a>
 
@@ -153,19 +117,21 @@ Discovered through the game-setting query and narrowed to the concrete value typ
 |---|---|
 | `Color` | Select each value separately. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/KeywordRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
-
 <a id="lscr-loadscreen"></a>
 
 ## LSCR — Load Screen
 
 | Properties | How they are patched |
 |---|---|
-| `Description`, `LoadingScreenNif`, `InitialScale`, `InitialRotation`, `InitialTranslationOffset`, `CameraPath` | Select each value separately. |
-| `Icons`, `RotationOffsetConstraints` | Select each whole value separately. |
+| `Description` | Select each value separately. |
 | `Conditions` | Merge aligned rows in order. |
 
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/LoadScreenRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).
+Grouped properties follow the [shared forwarding behavior](assets.md). Each group has one decision; the other listed properties retain their separate rules.
+
+| Property group | Properties kept together | Forwarding | Selection |
+|---|---|---|---|
+| `Icons` (IconsAndImages) | `Icons` | Normal | Use the existing complete-value or collection policy. |
+| `DisplayModel` (Meshes) | `LoadingScreenNif`, `InitialScale`, `InitialRotation`, `RotationOffsetConstraints`, `InitialTranslationOffset`, `CameraPath` | Normal | Select one complete source snapshot through the shared change/reversion rules. |
 
 <a id="mesg-message"></a>
 
@@ -175,7 +141,5 @@ Discovered through the game-setting query and narrowed to the concrete value typ
 |---|---|
 | `Description`, `Name`, `Quest`, `DisplayTime` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
-| `INAM` | Select each whole value separately. |
+| `INAM` | Select the complete binary payload. |
 | `MenuButtons` | Merge aligned rows in order. |
-
-[Record registration and source-record lookup](../../DreadsMashedPatch/RecordHandlers/MessageRecordHandler.cs); selection and final output follow the [shared processing path](README.md#which-records-reach-the-patch).

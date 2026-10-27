@@ -27,7 +27,6 @@ namespace DreadsMashedPatch.PropertyHandlers.General
                 }
                 else
                 {
-                    // Deep copy full model (File, Data, AlternateTextures)
                     var newModel = new Model();
                     newModel.File = value.File.IsNull
                         ? new AssetLink<SkyrimModelAssetType>()

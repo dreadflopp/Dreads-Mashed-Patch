@@ -37,7 +37,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Weapon
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Compare model properties using value-based comparison
             return AreModelsEqual(value1, value2);
         }
 
@@ -80,14 +79,12 @@ namespace DreadsMashedPatch.PropertyHandlers.Weapon
         {
             if (sourceModel == null) return null;
 
-            // Create a new Model with the same data
             var newModel = new Model();
             newModel.File = sourceModel.File.IsNull
                 ? new AssetLink<SkyrimModelAssetType>()
                 : AssetPathHelper.Copy(sourceModel.File)!;
             newModel.Data = sourceModel.Data?.ToArray();
 
-            // Copy alternate textures if they exist
             if (sourceModel.AlternateTextures != null)
             {
                 var alternateTextures = new ExtendedList<AlternateTexture>();

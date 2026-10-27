@@ -30,7 +30,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Cell
             if (value1 == null && value2 == null) return true;
             if (value1 == null || value2 == null) return false;
 
-            // Compare all properties using value-based comparison
             return value1.Versioning == value2.Versioning &&
                    value1.AmbientColor == value2.AmbientColor &&
                    value1.DirectionalColor == value2.DirectionalColor &&

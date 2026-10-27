@@ -64,14 +64,16 @@ public sealed class RecordHeaderFlagsTests : IDisposable
     {
         var handler = (AbstractRecordHandler)System.Activator.CreateInstance(handlerType)!;
         var flags = Assert.IsType<MajorRecordFlagsRawHandler>(handler.PropertyHandlers["MajorRecordFlagsRaw"]);
+        var recordName = handlerType.Name.Replace("RecordHandler", string.Empty);
+        if (recordName == "DialogResponse") recordName = "DialogResponses";
+        var recordType = typeof(Keyword).Assembly.GetType($"Mutagen.Bethesda.Skyrim.{recordName}")!;
         foreach (var value in Enum.GetValues(enumType))
         {
             var bit = unchecked((int)Convert.ToInt64(value));
             Assert.False(flags.AreValuesEqual(0, bit));
-            var record = new Keyword(new FormKey(OriginalKey, 0x801), SkyrimRelease.SkyrimSE)
-            {
-                MajorRecordFlagsRaw = UnknownBit | bit
-            };
+            var record = (Mutagen.Bethesda.Plugins.Records.IMajorRecord)System.Activator.CreateInstance(
+                recordType, new FormKey(OriginalKey, 0x801), SkyrimRelease.SkyrimSE)!;
+            record.MajorRecordFlagsRaw = UnknownBit | bit;
             handler.ApplyForwardedProperties(record, new() { ["MajorRecordFlagsRaw"] = 0 });
             Assert.Equal(UnknownBit, record.MajorRecordFlagsRaw);
             handler.ApplyForwardedProperties(record, new() { ["MajorRecordFlagsRaw"] = bit });

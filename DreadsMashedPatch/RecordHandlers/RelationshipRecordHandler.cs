@@ -10,16 +10,6 @@ using DreadsMashedPatch.PropertyHandlers.Interfaces;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
-
-// Migration note:
-// - Generalized: semantic RELA fields use shared scalar, flag, and form-link handlers.
-// - Kept specialized: none.
-// - Intentionally excluded: Unknown is outside the semantic conflict surface.
-// - Rationale: the winning override retains excluded engine-managed data.
-
-// Header migration: raw/common/Relationship.MajorFlag flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
 public class RelationshipRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

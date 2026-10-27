@@ -25,7 +25,6 @@ namespace DreadsMashedPatch.PropertyHandlers.ArmorAddon
                     return;
                 }
 
-                // Clear existing races and add new ones
                 armorAddonRecord.AdditionalRaces.Clear();
                 foreach (var race in value)
                 {
@@ -73,7 +72,6 @@ namespace DreadsMashedPatch.PropertyHandlers.ArmorAddon
             if (item1 == null && item2 == null) return true;
             if (item1 == null || item2 == null) return false;
 
-            // Compare by FormKey
             return item1.FormKey.Equals(item2.FormKey);
         }
 

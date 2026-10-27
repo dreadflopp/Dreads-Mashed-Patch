@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
@@ -15,21 +16,24 @@ using System.Linq;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: translated text and DNAM flags use semantic handlers; unnamed DNAM bits are preserved.
-// - Specialized: VMAD, stages, objectives, aliases, and condition lists retain their format-aware handlers
-//   and validation; the shared condition handler reads GetEventData through its concrete generated surface.
-// - Intentionally excluded: Unknown is opaque; QuestFormVersion is marked cpIgnore by xEdit; VMAD Versioning is serializer state.
-// - Coupled forwarding: structural graph changes always establish a complete QUEST ownership boundary.
-// - Rationale: aliases, objectives, stages, fragments, conditions, and event data cross-reference one another and
-//   must not be independently combined into a graph that never existed in any source plugin;
-//   independent forwarding is intentionally not configurable.
-
-// Header migration: raw/common flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// Stages, objectives, aliases, fragments, conditions and event data cross-reference one another.
+// Structural changes therefore select a complete QUEST graph. QuestFormVersion is cpIgnore in xEdit;
+// VMAD Versioning is serializer state, not an independent conflict.
 public class QuestRecordHandler : AbstractRecordHandler
 {
+    protected override void InitializePropertyContexts(
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+        IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+    {
+        base.InitializePropertyContexts(originalContext, winningContext);
+        AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+    }
+
+    protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+        IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+        IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+        AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
     private const string VirtualMachineAdapterPrefix = "VirtualMachineAdapter.";
     private const string VirtualMachineAdapterPresence = "VirtualMachineAdapter.Presence";
 

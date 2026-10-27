@@ -30,18 +30,15 @@ namespace DreadsMashedPatch.PropertyHandlers.Npc
             {
                 if (npcRecord.PlayerSkills == null)
                 {
-                    // Create new PlayerSkills if it doesn't exist
                     npcRecord.PlayerSkills = new PlayerSkills();
                 }
 
                 if (value == null)
                 {
-                    // Clear skill values
                     npcRecord.PlayerSkills.SkillValues.Clear();
                 }
                 else
                 {
-                    // Clear existing values and add new ones
                     npcRecord.PlayerSkills.SkillValues.Clear();
                     foreach (var kvp in value)
                     {

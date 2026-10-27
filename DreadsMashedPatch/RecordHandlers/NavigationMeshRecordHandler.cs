@@ -11,15 +11,8 @@ using DreadsMashedPatch.RecordHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Migration note:
-// - Generalized: NAVM binary payloads use shared handlers.
-// - Kept specialized: Data uses Mutagen's generated aggregate copy because its overlay-backed geometry lists
-//   require element conversion into mutable NavmeshTriangle, EdgeLink, and DoorTriangle instances.
-// - Rationale: generated copy preserves the full atomic NAVM data aggregate without reflection assignments.
-
-// Header migration: raw/common/NavigationMesh.MajorFlag flags share one masked integer handler.
-// Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-// Removed overlapping header registrations so selected clears cannot be reintroduced.
+// The atomic Data copy must materialize overlay geometry as mutable triangles, edge links
+// and door triangles; direct reflection assignment cannot convert those nested lists.
 public class NavigationMeshRecordHandler : AbstractRecordHandler
 {
     public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()

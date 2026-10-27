@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Synthesis;
@@ -12,34 +13,42 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: the three semantic BodyTemplate leaves and RagdollConstraintTemplate.
-    // - Kept specialized: Armature is one atomic ordered Armor Addon list; WorldModel plus the existing shared
-    //   Name/ObjectBounds/Keywords/Value/Weight/Destructible handlers retain their cohesive value semantics.
-    // - Intentionally excluded: BodyTemplate.ActsLike44 is Mutagen serialization state selecting BOD2 versus BODT, not an xEdit field.
-    // - Flag decision: the raw record-header handler is the sole storage path and owns common Skyrim plus ARMO flags.
-    // - Rationale: semantic BodyTemplate values are forwardable; its binary-layout discriminator is not forwarded independently.
-    //   Armature may intentionally contain multiple components, but independently authored lists must not be unioned into
-    //   an equipped model combination that no source plugin declared.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
+    // Forwarding decision: meshes/bounds and the armature selector use Meshes; each gender's icons
+    // use IconsAndImages. Body-template gameplay flags, armor class and race retain ordinary rules.
+    // Mesh writers preserve icons; icon writers preserve meshes.
+    // Armature is one authored list: unioning addons can invent an equipped model combination.
+    // BodyTemplate.ActsLike44 selects BOD2 versus BODT layout and is not forwarded independently.
     public class ArmorRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
         {
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(Mutagen.Bethesda.Skyrim.Armor.MajorFlag)) },
             { "Name", new TranslatedStringReflectionPropertyHandler<IArmor, IArmorGetter>("Name") },
-            // VMAD note: shared setter retains winner Version/ObjectFormat; script ownership/unused-data copying stays specialized because selection contains only scripts.
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IArmor, IArmorGetter>() },
             { "ObjectEffect", new SimpleReflectionFormLinkPropertyHandler<IEffectRecordGetter, IArmor, IArmorGetter>("ObjectEffect") },
             { "EnchantmentAmount", new SimpleReflectionPropertyHandler<ushort?, IArmor, IArmorGetter>("EnchantmentAmount") },
             { "WorldModelAndBounds", ModelBoundsHandler.ForArmorWorldModel() },
+            { "WorldModel.Male.Icons", new ArmorIconsHandler(MaleFemaleGender.Male) },
+            { "WorldModel.Female.Icons", new ArmorIconsHandler(MaleFemaleGender.Female) },
             { "BodyTemplate.FirstPersonFlags", new SimpleReflectionFlagPropertyHandler<BipedObjectFlag, IArmor, IArmorGetter>("BodyTemplate.FirstPersonFlags", preserveUnknownBits: true, includeUnnamedBits: true) },
             { "BodyTemplate.Flags", new SimpleReflectionFlagPropertyHandler<BodyTemplate.Flag, IArmor, IArmorGetter>("BodyTemplate.Flags", preserveUnknownBits: true) },
             { "BodyTemplate.ArmorType", new SimpleReflectionPropertyHandler<ArmorType, IArmor, IArmorGetter>("BodyTemplate.ArmorType") },
-            { "Destructible", new DestructibleHandler() },
+            { "Destructible", DestructibleDataHandlers.Data(new DestructibleHandler()) },
+            { "Destructible.StageModels", DestructibleDataHandlers.Meshes(new DestructibleHandler()) },
             { "PickUpSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IArmor, IArmorGetter>("PickUpSound") },
             { "PutDownSound", new SimpleReflectionFormLinkPropertyHandler<ISoundDescriptorGetter, IArmor, IArmorGetter>("PutDownSound") },
             { "RagdollConstraintTemplate", new SimpleReflectionPropertyHandler<string?, IArmor, IArmorGetter>("RagdollConstraintTemplate") },

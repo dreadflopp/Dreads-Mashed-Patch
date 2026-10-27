@@ -62,22 +62,18 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
             if (item1 == null && item2 == null) return true;
             if (item1 == null || item2 == null) return false;
 
-            // Compare the key properties of QuestFragmentAlias
             if (item1.Version != item2.Version) return false;
             if (item1.ObjectFormat != item2.ObjectFormat) return false;
             if (item1.Scripts.Count != item2.Scripts.Count) return false;
 
-            // Sort scripts by name for consistent comparison
             var scripts1 = item1.Scripts.OrderBy(s => s.Name).ToList();
             var scripts2 = item2.Scripts.OrderBy(s => s.Name).ToList();
 
-            // Compare scripts by content, not reference
             for (int i = 0; i < scripts1.Count; i++)
             {
                 if (!AreScriptEntriesEqual(scripts1[i], scripts2[i])) return false;
             }
 
-            // Compare Property using a simple hash-based approach instead of expensive reflection
             if (!ArePropertiesEqual(item1.Property, item2.Property)) return false;
 
             return true;
@@ -91,16 +87,13 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
 
         private bool AreScriptEntriesEqual(IScriptEntryGetter script1, IScriptEntryGetter script2)
         {
-            // Compare script entries by content, not reference
             if (script1.Name != script2.Name) return false;
             if (script1.Flags != script2.Flags) return false;
             if (script1.Properties.Count != script2.Properties.Count) return false;
 
-            // Sort properties by name for consistent comparison
             var props1 = script1.Properties.OrderBy(p => p.Name).ToList();
             var props2 = script2.Properties.OrderBy(p => p.Name).ToList();
 
-            // Compare properties by content
             for (int i = 0; i < props1.Count; i++)
             {
                 if (!AreScriptPropertiesEqual(props1[i], props2[i])) return false;
@@ -111,11 +104,9 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
 
         private bool AreScriptPropertiesEqual(IScriptPropertyGetter prop1, IScriptPropertyGetter prop2)
         {
-            // Basic property comparison
             if (prop1.Name != prop2.Name) return false;
             if (prop1.Flags != prop2.Flags) return false;
 
-            // Compare property data based on type - all values must match
             switch (prop1)
             {
                 case IScriptBoolPropertyGetter bool1 when prop2 is IScriptBoolPropertyGetter bool2:
@@ -190,7 +181,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
             if (prop1 == null || prop2 == null) return false;
             if (prop1.GetType() != prop2.GetType()) return false;
 
-            // Compare IScriptObjectPropertyGetter properties directly
             if (prop1 is IScriptObjectPropertyGetter scriptProp1 && prop2 is IScriptObjectPropertyGetter scriptProp2)
             {
                 return scriptProp1.Name == scriptProp2.Name &&
@@ -199,7 +189,6 @@ namespace DreadsMashedPatch.PropertyHandlers.Quest
                        scriptProp1.Alias == scriptProp2.Alias;
             }
 
-            // Fallback to Equals() for other types
             return prop1.Equals(prop2);
         }
 

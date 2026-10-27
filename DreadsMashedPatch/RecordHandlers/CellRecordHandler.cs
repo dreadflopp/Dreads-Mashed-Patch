@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins;
@@ -12,29 +13,23 @@ using DreadsMashedPatch.PropertyHandlers.Abstracts;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Migration note:
-    // - Generalized: semantic CELL fields use shared scalar, flag, link, and list handlers; obsolete one-field
-    //   CELL handlers replaced by these registrations were removed.
-    // - Kept specialized: lighting, ownership, encounter-zone, and occlusion structures retain typed handlers.
-    // - Smart rule: Tamriel's persistent CELL (000D74:Skyrim.esm) can retain the exact Dawnguard,
-    //   Skyrim, or winning header, or use a hybrid that substitutes Dawnguard only for a winning
-    //   Skyrim-equivalent header. Mutagen's CELL override mask keeps child references, landscape,
-    //   navigation meshes, and group metadata outside this header policy and comparison.
-    // - Intentionally excluded: WaterHeight and Landscape are runtime-managed; NavigationMeshes is navigation data.
-    // - Rationale: excluded fields remain exactly as authored by the winning override.
-
-    // Header migration: raw/common/Cell.MajorFlag flags share one masked integer handler.
-    // Unknown winner bits stay intact; other fields retain their existing handlers and policies.
-    // Removed overlapping header registrations so selected clears cannot be reintroduced.
-    // Name migration: translated Name uses generated copying to retain every selected language.
-    // Optional null names remove the value; comparison follows Mutagen's language policy.
-    // Other specialized fields/flags retain their policies; translations are selected as one value.
-    // Output migration: all Tamriel policy copies use shared staging, including parent creation.
-    // CELL source selection and Mutagen child-excluding copy rules remain specialized.
-    // Filter-policy migration: priority snapshots now run in the shared path before this policy.
-    // Ordinary EDID-only corrections use baseline identifiers; Tamriel still needs its CELL history.
+    // Tamriel's persistent CELL policy selects headers only; Mutagen's override mask excludes
+    // child references, landscape, navigation meshes and group metadata from these copies.
     public class CellRecordHandler : AbstractRecordHandler
     {
+        protected override void InitializePropertyContexts(
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> originalContext,
+            IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> winningContext)
+        {
+            base.InitializePropertyContexts(originalContext, winningContext);
+            AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+        }
+
+        protected override PropertyForwardingCoordination CoordinateForwardedProperties(
+            IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
+            IPatcherState<ISkyrimMod, ISkyrimModGetter> state) =>
+            AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state, AtomicOwnershipTriggerProperties);
+
         internal static readonly ModKey SkyrimModKey = ModKey.FromNameAndExtension("Skyrim.esm");
         internal static readonly ModKey DawnguardModKey = ModKey.FromNameAndExtension("Dawnguard.esm");
         internal static readonly FormKey TamrielPersistentCellFormKey = new(SkyrimModKey, 0x000D74);
@@ -60,7 +55,6 @@ namespace DreadsMashedPatch.RecordHandlers
 
         public CellRecordHandler()
         {
-            // Initialize property handlers for Cell records. Uses reflection-based handlers where applicable (ICell / ICellGetter).
             _propertyHandlers = new Dictionary<string, IPropertyHandler>
             {
                 { "EditorID", new EditorIDHandler() },
@@ -196,8 +190,5 @@ namespace DreadsMashedPatch.RecordHandlers
 
             return contexts;
         }
-
-        // CommitOverride and ApplyForwardedProperties are now handled by the base class
-        // The base class automatically handles flag property coordination
     }
 }
