@@ -7,7 +7,7 @@ using Mutagen.Bethesda.Plugins.Records;
 namespace DreadsMashedPatch.PropertyHandlers.General;
 
 /// <summary>
-/// Treats a form-link list as one ordered value instead of merging individual entries.
+/// Treats a form-link list as one complete value instead of merging individual entries.
 /// </summary>
 public sealed class AtomicFormLinkListPropertyHandler<TTarget, TRecord, TRecordGetter>
     : AbstractPropertyHandler<List<FormKey>>
@@ -17,14 +17,18 @@ public sealed class AtomicFormLinkListPropertyHandler<TTarget, TRecord, TRecordG
 {
     private readonly PropertyInfo _getterProperty;
     private readonly PropertyInfo _setterProperty;
+    private readonly bool _canBeNull;
+    private readonly bool _orderMatters;
 
-    public AtomicFormLinkListPropertyHandler(string propertyName)
+    public AtomicFormLinkListPropertyHandler(string propertyName, bool orderMatters = true)
     {
         PropertyName = propertyName;
         _getterProperty = ReflectionPropertyResolver.Find(typeof(TRecordGetter), propertyName)
             ?? throw new ArgumentException($"Property '{propertyName}' not found on {typeof(TRecordGetter).Name}.");
         _setterProperty = ReflectionPropertyResolver.Find(typeof(TRecord), propertyName)
             ?? throw new ArgumentException($"Property '{propertyName}' not found on {typeof(TRecord).Name}.");
+        _canBeNull = ReflectionPropertyResolver.IsNullable(_getterProperty);
+        _orderMatters = orderMatters;
     }
 
     public override string PropertyName { get; }
@@ -60,7 +64,20 @@ public sealed class AtomicFormLinkListPropertyHandler<TTarget, TRecord, TRecordG
             return;
         }
 
+        if (_canBeNull && value == null)
+        {
+            _setterProperty.SetValue(typedRecord, null);
+            return;
+        }
+
         var currentValue = _setterProperty.GetValue(typedRecord);
+        if (currentValue == null && value != null)
+        {
+            currentValue = System.Activator.CreateInstance(_setterProperty.PropertyType)
+                ?? throw new InvalidOperationException(
+                    $"Could not create form-link collection '{PropertyName}' on {typeof(TRecord).Name}.");
+            _setterProperty.SetValue(typedRecord, currentValue);
+        }
         if (currentValue is ICollection<IFormLinkGetter<TTarget>> links)
         {
             links.Clear();
@@ -101,6 +118,8 @@ public sealed class AtomicFormLinkListPropertyHandler<TTarget, TRecord, TRecordG
     {
         if (ReferenceEquals(value1, value2)) return true;
         if (value1 == null || value2 == null) return false;
-        return value1.SequenceEqual(value2);
+        return _orderMatters
+            ? value1.SequenceEqual(value2)
+            : CollectionComparisonHelper.UnorderedEquals(value1, value2, (left, right) => left == right);
     }
 }

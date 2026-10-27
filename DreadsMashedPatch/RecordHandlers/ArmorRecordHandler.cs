@@ -13,8 +13,10 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Forwarding decision: meshes/bounds and the armature selector use Meshes; each gender's icons
-    // use IconsAndImages. Body-template gameplay flags, armor class and race retain ordinary rules.
+    // WornMeshes selects the armature and complete biped slot mask together through the shared
+    // snapshot policy; approved flag comparison/writing stays in the registered member handler.
+    // Dropped meshes/bounds and each gender's icons remain separate. BodyTemplate.Flags,
+    // armor class and race retain ordinary rules so gameplay edits cannot select worn geometry.
     // Mesh writers preserve icons; icon writers preserve meshes.
     // Armature is one authored list: unioning addons can invent an equipped model combination.
     // BodyTemplate.ActsLike44 selects BOD2 versus BODT layout and is not forwarded independently.

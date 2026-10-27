@@ -99,7 +99,13 @@ required for this regression coverage.
 - Structural/non-alignable arrays retain complete sequences for positional
   connections, fixed enum maps, geometry, interpolation curves or parallel data.
   A reviewed array key does not automatically make independently authored
-  structures safe to union; ARMO Armature is a deliberate atomic exception.
+  structures safe to union; ARMO Armature and OTFT Items are deliberate atomic
+  exceptions. OTFT selects one complete outfit package with ordinary ownership
+  and reversion permissions. Its sorted FormID definition permits unordered
+  equality, preserving duplicate counts, while copies retain source order.
+  Nullable absence emits no INAM; present-empty emits an empty INAM, retaining
+  presence through binary output. Existing ordered atomic registrations keep
+  ordered equality.
 
 See [appearance regressions](record-patching/REVIEW.md#appearance-boundaries) and
 [pinned xEdit evidence](history/LIST_ORDERING_AUDIT.md). The manifest audits only

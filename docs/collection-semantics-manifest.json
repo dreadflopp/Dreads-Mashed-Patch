@@ -118,7 +118,7 @@
     "IdentityPolicy": "Whole collection",
     "CardinalityPolicy": "Atomic sequence",
     "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
-    "Evidence": "Asset group WornMeshes (Meshes); forwarding enabled by default. When enabled, retains the member handler\u0027s collection policy."
+    "Evidence": "Asset group WornMeshes (Meshes); forwarding enabled by default. One complete snapshot; member list reconciliation is inactive."
   },
   {
     "RecordHandler": "ArmorRecordHandler",
@@ -1135,12 +1135,12 @@
   {
     "RecordHandler": "OutfitRecordHandler",
     "Property": "Items",
-    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IOutfitTargetGetter\u003E\u003E",
-    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.SimpleReflectionListPropertyHandler\u003CMutagen.Bethesda.Plugins.IFormLinkGetter\u003CMutagen.Bethesda.Skyrim.IOutfitTargetGetter\u003E, Mutagen.Bethesda.Skyrim.IOutfit, Mutagen.Bethesda.Skyrim.IOutfitGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
-    "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
+    "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Plugins.FormKey\u003E",
+    "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.AtomicFormLinkListPropertyHandler\u003CMutagen.Bethesda.Skyrim.IOutfitTargetGetter, Mutagen.Bethesda.Skyrim.IOutfit, Mutagen.Bethesda.Skyrim.IOutfitGetter\u003E",
+    "MergeMode": "Atomic",
+    "IdentityPolicy": "Whole collection",
+    "CardinalityPolicy": "Atomic sequence",
+    "PresencePolicy": "Whole collection has one owner; handler-defined null/empty behavior.",
     "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
   },
   {

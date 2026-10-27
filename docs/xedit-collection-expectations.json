@@ -138,9 +138,9 @@
         "XEditConstruct":  "Ordered, fixed, structural, or dfNotAlignable collection",
         "IdentityKey":  "Whole collection",
         "Alignability":  "Not independently mergeable by project policy",
-        "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
+        "CountOrCoupling":  "WornMeshes selects the whole Armature list and BodyTemplate.FirstPersonFlags mask from one source; independent row/bit ownership is inactive.",
         "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
-        "Rationale":  "The pinned list audit requires whole-value ownership because independently merging rows can produce invalid structural or behavioral combinations."
+        "Rationale":  "Keep the authored addon list atomic and select it with the complete biped slot mask so slot conversions cannot outlive their addon list or combine masks from different sources."
     },
     {
         "RecordHandler":  "ArmorRecordHandler",
@@ -1341,15 +1341,15 @@
     {
         "RecordHandler":  "OutfitRecordHandler",
         "Property":  "Items",
-        "ReviewStatus":  "Reviewed",
-        "ExpectedRuntimeMode":  "SortedKeyed",
+        "ReviewStatus":  "IntentionalException",
+        "ExpectedRuntimeMode":  "Atomic",
         "XEditSemantics":  "SortedKeyed",
-        "XEditConstruct":  "wbArrayS/wbRArrayS or audited sorted VMAD collection",
-        "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
-        "Alignability":  "Sorted by xEdit key",
-        "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
-        "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
+        "XEditConstruct":  "wbArrayS(INAM, Items, wbFormIDCk(Item, [ARMO, LVLI]))",
+        "IdentityKey":  "FormID is the xEdit sort key; runtime ownership belongs to the whole outfit package",
+        "Alignability":  "Sorted by FormID; runtime equality ignores order but retains duplicate counts",
+        "CountOrCoupling":  "Competing clothing/armor/leveled-item selections form one authored outfit. Nullable absence emits no INAM; present-empty emits an empty INAM, retaining presence on reload.",
+        "XEditSource":  "XEditSource/Core/wbDefinitionsTES5.pas:7441-7444 (pinned 93cc0bc); decompiled Mutagen 0.54.4 IOutfit/IOutfitGetter, OutfitBinaryWriteTranslation, OutfitBinaryOverlay and ListBinaryTranslation.Write(IReadOnlyList, RecordType, BinaryMasterWriteDelegate); docs/history/LIST_ORDERING_MIGRATION.md",
+        "Rationale":  "Select one complete source Items list with ordinary ownership/reversion permissions. Per-FormID merging creates hybrid outfits with competing boots or other gear, as in the Vigilant AEGIS/Dawnguard Arsenal conflict. Preserve source order and detached links; do not infer slots or merge referenced LVLI contents."
     },
     {
         "RecordHandler":  "PackageRecordHandler",

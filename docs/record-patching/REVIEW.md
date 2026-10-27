@@ -33,6 +33,8 @@ membership and the collection reports account for multi-member atomic selection.
 | NPC Perks and GLOB/GMST | Perks must populate an absent destination and preserve selected presence. Subtype histories resolve through the shared group getter and stop at the latest eligible subtype boundary; no older subtype reconnection or scalar conversion. | [UserReportedFailureRegressionTests](../../DreadsMashedPatch.Tests/UserReportedFailureRegressionTests.cs), [diagnostic details](../USER-REPORTED-FAILURES-2026-10-10.md) |
 | Asset paths and model bounds | Preserve GivenPath. Final filenames matching the winner retain winning bounds; selecting different filenames carries their source bounds. Bounds are never independently merged, including standalone registrations. See the [model/bounds decisions](#model-and-bounds). ARMA model metadata has a separate comparison policy. | [AssetPathHandlingTests](../../DreadsMashedPatch.Tests/AssetPathHandlingTests.cs), [ModelBoundsHandlerTests](../../DreadsMashedPatch.Tests/ModelBoundsHandlerTests.cs), [ModelBoundsForwardingTests](../../DreadsMashedPatch.Tests/ModelBoundsForwardingTests.cs), [ModelHandlerRegressionTests](../../DreadsMashedPatch.Tests/ModelHandlerRegressionTests.cs) |
 | Collection identity | Sorted keys, aligned occurrence IDs, exact positions and whole sequences are distinct policies. Do not use full row equality as a substitute for the reviewed identity key. | [XEditListAlignmentTests](../../DreadsMashedPatch.Tests/XEditListAlignmentTests.cs), [ListSemanticsTests](../../DreadsMashedPatch.Tests/ListSemanticsTests.cs), [ExactOrderedEffectsTests](../../DreadsMashedPatch.Tests/ExactOrderedEffectsTests.cs), [CollectionSemanticsBinaryRoundTripTests](../../DreadsMashedPatch.Tests/CollectionSemanticsBinaryRoundTripTests.cs) |
+| ARMO worn meshes | Armature and the complete BodyTemplate.FirstPersonFlags mask select one source through WornMeshes, including slot-only edits, unnamed bits, empty lists and owner-authorized reversions. Approved member handlers remain the sole comparers/setters; ArmorType and legacy general flags keep ordinary forwarding. These synthetic pipeline/binary-output cases establish ARMO selection, not compatibility with independently overridden ARMA or deployed NIF partitions. Reference: pinned xEdit 93cc0bc, Core/wbDefinitionsTES5.pas:2331–2353 and 4073–4084; decompiled Mutagen 0.54.4 BodyTemplateBinaryCreateTranslation/BodyTemplateBinaryWriteTranslation distinguish BOD2 slots/armor type from legacy BODT flags and ActsLike44 encoding state. | [Armor forwarding tests](../../DreadsMashedPatch.Tests/AssetForwardingPolicyTests.Armor.cs), [member handler tests](../../DreadsMashedPatch.Tests/ArmorRecordHandlerTests.cs) |
+| OTFT outfit package | Items uses the shared atomic form-link adapter: select an entire source package with ordinary reversion permissions, compare as a multiset and copy detached links in source order. Header flags and EditorID stay independent. The Vigilant conflict fixture uses the reported item FormKeys and proves the winner's three-item package survives instead of the former five-item hybrid. Nullable absence emits no INAM; present-empty emits an empty INAM, retaining presence through source/patch overlays. Reference: xEdit 93cc0bc, Core/wbDefinitionsTES5.pas:7441–7444 (wbArrayS with ARMO/LVLI links); decompiled Mutagen 0.54.4 IOutfit/IOutfitGetter, OutfitBinaryWriteTranslation/OutfitBinaryOverlay and ListBinaryTranslation.Write(IReadOnlyList, RecordType, BinaryMasterWriteDelegate). No slot-aware merge or resolution of referenced LVLI contents is attempted. | [Outfit forwarding tests](../../DreadsMashedPatch.Tests/AssetForwardingPolicyTests.Outfit.cs), [member and source/patch overlay tests](../../DreadsMashedPatch.Tests/OutfitRecordHandlerTests.cs), [ordered atomic regression](../../DreadsMashedPatch.Tests/FootstepSetRecordHandlerTests.cs) |
 
 ## Model and bounds
 
@@ -62,7 +64,7 @@ Their `ObjectBoundsHandler` follows the last eligible override in the shared
 chronological pass rather than applying addition/reversion permissions. Its
 getter/setter/equality still serve model/bounds copying; no parallel handler is
 registered. NPC appearance and referenced models remain specialized. TREE retains
-its winner-owned group by default; enabled forwarding uses one dedicated Trees selection independently of the fixed resource classifications. Approved flag handlers and Armature remain unchanged.
+its winner-owned group by default; enabled forwarding uses one dedicated Trees selection independently of the fixed resource classifications. ARMO WornMeshes selects the armature/slot pair separately from dropped-model bounds; approved flag and armature writers retain their copying behavior.
 
 Removed state: independent original/previous bounds and bounds ownership, the
 bounds-only selection branch, and the misleading geometry-identity naming. Filename
@@ -141,13 +143,13 @@ keeps its merged bits; zero water clears retain destination presence. Multi-memb
 list exceptions retain independent xEdit order/key provenance in the reviewed
 expectations. Shared selection/flag/list algorithms are unchanged. The common application loop orders structural writes before nested resource writes and restricts references to surviving rows/parents.
 
-## Current validation scope
+## Validation scope
 
-On 2026-10-26, the solution (core, tests and WPF desktop) built with zero warnings
-or errors, and the full suite passed **2,057 tests**. Strict property coverage
+On 2026-10-27, the solution (core, tests and WPF desktop) built with zero warnings
+or errors, and the full suite passed **2,077 tests**. Strict property coverage
 reported 131 handlers with zero missing/partial candidates. Collection verification
 covered 209 registrations/expectations with zero unresolved entries or failures.
-The generated catalog contains 72 record handlers, 161 groups and 234 registered
+The generated catalog contains 72 record handlers, 161 groups and 235 registered
 member values. All 161 public group/forwarding rows matched it; local public links and
 anchors resolved. settings.md has one shared eligibility link and no source-file links.
 

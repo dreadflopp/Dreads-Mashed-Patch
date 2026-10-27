@@ -99,13 +99,13 @@ Grouped properties follow the [shared forwarding behavior](assets.md). Each grou
 
 ## ARMO — Armor
 
-Dropped/world meshes follow the model/bounds rule under Meshes. Armature references have a separate Meshes decision. Male/female inventory icons use IconsAndImages independently. BodyTemplate fields and Race use ordinary forwarding. ActsLike44 is not independently patched.
+Dropped/world meshes follow the model/bounds rule under Meshes. Armature references and the complete biped slot mask (`BodyTemplate.FirstPersonFlags`) share one Meshes decision, so slots cannot be combined with another source's addon list. Male/female inventory icons use IconsAndImages independently. Armor type, general BodyTemplate flags and Race use ordinary forwarding. ActsLike44 is not independently patched.
 
 | Properties | How they are patched |
 |---|---|
 | `Name`, `ObjectEffect`, `EnchantmentAmount`, `PickUpSound`, `PutDownSound`, `RagdollConstraintTemplate`, `EquipmentType`, `BashImpactDataSet`, `AlternateBlockMaterial`, `Description`, `Value`, `Weight`, `ArmorRating`, `TemplateArmor` | Select each value separately. |
 | `Keywords` | Merge rows by key. |
-| `BodyTemplate.FirstPersonFlags`, `BodyTemplate.Flags` | Merge registered flag bits separately. |
+| `BodyTemplate.Flags` | Merge registered flag bits separately. |
 | `BodyTemplate.ArmorType`, `Race` | Select each value independently. |
 | `BodyTemplate.ActsLike44` | Serialization/unused state; no independent decision. |
 
@@ -120,7 +120,7 @@ Grouped properties follow the [shared forwarding behavior](assets.md). Each grou
 | `WorldModelAndBounds` (Meshes) | `WorldModelAndBounds` | Normal | Select the model value; retain winning bounds for matching filenames, otherwise carry source bounds. |
 | `MaleIcons` (IconsAndImages) | `WorldModel.Male.Icons` | Normal | Use the existing complete-value or collection policy. |
 | `FemaleIcons` (IconsAndImages) | `WorldModel.Female.Icons` | Normal | Use the existing complete-value or collection policy. |
-| `WornMeshes` (Meshes) | `Armature` | Normal | Use the existing complete-value or collection policy. |
+| `WornMeshes` (Meshes) | `Armature`, `BodyTemplate.FirstPersonFlags` | Normal | Select the complete addon list and slot mask from one source through the shared change/reversion rules. A slot-only change also selects the complete pair. |
 
 
 <a id="book-book"></a>

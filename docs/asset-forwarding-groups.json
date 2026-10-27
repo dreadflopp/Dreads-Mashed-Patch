@@ -216,7 +216,8 @@
         "Family": "Meshes",
         "ForwardByDefault": true,
         "Members": [
-          "Armature"
+          "Armature",
+          "BodyTemplate.FirstPersonFlags"
         ]
       }
     ]

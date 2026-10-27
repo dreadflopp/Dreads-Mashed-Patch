@@ -218,9 +218,22 @@ Grouped properties follow the [shared forwarding behavior](assets.md). Each grou
 
 ## OTFT — Outfit
 
+An outfit's items are one complete package. The patch selects a source's entire
+list using the [shared change and reversion rules](README.md), keeping that
+source's clothing, armor and leveled-item references together. It does not
+combine individual pieces from competing outfits or infer equipment slots.
+In the Vigilant outfit conflict between AEGIS and Dawnguard Arsenal, this keeps
+Dawnguard Arsenal's complete outfit instead of adding AEGIS's boots and clothing.
+An earlier complete outfit can still be forwarded when a later plugin restores
+the original list without the required permission.
+
 | Properties | How they are patched |
 |---|---|
-| `Items` | Merge rows by key. |
+| `Items` | Select one complete source list, including an absent or empty list. Reordering alone is not a change; duplicate counts remain significant. |
+
+Copies retain the selected source's item order and preserve the difference
+between an absent list and a present empty list. EditorID and record-header
+flags retain their separate shared rules.
 
 
 <a id="race-race"></a>

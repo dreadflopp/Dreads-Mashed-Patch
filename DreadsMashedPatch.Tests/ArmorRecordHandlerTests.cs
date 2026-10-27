@@ -1,3 +1,4 @@
+using DreadsMashedPatch.AssetForwarding;
 using DreadsMashedPatch.PropertyHandlers.Armor;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.RecordHandlers;
@@ -29,6 +30,12 @@ public sealed class ArmorRecordHandlerTests
         Assert.IsType<ModelBoundsHandler>(handlers["WorldModelAndBounds"]);
         Assert.DoesNotContain("WorldModel", handlers.Keys);
         Assert.DoesNotContain("ObjectBounds", handlers.Keys);
+
+        var wornMeshes = Assert.Single(AssetGroupCatalog.For(typeof(ArmorRecordHandler)),
+            group => group.Name == "WornMeshes");
+        Assert.Equal(new[] { "Armature", "BodyTemplate.FirstPersonFlags" }, wornMeshes.Members);
+        Assert.IsType<SimpleReflectionFlagPropertyHandler<BipedObjectFlag, IArmor, IArmorGetter>>(
+            handlers["BodyTemplate.FirstPersonFlags"]);
     }
 
     [Fact]

@@ -42,7 +42,7 @@ public static class AssetGroupCatalog
                 new("WorldModelAndBounds", ForwardingRule.Meshes, "WorldModelAndBounds"),
                 new("MaleIcons", ForwardingRule.IconsAndImages, "WorldModel.Male.Icons"),
                 new("FemaleIcons", ForwardingRule.IconsAndImages, "WorldModel.Female.Icons"),
-                new("WornMeshes", ForwardingRule.Meshes, "Armature"),
+                new("WornMeshes", ForwardingRule.Meshes, "Armature", "BodyTemplate.FirstPersonFlags"),
             ],
             [typeof(ArmorAddonRecordHandler)] =
             [

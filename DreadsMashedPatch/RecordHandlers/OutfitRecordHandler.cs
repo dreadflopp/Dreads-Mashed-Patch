@@ -8,7 +8,6 @@ using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.General;
-using DreadsMashedPatch.PropertyHandlers.Abstracts;
 using DreadsMashedPatch.PropertyHandlers.Interfaces;
 
 namespace DreadsMashedPatch.RecordHandlers;
@@ -18,7 +17,8 @@ public class OutfitRecordHandler : AbstractRecordHandler
     {
         { "EditorID", new EditorIDHandler() },
         { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
-        { "Items", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IOutfitTargetGetter>, IOutfit, IOutfitGetter>("Items", ListSemantics.SortedKeyed) }
+        // One authored outfit package; xEdit's sorted FormID array does not imply safe item-by-item merging.
+        { "Items", new AtomicFormLinkListPropertyHandler<IOutfitTargetGetter, IOutfit, IOutfitGetter>("Items", orderMatters: false) }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(
