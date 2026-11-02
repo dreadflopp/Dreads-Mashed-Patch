@@ -114,13 +114,14 @@ public sealed class PatcherConfiguration
         Rule("Masterwork - The Staff of Sheogorath.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
         Rule("Masterwork - Umbra.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
         Rule("Starfrost.esp", "Unofficial Skyrim Creation Club Content Patch.esl"),
-
         Rule("MadMen.esp", "cutting room floor.esp", "BladeAndBlunt.esp"),
         Rule("StarfrostInjuries.esp", "Apothecary.esp"),
         Rule("BS Bruma - CC Curios Patch.esp", "BSHeartland - Unofficial Fixes.esp"),
         Rule("Civil War Overhaul.esp", "Simple Better Civil War Soldiers.esp"),
         Rule("Immersive Sounds - Compendium.esp", "Audio Overhaul Skyrim.esp"),
-        Rule("Aspens Ablaze.esp", "Nature of the Wild Lands.esp")
+        Rule("Aspens Ablaze.esp", "Nature of the Wild Lands.esp"),
+        Rule("Dawnguard HQ.esp", "castle volkihar rebuilt.esp"),
+        Rule("Lux - Great Village of Shor's Stone patch.esp", "Unofficial Skyrim Special Edition Patch.esp"),
     ];
 
     private static VirtualMasterRule Rule(string targetMod, params string[] virtualMasters) => new()
