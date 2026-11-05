@@ -16,7 +16,6 @@ using Noggog;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Inherited fields follow the PHZD/xEdit ReferenceRecord pattern.
-// Safe-disable UDR coordination remains limited to ACHR/REFR.
 public class PlacedArrowRecordHandler : AbstractRecordHandler
 {
     protected override void InitializePropertyContexts(
@@ -39,8 +38,7 @@ public class PlacedArrowRecordHandler : AbstractRecordHandler
         { "Projectile", new SimpleReflectionFormLinkPropertyHandler<IProjectileGetter, IPlacedArrow, IPlacedArrowGetter>("Projectile") },
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedArrow, IPlacedArrowGetter>() },
         { "EncounterZone", new SimpleReflectionFormLinkPropertyHandler<IEncounterZoneGetter, IPlacedArrow, IPlacedArrowGetter>("EncounterZone") },
-        { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedArrow, IPlacedArrowGetter>("Owner") },
-        { "FactionRank", new SimpleReflectionPropertyHandler<int?, IPlacedArrow, IPlacedArrowGetter>("FactionRank") },
+        { "Ownership", new OwnershipPropertyHandler<IPlacedArrow, IPlacedArrowGetter, int?>() },
         { "HeadTrackingWeight", new SimpleReflectionPropertyHandler<float?, IPlacedArrow, IPlacedArrowGetter>("HeadTrackingWeight") },
         { "FavorCost", new SimpleReflectionPropertyHandler<float?, IPlacedArrow, IPlacedArrowGetter>("FavorCost") },
         { "Reflections", new GeneratedCopyReflectionListPropertyHandler<IWaterReflectionGetter, WaterReflection, IPlacedArrow, IPlacedArrowGetter>(
@@ -61,8 +59,7 @@ public class PlacedArrowRecordHandler : AbstractRecordHandler
         { "LocationReference", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IPlacedArrow, IPlacedArrowGetter>("LocationReference") },
         { "DistantLodData", new GeneratedCopyReflectionPropertyHandler<IReadOnlyList<float>, ExtendedList<float>, IPlacedArrow, IPlacedArrowGetter>(
             "DistantLodData", value => new ExtendedList<float>(value), (left, right) => left.SequenceEqual(right)) },
-        { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedArrow, IPlacedArrowGetter>("Scale") },
-        { "Placement", new PlacementPropertyHandler<IPlacedArrow, IPlacedArrowGetter>() }
+        { "Transform", new TransformPropertyHandler<IPlacedArrow, IPlacedArrowGetter>() }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

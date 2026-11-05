@@ -65,8 +65,12 @@ Null and empty are not interchangeable everywhere. Some handlers track presence;
 | Other script adapters | Forward normally as grouped values. INFO, PACK and PERK select whole adapters. QUST and SCEN expose presence and child fields separately; their VMAD-only groups keep metadata, scripts and bindings together. Record structure retains its own ownership rules. Their record notes describe the gates and ownership rules. Papyrus unused bytes do not determine script equality; copying preserves destination unused values where its policy supports that. |
 | Form identity and general record metadata | Not independent merge decisions. This includes version-control and runtime/registration members. Record-specific omissions appear in the tables. |
 
-## Placed-reference coordination
+## Placed-reference state and placement
 
-ACHR and REFR coordinate safe deletion handling. A safe UDR state combines InitiallyDisabled, Z = -30000 at comparison precision, and an enable parent opposite to the player. When such a state occurs in the history, the owner of the selected InitiallyDisabled bit can also supply Placement and EnableParent. Coherent restoration is handled too. An ordinary disabled reference does not automatically trigger this rule. PHZD and the seven placed-projectile variants do not use it.
+ACHR and REFR select InitiallyDisabled, Transform and EnableParent independently under the normal addition/reversion rules. A denied InitiallyDisabled reversion does not block a new Transform or EnableParent value, and an accepted flag change does not select those properties from the same mod. Reversion permissions are checked against each property's own selected owner, using actual and virtual masters.
+
+Transform keeps position, rotation and scale together at the project's comparison precision, including for disabled references. A later scale-only edit can select a complete transform from that mod. EnableParent keeps its reference and flags, including the opposite-of-parent flag, together as one complete value. Neither group is selected by the InitiallyDisabled owner.
+
+InitiallyDisabled is a starting-state flag; a reference can become enabled during play, and an enable parent controls its child's enabled state. Placement therefore remains eligible for forwarding. Safe undeleted-and-disabled (UDR) patterns receive the same independent property decisions; the patcher does not force a disable bundle. Placed hazards and projectile variants retain their normal forwarding rules too.
 
 Inspect the generated patch in xEdit. These property rules do not guarantee correct gameplay behavior for every mod combination or byte-for-byte preservation of omitted fields.

@@ -13,9 +13,9 @@ namespace DreadsMashedPatch.Tests;
 public sealed class PlacedHazardRecordHandlerTests : IDisposable
 {
     private static readonly FormKey CellKey = new(CoverageTestHistory.Original, 0x900);
-    private static readonly string[] InheritedFields = ["VirtualMachineAdapter", "EncounterZone", "Owner", "FactionRank",
+    private static readonly string[] InheritedFields = ["VirtualMachineAdapter", "EncounterZone", "Ownership",
         "HeadTrackingWeight", "FavorCost", "Reflections", "LinkedReferences", "ActivateParents", "EnableParent", "Emittance",
-        "MultiBoundReference", "IgnoredBySandbox", "LocationRefTypes", "LocationReference", "DistantLodData", "Scale", "Placement"];
+        "MultiBoundReference", "IgnoredBySandbox", "LocationRefTypes", "LocationReference", "DistantLodData", "Transform"];
 
     public void Dispose() => CoverageTestHistory.Reset();
     public static IEnumerable<object[]> Fields() => InheritedFields.Select(field => new object[] { field });
@@ -23,7 +23,7 @@ public sealed class PlacedHazardRecordHandlerTests : IDisposable
         new[] { false, true }.SelectMany(authorized => new[] { false, true }
             // DATA placement is required in xEdit; exercise its value reversion,
             // rather than constructing a source without placement for a removal test.
-            .Where(removal => !removal || field != "Placement")
+            .Where(removal => !removal || field != "Transform")
             .Select(removal => new object[] { field, authorized, removal })));
 
     [Fact]
@@ -64,9 +64,10 @@ public sealed class PlacedHazardRecordHandlerTests : IDisposable
         Assert.True(handler.AreValuesEqual(value, handler.GetValue(
             Assert.Single(outputOverlay.EnumerateMajorRecords().OfType<IPlacedHazardGetter>()))), field);
 
-        handler.SetValue(target, null);
+        handler.SetValue(target, field is "Ownership" or "Transform" ? handler.GetValue(Empty()) : null);
         var result = handler.GetValue(target);
         if (field is "Reflections" or "LinkedReferences") Assert.Empty(Assert.IsAssignableFrom<System.Collections.IEnumerable>(result));
+        else if (field is "Ownership" or "Transform") Assert.True(handler.AreValuesEqual(handler.GetValue(Empty()), result));
         else Assert.Null(result);
         Assert.True(handler.AreValuesEqual(value, handler.GetValue(getter)), "Source overlay was altered");
     }
@@ -79,7 +80,7 @@ public sealed class PlacedHazardRecordHandlerTests : IDisposable
         var mods = CoverageTestHistory.Mods();
         var records = mods.Select(_ => removal ? Populated() : Empty()).ToArray();
         var handler = new PlacedHazardRecordHandler().PropertyHandlers[field];
-        handler.SetValue(records[1], removal ? null : handler.GetValue(Populated()));
+        handler.SetValue(records[1], removal ? (field == "Ownership" ? handler.GetValue(Empty()) : null) : handler.GetValue(Populated()));
         var selected = handler.GetValue(records[1]);
         for (var i = 0; i < mods.Length; i++) Add(mods[i], records[i]);
         using var state = CoverageTestHistory.State(mods);

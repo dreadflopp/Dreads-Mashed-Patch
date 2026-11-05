@@ -14,9 +14,8 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Placement uses xEdit precision and normalized circular angles to avoid invisible conflicts.
-    // Safe UDRs coordinate Initially Disabled, Placement and EnableParent; ordinary disabled references
-    // are not UDRs. LocationReference remains independent and requires ownership for removal.
+    // Header flags, Transform and EnableParent retain independent selection owners.
+    // LocationReference remains independent and requires ownership for removal.
     public class PlacedNpcRecordHandler : AbstractRecordHandler
     {
         protected override void InitializePropertyContexts(
@@ -32,7 +31,7 @@ namespace DreadsMashedPatch.RecordHandlers
             IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             return AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state,
-                AtomicOwnershipTriggerProperties, PlacedReferenceUdrCoordinator.Coordinate(recordContexts, PropertyContexts));
+                AtomicOwnershipTriggerProperties);
         }
 
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -41,8 +40,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag), typeof(PlacedNpc.MajorFlag)) },
             { "Base", new SimpleReflectionFormLinkPropertyHandler<INpcGetter, IPlacedNpc, IPlacedNpcGetter>("Base") },
             { "EncounterZone", new SimpleReflectionFormLinkPropertyHandler<IEncounterZoneGetter, IPlacedNpc, IPlacedNpcGetter>("EncounterZone") },
-            { "RagdollData", new SimpleReflectionBinaryDataPropertyHandler<IPlacedNpc, IPlacedNpcGetter>("RagdollData") },
-            { "RagdollBipedData", new SimpleReflectionBinaryDataPropertyHandler<IPlacedNpc, IPlacedNpcGetter>("RagdollBipedData") },
+            { "RagdollPose", new RagdollPosePropertyHandler<IPlacedNpc, IPlacedNpcGetter>() },
             { "Patrol", new GeneratedCopyReflectionPropertyHandler<IPatrolGetter, Patrol, IPlacedNpc, IPlacedNpcGetter>(
                 "Patrol", value => value.DeepCopy(), PatrolMixIn.Equals) },
             { "LevelModifier", new SimpleReflectionPropertyHandler<Level?, IPlacedNpc, IPlacedNpcGetter>("LevelModifier") },
@@ -65,13 +63,11 @@ namespace DreadsMashedPatch.RecordHandlers
             { "FavorCost", new SimpleReflectionPropertyHandler<float?, IPlacedNpc, IPlacedNpcGetter>("FavorCost") },
             { "EnableParent", new GeneratedCopyReflectionPropertyHandler<IEnableParentGetter, EnableParent, IPlacedNpc, IPlacedNpcGetter>(
                 "EnableParent", value => value.DeepCopy(), EnableParentMixIn.Equals) },
-            { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedNpc, IPlacedNpcGetter>("Owner") },
-            { "FactionRank", new SimpleReflectionPropertyHandler<int?, IPlacedNpc, IPlacedNpcGetter>("FactionRank") },
+            { "Ownership", new OwnershipPropertyHandler<IPlacedNpc, IPlacedNpcGetter, int?>() },
             { "Emittance", new SimpleReflectionFormLinkPropertyHandler<IEmittanceGetter, IPlacedNpc, IPlacedNpcGetter>("Emittance") },
             { "MultiBoundReference", new SimpleReflectionFormLinkPropertyHandler<IPlacedObjectGetter, IPlacedNpc, IPlacedNpcGetter>("MultiBoundReference") },
             { "IsIgnoredBySandbox2", new SimpleReflectionPropertyHandler<bool, IPlacedNpc, IPlacedNpcGetter>("IsIgnoredBySandbox2") },
-            { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedNpc, IPlacedNpcGetter>("Scale") },
-            { "Placement", new PlacementHandler() },
+            { "Transform", new TransformPropertyHandler<IPlacedNpc, IPlacedNpcGetter>() },
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() }
         };
 

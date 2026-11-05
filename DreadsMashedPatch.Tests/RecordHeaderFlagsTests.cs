@@ -132,7 +132,7 @@ public sealed class RecordHeaderFlagsTests : IDisposable
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(true, true)]
-    public void FullRunKeepsSafeUdrAndAuthorizedRestorationCoherent(bool npc, bool restore)
+    public void FullRunResolvesDisabledFlagsAndPropertyRestorationsWithTheirOwnPermissions(bool npc, bool restore)
     {
         Configure(restore);
         var baseMods = CreateMods();

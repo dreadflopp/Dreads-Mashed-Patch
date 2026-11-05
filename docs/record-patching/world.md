@@ -14,8 +14,9 @@ Lighting includes its inheritance flags and Versioning. WaterHeight is not indep
 
 | Properties | How they are patched |
 |---|---|
+| `Ownership` (`Owner`, `FactionRank`) | Select the owner and required rank together. |
 | `Water` | Select the record reference separately. |
-| `Name`, `Location`, `Owner`, `LightingTemplate`, `AcousticSpace`, `EncounterZone`, `Music`, `ImageSpace`, `SkyAndWeatherFromRegion`, `FactionRank`, `LockList` | Select each value separately. |
+| `Name`, `Location`, `LightingTemplate`, `AcousticSpace`, `EncounterZone`, `Music`, `ImageSpace`, `SkyAndWeatherFromRegion`, `LockList` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
 | `Lighting`, `Grid`, `MaxHeightData`, `WaterVelocity`, `XWCN`, `XWCS`, `OcclusionData`, `LNAM` | Select each whole value separately. |
 | `Regions` | Merge rows by key. |
@@ -52,7 +53,8 @@ Grouped properties follow the [shared forwarding behavior](assets.md). Each grou
 
 | Properties | How they are patched |
 |---|---|
-| `Owner`, `Location`, `Rank`, `MinLevel`, `MaxLevel` | Select each value separately. |
+| `Ownership` (`Owner`, `Rank`) | Select the owner and required rank together. |
+| `Location`, `MinLevel`, `MaxLevel` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
 | `DATADataTypeState` | Serialization/unused state; no independent decision. |
 

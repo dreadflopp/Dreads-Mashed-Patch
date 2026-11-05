@@ -16,7 +16,6 @@ using Noggog;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Inherited fields follow the PHZD/xEdit ReferenceRecord pattern.
-// Safe-disable UDR coordination remains limited to ACHR/REFR.
 public class PlacedFlameRecordHandler : AbstractRecordHandler
 {
     protected override void InitializePropertyContexts(
@@ -39,8 +38,7 @@ public class PlacedFlameRecordHandler : AbstractRecordHandler
         { "Projectile", new SimpleReflectionFormLinkPropertyHandler<IProjectileGetter, IPlacedFlame, IPlacedFlameGetter>("Projectile") },
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedFlame, IPlacedFlameGetter>() },
         { "EncounterZone", new SimpleReflectionFormLinkPropertyHandler<IEncounterZoneGetter, IPlacedFlame, IPlacedFlameGetter>("EncounterZone") },
-        { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedFlame, IPlacedFlameGetter>("Owner") },
-        { "FactionRank", new SimpleReflectionPropertyHandler<int?, IPlacedFlame, IPlacedFlameGetter>("FactionRank") },
+        { "Ownership", new OwnershipPropertyHandler<IPlacedFlame, IPlacedFlameGetter, int?>() },
         { "HeadTrackingWeight", new SimpleReflectionPropertyHandler<float?, IPlacedFlame, IPlacedFlameGetter>("HeadTrackingWeight") },
         { "FavorCost", new SimpleReflectionPropertyHandler<float?, IPlacedFlame, IPlacedFlameGetter>("FavorCost") },
         { "Reflections", new GeneratedCopyReflectionListPropertyHandler<IWaterReflectionGetter, WaterReflection, IPlacedFlame, IPlacedFlameGetter>(
@@ -61,8 +59,7 @@ public class PlacedFlameRecordHandler : AbstractRecordHandler
         { "LocationReference", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IPlacedFlame, IPlacedFlameGetter>("LocationReference") },
         { "DistantLodData", new GeneratedCopyReflectionPropertyHandler<IReadOnlyList<float>, ExtendedList<float>, IPlacedFlame, IPlacedFlameGetter>(
             "DistantLodData", value => new ExtendedList<float>(value), (left, right) => left.SequenceEqual(right)) },
-        { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedFlame, IPlacedFlameGetter>("Scale") },
-        { "Placement", new PlacementPropertyHandler<IPlacedFlame, IPlacedFlameGetter>() }
+        { "Transform", new TransformPropertyHandler<IPlacedFlame, IPlacedFlameGetter>() }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

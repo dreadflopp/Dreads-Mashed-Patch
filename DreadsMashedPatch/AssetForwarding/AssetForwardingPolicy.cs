@@ -35,11 +35,10 @@ public static class AssetForwardingPolicy
         IReadOnlyDictionary<string, IPropertyHandler> handlers,
         IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> contexts,
         IPatcherState<ISkyrimMod, ISkyrimModGetter> state,
-        IReadOnlySet<string> structuralTriggers,
-        PropertyForwardingCoordination? prior = null)
+        IReadOnlySet<string> structuralTriggers)
     {
         var groups = AssetGroupCatalog.For(recordHandlerType);
-        if (groups.Count == 0) return prior ?? PropertyForwardingCoordination.None;
+        if (groups.Count == 0) return PropertyForwardingCoordination.None;
         var winner = contexts[0];
         var history = contexts.Reverse().ToArray();
         // Match the existing record-wide ownership reset. Never use an intermediate reset
@@ -50,10 +49,8 @@ public static class AssetForwardingPolicy
                 handlers[key].GetValue(history[i - 1].Record), handlers[key].GetValue(history[i].Record))))
                 start = i;
         var eligible = history[start..];
-        var values = prior == null ? new Dictionary<string, object?>()
-            : new Dictionary<string, object?>(prior.ForwardValues);
+        var values = new Dictionary<string, object?>();
         var audit = new List<string>();
-        if (prior?.AuditMessage != null) audit.Add(prior.AuditMessage);
         foreach (var group in groups)
         {
             var allow = PatcherSettings.AllowsForwarding(group.Family);

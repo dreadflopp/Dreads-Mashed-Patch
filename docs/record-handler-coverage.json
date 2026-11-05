@@ -3173,8 +3173,8 @@
         "SourceLine": 66
       },
       {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 67
       },
       {
@@ -3258,19 +3258,14 @@
         "SourceLine": 83
       },
       {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 84
-      },
-      {
         "Key": "LockList",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 85
+        "SourceLine": 84
       },
       {
         "Key": "WaterEnvironmentMap",
         "HandlerType": "WaterEnvironmentMapHandler",
-        "SourceLine": 86
+        "SourceLine": 85
       }
     ],
     "Properties": [
@@ -3307,11 +3302,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -3477,11 +3474,13 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -7537,8 +7536,8 @@
         "SourceLine": 21
       },
       {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 22
       },
       {
@@ -7547,24 +7546,19 @@
         "SourceLine": 23
       },
       {
-        "Key": "Rank",
+        "Key": "MinLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
         "SourceLine": 24
       },
       {
-        "Key": "MinLevel",
+        "Key": "MaxLevel",
         "HandlerType": "SimpleReflectionPropertyHandler",
         "SourceLine": 25
       },
       {
-        "Key": "MaxLevel",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 26
-      },
-      {
         "Key": "Flags",
         "HandlerType": "FlagsHandler",
-        "SourceLine": 27
+        "SourceLine": 26
       }
     ],
     "Properties": [
@@ -7641,21 +7635,25 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Rank",
         "Type": "Byte",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "Rank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -19333,107 +19331,97 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 37
+        "SourceLine": 36
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 37
       },
       {
         "Key": "Projectile",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 38
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 40
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 41
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 42
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 43
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "IgnoredBySandbox",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 56
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 60
+      },
+      {
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
         "SourceLine": 62
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementPropertyHandler",
-        "SourceLine": 65
       }
     ],
     "Properties": [
@@ -19500,11 +19488,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -19600,21 +19590,42 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -19640,11 +19651,14 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -19677,107 +19691,97 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 37
+        "SourceLine": 36
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 37
       },
       {
         "Key": "Projectile",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 38
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 40
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 41
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 42
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 43
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "IgnoredBySandbox",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 56
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 60
+      },
+      {
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
         "SourceLine": 62
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementPropertyHandler",
-        "SourceLine": 65
       }
     ],
     "Properties": [
@@ -19844,11 +19848,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -19944,21 +19950,42 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -19984,11 +20011,14 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -20021,107 +20051,97 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 37
+        "SourceLine": 36
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 37
       },
       {
         "Key": "Projectile",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 38
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 40
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 41
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 42
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 43
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "IgnoredBySandbox",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 56
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 60
+      },
+      {
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
         "SourceLine": 62
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementPropertyHandler",
-        "SourceLine": 65
       }
     ],
     "Properties": [
@@ -20188,11 +20208,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -20288,21 +20310,42 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -20328,11 +20371,14 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -20365,107 +20411,97 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 37
+        "SourceLine": 36
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 37
       },
       {
         "Key": "Projectile",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 38
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 40
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 41
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 42
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 43
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "IgnoredBySandbox",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 56
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 60
+      },
+      {
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
         "SourceLine": 62
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementPropertyHandler",
-        "SourceLine": 65
       }
     ],
     "Properties": [
@@ -20532,11 +20568,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -20632,21 +20670,42 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -20672,11 +20731,14 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -20709,107 +20771,97 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 37
+        "SourceLine": 36
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 37
       },
       {
         "Key": "Projectile",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 38
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 40
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 41
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 42
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 43
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "IgnoredBySandbox",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 56
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 60
+      },
+      {
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
         "SourceLine": 62
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementPropertyHandler",
-        "SourceLine": 65
       }
     ],
     "Properties": [
@@ -20876,11 +20928,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -20976,21 +21030,42 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -21016,11 +21091,14 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -21053,107 +21131,97 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 37
+        "SourceLine": 36
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 37
       },
       {
         "Key": "Hazard",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 38
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 40
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 41
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 42
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 43
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "IgnoredBySandbox",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 56
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 60
+      },
+      {
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
         "SourceLine": 62
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementPropertyHandler",
-        "SourceLine": 65
       }
     ],
     "Properties": [
@@ -21220,11 +21288,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -21330,21 +21400,42 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -21360,11 +21451,14 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -21397,107 +21491,97 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 37
+        "SourceLine": 36
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 37
       },
       {
         "Key": "Projectile",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 38
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 40
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 41
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 42
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 43
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "IgnoredBySandbox",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 56
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 60
+      },
+      {
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
         "SourceLine": 62
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementPropertyHandler",
-        "SourceLine": 65
       }
     ],
     "Properties": [
@@ -21564,11 +21648,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -21664,21 +21750,42 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -21704,11 +21811,14 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -21741,157 +21851,142 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 41
+        "SourceLine": 40
       },
       {
         "Key": "Base",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
+        "SourceLine": 41
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 42
+      },
+      {
+        "Key": "RagdollPose",
+        "HandlerType": "RagdollPosePropertyHandler",
         "SourceLine": 43
-      },
-      {
-        "Key": "RagdollData",
-        "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 44
-      },
-      {
-        "Key": "RagdollBipedData",
-        "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 45
       },
       {
         "Key": "Patrol",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LevelModifier",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 48
+        "SourceLine": 46
       },
       {
         "Key": "MerchantContainer",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "Count",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 50
+        "SourceLine": 48
       },
       {
         "Key": "Radius",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 51
+        "SourceLine": 49
       },
       {
         "Key": "Health",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 53
+        "SourceLine": 51
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "LinkedReferenceColor",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "PersistentLocation",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 60
+        "SourceLine": 58
       },
       {
         "Key": "IsIgnoredBySandbox",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 62
+        "SourceLine": 60
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 63
+        "SourceLine": 61
       },
       {
         "Key": "Horse",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 64
+        "SourceLine": 62
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 65
+        "SourceLine": 63
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 64
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 66
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 68
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 69
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 70
+        "SourceLine": 67
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 71
+        "SourceLine": 68
       },
       {
         "Key": "IsIgnoredBySandbox2",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 72
+        "SourceLine": 69
       },
       {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 73
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementHandler",
-        "SourceLine": 74
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
+        "SourceLine": 70
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "VirtualMachineAdapterHandler",
-        "SourceLine": 75
+        "SourceLine": 71
       }
     ],
     "Properties": [
@@ -21968,11 +22063,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -22128,11 +22225,15 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "RagdollPose",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -22158,11 +22259,30 @@
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "RagdollPose",
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -22178,31 +22298,43 @@
       {
         "Name": "RagdollBipedData",
         "Type": "Nullable\u003CReadOnlyMemorySlice\u003CByte\u003E\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "RagdollPose",
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "RagdollBipedData"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "RagdollData",
         "Type": "Nullable\u003CReadOnlyMemorySlice\u003CByte\u003E\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "RagdollPose",
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "RagdollData"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "RagdollPose",
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -22235,302 +22367,287 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 43
+        "SourceLine": 42
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 44
+        "SourceLine": 43
       },
       {
         "Key": "Base",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 44
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 45
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 46
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 47
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 48
+        "SourceLine": 46
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "LinkedRooms",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 51
+        "SourceLine": 49
       },
       {
         "Key": "ImageSpace",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "LightingTemplate",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 53
+        "SourceLine": 51
       },
       {
         "Key": "BoundHalfExtents",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Primitive",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 55
+        "SourceLine": 53
       },
       {
         "Key": "OcclusionPlane",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "Portals",
         "HandlerType": "AtomicGeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "RoomPortal",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "Radius",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 63
+        "SourceLine": 61
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 64
+        "SourceLine": 62
       },
       {
         "Key": "LitWater",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 67
+        "SourceLine": 65
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 68
+        "SourceLine": 66
       },
       {
         "Key": "TeleportMessageBox",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 69
+        "SourceLine": 67
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 70
+        "SourceLine": 68
       },
       {
         "Key": "SpawnContainer",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 71
+        "SourceLine": 69
       },
       {
         "Key": "LeveledItemBaseObject",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 72
+        "SourceLine": 70
       },
       {
         "Key": "PersistentLocation",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 73
+        "SourceLine": 71
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 74
+        "SourceLine": 72
       },
       {
         "Key": "NavigationDoorLink",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 75
+        "SourceLine": 73
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 77
+        "SourceLine": 75
       },
       {
         "Key": "IsMultiBoundPrimitive",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 78
+        "SourceLine": 76
       },
       {
         "Key": "IsIgnoredBySandbox",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 79
+        "SourceLine": 77
       },
       {
         "Key": "IsOpenByDefault",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 80
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 81
+        "SourceLine": 78
       },
       {
         "Key": "ItemCount",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 82
+        "SourceLine": 79
       },
       {
         "Key": "Charge",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 83
+        "SourceLine": 80
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 84
+        "SourceLine": 81
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 85
+        "SourceLine": 82
       },
       {
         "Key": "CollisionLayer",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 86
+        "SourceLine": 83
       },
       {
         "Key": "LevelModifier",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 87
+        "SourceLine": 84
       },
       {
         "Key": "TeleportDestination",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 88
+        "SourceLine": 85
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 90
+        "SourceLine": 87
       },
       {
         "Key": "Lock",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 91
+        "SourceLine": 88
       },
       {
         "Key": "AttachRef",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 93
+        "SourceLine": 90
       },
       {
         "Key": "Action",
         "HandlerType": "SimpleReflectionFlagPropertyHandler",
-        "SourceLine": 94
+        "SourceLine": 91
       },
       {
         "Key": "LightData",
         "HandlerType": "LightDataHandler",
-        "SourceLine": 95
+        "SourceLine": 92
       },
       {
         "Key": "Alpha",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 96
+        "SourceLine": 93
       },
       {
         "Key": "Patrol",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 98
+        "SourceLine": 95
       },
       {
         "Key": "MapMarker",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 100
+        "SourceLine": 97
       },
       {
-        "Key": "Placement",
-        "HandlerType": "PlacementHandler",
-        "SourceLine": 102
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
+        "SourceLine": 99
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 103
+        "SourceLine": 100
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 104
+        "SourceLine": 101
       },
       {
         "Key": "WaterVelocity",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 106
+        "SourceLine": 103
       },
       {
         "Key": "XCZR",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 108
+        "SourceLine": 105
       },
       {
         "Key": "XCZC",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 109
+        "SourceLine": 106
       },
       {
         "Key": "XORD",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 110
+        "SourceLine": 107
       },
       {
-        "Key": "RagdollData",
-        "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 111
-      },
-      {
-        "Key": "RagdollBipedData",
-        "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 112
+        "Key": "RagdollPose",
+        "HandlerType": "RagdollPosePropertyHandler",
+        "SourceLine": 108
       },
       {
         "Key": "XWCN",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 113
+        "SourceLine": 109
       },
       {
         "Key": "XWCS",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 114
+        "SourceLine": 110
       },
       {
         "Key": "XCVL",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 115
+        "SourceLine": 111
       },
       {
         "Key": "XCZA",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 116
+        "SourceLine": 112
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 117
+        "SourceLine": 113
       }
     ],
     "Properties": [
@@ -22667,11 +22784,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -22897,11 +23016,15 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform",
+          "RagdollPose"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -22927,11 +23050,30 @@
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform",
+          "RagdollPose"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -22967,21 +23109,29 @@
       {
         "Name": "RagdollBipedData",
         "Type": "Nullable\u003CReadOnlyMemorySlice\u003CByte\u003E\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform",
+          "RagdollPose"
+        ],
+        "NestedLeaves": [
           "RagdollBipedData"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "RagdollData",
         "Type": "Nullable\u003CReadOnlyMemorySlice\u003CByte\u003E\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform",
+          "RagdollPose"
+        ],
+        "NestedLeaves": [
           "RagdollData"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -23007,11 +23157,15 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform",
+          "RagdollPose"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -23164,107 +23318,97 @@
       {
         "Key": "EditorID",
         "HandlerType": "EditorIDHandler",
-        "SourceLine": 37
+        "SourceLine": 36
       },
       {
         "Key": "MajorRecordFlagsRaw",
         "HandlerType": "MajorRecordFlagsRawHandler",
-        "SourceLine": 38
+        "SourceLine": 37
       },
       {
         "Key": "Projectile",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 39
+        "SourceLine": 38
       },
       {
         "Key": "VirtualMachineAdapter",
         "HandlerType": "SimpleReflectionVirtualMachineAdapterHandler",
-        "SourceLine": 40
+        "SourceLine": 39
       },
       {
         "Key": "EncounterZone",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
+        "SourceLine": 40
+      },
+      {
+        "Key": "Ownership",
+        "HandlerType": "OwnershipPropertyHandler",
         "SourceLine": 41
-      },
-      {
-        "Key": "Owner",
-        "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 42
-      },
-      {
-        "Key": "FactionRank",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 43
       },
       {
         "Key": "HeadTrackingWeight",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 44
+        "SourceLine": 42
       },
       {
         "Key": "FavorCost",
         "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 45
+        "SourceLine": 43
       },
       {
         "Key": "Reflections",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 46
+        "SourceLine": 44
       },
       {
         "Key": "LinkedReferences",
         "HandlerType": "GeneratedCopyReflectionListPropertyHandler",
-        "SourceLine": 49
+        "SourceLine": 47
       },
       {
         "Key": "ActivateParents",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 52
+        "SourceLine": 50
       },
       {
         "Key": "EnableParent",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
-        "SourceLine": 54
+        "SourceLine": 52
       },
       {
         "Key": "Emittance",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 56
+        "SourceLine": 54
       },
       {
         "Key": "MultiBoundReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 57
+        "SourceLine": 55
       },
       {
         "Key": "IgnoredBySandbox",
         "HandlerType": "SimpleReflectionBinaryDataPropertyHandler",
-        "SourceLine": 58
+        "SourceLine": 56
       },
       {
         "Key": "LocationRefTypes",
         "HandlerType": "SimpleReflectionListPropertyHandler",
-        "SourceLine": 59
+        "SourceLine": 57
       },
       {
         "Key": "LocationReference",
         "HandlerType": "SimpleReflectionFormLinkPropertyHandler",
-        "SourceLine": 61
+        "SourceLine": 59
       },
       {
         "Key": "DistantLodData",
         "HandlerType": "GeneratedCopyReflectionPropertyHandler",
+        "SourceLine": 60
+      },
+      {
+        "Key": "Transform",
+        "HandlerType": "TransformPropertyHandler",
         "SourceLine": 62
-      },
-      {
-        "Key": "Scale",
-        "HandlerType": "SimpleReflectionPropertyHandler",
-        "SourceLine": 64
-      },
-      {
-        "Key": "Placement",
-        "HandlerType": "PlacementPropertyHandler",
-        "SourceLine": 65
       }
     ],
     "Properties": [
@@ -23331,11 +23475,13 @@
       {
         "Name": "FactionRank",
         "Type": "Nullable\u003CInt32\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership"
+        ],
+        "NestedLeaves": [
           "FactionRank"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
@@ -23431,21 +23577,42 @@
       {
         "Name": "Owner",
         "Type": "IFormLinkNullableGetter\u003CIOwnerGetter\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Owner"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {
         "Name": "Placement",
         "Type": "IPlacementGetter",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
-          "Placement"
+          "Ownership",
+          "Transform"
         ],
-        "NestedLeaves": [],
+        "NestedLeaves": [
+          "Placement.Position.Absolute",
+          "Placement.Position.Length",
+          "Placement.Position.Magnitude",
+          "Placement.Position.Normalized",
+          "Placement.Position.SqrMagnitude",
+          "Placement.Position.X",
+          "Placement.Position.Y",
+          "Placement.Position.Z",
+          "Placement.Rotation.Absolute",
+          "Placement.Rotation.Length",
+          "Placement.Rotation.Magnitude",
+          "Placement.Rotation.Normalized",
+          "Placement.Rotation.SqrMagnitude",
+          "Placement.Rotation.X",
+          "Placement.Rotation.Y",
+          "Placement.Rotation.Z"
+        ],
         "Reason": null
       },
       {
@@ -23471,11 +23638,14 @@
       {
         "Name": "Scale",
         "Type": "Nullable\u003CSingle\u003E",
-        "Status": "Covered",
+        "Status": "AggregateCovered",
         "HandlerKeys": [
+          "Ownership",
+          "Transform"
+        ],
+        "NestedLeaves": [
           "Scale"
         ],
-        "NestedLeaves": [],
         "Reason": null
       },
       {

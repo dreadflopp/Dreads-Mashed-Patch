@@ -107,7 +107,7 @@ The shared application loop now writes ordinary containers/lists before handlers
 
 ProjectedPropertyHandler composes the existing typed aggregate reader/comparer/copier with explicit projection and merge functions. Its normal and resource projections preserve each other's destination fields. BodyPartRowsHandler derives the existing generated list adapter to retain keyed reconciliation. No whole-carrier gate or duplicate property context remains registered. Runtime group ownership metadata describes actual fields rather than assuming the aggregate key owns every descendant.
 
-Final coordination composes with ACHR/REFR UDR values, refusing overlapping keys.
+Final coordination selects declared asset groups, refusing overlapping keys. ACHR/REFR header flags, Transform and EnableParent retain ordinary independent contexts; no disabled-state snapshot is composed into asset decisions.
 Forwarding.ForwardTreeGroups maps to ForwardingRule.Trees and defaults false. One
 TreeAssets catalog group controls model/bounds, TreeData, VMAD script lists and
 supported header flags. All non-tree classifications are fixed true; they do not gate TREE.

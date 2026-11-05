@@ -1,5 +1,4 @@
 using DreadsMashedPatch.PropertyHandlers.General;
-using DreadsMashedPatch.PropertyHandlers.PlacedObject;
 using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
@@ -20,18 +19,17 @@ public sealed class PlacedObjectPlacementHandlerTests
     [Fact]
     public void RecordHandlerUsesReadablePlacementFormatter()
     {
-        var handler = Assert.IsType<PlacementHandler>(
-            new PlacedObjectRecordHandler().PropertyHandlers["Placement"]);
+        var handler = new PlacedObjectRecordHandler().PropertyHandlers["Transform"];
         var placement = new Placement
         {
             Position = new P3Float(1.25f, -2.5f, -0f),
             Rotation = new P3Float(0.1f, 0.2f, 0.3f)
         };
 
-        var formatted = handler.FormatValue(placement);
+        var formatted = handler.FormatValue(new TransformValue(placement, null));
 
         Assert.Equal(
-            "Position=(1.250000, -2.500000, 0.000000), RotationDegrees=(5.7296, 11.4592, 17.1887)",
+            "Position=(1.250000, -2.500000, 0.000000), RotationDegrees=(5.7296, 11.4592, 17.1887), Scale=null",
             formatted);
     }
 
@@ -40,7 +38,9 @@ public sealed class PlacedObjectPlacementHandlerTests
     {
         var handlers = new PlacedObjectRecordHandler().PropertyHandlers;
 
-        Assert.Contains("Placement", handlers.Keys);
+        Assert.Contains("Transform", handlers.Keys);
+        Assert.DoesNotContain("Placement", handlers.Keys);
+        Assert.DoesNotContain("Scale", handlers.Keys);
         Assert.DoesNotContain("Placement.Position", handlers.Keys);
         Assert.DoesNotContain("Placement.Rotation", handlers.Keys);
     }
@@ -48,7 +48,7 @@ public sealed class PlacedObjectPlacementHandlerTests
     [Fact]
     public void PlacementEqualityIgnoresSubPrecisionRotationDifferences()
     {
-        var handler = new PlacementHandler();
+        var handler = new PlacementPropertyHandler<IPlacedObject, IPlacedObjectGetter>();
         var original = new Placement
         {
             Position = new P3Float(936.2212f, 76.75349f, 240f),
@@ -72,7 +72,7 @@ public sealed class PlacedObjectPlacementHandlerTests
     [Fact]
     public void PlacementEqualityNormalizesEquivalentAnglesModuloFullTurn()
     {
-        var handler = new PlacementHandler();
+        var handler = new PlacementPropertyHandler<IPlacedObject, IPlacedObjectGetter>();
         var original = new Placement
         {
             Position = new P3Float(2002.1953125f, -568.9878540f, -5.7508850f),
@@ -93,7 +93,7 @@ public sealed class PlacedObjectPlacementHandlerTests
     [Fact]
     public void PlacementEqualityUsesXEditPositionPrecision()
     {
-        var handler = new PlacementHandler();
+        var handler = new PlacementPropertyHandler<IPlacedObject, IPlacedObjectGetter>();
         var original = new Placement
         {
             Position = new P3Float(1.0000001f, 2f, 3f),
@@ -117,7 +117,7 @@ public sealed class PlacedObjectPlacementHandlerTests
     [Fact]
     public void FormatterPreservesNullOutput()
     {
-        Assert.Equal("null", new PlacementHandler().FormatValue(null));
+        Assert.Equal("null", new TransformPropertyHandler<IPlacedObject, IPlacedObjectGetter>().FormatValue(null));
     }
 
     [Fact]

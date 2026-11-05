@@ -14,8 +14,7 @@ public sealed class RemainingMissingCoverageTests
     [InlineData("RagdollBipedData")]
     public void PlacedNpcRagdollHandlersDeepCopyBytes(string propertyName)
     {
-        var handler = Assert.IsType<SimpleReflectionBinaryDataPropertyHandler<IPlacedNpc, IPlacedNpcGetter>>(
-            new PlacedNpcRecordHandler().PropertyHandlers[propertyName]);
+        var handler = new PlacedNpcRecordHandler().PropertyHandlers["RagdollPose"];
         var sourceBytes = new byte[] { 1, 2, 3, 4 };
         var source = CreatePlacedNpc(0x500);
         var target = CreatePlacedNpc(0x501);

@@ -16,7 +16,6 @@ using Noggog;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Inherited fields follow the PHZD/xEdit ReferenceRecord pattern.
-// Safe-disable UDR coordination remains limited to ACHR/REFR.
 public class PlacedConeRecordHandler : AbstractRecordHandler
 {
     protected override void InitializePropertyContexts(
@@ -39,8 +38,7 @@ public class PlacedConeRecordHandler : AbstractRecordHandler
         { "Projectile", new SimpleReflectionFormLinkPropertyHandler<IProjectileGetter, IPlacedCone, IPlacedConeGetter>("Projectile") },
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedCone, IPlacedConeGetter>() },
         { "EncounterZone", new SimpleReflectionFormLinkPropertyHandler<IEncounterZoneGetter, IPlacedCone, IPlacedConeGetter>("EncounterZone") },
-        { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedCone, IPlacedConeGetter>("Owner") },
-        { "FactionRank", new SimpleReflectionPropertyHandler<int?, IPlacedCone, IPlacedConeGetter>("FactionRank") },
+        { "Ownership", new OwnershipPropertyHandler<IPlacedCone, IPlacedConeGetter, int?>() },
         { "HeadTrackingWeight", new SimpleReflectionPropertyHandler<float?, IPlacedCone, IPlacedConeGetter>("HeadTrackingWeight") },
         { "FavorCost", new SimpleReflectionPropertyHandler<float?, IPlacedCone, IPlacedConeGetter>("FavorCost") },
         { "Reflections", new GeneratedCopyReflectionListPropertyHandler<IWaterReflectionGetter, WaterReflection, IPlacedCone, IPlacedConeGetter>(
@@ -61,8 +59,7 @@ public class PlacedConeRecordHandler : AbstractRecordHandler
         { "LocationReference", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IPlacedCone, IPlacedConeGetter>("LocationReference") },
         { "DistantLodData", new GeneratedCopyReflectionPropertyHandler<IReadOnlyList<float>, ExtendedList<float>, IPlacedCone, IPlacedConeGetter>(
             "DistantLodData", value => new ExtendedList<float>(value), (left, right) => left.SequenceEqual(right)) },
-        { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedCone, IPlacedConeGetter>("Scale") },
-        { "Placement", new PlacementPropertyHandler<IPlacedCone, IPlacedConeGetter>() }
+        { "Transform", new TransformPropertyHandler<IPlacedCone, IPlacedConeGetter>() }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

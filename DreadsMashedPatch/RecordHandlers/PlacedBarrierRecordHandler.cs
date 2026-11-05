@@ -16,7 +16,6 @@ using Noggog;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Inherited fields follow the PHZD/xEdit ReferenceRecord pattern.
-// Safe-disable UDR coordination remains limited to ACHR/REFR.
 public class PlacedBarrierRecordHandler : AbstractRecordHandler
 {
     protected override void InitializePropertyContexts(
@@ -39,8 +38,7 @@ public class PlacedBarrierRecordHandler : AbstractRecordHandler
         { "Projectile", new SimpleReflectionFormLinkPropertyHandler<IProjectileGetter, IPlacedBarrier, IPlacedBarrierGetter>("Projectile") },
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedBarrier, IPlacedBarrierGetter>() },
         { "EncounterZone", new SimpleReflectionFormLinkPropertyHandler<IEncounterZoneGetter, IPlacedBarrier, IPlacedBarrierGetter>("EncounterZone") },
-        { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedBarrier, IPlacedBarrierGetter>("Owner") },
-        { "FactionRank", new SimpleReflectionPropertyHandler<int?, IPlacedBarrier, IPlacedBarrierGetter>("FactionRank") },
+        { "Ownership", new OwnershipPropertyHandler<IPlacedBarrier, IPlacedBarrierGetter, int?>() },
         { "HeadTrackingWeight", new SimpleReflectionPropertyHandler<float?, IPlacedBarrier, IPlacedBarrierGetter>("HeadTrackingWeight") },
         { "FavorCost", new SimpleReflectionPropertyHandler<float?, IPlacedBarrier, IPlacedBarrierGetter>("FavorCost") },
         { "Reflections", new GeneratedCopyReflectionListPropertyHandler<IWaterReflectionGetter, WaterReflection, IPlacedBarrier, IPlacedBarrierGetter>(
@@ -61,8 +59,7 @@ public class PlacedBarrierRecordHandler : AbstractRecordHandler
         { "LocationReference", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IPlacedBarrier, IPlacedBarrierGetter>("LocationReference") },
         { "DistantLodData", new GeneratedCopyReflectionPropertyHandler<IReadOnlyList<float>, ExtendedList<float>, IPlacedBarrier, IPlacedBarrierGetter>(
             "DistantLodData", value => new ExtendedList<float>(value), (left, right) => left.SequenceEqual(right)) },
-        { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedBarrier, IPlacedBarrierGetter>("Scale") },
-        { "Placement", new PlacementPropertyHandler<IPlacedBarrier, IPlacedBarrierGetter>() }
+        { "Transform", new TransformPropertyHandler<IPlacedBarrier, IPlacedBarrierGetter>() }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

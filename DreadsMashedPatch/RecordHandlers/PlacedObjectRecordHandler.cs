@@ -5,7 +5,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins;
-using DreadsMashedPatch;
 using DreadsMashedPatch.PropertyHandlers.General;
 using DreadsMashedPatch.PropertyHandlers.PlacedObject;
 using DreadsMashedPatch.PropertyHandlers.Abstracts;
@@ -16,8 +15,8 @@ using Noggog;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Placement uses xEdit precision and normalized circular angles to avoid invisible conflicts.
-    // Safe UDRs coordinate Initially Disabled, Placement and EnableParent; LocationReference stays independent.
+    // Header flags, Transform and EnableParent retain independent selection owners.
+    // LocationReference stays independent of transform and requires ownership for removal.
     // LinkedReferences is positional: xEdit declares an unsorted wbRArray without a StructSK key.
     // Unknown is outside the semantic conflict surface.
     public class PlacedObjectRecordHandler : AbstractRecordHandler
@@ -35,7 +34,7 @@ namespace DreadsMashedPatch.RecordHandlers
             IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             return AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state,
-                AtomicOwnershipTriggerProperties, PlacedReferenceUdrCoordinator.Coordinate(recordContexts, PropertyContexts));
+                AtomicOwnershipTriggerProperties);
         }
 
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -43,8 +42,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
             { "Base", new SimpleReflectionFormLinkPropertyHandler<IPlaceableObjectGetter, IPlacedObject, IPlacedObjectGetter>("Base") },
-            { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedObject, IPlacedObjectGetter>("Owner") },
-            { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedObject, IPlacedObjectGetter>("Scale") },
+            { "Ownership", new OwnershipPropertyHandler<IPlacedObject, IPlacedObjectGetter, int?>() },
             { "LocationReference", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IPlacedObject, IPlacedObjectGetter>("LocationReference") },
             { "LinkedReferences", new GeneratedCopyReflectionListPropertyHandler<ILinkedReferencesGetter, LinkedReferences, IPlacedObject, IPlacedObjectGetter>(
                 "LinkedReferences", ListSemantics.ExactOrdered, value => value.DeepCopy(), LinkedReferencesMixIn.Equals) },
@@ -78,7 +76,6 @@ namespace DreadsMashedPatch.RecordHandlers
             { "IsMultiBoundPrimitive", new SimpleReflectionPropertyHandler<bool, IPlacedObject, IPlacedObjectGetter>("IsMultiBoundPrimitive") },
             { "IsIgnoredBySandbox", new SimpleReflectionPropertyHandler<bool, IPlacedObject, IPlacedObjectGetter>("IsIgnoredBySandbox") },
             { "IsOpenByDefault", new SimpleReflectionPropertyHandler<bool, IPlacedObject, IPlacedObjectGetter>("IsOpenByDefault") },
-            { "FactionRank", new SimpleReflectionPropertyHandler<int?, IPlacedObject, IPlacedObjectGetter>("FactionRank") },
             { "ItemCount", new SimpleReflectionPropertyHandler<int?, IPlacedObject, IPlacedObjectGetter>("ItemCount") },
             { "Charge", new SimpleReflectionPropertyHandler<float?, IPlacedObject, IPlacedObjectGetter>("Charge") },
             { "HeadTrackingWeight", new SimpleReflectionPropertyHandler<float?, IPlacedObject, IPlacedObjectGetter>("HeadTrackingWeight") },
@@ -99,7 +96,7 @@ namespace DreadsMashedPatch.RecordHandlers
                 "Patrol", value => value.DeepCopy(), PatrolMixIn.Equals) },
             { "MapMarker", new GeneratedCopyReflectionPropertyHandler<IMapMarkerGetter, MapMarker, IPlacedObject, IPlacedObjectGetter>(
                 "MapMarker", value => value.DeepCopy(), MapMarkerMixIn.Equals) },
-            { "Placement", new PlacementHandler() },
+            { "Transform", new TransformPropertyHandler<IPlacedObject, IPlacedObjectGetter>() },
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedObject, IPlacedObjectGetter>() },
             { "EnableParent", new GeneratedCopyReflectionPropertyHandler<IEnableParentGetter, EnableParent, IPlacedObject, IPlacedObjectGetter>(
                 "EnableParent", value => value.DeepCopy(), EnableParentMixIn.Equals) },
@@ -108,8 +105,7 @@ namespace DreadsMashedPatch.RecordHandlers
             { "XCZR", new SimpleReflectionFormLinkPropertyHandler<ILinkedReferenceGetter, IPlacedObject, IPlacedObjectGetter>("XCZR") },
             { "XCZC", new SimpleReflectionFormLinkPropertyHandler<ICellGetter, IPlacedObject, IPlacedObjectGetter>("XCZC") },
             { "XORD", new SimpleReflectionBinaryDataPropertyHandler<IPlacedObject, IPlacedObjectGetter>("XORD") },
-            { "RagdollData", new SimpleReflectionBinaryDataPropertyHandler<IPlacedObject, IPlacedObjectGetter>("RagdollData") },
-            { "RagdollBipedData", new SimpleReflectionBinaryDataPropertyHandler<IPlacedObject, IPlacedObjectGetter>("RagdollBipedData") },
+            { "RagdollPose", new RagdollPosePropertyHandler<IPlacedObject, IPlacedObjectGetter>() },
             { "XWCN", new SimpleReflectionBinaryDataPropertyHandler<IPlacedObject, IPlacedObjectGetter>("XWCN") },
             { "XWCS", new SimpleReflectionBinaryDataPropertyHandler<IPlacedObject, IPlacedObjectGetter>("XWCS") },
             { "XCVL", new SimpleReflectionBinaryDataPropertyHandler<IPlacedObject, IPlacedObjectGetter>("XCVL") },

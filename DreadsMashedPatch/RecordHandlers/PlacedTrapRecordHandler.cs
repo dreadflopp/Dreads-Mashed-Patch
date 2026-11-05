@@ -16,7 +16,6 @@ using Noggog;
 namespace DreadsMashedPatch.RecordHandlers;
 
 // Inherited fields follow the PHZD/xEdit ReferenceRecord pattern.
-// Safe-disable UDR coordination remains limited to ACHR/REFR.
 public class PlacedTrapRecordHandler : AbstractRecordHandler
 {
     protected override void InitializePropertyContexts(
@@ -39,8 +38,7 @@ public class PlacedTrapRecordHandler : AbstractRecordHandler
         { "Projectile", new SimpleReflectionFormLinkPropertyHandler<IProjectileGetter, IPlacedTrap, IPlacedTrapGetter>("Projectile") },
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedTrap, IPlacedTrapGetter>() },
         { "EncounterZone", new SimpleReflectionFormLinkPropertyHandler<IEncounterZoneGetter, IPlacedTrap, IPlacedTrapGetter>("EncounterZone") },
-        { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedTrap, IPlacedTrapGetter>("Owner") },
-        { "FactionRank", new SimpleReflectionPropertyHandler<int?, IPlacedTrap, IPlacedTrapGetter>("FactionRank") },
+        { "Ownership", new OwnershipPropertyHandler<IPlacedTrap, IPlacedTrapGetter, int?>() },
         { "HeadTrackingWeight", new SimpleReflectionPropertyHandler<float?, IPlacedTrap, IPlacedTrapGetter>("HeadTrackingWeight") },
         { "FavorCost", new SimpleReflectionPropertyHandler<float?, IPlacedTrap, IPlacedTrapGetter>("FavorCost") },
         { "Reflections", new GeneratedCopyReflectionListPropertyHandler<IWaterReflectionGetter, WaterReflection, IPlacedTrap, IPlacedTrapGetter>(
@@ -61,8 +59,7 @@ public class PlacedTrapRecordHandler : AbstractRecordHandler
         { "LocationReference", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IPlacedTrap, IPlacedTrapGetter>("LocationReference") },
         { "DistantLodData", new GeneratedCopyReflectionPropertyHandler<IReadOnlyList<float>, ExtendedList<float>, IPlacedTrap, IPlacedTrapGetter>(
             "DistantLodData", value => new ExtendedList<float>(value), (left, right) => left.SequenceEqual(right)) },
-        { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedTrap, IPlacedTrapGetter>("Scale") },
-        { "Placement", new PlacementPropertyHandler<IPlacedTrap, IPlacedTrapGetter>() }
+        { "Transform", new TransformPropertyHandler<IPlacedTrap, IPlacedTrapGetter>() }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

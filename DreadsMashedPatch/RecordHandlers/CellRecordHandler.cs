@@ -64,7 +64,7 @@ namespace DreadsMashedPatch.RecordHandlers
 
                 { "Regions", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IRegionGetter>, ICell, ICellGetter>("Regions", ListSemantics.SortedKeyed) },
                 { "Location", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, ICell, ICellGetter>("Location") },
-                { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, ICell, ICellGetter>("Owner") },
+                { "Ownership", new OwnershipPropertyHandler<ICell, ICellGetter, int?>() },
                 { "Water", new SimpleReflectionFormLinkPropertyHandler<IWaterGetter, ICell, ICellGetter>("Water") },
                 { "Lighting", new LightingHandler() },
                 { "LightingTemplate", new SimpleReflectionFormLinkPropertyHandler<ILightingTemplateGetter, ICell, ICellGetter>("LightingTemplate") },
@@ -81,7 +81,6 @@ namespace DreadsMashedPatch.RecordHandlers
                 { "XWCS", new WaterCurrentCountOldHandler() },
                 { "OcclusionData", new OcclusionDataHandler() },
                 { "LNAM", new LNAMHandler() },
-                { "FactionRank", new SimpleReflectionPropertyHandler<int?, ICell, ICellGetter>("FactionRank") },
                 { "LockList", new SimpleReflectionFormLinkPropertyHandler<ILockListGetter, ICell, ICellGetter>("LockList") },
                 { "WaterEnvironmentMap", new WaterEnvironmentMapHandler() },
 

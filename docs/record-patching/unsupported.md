@@ -25,7 +25,7 @@ Some supported records also use indirect routes:
 | GLOB | Global query narrowed to Float, Int, Short or Unknown. Each has its own Data handling. |
 | GMST | Game-setting query narrowed to Bool, Float, Int or String. |
 | PHZD | Placed-trap query narrowed to hazards. Hazard, all eighteen inherited placed fields and shared metadata/header handling are registered. All seven placed-projectile siblings have their own concrete narrowing and handlers. |
-| PARW / PBAR / PBEA / PCON / PFLA / PGRE / PMIS | Shared placed-trap query narrowed separately to each concrete variant. Projectile, all eighteen inherited fields and shared metadata/header handling are registered. No ACHR/REFR UDR coordination. |
+| PARW / PBAR / PBEA / PCON / PFLA / PGRE / PMIS | Shared placed-trap query narrowed separately to each concrete variant. Projectile, all eighteen inherited fields and shared metadata/header handling are registered. |
 | FLST | Routed to FormIdRecordHandler. |
 | INFO | Routed to singular-named DialogResponseRecordHandler, separately from DIAL child lists. |
 | ACHR / REFR | Placed NPC/object handlers, independently queried even beneath cells. |

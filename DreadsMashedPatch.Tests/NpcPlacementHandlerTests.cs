@@ -3,7 +3,7 @@ using DreadsMashedPatch.RecordHandlers;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Xunit;
-using PlacedNpcPlacementHandler = DreadsMashedPatch.PropertyHandlers.PlacedNpc.PlacementHandler;
+using DreadsMashedPatch.PropertyHandlers.General;
 
 namespace DreadsMashedPatch.Tests;
 
@@ -40,14 +40,14 @@ public sealed class NpcPlacementHandlerTests
     [Fact]
     public void RecordHandlerUsesEpsilonAwarePlacementHandler()
     {
-        Assert.IsType<PlacedNpcPlacementHandler>(
-            new PlacedNpcRecordHandler().PropertyHandlers["Placement"]);
+        Assert.IsType<TransformPropertyHandler<IPlacedNpc, IPlacedNpcGetter>>(
+            new PlacedNpcRecordHandler().PropertyHandlers["Transform"]);
     }
 
     [Fact]
     public void PlacementEqualityIgnoresLoggedSubPrecisionRotationDifference()
     {
-        var handler = new PlacedNpcPlacementHandler();
+        var handler = new PlacementPropertyHandler<IPlacedNpc, IPlacedNpcGetter>();
         var winning = new Placement
         {
             Position = new Noggog.P3Float(936.2212f, 76.75349f, 240f),

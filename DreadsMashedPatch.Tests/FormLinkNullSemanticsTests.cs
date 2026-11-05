@@ -18,13 +18,11 @@ public sealed class FormLinkNullSemanticsTests
         var patch = new SkyrimMod(PatchModKey, SkyrimRelease.SkyrimSE);
         var placed = new PlacedObject(new FormKey(PatchModKey, 0xB01), SkyrimRelease.SkyrimSE);
         placed.Owner.SetTo(OwnerKey);
+        placed.FactionRank = 3;
         AddToCell(patch, placed);
-        var handler = Assert.IsType<SimpleReflectionFormLinkPropertyHandler<
-            IOwnerGetter,
-            IPlacedObject,
-            IPlacedObjectGetter>>(new PlacedObjectRecordHandler().PropertyHandlers["Owner"]);
+        var handler = new PlacedObjectRecordHandler().PropertyHandlers["Ownership"];
 
-        handler.SetValue(placed, null);
+        handler.SetValue(placed, new OwnershipValue<int?>(null, null));
 
         Assert.Null(placed.Owner.FormKeyNullable);
         using var stream = new MemoryStream();
@@ -33,6 +31,7 @@ public sealed class FormLinkNullSemanticsTests
         using var overlay = SkyrimMod.CreateFromBinaryOverlay(stream, SkyrimRelease.SkyrimSE, PatchModKey);
         var written = Assert.Single(overlay.EnumerateMajorRecords<IPlacedObjectGetter>());
         Assert.Null(written.Owner.FormKeyNullable);
+        Assert.Null(written.FactionRank);
     }
 
     [Fact]

@@ -116,7 +116,7 @@ Notes:
 | PFLA | Placed Flame | `IPlacedFlameGetter` | `PlacedFlameRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
 | PGRE | Placed Trap | `IPlacedTrapGetter` | `PlacedTrapRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
 | PMIS | Placed Missile | `IPlacedMissileGetter` | `PlacedMissileRecordHandler` | Wired | Concrete narrowing from the shared placed-trap query; Projectile and all inherited fields. |
-| PHZD | Placed Hazard | `IPlacedHazardGetter` | `PlacedHazardRecordHandler` | Wired | Hazard plus all eighteen inherited placed fields, EditorID and approved header flags. PHZD has no UDR coordinator. |
+| PHZD | Placed Hazard | `IPlacedHazardGetter` | `PlacedHazardRecordHandler` | Wired | Hazard plus all eighteen inherited placed fields, EditorID and approved header flags. |
 | PROJ | Projectile | `IProjectileGetter` | `ProjectileRecordHandler` | Wired | |
 | QUST | Quest | `IQuestGetter` | `QuestRecordHandler` | Wired | |
 | RACE | Race | `IRaceGetter` | `RaceRecordHandler` | Wired | |

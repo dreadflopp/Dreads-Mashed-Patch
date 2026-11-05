@@ -15,8 +15,7 @@ using Noggog;
 
 namespace DreadsMashedPatch.RecordHandlers;
 
-// Inherited placed fields follow xEdit ReferenceRecord semantics. Safe-disable UDR coordination
-// is limited to ACHR/REFR; no PHZD UDR policy is established.
+// Inherited placed fields follow xEdit ReferenceRecord semantics.
 public class PlacedHazardRecordHandler : AbstractRecordHandler
 {
     protected override void InitializePropertyContexts(
@@ -39,8 +38,7 @@ public class PlacedHazardRecordHandler : AbstractRecordHandler
         { "Hazard", new SimpleReflectionFormLinkPropertyHandler<IHazardGetter, IPlacedHazard, IPlacedHazardGetter>("Hazard") },
         { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedHazard, IPlacedHazardGetter>() },
         { "EncounterZone", new SimpleReflectionFormLinkPropertyHandler<IEncounterZoneGetter, IPlacedHazard, IPlacedHazardGetter>("EncounterZone") },
-        { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IPlacedHazard, IPlacedHazardGetter>("Owner") },
-        { "FactionRank", new SimpleReflectionPropertyHandler<int?, IPlacedHazard, IPlacedHazardGetter>("FactionRank") },
+        { "Ownership", new OwnershipPropertyHandler<IPlacedHazard, IPlacedHazardGetter, int?>() },
         { "HeadTrackingWeight", new SimpleReflectionPropertyHandler<float?, IPlacedHazard, IPlacedHazardGetter>("HeadTrackingWeight") },
         { "FavorCost", new SimpleReflectionPropertyHandler<float?, IPlacedHazard, IPlacedHazardGetter>("FavorCost") },
         { "Reflections", new GeneratedCopyReflectionListPropertyHandler<IWaterReflectionGetter, WaterReflection, IPlacedHazard, IPlacedHazardGetter>(
@@ -61,8 +59,7 @@ public class PlacedHazardRecordHandler : AbstractRecordHandler
         { "LocationReference", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IPlacedHazard, IPlacedHazardGetter>("LocationReference") },
         { "DistantLodData", new GeneratedCopyReflectionPropertyHandler<IReadOnlyList<float>, ExtendedList<float>, IPlacedHazard, IPlacedHazardGetter>(
             "DistantLodData", value => new ExtendedList<float>(value), (left, right) => left.SequenceEqual(right)) },
-        { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedHazard, IPlacedHazardGetter>("Scale") },
-        { "Placement", new PlacementPropertyHandler<IPlacedHazard, IPlacedHazardGetter>() }
+        { "Transform", new TransformPropertyHandler<IPlacedHazard, IPlacedHazardGetter>() }
     };
 
     public override IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>[] GetRecordContexts(

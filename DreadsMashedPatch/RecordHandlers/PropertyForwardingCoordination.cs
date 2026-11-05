@@ -9,7 +9,7 @@ public sealed class PropertyForwardingCoordination
     public PropertyForwardingCoordination(
         IReadOnlyDictionary<string, object?> forwardValues,
         string? auditMessage,
-        string auditProperty = "UDR")
+        string auditProperty = "Coordination")
     {
         ForwardValues = forwardValues;
         AuditMessage = auditMessage;

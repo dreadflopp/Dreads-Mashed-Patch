@@ -19,9 +19,8 @@ namespace DreadsMashedPatch.RecordHandlers
         {
             { "EditorID", new EditorIDHandler() },
             { "MajorRecordFlagsRaw", new MajorRecordFlagsRawHandler(typeof(SkyrimMajorRecord.SkyrimMajorRecordFlag)) },
-            { "Owner", new SimpleReflectionFormLinkPropertyHandler<IOwnerGetter, IEncounterZone, IEncounterZoneGetter>("Owner") },
+            { "Ownership", new OwnershipPropertyHandler<IEncounterZone, IEncounterZoneGetter, byte>("Rank") },
             { "Location", new SimpleReflectionFormLinkPropertyHandler<ILocationGetter, IEncounterZone, IEncounterZoneGetter>("Location") },
-            { "Rank", new SimpleReflectionPropertyHandler<byte, IEncounterZone, IEncounterZoneGetter>("Rank") },
             { "MinLevel", new SimpleReflectionPropertyHandler<byte, IEncounterZone, IEncounterZoneGetter>("MinLevel") },
             { "MaxLevel", new SimpleReflectionPropertyHandler<byte, IEncounterZone, IEncounterZoneGetter>("MaxLevel") },
             { "Flags", new FlagsHandler() }
