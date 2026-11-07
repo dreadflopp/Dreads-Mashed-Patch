@@ -40,8 +40,8 @@ public sealed class NpcPlacementHandlerTests
     [Fact]
     public void RecordHandlerUsesEpsilonAwarePlacementHandler()
     {
-        Assert.IsType<TransformPropertyHandler<IPlacedNpc, IPlacedNpcGetter>>(
-            new PlacedNpcRecordHandler().PropertyHandlers["Transform"]);
+        Assert.IsType<PlacementPropertyHandler<IPlacedNpc, IPlacedNpcGetter>>(
+            new PlacedNpcRecordHandler().PropertyHandlers["Placement"]);
     }
 
     [Fact]

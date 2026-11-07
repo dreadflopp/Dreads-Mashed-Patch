@@ -417,7 +417,8 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                             // EditorID preservation uses the latest configured official baseline.
                             forwardValue = baselineEditorId;
                         }
-                        var shouldForward = !handler.AreValuesEqual(forwardValue, winningValue);
+                        var spatialMove = propertyName == "Placement" && coordination.OverrideContext != null;
+                        var shouldForward = spatialMove || !handler.AreValuesEqual(forwardValue, winningValue);
 
                         if (shouldForward)
                         {
@@ -500,7 +501,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                         }
                         LogCollector.AddDecisionAudit(
                             propertyName,
-                            $"[{propertyName}]   Decision: {(shouldForward ? "FORWARD (computed value differs from winning)" : "KEEP WINNING (computed value equals winning)")}");
+                            $"[{propertyName}]   Decision: {(spatialMove ? "FORWARD (parent cell differs from winning)" : shouldForward ? "FORWARD (computed value differs from winning)" : "KEEP WINNING (computed value equals winning)")}");
                     }
 
                     if (LogCollector.HasLogs())
@@ -522,7 +523,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     diagnostics.Report.ThrowIfFailed();
                     if (propertiesToForward.Count > 0)
                     {
-                        CommitOverride(winningContext, state, propertiesToForward);
+                        CommitOverride(coordination.OverrideContext ?? winningContext, state, propertiesToForward);
                     }
 
                 }

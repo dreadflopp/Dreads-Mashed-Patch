@@ -18,19 +18,17 @@ not an open-issues list. Public limitations remain on the affected record pages.
 | LTEX | HNAM/SNAM scalar interfaces do not expose absent-subrecord state; writing can normalize missing representations. Nullable snow INAM requires SSE FormVersion 43 or later. LAND remains excluded. |
 | Null/default writes | Setters normalize presence per property. Shared post-write validation checks non-null values only. Keywords and NPC Perks preserve absent versus present-empty, but there is no universal null-removal guarantee. |
 | Omitted/opaque data | Unregistered fields have no independent decision. Copying/writing may change representation. The meaning and safe combination of every exposed byte payload are not established. See [inventory exclusions](INVENTORY.md#exclusions-and-fields-that-are-not-independent-decisions). |
-| ACHR / REFR relocation | Parent cell/world and child-group placement are not part of the current Transform decision. A forwarded transform can therefore be written under an incompatible winning parent. Independent XLRL selection can also retain the old location. The [field review below](#placed-reference-relocation-review-achrrefr) distinguishes required spatial consistency from unsafe broad grouping. |
+| ACHR / REFR relocation | Interior-only cell + DATA and same-cell XLRL selection correct the reported mixed-parent output. Exterior and specialized spatial moves fall back to winning placement; general persistence-only storage correction and LCTN/script/network reconstruction remain outside scope. See the [field review](#placed-reference-relocation-review-achrrefr). |
 | REFR water current packages | Mutagen 0.54.4 exposes XWCN/XWCS byte counts and one fixed-layout WaterVelocity/XWCU value, whereas xEdit 93cc0bc defines count/payload alternatives. XCZR/XCZC/XCZA are singular properties but xEdit defines repeated reference-or-cell target/payload entries. The XCZR registration uses ILinkedReferenceGetter while the actual surface is IPlacedGetter. Independent forwarding is retained pending binary fixtures for both count variants, multiple entries, target switches, order and presence. Check xEdit's separate XCVR surface too; do not infer it from WaterVelocity's member names. Sources: wbDefinitionsTES5.pas:9729–9761; decompiled PlacedObjectBinaryCreateTranslation, PlacedObjectBinaryOverlay, PlacedObjectBinaryWriteTranslation and WaterVelocityBinaryCreateTranslation. Grouping cannot recover unrepresented entries. |
 | REFR occlusion/geometry | XORD is four positional FormIDs in xEdit (wbDefinitionsTES5.pas:9650), but Mutagen 0.54.4 reads/writes it as raw bytes. Source master indices may survive copying into a different patch master table; this is a source-based risk, not a reproduced cross-master failure. Test differing master indices and links referenced only inside XORD before considering OcclusionPlane + XORD grouping. Merely removing its registration would not establish safe winner copying. Primitive/BoundHalfExtents/Portals/multibound fields remain independent pending representative authored records establishing a shared geometry/transform boundary. RoomPortal/XPTL is marked unused/removed by CK; that alone does not authorize dropping it. |
 | Policy performance | Priority/baseline identifier indexes are lazy and avoid full histories during policy checks, but their setup/memory cost has no broad real-modlist benchmark. |
 
 ## Placed-reference relocation review (ACHR/REFR)
 
-This is an investigation of the current implementation and proposed boundaries,
-not an implemented relocation policy or an in-game validation result. The field
-tables cover the record-level members of Mutagen 0.54.4 `IPlacedNpcGetter` and
-`IPlacedObjectGetter`, their shared placed members, and the containing structure.
-Nested values retain the boundaries stated in their rows; this review does not
-establish the engine meaning of every opaque byte or every script property.
+InteriorReferencePlacement implements the narrow interior-to-interior correction.
+The field tables retain the Mutagen 0.54.4 surface review and dependency limits;
+they are not a claim that every listed compatibility check is implemented or
+that game behavior has been validated. Nested values retain their stated boundaries.
 
 ### Established failure and the grouping trap
 
@@ -53,21 +51,21 @@ later `(mine, original position, MineLocation)` tuple differs from the original
 `(mine, original position, null)` tuple. It is consequently an addition, not a
 permission-controlled restoration, and can replace CRF's entire move. This is a
 branch trace of the existing algorithm, not a binary fixture of an implemented
-alternative. Independent XLRL selection currently reaches the mine value for
+alternative. The former independent XLRL selection reached the mine value for
 the same reason. Adding Persist Location, flags, or unrelated fields to that
 tuple introduces more ways for an unrelated edit to replace a relocation.
 
 ### Shared fields and ACHR-specific fields
 
-Recommendations in this table describe the intended design direction. Current
-registrations and existing tests continue to define executable behavior.
+Current interior selection is described explicitly below; broader dependency
+checks remain review boundaries, not implicit implementation promises.
 
 | Fields | Boundary and consequence for relocation |
 |---|---|
-| Parent CELL, parent WRLD, exterior grid, persistent/temporary child group | Structural context, absent from ordinary property comparison. Physical cell/world and position/rotation must describe the same authored placement. Exterior persistent storage uses the world's persistent cell, so storage-cell identity is not always geographic-cell identity. The final Persistent flag must agree with output storage; copying the movement source's child group blindly is insufficient. |
-| `Placement`, `Scale` (`Transform`) | Current policy selects position, rotation and scale together. Extend spatial selection to include its coordinate frame and retain provenance. A same-coordinate move to another interior must still count as a change. Existing tests deliberately allow a scale-only edit to replace an earlier movement; with cell grouping it could also replace the cell. This is a policy tradeoff, not an engine requirement that scale and cell always share an owner. Do not silently change the existing scale policy as part of a structural fix. |
-| `LocationReference` (XLRL) | Current independent form-link selection produces the reported mismatch. A relocation needs the location metadata associated with its selected spatial context. Later metadata-only corrections from a compatible context should remain possible; an override describing the rejected old interior must not supply that old interior's location. Compatibility must be explicit, not inferred from identical coordinates. Mutagen types this as LCTN, while xEdit accepts LCRT/LCTN/NULL; the latter variants need fixtures before a universal interpretation is implemented. |
-| `PersistentLocation` (XLCN) | Separate from XLRL and from the containing cell. It can intentionally identify a broader settlement shared by multiple interiors. Retain independent persistence semantics and check compatibility when relocating; do not replace it automatically with the destination cell's most specific location. CK documents consequences for unique-actor alias filling. Gestur's StonehillsLocation is unchanged in the supplied history. |
+| Parent CELL, parent WRLD, exterior grid, persistent/temporary child group | Supported interior moves select CELL with position/rotation and use final Persistent to choose destination storage. The existing transaction publishes one winning-baseline reference per FormKey during normal processing. Exterior/cross-world moves are rejected; exterior geographic indexing and general persistence-only storage correction are not implemented. |
+| `Placement`, `Scale` | ACHR/REFR select interior CELL + position/rotation, retaining source ownership. Cell-only moves count. Scale is deliberately separate so a size edit cannot replace an earlier move. Hazards/projectiles retain Transform pending separate review. |
+| `LocationReference` (XLRL) | Select from same-parent-cell history while preserving the global original for removal/reversion permissions. Metadata does not participate in movement equality. A forwarded interior move requires its non-null link to resolve as LCTN; xEdit also accepts LCRT/NULL variants, whose universal interpretation is not implemented. |
+| `PersistentLocation` (XLCN) | Separate from XLRL and the containing cell; it can name a broader settlement. Gestur retains StonehillsLocation. The interior fix does not traverse LCTN ancestry or establish compatibility with unique-actor aliases; review those relationships in actual plugins. |
 | `LocationRefTypes` (XLRT) | Semantic roles such as Boss, used by location-based systems. They are not coordinates and should not be reset by a movement or scale edit. Relocation requires checking the related LCTN reference tables; selecting the list on ACHR alone cannot establish that a location's boss/alias bookkeeping agrees. Preserve existing aligned-list semantics unless separately changed with evidence. |
 | `EncounterZone`, `LevelModifier` | Keep explicit encounter/level decisions separate. An absent encounter zone inherits from the cell, so a move can change effective behavior even without a field edit. Audit explicit zone choices against the destination rather than automatically copying or deriving them. Grouping them with placement could undo leveling fixes or moves. |
 | `Owner`, `FactionRank` (`Ownership`) | Keep the existing pair. Do not tie it to placement. For relevant REFR types, an absent owner inherits from the containing cell, so moving can change effective ownership without changing this pair. Grouping cannot preserve both an intentional inheritance change and an unrelated ownership correction automatically. |
@@ -79,7 +77,7 @@ registrations and existing tests continue to define executable behavior.
 | `LinkedReferences`, ACHR `LinkedReferenceColor` | Preserve link-pair payloads and current collection policy: ACHR keyed, REFR positional. Link targets can be distant and intentional; do not force them to match the placement source. Patrol chains, work markers and script links still need reference-level validation after a move. Color remains a separate aggregate. |
 | `ActivateParents` | Keep the complete activation configuration together, separately from placement. Grouping it with a move could lose activation-only restrictions or delays; requiring its references to share a cell would reject legitimate setups. |
 | `Patrol` | Keep its idle/time/topic payload together. Patrol behavior can depend on linked markers and NPC packages outside this record, so the aggregate does not validate the route. A move should not automatically replace patrol configuration. |
-| `Emittance`, `MultiBoundReference` | Remain distinct decisions, but explicit region lighting and room membership can become inappropriate after relocation. MultiBoundReference is a spatial dependency: inspect the selected room and destination, and report incompatibility. Do not assume all emission or room edits should have the movement owner. |
+| `Emittance`, `MultiBoundReference` | Remain distinct decisions. Explicit multibound membership gates automatic cross-cell movement, retaining winning spatial data. No general region-lighting compatibility rule is implemented. |
 | `IsIgnoredBySandbox`, ACHR `IsIgnoredBySandbox2` | Preserve the distinct markers and current semantics. They affect AI use independently of movement. Combining them or moving their ownership into placement lacks supporting evidence. |
 | ACHR `MerchantContainer`, `Horse` | Keep independent links. Merchant storage and the actor's horse can intentionally be elsewhere; copying movement-source values can discard valid vendor or riding fixes. Existence and expected target type are useful checks, not a same-cell rule. |
 | ACHR `Count`, `Radius`, `Health`; shared `HeadTrackingWeight`, `FavorCost` | Keep separate values. Several CK descriptions are legacy/unused, and their exact engine effect is not uniformly established. That does not authorize deleting them, interpreting them as relocation metadata, or claiming harmlessness. REFR Radius also has a map-marker use. |
@@ -108,43 +106,31 @@ would mix door connectivity, room geometry, water data and ordinary item tuning.
 | `AttachRef` | Depends on the selected target and an appropriate animation/NIF attachment node. Physical co-location and a common movement owner do not establish that compatibility. Keep separate and report obvious target/type problems. |
 | `DistantLodData` | Keep complete payload/presence behavior. LOD also depends on placement, Base, flags and externally generated assets; grouping cannot regenerate LOD or prove that deployed LOD matches. |
 
-### Recommended algorithm boundary
+### Implemented boundary
 
-1. Make physical placement context-aware: select the coordinate frame with the
-   current Transform using existing comparison precision and reversion rules.
-   Track the selected source, even for a cell-only change. Keep storage ancestry
-   distinct from geographic location for persistent exterior references. The
-   existing scale-only selection policy needs an explicit decision before any
-   change to that ownership boundary.
-2. Coordinate XLRL with the selected spatial context. For the reported interior
-   move, old-mine overrides must not replace the house's location metadata.
-   Permit location-only corrections associated with the selected interior rather
-   than demanding identical coordinates. This requires source/context-aware
-   coordination, not an ordinary larger SimplePropertyContext value. Exterior,
-   persistence-only, absent-location and unusual XLRL cases need explicit
-   compatibility rules and fixtures before generalization.
-3. Keep XLCN, location roles, explicit encounter zone, Ownership, enable state,
-   scripts and AI links under their distinct semantics. Inspect dependencies
-   affected by a move. Preserve null/inherited values as authored; do not fill
-   them with guessed destination defaults. Treat clear incompatibilities as
-   diagnostics and unresolved specialized cases as requiring review.
-4. Stage the resulting reference under its selected physical parent and final
-   persistence arrangement, using the winning record for unrelated baseline
-   fields and retaining already-patched parent/sibling data. Ensure the FormKey
-   occurs only once. A move between roots requires atomic removal/insertion;
-   failure must not publish only one side. Moving to CRF's Temporary collection
-   with a later selected Persistent bit is not a valid shortcut.
-5. Check related CELL/LCTN data and special REFR networks separately. The
-   Location handler deliberately does not merge Added/Static/Removed reference
-   tables; the patcher has no relocation-aware reconstruction of those tables.
-   This is relevant to unique actors, persistence and location ref types, and
-   prevents a promise that changing ACHR's cell and XLRL alone validates quests.
+Placement and LocationReference have one selection path in InteriorReferencePlacement;
+the registered member handlers remain their only writers. Same-parent histories
+use the existing ordinary algorithm. Different-parent histories use a selection-only
+cell/DATA adapter and same-cell XLRL history, retaining global-original permissions.
+Scale and approved flags stay independent.
 
-The narrow, established correction is Gestur's house placement plus its
-associated house XLRL, preserving Stonehills Persist Location and separately
-selected quest/enable/persistence edits. That is a coherent record-level target;
-it has not been verified against the complete plugins' location tables,
-packages, quests or an in-game run.
+Only available interior destinations are supported. Exterior histories, unresolved
+LCTN targets and special door/navigation, room/multibound, occlusion, water or
+attachment payloads gate automatic moves. Rejection keeps winning placement and
+dependent spatial payloads, selects compatible XLRL and logs the reason. Unrelated
+valid edits continue.
+
+A destination context supplies winning reference data and effective destination
+CELL ancestry to the existing RecordOverrideTransaction. Its copy masks retain
+patched parents/siblings, and failed setters discard the staged candidate. Normal
+processing handles each FormKey once; no repeated-relocation API, output-location
+index or multi-root transaction was added. A supported interior move inserts into
+the collection selected by the final Persistent bit.
+
+No exterior cell lookup, persistence-only storage normalization, LCTN ancestry/table
+reconstruction, arbitrary script repair or network/LOD rebuild is implemented.
+Gestur's coherent record-level output has binary regression coverage, but its
+complete plugins' location tables, packages, quests and gameplay remain unverified.
 
 ### Evidence and validation boundaries
 
@@ -152,9 +138,10 @@ packages, quests or an in-game run.
   `SimplePropertyContext`, `ReferenceGroupHandlers`, both placed record handlers,
   `RecordOverrideTransaction`, `MajorRecordFlagsRawHandler` and
   `LocationRecordHandler`. Parent selection is structural; flag selection is
-  bitwise; no independent parent-cell merge exists.
+  bitwise; parent CELL is structural rather than a reflected field.
 - **Mutagen 0.54.4:** local decompiled `IPlacedGetter`, `IPlacedNpcGetter`,
   `IPlacedObjectGetter`, `ILocationGetter`, `CellCommon.EnumerateMajorRecordContexts`,
+  `ModContextExt.EnumerateMajorRecordContexts/CellCopyMask`,
   `CellBinaryWriteTranslation`, `WorldspaceBinaryWriteTranslation`, and both
   placed records' binary create/write translations. The context inserter chooses
   Persistent/Temporary from source collection membership; the writer emits the
@@ -177,16 +164,14 @@ packages, quests or an in-game run.
   `w/api.php?action=parse&page=PAGE&prop=wikitext&format=json` endpoint.
   These document concepts; they do not establish every XLRL binary variant's
   engine precedence or a relocation-table reconstruction algorithm.
-- **Existing regression entry points:** `LocationReferenceConflictPolicyTests`,
-  `PlacedObjectGroupTests`, `SharedReferenceGroupTests`,
-  `PlacedReferenceForwardingTests`, and `RecordOverrideTransactionTests`.
-  The reviewed fixtures establish current same-cell selection, group ownership,
-  disabled-reference policy and failure isolation. They do not establish cross-cell
-  relocation or game-valid location graphs. Future validation needs cell-only
-  moves; conflicting XLRL edits; allowed/denied reversions; scale-only edits;
-  interior/exterior and persistent/temporary transitions; duplicate prevention;
-  rollback preserving siblings; actual LCTN table inspection; and in-game actor,
-  quest, door and rendering checks appropriate to the affected record kinds.
+- **Regression entry points:** `InteriorReferencePlacementTests` verifies source
+  overlays through output reload for Gestur, cell-only changes, permissions,
+  compatible metadata, independent Scale/EnableParent, effective destination
+  metadata, existing siblings, unsupported moves and failed setters.
+  `LocationReferenceConflictPolicyTests`, `PlacedObjectGroupTests`,
+  `SharedReferenceGroupTests`, `PlacedReferenceForwardingTests` and
+  `RecordOverrideTransactionTests` retain ordinary selection/copying invariants.
+  These fixtures do not establish game-valid LCTN tables, quests or generated assets.
 
 ## Appearance and referenced assets
 

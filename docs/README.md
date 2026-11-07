@@ -15,7 +15,7 @@ source code and executable tests determine actual behavior.
 | Property groups, fixed forwarding policy, future controls and resource ownership | [Asset forwarding guide](ASSET_FORWARDING.md) |
 | Find regressions and implementation decisions to preserve | [Regression reference](record-patching/REVIEW.md) |
 | Unresolved behavior, writer limits and validation gaps | [Known limits](record-patching/KNOWN-ISSUES.md) |
-| Proposed ACHR/REFR relocation work, scope and performance baseline | [Relocation plan](PLACED_REFERENCE_RELOCATION_PLAN.md) |
+| Interior ACHR/REFR relocation and remaining spatial limits | [Field review](record-patching/KNOWN-ISSUES.md#placed-reference-relocation-review-achrrefr) |
 | Collection mode, key, presence or duplicate behavior | [Collection workflow](COLLECTION_SEMANTICS.md), [alignment algorithm](LIST_ALIGNMENT.md), [source decisions](history/README.md) |
 | Exact Mutagen/xEdit member and writer surfaces | [Reference exporters](REFERENCE_SOURCES.md) |
 | Desktop build, publish, WPF and Proton constraints | [Standalone development](STANDALONE_DEVELOPMENT.md) |

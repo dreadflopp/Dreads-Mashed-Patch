@@ -74,6 +74,32 @@ public sealed class ListSemanticsTests
     }
 
     [Fact]
+    public void MagicEffectSoundsRetainDeclarationOrderAndCompletePairIdentity()
+    {
+        var handler = new MagicEffectRecordHandler().PropertyHandlers["Sounds"];
+        var loop = new MagicEffectSound
+        {
+            Type = MagicEffect.SoundType.ConcentrationCastLoop,
+            Sound = new FormLink<ISoundDescriptorGetter>(new FormKey(
+                ModKey.FromNameAndExtension("Skyrim.esm"), 0x03E5CB))
+        };
+        var sheath = loop.DeepCopy();
+        sheath.Type = MagicEffect.SoundType.SheathDraw;
+        var changedSound = loop.DeepCopy();
+        changedSound.Sound.SetTo(new FormKey(ModKey.FromNameAndExtension("Skyrim.esm"), 0x03E5E3));
+
+        Assert.True(handler.AreValuesEqual(
+            new List<IMagicEffectSoundGetter> { loop, sheath },
+            new List<IMagicEffectSoundGetter> { loop.DeepCopy(), sheath.DeepCopy() }));
+        Assert.False(handler.AreValuesEqual(
+            new List<IMagicEffectSoundGetter> { loop, sheath },
+            new List<IMagicEffectSoundGetter> { sheath, loop }));
+        Assert.False(handler.AreValuesEqual(
+            new List<IMagicEffectSoundGetter> { loop },
+            new List<IMagicEffectSoundGetter> { changedSound }));
+    }
+
+    [Fact]
     public void PlacedNpcLinkedReferencesRemainSortedAndOrderIndependent()
     {
         var handler = new PlacedNpcRecordHandler().PropertyHandlers["LinkedReferences"];

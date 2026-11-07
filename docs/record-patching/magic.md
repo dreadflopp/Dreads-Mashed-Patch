@@ -78,7 +78,8 @@ Archetype copies the selected subtype whole. Type, ActorValue and AssociationKey
 | `Name`, `Description`, `BaseCost`, `CastType`, `TargetType`, `MagicSkill`, `ResistValue`, `SecondActorValue`, `CastingSoundLevel`, `MenuDisplayObject`, `CastingLight`, `HitShader`, `EnchantShader`, `Projectile`, `Explosion`, `CastingArt`, `HitEffectArt`, `ImpactData`, `DualCastArt`, `EnchantArt`, `HitVisuals`, `EnchantVisuals`, `EquipAbility`, `ImageSpaceModifier`, `PerkToApply`, `TaperWeight`, `MinimumSkillLevel`, `SpellmakingArea`, `SpellmakingCastingTime`, `TaperCurve`, `TaperDuration`, `SecondActorValueWeight`, `SkillUsageMultiplier`, `DualCastScale`, `ScriptEffectAIScore`, `ScriptEffectAIDelayTime` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately. |
 | `Archetype` | Select each whole value separately. |
-| `Keywords`, `CounterEffects`, `Sounds` | Merge rows by key. |
+| `Keywords`, `CounterEffects` | Merge rows by key. |
+| `Sounds` | Merge aligned Type/Sound pairs in declaration order, preserving duplicate entries. |
 | `Conditions` | Merge aligned rows in order. |
 | `Unknown1` | Not independently forwarded. |
 

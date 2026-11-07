@@ -110,7 +110,7 @@ public class RaceRecordHandler : AbstractRecordHandler
         { "MovementTypes", new GeneratedCopyReflectionListPropertyHandler<IRaceMovementTypeGetter, RaceMovementType, IRace, IRaceGetter>(
             "MovementTypes", ListSemantics.SortedKeyed, value => value.DeepCopy(), RaceMovementTypeMixIn.Equals,
             keySelector: movement => movement.MovementType.FormKey) },
-        { "EquipmentFlags", new SimpleReflectionPropertyHandler<EquipTypeFlag?, IRace, IRaceGetter>("EquipmentFlags") },
+        { "EquipmentFlags", new SimpleReflectionNullableFlagPropertyHandler<EquipTypeFlag, IRace, IRaceGetter>("EquipmentFlags", preserveUnknownBits: true) },
         { "EquipmentSlots", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IEquipTypeGetter>, IRace, IRaceGetter>("EquipmentSlots", ListSemantics.SortedKeyed) },
         { "UnarmedEquipSlot", new SimpleReflectionFormLinkPropertyHandler<IEquipTypeGetter, IRace, IRaceGetter>("UnarmedEquipSlot") },
         { "FaceFxPhonemes", new GeneratedCopyReflectionPropertyHandler<IFaceFxPhonemesGetter, FaceFxPhonemes, IRace, IRaceGetter>(

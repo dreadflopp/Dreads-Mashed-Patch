@@ -126,6 +126,9 @@ a later independent `x=-1` could then produce `z<200, x=-1` rather than aligned
   to prevent independently unioned overlapping models.
 - Magic-item Effects, SNDR sound slots and REFR LinkedReferences use exact
   ordinal identity. ACHR LinkedReferences is independently sorted/keyed.
+- MGEF Sounds uses aligned declaration order and complete Type/Sound pair keys
+  for xEdit 4.1.5f compatibility. The newer pinned source sorts by Type; see the
+  [version exception](history/LIST_ORDERING_AUDIT.md#mgef-sndd-version-exception).
 - Unordered/sorted-keyed values use their own identity reconciliation, not the
   aligner. Structural arrays remain atomic values rather than per-entry contexts.
 

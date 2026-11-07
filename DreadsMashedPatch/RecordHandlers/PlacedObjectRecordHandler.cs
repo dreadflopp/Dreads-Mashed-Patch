@@ -15,8 +15,8 @@ using Noggog;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Header flags, Transform and EnableParent retain independent selection owners.
-    // LocationReference stays independent of transform and requires ownership for removal.
+    // Interior placement, Scale and enable state retain independent selection owners.
+    // LocationReference is selected within the accepted parent cell.
     // LinkedReferences is positional: xEdit declares an unsorted wbRArray without a StructSK key.
     // Unknown is outside the semantic conflict surface.
     public class PlacedObjectRecordHandler : AbstractRecordHandler
@@ -27,14 +27,16 @@ namespace DreadsMashedPatch.RecordHandlers
         {
             base.InitializePropertyContexts(originalContext, winningContext);
             AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+            foreach (var key in InteriorReferencePlacement.SelectedProperties) PropertyContexts[key].IsResolved = true;
         }
 
         protected override PropertyForwardingCoordination CoordinateForwardedProperties(
             IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
             IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            return AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state,
+            var assets = AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state,
                 AtomicOwnershipTriggerProperties);
+            return InteriorReferencePlacement.Coordinate(recordContexts, state, PropertyHandlers, PropertyContexts, assets);
         }
 
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -96,7 +98,8 @@ namespace DreadsMashedPatch.RecordHandlers
                 "Patrol", value => value.DeepCopy(), PatrolMixIn.Equals) },
             { "MapMarker", new GeneratedCopyReflectionPropertyHandler<IMapMarkerGetter, MapMarker, IPlacedObject, IPlacedObjectGetter>(
                 "MapMarker", value => value.DeepCopy(), MapMarkerMixIn.Equals) },
-            { "Transform", new TransformPropertyHandler<IPlacedObject, IPlacedObjectGetter>() },
+            { "Placement", new PlacementPropertyHandler<IPlacedObject, IPlacedObjectGetter>() },
+            { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedObject, IPlacedObjectGetter>("Scale") },
             { "VirtualMachineAdapter", new SimpleReflectionVirtualMachineAdapterHandler<IPlacedObject, IPlacedObjectGetter>() },
             { "EnableParent", new GeneratedCopyReflectionPropertyHandler<IEnableParentGetter, EnableParent, IPlacedObject, IPlacedObjectGetter>(
                 "EnableParent", value => value.DeepCopy(), EnableParentMixIn.Equals) },

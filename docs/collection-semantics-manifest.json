@@ -906,9 +906,9 @@
     "Property": "Sounds",
     "ValueType": "System.Collections.Generic.List\u003CMutagen.Bethesda.Skyrim.IMagicEffectSoundGetter\u003E",
     "HandlerType": "DreadsMashedPatch.PropertyHandlers.General.GeneratedCopyReflectionListPropertyHandler\u003CMutagen.Bethesda.Skyrim.IMagicEffectSoundGetter, Mutagen.Bethesda.Skyrim.MagicEffectSound, Mutagen.Bethesda.Skyrim.IMagicEffect, Mutagen.Bethesda.Skyrim.IMagicEffectGetter\u003E",
-    "MergeMode": "SortedKeyed",
-    "IdentityPolicy": "xEdit sort key (StructSK/RStructSK or scalar value)",
-    "CardinalityPolicy": "Keyed rows; duplicate occurrences retained",
+    "MergeMode": "AlignedOrdered",
+    "IdentityPolicy": "Occurrence-specific aligned row key",
+    "CardinalityPolicy": "Ordered sequence; duplicate occurrences retained",
     "PresencePolicy": "Per-entry ownership; list handler tracks null versus empty when the Mutagen surface is nullable.",
     "Evidence": "Observed runtime behavior only; compare with xedit-collection-expectations.json."
   },

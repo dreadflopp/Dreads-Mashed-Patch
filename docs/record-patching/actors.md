@@ -244,8 +244,9 @@ SkillBoosts owns all seven physical skill slots. Padding is ignored; output is s
 
 | Properties | How they are patched |
 |---|---|
-| `Name`, `Description`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `AttackRace`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `EquipmentFlags`, `UnarmedEquipSlot`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `ArmorRace` | Select each value separately. |
+| `Name`, `Description`, `BaseCarryWeight`, `BaseMass`, `AccelerationRate`, `DecelerationRate`, `Size`, `HeadBipedObject`, `HairBipedObject`, `InjuredHealthPercent`, `ShieldBipedObject`, `UnarmedDamage`, `UnarmedReach`, `BodyBipedObject`, `AimAngleTolerance`, `FlightRadius`, `AngularAccelerationRate`, `AngularTolerance`, `AttackRace`, `MaterialType`, `ImpactDataSet`, `DecapitationFX`, `OpenLootSound`, `CloseLootSound`, `UnarmedEquipSlot`, `BaseMovementDefaultWalk`, `BaseMovementDefaultRun`, `BaseMovementDefaultSwim`, `BaseMovementDefaultFly`, `BaseMovementDefaultSneak`, `BaseMovementDefaultSprint`, `ArmorRace` | Select each value separately. |
 | `Flags` | Merge registered flag bits separately, including FaceGenHead. |
+| `EquipmentFlags` | Merge named equipment flags separately. Preserve the winning record’s unnamed bits; differences in those bits alone do not trigger forwarding. Track an absent field separately from present zero. Logs show named flags. |
 | `BodyTemplate`, `Height`, `Weight`, `MountData`, `Voices`, `DecapitateArmors`, `DefaultHairColors`, `FaceFxPhonemes` | Select each whole value separately. |
 | `Starting`, `Regen`, `BipedObjectNames` | Select each whole collection separately. |
 | `ActorEffect`, `Keywords`, `SkillBoosts`, `Attacks`, `MovementTypeNames`, `MovementTypes`, `Hairs`, `Eyes`, `EquipmentSlots` | Merge rows by key. |

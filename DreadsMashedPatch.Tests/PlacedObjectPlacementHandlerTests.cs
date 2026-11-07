@@ -19,17 +19,17 @@ public sealed class PlacedObjectPlacementHandlerTests
     [Fact]
     public void RecordHandlerUsesReadablePlacementFormatter()
     {
-        var handler = new PlacedObjectRecordHandler().PropertyHandlers["Transform"];
+        var handler = new PlacedObjectRecordHandler().PropertyHandlers["Placement"];
         var placement = new Placement
         {
             Position = new P3Float(1.25f, -2.5f, -0f),
             Rotation = new P3Float(0.1f, 0.2f, 0.3f)
         };
 
-        var formatted = handler.FormatValue(new TransformValue(placement, null));
+        var formatted = handler.FormatValue(placement);
 
         Assert.Equal(
-            "Position=(1.250000, -2.500000, 0.000000), RotationDegrees=(5.7296, 11.4592, 17.1887), Scale=null",
+            "Position=(1.250000, -2.500000, 0.000000), RotationDegrees=(5.7296, 11.4592, 17.1887)",
             formatted);
     }
 
@@ -38,9 +38,9 @@ public sealed class PlacedObjectPlacementHandlerTests
     {
         var handlers = new PlacedObjectRecordHandler().PropertyHandlers;
 
-        Assert.Contains("Transform", handlers.Keys);
-        Assert.DoesNotContain("Placement", handlers.Keys);
-        Assert.DoesNotContain("Scale", handlers.Keys);
+        Assert.DoesNotContain("Transform", handlers.Keys);
+        Assert.Contains("Placement", handlers.Keys);
+        Assert.Contains("Scale", handlers.Keys);
         Assert.DoesNotContain("Placement.Position", handlers.Keys);
         Assert.DoesNotContain("Placement.Rotation", handlers.Keys);
     }
@@ -117,7 +117,7 @@ public sealed class PlacedObjectPlacementHandlerTests
     [Fact]
     public void FormatterPreservesNullOutput()
     {
-        Assert.Equal("null", new TransformPropertyHandler<IPlacedObject, IPlacedObjectGetter>().FormatValue(null));
+        Assert.Equal("null", new PlacementPropertyHandler<IPlacedObject, IPlacedObjectGetter>().FormatValue(null));
     }
 
     [Fact]

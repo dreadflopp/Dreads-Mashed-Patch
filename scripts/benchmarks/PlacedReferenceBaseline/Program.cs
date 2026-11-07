@@ -1,5 +1,5 @@
 // Opt-in baseline benchmark; not a test of a relocation implementation.
-// See docs/PLACED_REFERENCE_RELOCATION_PLAN.md for measurement scope and limits.
+// Component measurements exclude setup, input indexing and output serialization.
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;

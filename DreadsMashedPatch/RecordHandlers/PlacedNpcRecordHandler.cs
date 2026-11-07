@@ -14,8 +14,8 @@ using System;
 
 namespace DreadsMashedPatch.RecordHandlers
 {
-    // Header flags, Transform and EnableParent retain independent selection owners.
-    // LocationReference remains independent and requires ownership for removal.
+    // Interior placement, Scale and enable state retain independent selection owners.
+    // LocationReference is selected within the accepted parent cell.
     public class PlacedNpcRecordHandler : AbstractRecordHandler
     {
         protected override void InitializePropertyContexts(
@@ -24,14 +24,16 @@ namespace DreadsMashedPatch.RecordHandlers
         {
             base.InitializePropertyContexts(originalContext, winningContext);
             AssetForwardingPolicy.ResolveMemberContexts(GetType(), PropertyHandlers, PropertyContexts);
+            foreach (var key in InteriorReferencePlacement.SelectedProperties) PropertyContexts[key].IsResolved = true;
         }
 
         protected override PropertyForwardingCoordination CoordinateForwardedProperties(
             IReadOnlyList<IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter>> recordContexts,
             IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            return AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state,
+            var assets = AssetForwardingPolicy.Coordinate(GetType(), PropertyHandlers, recordContexts, state,
                 AtomicOwnershipTriggerProperties);
+            return InteriorReferencePlacement.Coordinate(recordContexts, state, PropertyHandlers, PropertyContexts, assets);
         }
 
         public override Dictionary<string, IPropertyHandler> PropertyHandlers { get; } = new()
@@ -67,7 +69,8 @@ namespace DreadsMashedPatch.RecordHandlers
             { "Emittance", new SimpleReflectionFormLinkPropertyHandler<IEmittanceGetter, IPlacedNpc, IPlacedNpcGetter>("Emittance") },
             { "MultiBoundReference", new SimpleReflectionFormLinkPropertyHandler<IPlacedObjectGetter, IPlacedNpc, IPlacedNpcGetter>("MultiBoundReference") },
             { "IsIgnoredBySandbox2", new SimpleReflectionPropertyHandler<bool, IPlacedNpc, IPlacedNpcGetter>("IsIgnoredBySandbox2") },
-            { "Transform", new TransformPropertyHandler<IPlacedNpc, IPlacedNpcGetter>() },
+            { "Placement", new PlacementPropertyHandler<IPlacedNpc, IPlacedNpcGetter>() },
+            { "Scale", new SimpleReflectionPropertyHandler<float?, IPlacedNpc, IPlacedNpcGetter>("Scale") },
             { "VirtualMachineAdapter", new VirtualMachineAdapterHandler() }
         };
 

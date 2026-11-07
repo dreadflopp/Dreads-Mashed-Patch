@@ -73,9 +73,10 @@ namespace DreadsMashedPatch.RecordHandlers
             { "ScriptEffectAIScore", new SimpleReflectionPropertyHandler<float, IMagicEffect, IMagicEffectGetter>("ScriptEffectAIScore") },
             { "ScriptEffectAIDelayTime", new SimpleReflectionPropertyHandler<float, IMagicEffect, IMagicEffectGetter>("ScriptEffectAIDelayTime") },
             { "CounterEffects", new SimpleReflectionListPropertyHandler<IFormLinkGetter<IMagicEffectGetter>, IMagicEffect, IMagicEffectGetter>("CounterEffects", ListSemantics.SortedKeyed) },
+            // xEdit 4.1.5f uses an alignable SNDD array with complete Type/Sound row keys.
+            // Preserve declaration order; the newer pinned definition sorts by Type.
             { "Sounds", new GeneratedCopyReflectionListPropertyHandler<IMagicEffectSoundGetter, MagicEffectSound, IMagicEffect, IMagicEffectGetter>(
-                "Sounds", ListSemantics.SortedKeyed, value => value.DeepCopy(), MagicEffectSoundMixIn.Equals,
-                keySelector: sound => sound.Type) },
+                "Sounds", ListSemantics.AlignedOrdered, value => value.DeepCopy(), MagicEffectSoundMixIn.Equals) },
             { "Archetype", new ArchetypeHandler() },
             { "Conditions", new ConditionsHandler() }
         };

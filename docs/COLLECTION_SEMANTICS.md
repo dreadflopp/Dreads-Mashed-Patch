@@ -26,6 +26,12 @@ count/coupling concerns, source evidence, and rationale. The pinned source inter
 The manifest includes constructible dormant handlers, including LAND. Use the
 [supported/excluded routes](record-patching/unsupported.md) to determine what runs.
 
+MGEF Sounds intentionally follows released xEdit 4.1.5f's aligned declaration
+order and full Type/Sound pair keys. The newer pinned reference sorts by Type;
+the [version exception](history/LIST_ORDERING_AUDIT.md#mgef-sndd-version-exception)
+records both definitions and Mutagen writer evidence. Do not regenerate away
+this reviewed compatibility decision.
+
 Use the generated comparison report for current registration counts. Each of the seven placed-projectile variants contributes five shared ReferenceRecord collection registrations. LTEX grasses use sorted Grass FormID keys. LENS sprites are nested inside `FlareSprites`, an atomic resource value, so they are documented and tested separately rather than appearing as a directly registered collection. Sprite order, duplicates and presence travel together with each sprite's texture/settings. Both global flare parameters remain ordinary scalars. BPTD Parts retains keyed row reconciliation; Parts.LimbMeshes is a separate atomic resource projection restricted to surviving PartNode occurrences.
 
 ## Modes

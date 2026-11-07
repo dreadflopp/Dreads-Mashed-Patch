@@ -93,7 +93,7 @@ This report compares the generated runtime inventory with the independently main
 | `MagicEffectRecordHandler.Conditions` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `MagicEffectRecordHandler.CounterEffects` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `MagicEffectRecordHandler.Keywords` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
-| `MagicEffectRecordHandler.Sounds` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
+| `MagicEffectRecordHandler.Sounds` | Matched | AlignedOrdered | AlignedOrdered | Use shared ordered alignment for 4.1.5f compatibility. Type sorting reversed FrostDamageConcAimed's surviving sounds after a Release removal; Mutagen preserves that unwanted order. Keep generated full-pair equality/deep copying and ordinary removal ownership. |
 | `MagicEffectRecordHandler.VirtualMachineAdapter` | Matched | SortedKeyed | SortedKeyed | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |
 | `MaterialObjectRecordHandler.DNAMs` | Matched | Atomic | Atomic | xEdit deliberately hides and ignores the opaque payload; it has no safe semantic row identity. |
 | `MessageRecordHandler.MenuButtons` | Matched | AlignedOrdered | AlignedOrdered | Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration. |

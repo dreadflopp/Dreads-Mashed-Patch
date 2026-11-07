@@ -56,7 +56,8 @@ Do not edit the checkout or assume these line numbers apply to another revision.
 | NPC HeadParts / TintLayers | Sorted HeadPart FormID / Tint Index definitions | Nested atomic Appearance contents compare without sorting claiming ownership; retain duplicates and full tint payload. |
 | ARMA alternate textures | Composite (3D Name, 3D Index) | Keyed replacement; preserve other row data. |
 | BPTD Parts | PartNode key | Sorted/keyed rather than ordinal identity. |
-| MGEF Sounds / WTHR Sounds | Sound Type | Type is key, selected sound is data. |
+| MGEF Sounds | Pinned dev-4.1.6 uses wbArrayS/StructSK([0]); released 4.1.5f uses plain wbArray/wbStruct | Runtime deliberately preserves aligned declaration order for 4.1.5f; see version exception below. |
+| WTHR Sounds | Sound Type | Type is key, selected sound is data. |
 | CLMT WeatherTypes | Weather FormID | Chance/global remain data. |
 | CONT/COBJ/NPC Items | Item FormID | Count and COED are payload; specialized duplicate/ownership rules still apply. |
 | DOBJ Objects | Use/type field | Object FormID is data; DOBJ route remains dormant. |
@@ -73,3 +74,35 @@ DLVW Topics has no collection member on the referenced writable Mutagen interfac
 no independent registration is justified by its ordered xEdit definition alone.
 WATR UnusedNoisemaps is excluded; an earlier unordered classification is not an
 active policy. Recheck exact generated/binary surfaces before changing either.
+
+## MGEF SNDD version exception
+
+xEdit 4.1.5f, tag `xedit-4.1.5f`, commit
+`f5c00f3fa3ee39511185515802647246c807f759`, defines `wbMagicEffectSounds`
+as `wbArray(SNDD, 'Sounds', wbStruct(...))` in
+`Core/wbDefinitionsCommon.pas:663–681`. Its plain struct uses both Type and Sound
+as the display alignment key (`Core/wbInterface.pas:14419–14496`);
+`TwbSubRecord.GetAlignable` permits this variable-length unsorted array
+(`Core/wbImplementation.pas:14726–14747`). `SetSummaryKey` controls the summary,
+not sorting. Inspect this version without replacing the pinned reference:
+
+```bash
+git -C XEditSource fetch origin tag xedit-4.1.5f --depth 1
+git -C XEditSource show xedit-4.1.5f:Core/wbDefinitionsCommon.pas
+```
+
+The newer pinned definition sorts by numeric Type. Applying that policy to
+FrostDamageConcAimed reverses its authored Concentration/Sheath order after
+Release is removed, and 4.1.5f displays the moved entry on another aligned row.
+Runtime therefore uses shared `AlignedOrdered` reconciliation and generated
+full-pair equality, with no Type-only key. This intentionally differs from the
+newer reference; it remains valid declaration-order plugin data.
+
+Mutagen 0.54.4 `MagicEffectBinaryOverlay.FillRecordType` reads SNDD as 8-byte
+Type/Sound pairs in stream order. `MagicEffectBinaryWriteTranslation.Write`
+passes the list unchanged to `ListBinaryTranslation`, and
+`MagicEffectSoundBinaryWriteTranslation.WriteEmbedded` writes the 4-byte Type
+followed by the Sound FormID. No sorted-container setting is serialized.
+`UserReportedFailureRegressionTests.FrostbiteSoundRemovalPreservesDeclaredOrderThroughPatchOutput`
+covers mutable and binary-overlay input, retained Release removal, duplicate
+occurrences and binary patch reload; this does not establish an xEdit GUI run.

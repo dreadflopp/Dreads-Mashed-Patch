@@ -1,3 +1,4 @@
+using DreadsMashedPatch.Contexts;
 using DreadsMashedPatch.PropertyHandlers.Npc;
 using DreadsMashedPatch.RecordHandlers;
 using DreadsMashedPatch.RecordHandlers.Abstracts;
@@ -30,6 +31,96 @@ public sealed class UserReportedFailureRegressionTests : IDisposable
     {
         PatcherSettings.Apply(new PatcherConfiguration());
         LogCollector.Clear();
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    public void FrostbiteSoundRemovalPreservesDeclaredOrderThroughPatchOutput(
+        bool binaryOverlay, bool duplicateLoop)
+    {
+        var key = new FormKey(Original, 0x013CAA);
+        var expected = new List<(MagicEffect.SoundType Type, FormKey Sound)>
+        {
+            (MagicEffect.SoundType.ConcentrationCastLoop, new FormKey(Original, 0x03E5CB)),
+            (MagicEffect.SoundType.SheathDraw, new FormKey(Original, 0x03E5E3))
+        };
+        if (duplicateLoop) expected.Add(expected[0]);
+        var originalSounds = expected.Append(
+            (MagicEffect.SoundType.Release, new FormKey(Original, 0x03F2EB))).ToArray();
+        var mods = new[] { Original, Earlier, Winner }.Select(modKey =>
+        {
+            var mod = NewMod(modKey);
+            var effect = new MagicEffect(key, SkyrimRelease.SkyrimSE)
+            {
+                EditorID = "FrostDamageConcAimed",
+                Sounds = new ExtendedList<MagicEffectSound>()
+            };
+            foreach (var (type, sound) in modKey == Earlier ? expected.ToArray() : originalSounds)
+                effect.Sounds.Add(new MagicEffectSound
+                {
+                    Type = type,
+                    Sound = new FormLink<ISoundDescriptorGetter>(sound)
+                });
+            mod.MagicEffects.Add(effect);
+            return mod;
+        }).ToArray();
+        using var fixtures = new OverlayFixtures(mods, binaryOverlay);
+        using var state = State(fixtures.Mods);
+
+        var report = Program.RunPatchWithReport(state);
+
+        Assert.True(report.Succeeded);
+        var patched = Assert.Single(state.PatchMod.MagicEffects);
+        Assert.Equal(expected, patched.Sounds!.Select(sound => (sound.Type, sound.Sound.FormKey)));
+        Assert.DoesNotContain(patched.Sounds!, sound => sound.Type == MagicEffect.SoundType.Release);
+        using var stream = new MemoryStream();
+        state.PatchMod.WriteToBinary(stream);
+        stream.Position = 0;
+        using var reloaded = SkyrimMod.CreateFromBinaryOverlay(stream, SkyrimRelease.SkyrimSE, Patch);
+        Assert.Equal(expected, Assert.Single(reloaded.MagicEffects).Sounds!
+            .Select(sound => (sound.Type, sound.Sound.FormKey)));
+    }
+
+    [Fact]
+    public void MagicEffectSoundAlignmentDistinguishesSoundChangesWithinTheSameType()
+    {
+        var mods = new[] { Original, Winner }.Select(modKey =>
+        {
+            var mod = NewMod(modKey);
+            var effect = new MagicEffect(Key, SkyrimRelease.SkyrimSE)
+            {
+                Sounds = new ExtendedList<MagicEffectSound>
+                {
+                    new()
+                    {
+                        Type = MagicEffect.SoundType.ConcentrationCastLoop,
+                        Sound = new FormLink<ISoundDescriptorGetter>(new FormKey(
+                            Original, modKey == Original ? 0x03E5CBu : 0x03E5E3u))
+                    }
+                }
+            };
+            mod.MagicEffects.Add(effect);
+            return mod;
+        }).ToArray();
+        using var state = State(mods);
+        var recordHandler = new MagicEffectRecordHandler();
+        var contexts = recordHandler.GetRecordContexts(Winners(state).Single(), state);
+        var handler = recordHandler.PropertyHandlers["Sounds"];
+        var propertyContext = Assert.IsType<ListPropertyContext<IMagicEffectSoundGetter>>(
+            handler.CreatePropertyContext());
+        handler.InitializeContext(contexts[^1], contexts[0], propertyContext);
+
+        handler.UpdatePropertyContext(contexts[0], state, propertyContext);
+
+        // 4.1.5f's plain struct includes Sound in its display key: these are
+        // distinct aligned rows even though their Type values are identical.
+        Assert.Equal(new uint[] { 0x03E5CB, 0x03E5E3 }, propertyContext.AlignmentRows
+            .Select(row => row.Representative.Sound.FormKey.ID));
+        Assert.Equal(0x03E5E3u, Assert.Single(propertyContext.ForwardValueContexts!,
+            row => !row.IsRemoved).Value.Sound.FormKey.ID);
     }
 
     [Theory]

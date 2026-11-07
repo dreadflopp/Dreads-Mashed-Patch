@@ -23,7 +23,7 @@ public sealed class SharedReferenceGroupTests : IDisposable
     public void Dispose() => CoverageTestHistory.Reset();
 
     public static IEnumerable<object[]> Groups() => PlacedKinds.SelectMany(kind =>
-        new[] { "Transform", "Ownership" }.Concat(kind is "PlacedNpc" or "PlacedObject" ? ["RagdollPose"] : [])
+        (kind is "PlacedNpc" or "PlacedObject" ? new[] { "Ownership", "RagdollPose" } : new[] { "Transform", "Ownership" })
             .Select(group => new object[] { kind, group }))
         .Concat(new[] { new object[] { "Cell", "Ownership" }, new object[] { "EncounterZone", "Ownership" } });
     public static IEnumerable<object[]> Conflicts() => Groups().SelectMany(row =>
@@ -94,7 +94,7 @@ public sealed class SharedReferenceGroupTests : IDisposable
     [InlineData("safe")]
     [InlineData("restored")]
     [InlineData("ordinary")]
-    public void AchrDisabledFlagsDoNotChangeTransformGroupSelection(string kind)
+    public void AchrPlacementAndScaleKeepIndependentOwnersFromDisabledFlags(string kind)
     {
         var original = (PlacedNpc)New("PlacedNpc");
         var earlier = (PlacedNpc)New("PlacedNpc");
@@ -110,7 +110,7 @@ public sealed class SharedReferenceGroupTests : IDisposable
         winner.Scale = 3;
         var result = (IPlacedNpcGetter)Run([original, earlier, winner], kind == "restored" ? "declared" : "none");
         Assert.Equal(3f, result.Scale);
-        Assert.Equal(winner.Placement!.Position, result.Placement!.Position);
+        Assert.Equal((kind == "restored" ? winner : earlier).Placement!.Position, result.Placement!.Position);
         Assert.Equal(kind != "restored", result.SkyrimMajorRecordFlags.HasFlag(SkyrimMajorRecord.SkyrimMajorRecordFlag.InitiallyDisabled));
         if (kind == "safe") Assert.Equal(Constants.Player.FormKey, result.EnableParent!.Reference.FormKey);
         else Assert.Null(result.EnableParent);
@@ -220,7 +220,7 @@ public sealed class SharedReferenceGroupTests : IDisposable
         var source = (IPlacedNpcGetter)RoundTrip(record);
         var target = (PlacedNpc)New("PlacedNpc");
         var handlers = Handler("PlacedNpc").PropertyHandlers;
-        foreach (var group in new[] { "Transform", "RagdollPose" })
+        foreach (var group in new[] { "Placement", "Scale", "RagdollPose" })
             handlers[group].SetValue(target, handlers[group].GetValue(source));
         var written = (IPlacedNpcGetter)RoundTrip(target);
         Assert.Null(written.Scale);

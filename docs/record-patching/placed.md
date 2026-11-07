@@ -8,14 +8,16 @@ The [shared rules and table key](README.md#reading-the-property-tables) apply to
 
 ## ACHR — Placed Npc
 
-Transform keeps position, rotation and scale together at the project’s comparison precision, including while InitiallyDisabled is set. A later scale-only edit can replace an earlier movement edit. Transform, EnableParent and InitiallyDisabled have independent selection and reversion permissions under the [placed-reference rules](README.md#placed-reference-state-and-placement). EnableParent keeps its reference and flags together. Ownership and RagdollPose each select their paired fields together under the [shared rules](README.md#how-a-value-is-selected).
+Interior relocation selects the containing cell with position/rotation. Scale is independent, and LocationReference follows the accepted cell while allowing compatible corrections. Enable state, PersistentLocation and other gameplay fields keep their own decisions under the [placed-reference rules](README.md#placed-reference-state-and-placement). Ownership and RagdollPose retain their paired fields.
 
 | Properties | How they are patched |
 |---|---|
-| `Transform` (`Placement`, `Scale`) | Select position, rotation and scale together, independently of InitiallyDisabled. |
+| `Placement` and containing interior cell | Select cell, position and rotation together. |
+| `Scale` | Select independently of movement. |
+| `LocationReference` | Select within the accepted parent cell. |
 | `Ownership` (`Owner`, `FactionRank`) | Select the owner and rank together, including removal. |
 | `RagdollPose` (`RagdollData`, `RagdollBipedData`) | Select bones and biped rotation together. |
-| `Base`, `EncounterZone`, `LevelModifier`, `MerchantContainer`, `Count`, `Radius`, `Health`, `PersistentLocation`, `LocationReference`, `IsIgnoredBySandbox`, `HeadTrackingWeight`, `Horse`, `FavorCost`, `Emittance`, `MultiBoundReference`, `IsIgnoredBySandbox2` | Select each value separately. |
+| `Base`, `EncounterZone`, `LevelModifier`, `MerchantContainer`, `Count`, `Radius`, `Health`, `PersistentLocation`, `IsIgnoredBySandbox`, `HeadTrackingWeight`, `Horse`, `FavorCost`, `Emittance`, `MultiBoundReference`, `IsIgnoredBySandbox2` | Select each value separately. |
 | `Patrol`, `ActivateParents`, `LinkedReferenceColor`, `EnableParent` | Select each whole value separately. |
 | `LinkedReferences` | Merge rows by key. |
 | `LocationRefTypes` | Merge aligned rows in order. |
@@ -223,12 +225,14 @@ Grouped properties follow the [shared forwarding behavior](assets.md). Each grou
 
 ## REFR — Placed Object
 
-Transform selects position, rotation and scale together at the project’s comparison precision, including while InitiallyDisabled is set. A later scale-only edit can replace an earlier movement edit. Transform, EnableParent and InitiallyDisabled have independent selection and reversion permissions under the [placed-reference rules](README.md#placed-reference-state-and-placement). EnableParent keeps its reference and flags together. Ownership keeps the owner and faction rank together; RagdollPose keeps the bones and biped rotation together. Each group uses the [shared selection rules](README.md#how-a-value-is-selected).
+Ordinary interior relocation selects the containing cell with position/rotation; Scale is independent. LocationReference follows the accepted cell. Cross-cell moves involving exterior, door/navigation, room, occlusion, water or attachment data keep winning placement and dependent spatial data with a warning. See the [placed-reference rules](README.md#placed-reference-state-and-placement). Ownership and RagdollPose retain their paired fields.
 
 | Properties | How they are patched |
 |---|---|
-| `Base`, `LocationReference`, `ImageSpace`, `LightingTemplate`, `BoundHalfExtents`, `Radius`, `Emittance`, `TeleportMessageBox`, `MultiBoundReference`, `SpawnContainer`, `LeveledItemBaseObject`, `PersistentLocation`, `EncounterZone`, `IsMultiBoundPrimitive`, `IsIgnoredBySandbox`, `IsOpenByDefault`, `ItemCount`, `Charge`, `HeadTrackingWeight`, `FavorCost`, `CollisionLayer`, `LevelModifier`, `AttachRef`, `XCZR`, `XCZC` | Select each value separately. |
-| `Transform` (`Placement`, `Scale`) | Select position, rotation and scale together, independently of InitiallyDisabled. |
+| `Base`, `ImageSpace`, `LightingTemplate`, `BoundHalfExtents`, `Radius`, `Emittance`, `TeleportMessageBox`, `MultiBoundReference`, `SpawnContainer`, `LeveledItemBaseObject`, `PersistentLocation`, `EncounterZone`, `IsMultiBoundPrimitive`, `IsIgnoredBySandbox`, `IsOpenByDefault`, `ItemCount`, `Charge`, `HeadTrackingWeight`, `FavorCost`, `CollisionLayer`, `LevelModifier`, `AttachRef`, `XCZR`, `XCZC` | Select each value separately. |
+| `Placement` and containing interior cell | Select cell, position and rotation together. |
+| `Scale` | Select independently of movement. |
+| `LocationReference` | Select within the accepted parent cell. |
 | `Ownership` (`Owner`, `FactionRank`) | Select the owner and rank together, including removal. |
 | `RagdollPose` (`RagdollData`, `RagdollBipedData`) | Select the complete pose, preserving each payload’s presence. |
 | `Action` | Merge registered flag bits separately. |

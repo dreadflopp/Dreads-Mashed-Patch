@@ -1068,15 +1068,15 @@
     {
         "RecordHandler":  "MagicEffectRecordHandler",
         "Property":  "Sounds",
-        "ReviewStatus":  "Reviewed",
-        "ExpectedRuntimeMode":  "SortedKeyed",
-        "XEditSemantics":  "SortedKeyed",
-        "XEditConstruct":  "wbArrayS/wbRArrayS or audited sorted VMAD collection",
-        "IdentityKey":  "Record-specific StructSK/RStructSK or scalar value; see pinned audit",
-        "Alignability":  "Sorted by xEdit key",
-        "CountOrCoupling":  "None identified by the list-ordering audit; audit separately when the xEdit definition uses a counter or parallel field.",
-        "XEditSource":  "docs/history/LIST_ORDERING_AUDIT.md and docs/history/LIST_ORDERING_MIGRATION.md; pinned XEditSource/Core/wbDefinitionsTES5.pas",
-        "Rationale":  "Expected mode is the reviewed result recorded by the pinned xEdit list-ordering audit and migration."
+        "ReviewStatus":  "IntentionalException",
+        "ExpectedRuntimeMode":  "AlignedOrdered",
+        "XEditSemantics":  "AlignedOrdered in 4.1.5f; SortedKeyed in pinned dev-4.1.6",
+        "XEditConstruct":  "4.1.5f: wbArray(SNDD) with plain wbStruct; dev-4.1.6: wbArrayS with wbStructSK([0])",
+        "IdentityKey":  "4.1.5f complete Type and Sound FormID pair, using the plain struct sort-key fallback",
+        "Alignability":  "Preserve declaration order and progressively align complete pairs, retaining duplicate occurrences",
+        "CountOrCoupling":  "Nullable SNDD array; no separate count field. Mutagen writes each Type/Sound pair in supplied order.",
+        "XEditSource":  "xedit-4.1.5f f5c00f3fa3ee39511185515802647246c807f759 Core/wbDefinitionsCommon.pas:663-681, Core/wbInterface.pas:14419-14496, Core/wbImplementation.pas:14726-14747; pinned 93cc0bc Core/wbDefinitionsCommon.pas:8896-8915",
+        "Rationale":  "Use shared ordered alignment for 4.1.5f compatibility. Type sorting reversed FrostDamageConcAimed's surviving sounds after a Release removal; Mutagen preserves that unwanted order. Keep generated full-pair equality/deep copying and ordinary removal ownership."
     },
     {
         "RecordHandler":  "MagicEffectRecordHandler",

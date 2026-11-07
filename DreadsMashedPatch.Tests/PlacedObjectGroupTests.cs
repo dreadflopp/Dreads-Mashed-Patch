@@ -17,7 +17,7 @@ public sealed class PlacedObjectGroupTests : IDisposable
     private static readonly FormKey CellKey = new(CoverageTestHistory.Original, 0x900);
     private static readonly FormKey OwnerA = new(CoverageTestHistory.Original, 0xA00);
     private static readonly FormKey OwnerB = new(CoverageTestHistory.Original, 0xA01);
-    private static readonly string[] Groups = ["Transform", "Ownership", "RagdollPose"];
+    private static readonly string[] Groups = ["Ownership", "RagdollPose"];
 
     public void Dispose() => CoverageTestHistory.Reset();
 
@@ -32,7 +32,7 @@ public sealed class PlacedObjectGroupTests : IDisposable
             Assert.True(members.Add(member), member);
             Assert.DoesNotContain(member, handlers.Keys);
         }
-        Assert.Equal(new[] { "FactionRank", "Owner", "Placement", "RagdollBipedData", "RagdollData", "Scale" }, members.Order());
+        Assert.Equal(new[] { "FactionRank", "Owner", "RagdollBipedData", "RagdollData" }, members.Order());
     }
 
     public static IEnumerable<object[]> CompetingCases() => Groups.SelectMany(group =>
@@ -47,7 +47,6 @@ public sealed class PlacedObjectGroupTests : IDisposable
         var second = original.DeepCopy();
         switch (group)
         {
-            case "Transform": first.Placement!.Position = new P3Float(20, 0, 0); second.Scale = 3; break;
             case "Ownership": first.FactionRank = 4; second.Owner.SetTo(OwnerB); break;
             case "RagdollPose": first.RagdollData = Bytes(2, 28); second.RagdollBipedData = Bytes(3, 12); break;
         }
@@ -80,7 +79,6 @@ public sealed class PlacedObjectGroupTests : IDisposable
     }
 
     [Theory]
-    [InlineData("Transform")]
     [InlineData("Ownership")]
     [InlineData("RagdollPose")]
     public void CopiedUnchangedGroupDoesNotTakeOwnership(string group)
@@ -95,10 +93,8 @@ public sealed class PlacedObjectGroupTests : IDisposable
     }
 
     [Theory]
-    [InlineData("Transform", "ignored")]
     [InlineData("Ownership", "ignored")]
     [InlineData("RagdollPose", "ignored")]
-    [InlineData("Transform", "priority")]
     [InlineData("Ownership", "priority")]
     [InlineData("RagdollPose", "priority")]
     public void IgnoredAndPrioritySourcesRetainTheirPolicies(string group, string policy)
@@ -111,44 +107,39 @@ public sealed class PlacedObjectGroupTests : IDisposable
     }
 
     [Fact]
-    public void TransformRetainsPrecisionAndOptionalScaleSemantics()
+    public void PlacementAndScaleRetainSeparatePrecisionAndPresenceSemantics()
     {
-        var handler = new TransformPropertyHandler<IPlacedObject, IPlacedObjectGetter>();
+        var handlers = new PlacedObjectRecordHandler().PropertyHandlers;
         var first = Populated();
         first.Placement!.Position = new P3Float(1.0000001f, 0, 0);
-        first.Placement.Rotation = new P3Float(0, 0, 0);
         var second = first.DeepCopy();
         second.Placement!.Position = new P3Float(1.0000004f, 0, 0);
         second.Placement.Rotation = new P3Float(0, 0, MathF.Tau);
-        second.Scale += 0.00001f;
-        Assert.True(handler.AreValuesEqual(handler.GetValue(first), handler.GetValue(second)));
+        Assert.True(handlers["Placement"].AreValuesEqual(handlers["Placement"].GetValue(first), handlers["Placement"].GetValue(second)));
         second.Scale = null;
-        Assert.False(handler.AreValuesEqual(handler.GetValue(first), handler.GetValue(second)));
-        second.Scale = 1.01f;
-        Assert.False(handler.AreValuesEqual(handler.GetValue(first), handler.GetValue(second)));
+        Assert.False(handlers["Scale"].AreValuesEqual(handlers["Scale"].GetValue(first), handlers["Scale"].GetValue(second)));
     }
 
     [Fact]
-    public void GroupSnapshotsAndWritesDetachPlacementLinksAndBytes()
+    public void GroupSnapshotsAndWritesDetachLinksAndBytes()
     {
         var source = Populated();
         var expected = source.DeepCopy();
         var handlers = new PlacedObjectRecordHandler().PropertyHandlers;
-        var values = Groups.ToDictionary(name => name, name => handlers[name].GetValue(source));
-        source.Placement!.Position = new P3Float(99, 0, 0);
+        var fields = Groups;
+        var values = fields.ToDictionary(name => name, name => handlers[name].GetValue(source));
         source.Owner.SetTo(OwnerB);
         var sourceBones = source.RagdollData!.Value;
         sourceBones[0] = 99;
         var target = Empty();
-        foreach (var name in Groups) handlers[name].SetValue(target, values[name]);
-        foreach (var name in Groups) AssertGroup(name, expected, target);
-        target.Placement!.Position = new P3Float(88, 0, 0);
+        foreach (var name in fields) handlers[name].SetValue(target, values[name]);
+        foreach (var name in fields) AssertGroup(name, expected, target);
         target.Owner.SetTo(OwnerB);
         var targetBiped = target.RagdollBipedData!.Value;
         targetBiped[0] = 88;
         var secondTarget = Empty();
-        foreach (var name in Groups) handlers[name].SetValue(secondTarget, values[name]);
-        foreach (var name in Groups) AssertGroup(name, expected, secondTarget);
+        foreach (var name in fields) handlers[name].SetValue(secondTarget, values[name]);
+        foreach (var name in fields) AssertGroup(name, expected, secondTarget);
     }
 
     [Theory]
@@ -177,7 +168,7 @@ public sealed class PlacedObjectGroupTests : IDisposable
     [InlineData("restored", true)]
     [InlineData("ordinary", false)]
     [InlineData("ordinary", true)]
-    public void DisabledFlagsDoNotChangeTransformGroupSelection(string kind, bool absentScale)
+    public void PlacementAndScaleAreIndependentOfDisabledFlags(string kind, bool absentScale)
     {
         var original = Populated();
         var earlier = original.DeepCopy();
@@ -195,7 +186,7 @@ public sealed class PlacedObjectGroupTests : IDisposable
         var output = Run([original, earlier, winner], kind == "restored" ? "declared" : "none");
 
         Assert.Equal(winner.Scale, output.Scale);
-        Assert.Equal(winner.Placement!.Position, output.Placement!.Position);
+        Assert.Equal((kind == "restored" ? winner : earlier).Placement!.Position, output.Placement!.Position);
         Assert.Equal(kind != "restored", output.SkyrimMajorRecordFlags.HasFlag(SkyrimMajorRecord.SkyrimMajorRecordFlag.InitiallyDisabled));
         if (kind == "safe") Assert.Equal(Constants.Player.FormKey, output.EnableParent!.Reference.FormKey);
         else Assert.Null(output.EnableParent);
@@ -206,7 +197,6 @@ public sealed class PlacedObjectGroupTests : IDisposable
         var result = original.DeepCopy();
         switch (group)
         {
-            case "Transform": result.Placement!.Position = new P3Float(30, 0, 0); result.Scale = 2; break;
             case "Ownership": result.Owner.SetTo(OwnerB); result.FactionRank = 5; break;
             case "RagdollPose": result.RagdollData = Bytes(2, 28); result.RagdollBipedData = Bytes(3, 12); break;
         }
@@ -240,11 +230,6 @@ public sealed class PlacedObjectGroupTests : IDisposable
     {
         switch (group)
         {
-            case "Transform":
-                Assert.Equal(expected.Placement!.Position, actual.Placement!.Position);
-                Assert.Equal(expected.Placement.Rotation, actual.Placement.Rotation);
-                Assert.Equal(expected.Scale, actual.Scale);
-                break;
             case "Ownership":
                 Assert.Equal(expected.Owner.FormKeyNullable, actual.Owner.FormKeyNullable);
                 Assert.Equal(expected.FactionRank, actual.FactionRank);

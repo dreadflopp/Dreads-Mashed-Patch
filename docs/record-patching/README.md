@@ -67,10 +67,12 @@ Null and empty are not interchangeable everywhere. Some handlers track presence;
 
 ## Placed-reference state and placement
 
-ACHR and REFR select InitiallyDisabled, Transform and EnableParent independently under the normal addition/reversion rules. A denied InitiallyDisabled reversion does not block a new Transform or EnableParent value, and an accepted flag change does not select those properties from the same mod. Reversion permissions are checked against each property's own selected owner, using actual and virtual masters.
+ACHR and REFR support moves between interior cells: the containing cell, position and rotation are selected together under normal addition/reversion permissions. Scale is independent, so a size-only edit cannot undo an accepted move. Cell-only moves count even when the coordinates match.
 
-Transform keeps position, rotation and scale together at the project's comparison precision, including for disabled references. A later scale-only edit can select a complete transform from that mod. EnableParent keeps its reference and flags, including the opposite-of-parent flag, together as one complete value. Neither group is selected by the InitiallyDisabled owner.
+LocationReference comes from overrides describing the accepted cell. Compatible location-only corrections remain possible, with the normal permission checks for removal and restoration. PersistentLocation, InitiallyDisabled and EnableParent keep their separate owners; EnableParent retains its reference and flags together. A supported interior move uses the final Persistent flag to choose its destination collection.
 
-InitiallyDisabled is a starting-state flag; a reference can become enabled during play, and an enable parent controls its child's enabled state. Placement therefore remains eligible for forwarding. Safe undeleted-and-disabled (UDR) patterns receive the same independent property decisions; the patcher does not force a disable bundle. Placed hazards and projectile variants retain their normal forwarding rules too.
+Cross-cell moves involving exterior cells or specialized door/navigation, room/multibound, occlusion, water or attachment data keep winning placement and dependent spatial payloads, with a warning. Other valid edits still merge. Same-parent histories retain their existing forwarding rules. This change does not implement general exterior or persistence-only storage correction, location-table rebuilding, script repair or LOD generation.
+
+InitiallyDisabled is a starting-state flag; references may become enabled during play. Safe undeleted-and-disabled patterns receive the same independent state decisions. Hazards and placed projectiles retain their existing Transform group (position, rotation and scale).
 
 Inspect the generated patch in xEdit. These property rules do not guarantee correct gameplay behavior for every mod combination or byte-for-byte preservation of omitted fields.
