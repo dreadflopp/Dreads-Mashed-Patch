@@ -304,7 +304,7 @@ public sealed class ContainerItemExtraDataTests : IDisposable
     public void BinaryRoundTripPreservesOwnerVariantsAndDuplicateRows(string ownerKind)
     {
         var mod = new SkyrimMod(PatchKey, SkyrimRelease.SkyrimSE);
-        var ownerKey = new FormKey(PatchKey, 0x900);
+        var ownerKey = new FormKey(PatchKey, ownerKind == "faction" ? 0x910u : 0x900u);
         var variableKey = new FormKey(PatchKey, 0x901);
         if (ownerKind == "faction") mod.Factions.Add(new Faction(ownerKey, SkyrimRelease.SkyrimSE));
         else if (ownerKind == "npc") mod.Npcs.Add(new Npc(ownerKey, SkyrimRelease.SkyrimSE));
@@ -349,7 +349,7 @@ public sealed class ContainerItemExtraDataTests : IDisposable
 
     private static ExtraData Data(string ownerKind, ModKey? ownerMod = null)
     {
-        var owner = new FormKey(ownerMod ?? OriginalKey, 0x900);
+        var owner = new FormKey(ownerMod ?? OriginalKey, ownerKind == "faction" ? 0x910u : 0x900u);
         var variable = new FormKey(ownerMod ?? OriginalKey, 0x901);
         return new ExtraData
         {
@@ -401,6 +401,31 @@ public sealed class ContainerItemExtraDataTests : IDisposable
 #pragma warning disable CS0618
     private static SynthesisState<ISkyrimMod, ISkyrimModGetter> CreateState(params SkyrimMod[] mods)
     {
+        // Full-pipeline fixtures must define the item and all COED reference targets.
+        mods[0].Weapons.Add(new Weapon(ItemKey, SkyrimRelease.SkyrimSE));
+        var owners = mods.SelectMany(m => m.Containers).SelectMany(c => c.Items ?? [])
+            .Select(row => row.Data?.Owner).Where(owner => owner != null).ToArray();
+        foreach (var owner in owners)
+        {
+            if (owner is INpcOwnerGetter npc)
+            {
+                var destination = mods.Single(m => m.ModKey == npc.Npc.FormKey.ModKey);
+                if (!destination.Npcs.ContainsKey(npc.Npc.FormKey)) destination.Npcs.Add(new Npc(npc.Npc.FormKey, SkyrimRelease.SkyrimSE));
+                destination = mods.Single(m => m.ModKey == npc.Global.FormKey.ModKey);
+                if (!destination.Globals.ContainsKey(npc.Global.FormKey)) destination.Globals.Add(new GlobalFloat(npc.Global.FormKey, SkyrimRelease.SkyrimSE));
+            }
+            else if (owner is IFactionOwnerGetter faction)
+            {
+                var destination = mods.Single(m => m.ModKey == faction.Faction.FormKey.ModKey);
+                if (!destination.Factions.ContainsKey(faction.Faction.FormKey)) destination.Factions.Add(new Faction(faction.Faction.FormKey, SkyrimRelease.SkyrimSE));
+            }
+        }
+        foreach (var owner in owners.OfType<IUntypedOwnerGetter>())
+        foreach (var key in new[] { owner.OwnerData.FormKey, owner.VariableData.FormKey }.Where(key => !key.IsNull))
+        {
+            var destination = mods.Single(m => m.ModKey == key.ModKey);
+            if (!destination.EnumerateMajorRecords().Any(r => r.FormKey == key)) destination.Statics.Add(new Static(key, SkyrimRelease.SkyrimSE));
+        }
         var patchMod = new SkyrimMod(PatchKey, SkyrimRelease.SkyrimSE);
         var listings = mods.Cast<ISkyrimModGetter>().Append(patchMod).Select(mod => new ModListing<ISkyrimModGetter>(mod)).ToArray();
         var loadOrder = new LoadOrder<IModListing<ISkyrimModGetter>>(listings);

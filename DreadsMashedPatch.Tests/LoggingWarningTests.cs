@@ -9,6 +9,41 @@ public sealed class LogCollectorTestCollection;
 public sealed class LoggingWarningTests
 {
     [Theory]
+    [InlineData("Checking output patch for errors...")]
+    [InlineData("Output validation completed: 42 override(s) retained; 0 omitted.")]
+    public void OutputValidationProgressReachesRunLogWithoutIncreasingWarningCounts(string line)
+    {
+        var fullLog = new System.Text.StringBuilder();
+        var runLog = new System.Text.StringBuilder();
+        using var writer = new DreadsMashedPatch.App.Services.UiTextWriter(
+            text => fullLog.Append(text), text => runLog.Append(text));
+        writer.WriteLine(line);
+        writer.Flush();
+        Assert.Contains(line, fullLog.ToString());
+        Assert.Contains(line, runLog.ToString());
+        Assert.Equal(0, writer.WarningCount);
+        Assert.Equal(0, writer.ErrorCount);
+    }
+
+    [Fact]
+    public void ScopedWarningsIdentifyTheRecordAndRemainWarningsInTheUi()
+    {
+        LogCollector.Clear();
+        var key = new Mutagen.Bethesda.Plugins.FormKey(Mutagen.Bethesda.Plugins.ModKey.FromNameAndExtension("Source.esp"), 0x800);
+        using var diagnostics = new PatchDiagnostics(key);
+        LogCollector.AddWarning("Property", "An actionable record warning");
+        var line = Assert.Single(LogCollector.GetAll());
+        Assert.Contains(key.ToString(), line);
+        using var writer = new DreadsMashedPatch.App.Services.UiTextWriter(_ => { }, _ => { });
+        writer.WriteLine(line);
+        writer.Flush();
+        Assert.Equal(1, writer.WarningCount);
+        Assert.Equal(0, writer.ErrorCount);
+        Assert.True(diagnostics.Report.Succeeded);
+        LogCollector.Clear();
+    }
+
+    [Theory]
     [InlineData("[String] Mod.esp: Addition: [] -> <Error: Unknown lstring ID 00000011> Success")]
     [InlineData("[Name] Computed value: [Error] is part of the name")]
     [InlineData("[Name] Original value: Warning: read the sign")]

@@ -239,6 +239,7 @@ public sealed class ScriptAdapterMetadataTests : IDisposable
 #pragma warning disable CS0618
     private static SynthesisState<ISkyrimMod, ISkyrimModGetter> CreateState(params SkyrimMod[] mods)
     {
+        mods[0].Statics.Add(new Static(ObjectKey, SkyrimRelease.SkyrimSE));
         var patchMod = new SkyrimMod(PatchKey, SkyrimRelease.SkyrimSE);
         var listings = mods.Cast<ISkyrimModGetter>().Append(patchMod).Select(mod => new ModListing<ISkyrimModGetter>(mod)).ToArray();
         var loadOrder = new LoadOrder<IModListing<ISkyrimModGetter>>(listings);

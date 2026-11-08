@@ -131,15 +131,16 @@ public sealed class InteriorReferencePlacementTests : IDisposable
     }
 
     [Theory]
-    [InlineData("exterior")]
-    [InlineData("door")]
-    [InlineData("deleted")]
-    [InlineData("invalid-location")]
-    public void UnsupportedMoveKeepsWinningPlacementAndIndependentScale(string reason)
+    [InlineData("exterior", false)]
+    [InlineData("exterior", true)]
+    [InlineData("door", false)]
+    [InlineData("deleted", false)]
+    [InlineData("invalid-location", false)]
+    public void UnsupportedMoveKeepsWinningPlacementAndIndependentScale(string reason, bool npc)
     {
         var moved = reason == "exterior" ? House with { Cell = 2 } : House;
         if (reason == "invalid-location") moved = moved with { Location = new FormKey(CoverageTestHistory.Original, 0xFFFF) };
-        using var h = new History(false, [Mine, moved with { Scale = 1.2f }, Mine],
+        using var h = new History(npc, [Mine, moved with { Scale = 1.2f }, Mine],
             edit: (i, actor) =>
             {
                 if (reason == "door" && i == 1) ((IPlacedObject)actor).TeleportDestination = new TeleportDestination
@@ -152,8 +153,11 @@ public sealed class InteriorReferencePlacementTests : IDisposable
         var output = h.Reload();
         AssertPlacement(output, Cell(0), 182, null);
         Assert.Equal(1.2f, Actor(output).Scale);
-        Assert.Null(((IPlacedObjectGetter)Actor(output)).TeleportDestination);
+        if (!npc) Assert.Null(((IPlacedObjectGetter)Actor(output)).TeleportDestination);
         Assert.Contains("retaining winning placement", h.Log);
+        Assert.Contains(Key.ToString(), h.Log);
+        Assert.Contains(reason == "exterior" ? "[Info]" : "[Warning]", h.Log);
+        if (reason == "exterior") Assert.DoesNotContain("[Warning]", h.Log);
     }
 
     [Theory]

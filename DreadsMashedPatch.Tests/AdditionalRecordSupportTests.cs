@@ -234,6 +234,12 @@ public sealed class AdditionalRecordSupportTests : IDisposable
         var handler = new LandscapeTextureRecordHandler().PropertyHandlers[field];
         var selected = handler.GetValue(records[1]);
         for (var i = 0; i < mods.Length; i++) mods[i].LandscapeTextures.Add(records[i]);
+        switch (field)
+        {
+            case "TextureSet": mods[0].TextureSets.Add(new TextureSet(CoverageTestHistory.LinkKey, SkyrimRelease.SkyrimSE)); break;
+            case "MaterialType": mods[0].MaterialTypes.Add(new MaterialType(CoverageTestHistory.LinkKey, SkyrimRelease.SkyrimSE)); break;
+            case "Grasses": mods[0].Grasses.Add(new Grass(CoverageTestHistory.LinkKey, SkyrimRelease.SkyrimSE)); break;
+        }
         using var state = CoverageTestHistory.State(mods);
         Program.RunPatch(state);
         Assert.True(handler.AreValuesEqual(selected, handler.GetValue(Assert.Single(state.PatchMod.LandscapeTextures))));
@@ -357,6 +363,7 @@ public sealed class AdditionalRecordSupportTests : IDisposable
         records[1].Grasses.Add(new FormLink<IGrassGetter>(a)); records[1].Grasses.Add(new FormLink<IGrassGetter>(a));
         records[2].Grasses.Add(new FormLink<IGrassGetter>(c));
         for (var i = 0; i < mods.Length; i++) mods[i].LandscapeTextures.Add(records[i]);
+        foreach (var key in new[] { a, b, c }) mods[0].Grasses.Add(new Grass(key, SkyrimRelease.SkyrimSE));
         using var state = CoverageTestHistory.State(mods); Program.RunPatch(state);
         Assert.Equal(new[] { a, a, b, c }, Assert.Single(state.PatchMod.LandscapeTextures).Grasses.Select(link => link.FormKey));
         using var binary = Write(state.PatchMod);

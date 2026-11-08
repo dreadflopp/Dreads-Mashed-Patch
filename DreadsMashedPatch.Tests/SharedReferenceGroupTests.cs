@@ -314,6 +314,8 @@ public sealed class SharedReferenceGroupTests : IDisposable
 
     private static void Add(SkyrimMod mod, ISkyrimMajorRecord record)
     {
+        mod.Factions.Add(new Faction(OwnerA, SkyrimRelease.SkyrimSE));
+        mod.Factions.Add(new Faction(OwnerB, SkyrimRelease.SkyrimSE));
         if (record is EncounterZone zone) { mod.EncounterZones.Add(zone); return; }
         var cell = record as Cell ?? new Cell(CellKey, SkyrimRelease.SkyrimSE) { Flags = Cell.Flag.IsInteriorCell };
         if (record is IPlaced placed) cell.Temporary.Add(placed);

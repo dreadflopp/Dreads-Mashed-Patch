@@ -264,6 +264,8 @@ public sealed class PlacedObjectGroupTests : IDisposable
                     mod.ModHeader.MasterReferences.Add(new MasterReference { Master = keys[1] });
                 var cell = new Cell(CellKey, SkyrimRelease.SkyrimSE);
                 cell.Temporary.Add(records[i]);
+                mod.Factions.Add(new Faction(OwnerA, SkyrimRelease.SkyrimSE));
+                mod.Factions.Add(new Faction(OwnerB, SkyrimRelease.SkyrimSE));
                 var subBlock = new CellSubBlock();
                 subBlock.Cells.Add(cell);
                 var block = new CellBlock();

@@ -65,6 +65,8 @@ public sealed class UserReportedFailureRegressionTests : IDisposable
                     Sound = new FormLink<ISoundDescriptorGetter>(sound)
                 });
             mod.MagicEffects.Add(effect);
+            foreach (var sound in originalSounds.Select(s => s.Item2).Distinct())
+                mod.SoundDescriptors.Add(new SoundDescriptor(sound, SkyrimRelease.SkyrimSE));
             return mod;
         }).ToArray();
         using var fixtures = new OverlayFixtures(mods, binaryOverlay);

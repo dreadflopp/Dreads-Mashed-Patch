@@ -60,8 +60,16 @@ namespace DreadsMashedPatch
         {
             lock (_sync)
             {
+                if (PatchDiagnostics.CurrentRecord is { } record && !message.Contains(record.ToString(), StringComparison.Ordinal))
+                    message = $"{record}: {message}";
                 AddCore(identifier, FormatDiagnostic("Warning", message, exception));
             }
+        }
+
+        /// <summary>Records an expected exclusion without counting it as an actionable warning.</summary>
+        public static void AddInfo(string identifier, string message)
+        {
+            lock (_sync) AddCore(identifier, $"[Info] {message}");
         }
 
         /// <summary>Adds an error regardless of the configured verbosity.</summary>

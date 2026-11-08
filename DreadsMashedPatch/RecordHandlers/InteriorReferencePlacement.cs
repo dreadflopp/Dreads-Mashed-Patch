@@ -100,7 +100,12 @@ internal static class InteriorReferencePlacement
             {
                 selected = winner;
                 location = SelectLocation(winner);
-                LogCollector.AddWarning("Placement", $"{contexts[0].Record.FormKey}: {rejection}; retaining winning placement.");
+                var record = contexts[0].Record;
+                var message = $"{RecordTypeCatalog.GetRecordDescription(record)} {record.FormKey} ({record.EditorID ?? "no EditorID"}): {rejection}; retaining winning placement.";
+                if (history.All(s => s.Cell != null) && history.Any(s => s.World != null || !s.Cell!.Record.Flags.HasFlag(Cell.Flag.IsInteriorCell)))
+                    LogCollector.AddInfo("Placement", message);
+                else
+                    LogCollector.AddWarning("Placement", message);
             }
         }
 

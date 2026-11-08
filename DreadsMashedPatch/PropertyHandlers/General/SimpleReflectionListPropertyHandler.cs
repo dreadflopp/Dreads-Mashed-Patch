@@ -194,7 +194,7 @@ namespace DreadsMashedPatch.PropertyHandlers.General
 
                     if (!propertyIsNullable)
                     {
-                        Console.WriteLine($"Warning: Property '{PropertyName}' is null and cannot be set (property is not nullable and list creation failed)");
+                        LogCollector.AddWarning(PropertyName, $"{record.FormKey}: Property '{PropertyName}' is null and cannot be set (property is not nullable and list creation failed)");
                         return;
                     }
                 }

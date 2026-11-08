@@ -10,6 +10,7 @@ source code and executable tests determine actual behavior.
 | Task | Read |
 |---|---|
 | Architecture, handler choice, source comments, copying, errors, validation | [Development guide](DEVELOPMENT.md) |
+| COED faction-rank workaround, Synthesis import limits and removal conditions | [Import workaround](DEVELOPMENT.md#coed-faction-rank-import-workaround) |
 | Record dispatch, supported and dormant variants | [Interface mapping](record-code-interface-mapping.md), [record inventory](record-patching/INVENTORY.md) |
 | Property ownership, grouping, exclusions and exceptions | [Record inventory](record-patching/INVENTORY.md), then the linked handler |
 | Property groups, fixed forwarding policy, future controls and resource ownership | [Asset forwarding guide](ASSET_FORWARDING.md) |

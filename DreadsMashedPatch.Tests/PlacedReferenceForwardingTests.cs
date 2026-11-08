@@ -320,6 +320,8 @@ public sealed class PlacedReferenceForwardingTests : IDisposable
                     mod.ModHeader.MasterReferences.Add(new MasterReference { Master = ModKeys[owner] });
                 var cell = new Cell(CellKey, SkyrimRelease.SkyrimSE) { Flags = Cell.Flag.IsInteriorCell };
                 cell.Temporary.Add((IPlaced)records[i]);
+                foreach (var parent in new[] { CustomParent, OtherParent })
+                    cell.Persistent.Add(new PlacedNpc(parent, SkyrimRelease.SkyrimSE));
                 var sub = new CellSubBlock(); sub.Cells.Add(cell);
                 var block = new CellBlock(); block.SubBlocks.Add(sub); mod.Cells.Add(block);
                 var stream = new MemoryStream(); streams.Add(stream);

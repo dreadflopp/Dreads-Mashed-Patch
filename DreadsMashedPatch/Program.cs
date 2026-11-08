@@ -295,13 +295,14 @@ namespace DreadsMashedPatch
         {
             using var diagnostics = new PatchDiagnostics();
             RunPatchCore(state);
+            if (diagnostics.Report.Succeeded) OutputPatchValidator.Validate(state);
             if (diagnostics.Report.IsPartial)
             {
                 Console.WriteLine(diagnostics.Report.Succeeded
                     ? $"[Warning] Partial patch: skipped {diagnostics.Report.SkippedRecords.Count} record(s). Successful records will be published if output writing succeeds."
                     : $"[Warning] Skipped {diagnostics.Report.SkippedRecords.Count} record(s). Fatal errors prevent publication.");
-                foreach (var record in diagnostics.Report.SkippedRecords)
-                    Console.WriteLine($"[Warning] Skipped {record.Record} ({record.RecordType}): {record.Reason}");
+                // Each omission already logged its record and reason at the point
+                // of rejection. Do not repeat those warnings in the run summary.
             }
             return diagnostics.Report;
         }

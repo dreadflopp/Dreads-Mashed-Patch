@@ -372,7 +372,10 @@ public sealed class RecordOverrideTransactionTests : IDisposable
         Assert.Equal("WEAP - Weapon", skipped.RecordType);
         Assert.Contains("NullReferenceException", skipped.Reason);
         Assert.Contains("Partial patch", uiLog.ToString());
-        Assert.Contains($"Skipped {FailedKey}", fullLog.ToString());
+        Assert.Contains($"Skipping record {FailedKey}", fullLog.ToString());
+        Assert.DoesNotContain($"[Warning] Skipped {FailedKey}", fullLog.ToString());
+        Assert.Contains("Checking output patch for errors...", uiLog.ToString());
+        Assert.Contains("Output validation completed:", uiLog.ToString());
         Assert.True(writer.ErrorCount > 0);
         Assert.Equal(0, writer.PipelineErrorCount);
         Assert.Contains(report.Errors, error => error.Record == FailedKey && error.Exception != null);

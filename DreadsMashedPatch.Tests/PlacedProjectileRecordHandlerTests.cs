@@ -219,6 +219,7 @@ public sealed class PlacedProjectileRecordHandlerTests : IDisposable
             }
             cell.Temporary.Add(new PlacedHazard(new FormKey(CoverageTestHistory.Original, 0x820), SkyrimRelease.SkyrimSE)
                 { Placement = new Placement(), Scale = i == 1 ? 2 : 1 });
+            PlacedTrapTestTargets.Add(mods[i], cell, projectile: true);
             var block = new CellBlock { BlockNumber = 0, GroupType = GroupTypeEnum.InteriorCellBlock };
             var sub = new CellSubBlock { BlockNumber = 0, GroupType = GroupTypeEnum.InteriorCellSubBlock };
             sub.Cells.Add(cell); block.SubBlocks.Add(sub); mods[i].Cells.Add(block);
@@ -269,31 +270,31 @@ public sealed class PlacedProjectileRecordHandlerTests : IDisposable
     {
         var record = Empty(kind);
         record.GetType().GetProperty("Projectile")!.SetValue(record, new FormLink<IProjectileGetter>(CoverageTestHistory.LinkKey));
-        record.EncounterZone.SetTo(CoverageTestHistory.LinkKey);
-        record.Owner.SetTo(CoverageTestHistory.LinkKey);
-        record.Emittance.SetTo(CoverageTestHistory.LinkKey);
-        record.MultiBoundReference.SetTo(CoverageTestHistory.LinkKey);
-        record.LocationReference.SetTo(CoverageTestHistory.LinkKey);
+        record.EncounterZone.SetTo(PlacedTrapTestTargets.Key(0x804));
+        record.Owner.SetTo(PlacedTrapTestTargets.Key(0x805));
+        record.Emittance.SetTo(PlacedTrapTestTargets.Key(0x806));
+        record.MultiBoundReference.SetTo(PlacedTrapTestTargets.Key(0x807));
+        record.LocationReference.SetTo(PlacedTrapTestTargets.Key(0x808));
         record.FactionRank = 2; record.HeadTrackingWeight = 0.25f; record.FavorCost = 3; record.Scale = 1.5f;
         record.Placement = new Placement { Position = new P3Float(10, 20, 30), Rotation = new P3Float(0.25f, 0.5f, 0.75f) };
         record.LinkedReferences.Add(new LinkedReferences
         {
-            KeywordOrReference = new FormLink<IKeywordLinkedReferenceGetter>(CoverageTestHistory.LinkKey),
+            KeywordOrReference = new FormLink<IKeywordLinkedReferenceGetter>(PlacedTrapTestTargets.Key(0x809)),
             Reference = new FormLink<IPlacedGetter>(new FormKey(CoverageTestHistory.Original, 0x881))
         });
         record.Reflections.Add(new WaterReflection
         {
-            Water = new FormLink<IPlacedObjectGetter>(CoverageTestHistory.LinkKey), Type = WaterReflection.Flag.Reflection
+            Water = new FormLink<IPlacedObjectGetter>(PlacedTrapTestTargets.Key(0x80A)), Type = WaterReflection.Flag.Reflection
         });
         record.ActivateParents = new ActivateParents();
         record.ActivateParents.Parents.Add(new ActivateParent
         {
-            Reference = new FormLink<IPlacedGetter>(CoverageTestHistory.LinkKey), Delay = 0.75f
+            Reference = new FormLink<IPlacedGetter>(PlacedTrapTestTargets.Key(0x80B)), Delay = 0.75f
         });
-        record.EnableParent = new EnableParent { Reference = new FormLink<IPlacedGetter>(CoverageTestHistory.LinkKey) };
+        record.EnableParent = new EnableParent { Reference = new FormLink<IPlacedGetter>(PlacedTrapTestTargets.Key(0x80C)) };
         record.IgnoredBySandbox = new byte[] { 8, 9 };
         record.LocationRefTypes = [new FormLink<ILocationReferenceTypeGetter>(new FormKey(CoverageTestHistory.Original, 0x803)),
-            new FormLink<ILocationReferenceTypeGetter>(CoverageTestHistory.LinkKey)];
+            new FormLink<ILocationReferenceTypeGetter>(PlacedTrapTestTargets.Key(0x80D))];
         record.DistantLodData = [1.25f, 2.5f, 3.75f];
         record.VirtualMachineAdapter = new VirtualMachineAdapter { Version = 4, ObjectFormat = 1 };
         var script = new ScriptEntry { Name = "Test" };
@@ -306,6 +307,7 @@ public sealed class PlacedProjectileRecordHandlerTests : IDisposable
     {
         var cell = new Cell(CellKey, SkyrimRelease.SkyrimSE) { Flags = Cell.Flag.IsInteriorCell };
         cell.Temporary.Add(record);
+        PlacedTrapTestTargets.Add(mod, cell, projectile: true);
         var block = new CellBlock { BlockNumber = 0, GroupType = GroupTypeEnum.InteriorCellBlock };
         var sub = new CellSubBlock { BlockNumber = 0, GroupType = GroupTypeEnum.InteriorCellSubBlock };
         sub.Cells.Add(cell); block.SubBlocks.Add(sub); mod.Cells.Add(block);

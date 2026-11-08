@@ -60,6 +60,24 @@ internal sealed class PatchDiagnostics : IDisposable
 
     public static bool IsRecordScope => Current.Value?._record != null;
 
+    public static FormKey? CurrentRecord
+    {
+        get
+        {
+            for (var scope = Current.Value; scope != null; scope = scope._parent)
+                if (scope._record.HasValue) return scope._record;
+            return null;
+        }
+    }
+
+    // Output validation has already removed this override. It is a warning-level
+    // omission, not a recovered processing exception or a fatal pipeline failure.
+    public static void OmitInvalidOutput(FormKey record, string recordType, string reason)
+    {
+        var skipped = new SkippedPatchRecord(record, recordType, reason);
+        for (var scope = Current.Value; scope != null; scope = scope._parent) scope.Report.Add(skipped);
+    }
+
     // A FormKey alone does not make an error recoverable. Only the record loop
     // can accept a skip, after transactional application has returned or unwound.
     public void SkipRecord(string recordType, Exception exception)

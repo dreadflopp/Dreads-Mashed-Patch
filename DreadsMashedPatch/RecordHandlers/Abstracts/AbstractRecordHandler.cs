@@ -131,7 +131,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
             var warningKey = $"{handler.GetType().FullName}|{propertyName}|{value!.GetType().FullName}";
             if (EmittedFormatterWarnings.TryAdd(warningKey, 0))
             {
-                Console.WriteLine($"[Warning] [{propertyName}] {stage}: formatter returned a type-name fallback: {formatted}. Consider overriding FormatValue in {handler.GetType().Name}.");
+                LogCollector.AddWarning(propertyName, $"[{propertyName}] {stage}: formatter returned a type-name fallback: {formatted}. Consider overriding FormatValue in {handler.GetType().Name}.");
             }
         }
 
@@ -168,7 +168,7 @@ namespace DreadsMashedPatch.RecordHandlers.Abstracts
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"[Warning] [{propertyName}] formatter audit ({context.ModKey}): FormatValue threw {ex.GetType().Name}: {ex.Message}");
+                        LogCollector.AddWarning(propertyName, $"{context.Record.FormKey}: [{propertyName}] formatter audit ({context.ModKey}): FormatValue threw {ex.GetType().Name}: {ex.Message}");
                     }
                 }
             }
