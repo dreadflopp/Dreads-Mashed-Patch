@@ -376,6 +376,7 @@ public sealed class RecordOverrideTransactionTests : IDisposable
         Assert.DoesNotContain($"[Warning] Skipped {FailedKey}", fullLog.ToString());
         Assert.Contains("Checking output patch for errors...", uiLog.ToString());
         Assert.Contains("Output validation completed:", uiLog.ToString());
+        Assert.Equal(0, writer.WarningCount);
         Assert.True(writer.ErrorCount > 0);
         Assert.Equal(0, writer.PipelineErrorCount);
         Assert.Contains(report.Errors, error => error.Record == FailedKey && error.Exception != null);

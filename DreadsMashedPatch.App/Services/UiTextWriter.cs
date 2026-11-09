@@ -172,6 +172,8 @@ internal sealed class UiTextWriter : TextWriter
             || line.Equals("Running patch.", StringComparison.Ordinal)
             || line.Equals("Checking output patch for errors...", StringComparison.Ordinal)
             || line.StartsWith("Output validation completed:", StringComparison.Ordinal)
+            || line.StartsWith("Partial patch: skipped ", StringComparison.Ordinal)
+            || line.StartsWith("Skipped ", StringComparison.Ordinal)
             || line.StartsWith("Starting Mashed Patch", StringComparison.Ordinal)
             || (line.StartsWith("Processing ", StringComparison.Ordinal)
                 && (line.EndsWith(" records", StringComparison.Ordinal)

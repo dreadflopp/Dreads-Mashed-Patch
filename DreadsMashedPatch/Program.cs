@@ -226,7 +226,8 @@ namespace DreadsMashedPatch
 
             if (skippedCount > 0)
             {
-                Console.WriteLine($"[Warning] Skipped {skippedCount} malformed {contextName} context(s) during load.");
+                // Each malformed context already emitted its actionable warning.
+                Console.WriteLine($"Skipped {skippedCount} malformed {contextName} context(s) during load.");
             }
 
             return loaded;
@@ -299,8 +300,8 @@ namespace DreadsMashedPatch
             if (diagnostics.Report.IsPartial)
             {
                 Console.WriteLine(diagnostics.Report.Succeeded
-                    ? $"[Warning] Partial patch: skipped {diagnostics.Report.SkippedRecords.Count} record(s). Successful records will be published if output writing succeeds."
-                    : $"[Warning] Skipped {diagnostics.Report.SkippedRecords.Count} record(s). Fatal errors prevent publication.");
+                    ? $"Partial patch: skipped {diagnostics.Report.SkippedRecords.Count} record(s). Successful records will be published if output writing succeeds."
+                    : $"Skipped {diagnostics.Report.SkippedRecords.Count} record(s). Fatal errors prevent publication.");
                 // Each omission already logged its record and reason at the point
                 // of rejection. Do not repeat those warnings in the run summary.
             }

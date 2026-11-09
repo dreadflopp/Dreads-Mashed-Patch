@@ -33,9 +33,11 @@ public sealed class OutputPatchValidatorTests : IDisposable
         using var state = CoverageTestHistory.State(mods);
         var previous = Console.Out;
         using var log = new StringWriter();
+        using var runLog = new StringWriter();
+        var writer = new DreadsMashedPatch.App.Services.UiTextWriter(log.Write, runLog.Write);
         PatchRunReport report;
-        try { Console.SetOut(log); report = Program.RunPatchWithReport(state); }
-        finally { Console.SetOut(previous); }
+        try { Console.SetOut(writer); report = Program.RunPatchWithReport(state); }
+        finally { Console.SetOut(previous); writer.Dispose(); }
 
         Assert.True(report.Succeeded);
         Assert.True(report.IsPartial);
@@ -52,6 +54,10 @@ public sealed class OutputPatchValidatorTests : IDisposable
         Assert.Contains("Packages[0]", log.ToString());
         Assert.Contains("Earlier.esp", log.ToString());
         Assert.Contains("Repair or replace", log.ToString());
+        Assert.Contains("Omitted output override", runLog.ToString());
+        Assert.Contains("Partial patch: skipped 1 record(s).", runLog.ToString());
+        Assert.Equal(1, writer.WarningCount);
+        Assert.Equal(0, writer.ErrorCount);
         Assert.DoesNotContain("[Error]", log.ToString());
         Assert.Single(log.ToString().Split(Environment.NewLine),
             line => LogCollector.IsDiagnostic(line, "Warning") && line.Contains(Actor.ToString(), StringComparison.Ordinal));

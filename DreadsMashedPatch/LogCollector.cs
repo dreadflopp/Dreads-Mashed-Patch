@@ -164,7 +164,15 @@ namespace DreadsMashedPatch
             if (HasSeverityPrefix(message, severity)) return true;
             if (!message.StartsWith('[')) return false;
             var tagEnd = message.IndexOf(']');
-            return tagEnd >= 0 && HasSeverityPrefix(message[(tagEnd + 1)..].TrimStart(), severity);
+            if (tagEnd < 0) return false;
+            // An explicit severity owns the entry; only property tags may be
+            // skipped. For example, "[Warning] Error: ..." is still a warning.
+            var tag = message[1..tagEnd];
+            if (tag.Equals("Error", StringComparison.OrdinalIgnoreCase)
+                || tag.Equals("Warning", StringComparison.OrdinalIgnoreCase)
+                || tag.Equals("Info", StringComparison.OrdinalIgnoreCase)
+                || tag.Equals("Diagnostic", StringComparison.OrdinalIgnoreCase)) return false;
+            return HasSeverityPrefix(message[(tagEnd + 1)..].TrimStart(), severity);
         }
 
         private static bool HasSeverityPrefix(string message, string severity)
